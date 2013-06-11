@@ -4,6 +4,7 @@ from sqlalchemy.types import Integer, String, Text, Float, Unicode, Boolean
 from sqlalchemy.orm import relationship, backref, relation
 from pynformatics.contest.ejudge.serve_internal import EjudgeContestCfg
 import os
+import codecs
 
 from pynformatics.model.meta import Base
 
@@ -79,7 +80,7 @@ class EjudgeProblem(Problem):
 
         test_file_name = (prob.tests_dir + prob.test_pat) % int(test_num)
         if os.path.exists(test_file_name):
-            f = open(test_file_name)
+            f = codecs.open(test_file_name, 'r', encoding='utf-8')
             res = f.read(255)
         else:
             res = test_file_name
@@ -91,7 +92,7 @@ class EjudgeProblem(Problem):
 
         corr_file_name = (prob.tests_dir + prob.corr_pat) % int(test_num)
         if os.path.exists(corr_file_name):
-            f = open(corr_file_name)
+            f = codecs.open(corr_file_name, 'r', encoding='utf-8')
             res = f.read(255)
         else:
             res = corr_file_name
