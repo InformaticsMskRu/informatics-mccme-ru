@@ -35,14 +35,15 @@ class EjudgeProblemCfg:
                 self.abstract = d["super"][0].strip("\"")
             else:
                 self.abstract = None
+
+            if "short_name" in d:
+                self.short_name = d["short_name"][0].strip("\"")
+
             if "internal_name" in d:
                 self.internal_name = d["internal_name"][0].strip("\"")
             else:
-                self.internal_name = None
-            if "short_name" in d:
-                self.short_name = d["short_name"][0].strip("\"")
-            if "internal_name" in d:
-                self.internal_name = d["internal_name"][0].strip("\"")
+                self.internal_name = self.short_name
+
             self.long_name = ""
             if "long_name" in d:
                 self.long_name = d["long_name"][0].strip("\"")

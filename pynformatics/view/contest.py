@@ -115,6 +115,7 @@ def updateStatement(problem, p, contest, conf):
                         res = re.sub('&times;', '&#215;', res)
                         res = re.sub('&thinsp;', '&#8201;', res)
                         res = re.sub('&lt;', '&#8804;', res)
+                        res = re.sub('&ne;', '&#8800;', res)
                         res = re.sub('&le;', '&#8804;', res)
                         res = re.sub('&ge;', '&#8805;', res)
                         res = re.sub('<IMG([^>]*)>', replImg, res)

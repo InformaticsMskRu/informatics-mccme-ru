@@ -25,7 +25,7 @@ def RequestCheckUserCapability(request, capability):
         str = fh.read(512000)
         user = loads(bytes(str[str.find('USER|') + 5:], 'UTF-8'), object_hook=phpobject, decode_strings=True)
         fh.close()
-        return user.capabilities[1][capability] == '1' or user.capabilities[1][capability] == 2
+        return int(user.capabilities[1][capability]) >= 1
     except:
        if fh != None:
            fh.close() 

@@ -27,7 +27,7 @@ def get_protocol(request):
             run.tested_protocol
 #            if 1 == 1:
 #                return "1"
-            if (run.user.statement.filter(Statement.olympiad == 1).filter(Statement.timestop > time.time()).filter(Statement.timestart < time.time()).count() == 0):
+            if (True or run.user.statement.filter(Statement.olympiad == 1).filter(Statement.timestop > time.time()).filter(Statement.timestart < time.time()).count() == 0):
                 res = OrderedDict()
                 for num in range(1, len(run.tests.keys()) + 1):
                     res[str(num)] = run.tests[str(num)]
