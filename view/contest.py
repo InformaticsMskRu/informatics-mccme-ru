@@ -8,6 +8,7 @@ import sys, traceback, collections
 #import jsonpickle, demjson
 from phpserialize import *
 from pynformatics.view.utils import *
+from pynformatics.utils.problemParser import getCorrectTree
 from pynformatics.models import DBSession
 import transaction
 #import jsonpickle, demjson
@@ -79,13 +80,11 @@ def updateStatement(problem, p, contest, conf):
                 try:
                     tttt = "@" + revision
                     with zipfile.ZipFile(get_problem_archive_name(contest.ejudge_int_id, p.internal_name, revision)) as arch:
-#                        tttt += "@"
                         xml_description = arch.read("problem.xml")
                         xml_description = ET.fromstring(xml_description)
                         
                         use_in_statement = ""
                         test_num = 0
-#                        tttt += "@"
                         
                         for test_node in xml_description.findall(".//testset/tests/test"):
                             test_num += 1
@@ -99,28 +98,29 @@ def updateStatement(problem, p, contest, conf):
                                 pass
                         
                         res = arch.read("statements/.html/russian/problem.html")
-                        res = re.sub('<META[^>]*>', '', res.decode("utf-8"))
-                        res = re.sub('<LINK[^>]*>', '', res)
-                        res = re.sub('<BR>', '<BR/>', res)
-                        res = re.sub('&nbsp;', '&#160;', res)
-                        res = re.sub('&mdash;', '&#8212;', res)
-                        res = re.sub('&ndash;', '&#150;', res)
-                        res = re.sub('&raquo;', '&#187;', res)
-                        res = re.sub('&laquo;', '&#171;', res)
-                        res = re.sub('&middot;', '&#183;', res)
-                        res = re.sub('&ldquo;', '&#8220;', res)
-                        res = re.sub('&rdquo;', '&#8221;', res)
-                        res = re.sub('&lsquo;', '&#8216;', res)
-                        res = re.sub('&rsquo;', '&#8217;', res)
-                        res = re.sub('&times;', '&#215;', res)
-                        res = re.sub('&thinsp;', '&#8201;', res)
-                        res = re.sub('&lt;', '&#8804;', res)
-                        res = re.sub('&ne;', '&#8800;', res)
-                        res = re.sub('&le;', '&#8804;', res)
-                        res = re.sub('&ge;', '&#8805;', res)
-                        res = re.sub('<IMG([^>]*)>', replImg, res)
+                        
+#                        res = re.sub('<META[^>]*>', '', res.decode("utf-8"))
+#                        res = re.sub('<LINK[^>]*>', '', res)
+#                        res = re.sub('<BR>', '<BR/>', res)
+#                        res = re.sub('&nbsp;', '&#160;', res)
+#                        res = re.sub('&mdash;', '&#8212;', res)
+#                        res = re.sub('&ndash;', '&#150;', res)
+#                        res = re.sub('&raquo;', '&#187;', res)
+#                        res = re.sub('&laquo;', '&#171;', res)
+#                        res = re.sub('&middot;', '&#183;', res)
+#                        res = re.sub('&ldquo;', '&#8220;', res)
+#                        res = re.sub('&rdquo;', '&#8221;', res)
+#                        res = re.sub('&lsquo;', '&#8216;', res)
+#                        res = re.sub('&rsquo;', '&#8217;', res)
+#                        res = re.sub('&times;', '&#215;', res)
+#                        res = re.sub('&thinsp;', '&#8201;', res)
+#                        res = re.sub('&lt;', '&#8804;', res)
+#                        res = re.sub('&ne;', '&#8800;', res)
+#                        res = re.sub('&le;', '&#8804;', res)
+#                        res = re.sub('&ge;', '&#8805;', res)
+#                        res = re.sub('<IMG([^>]*)>', replImg, res)
                         try:
-                            tree = ET.fromstring(res)
+                            tree = ET.fromstring(getCorrectTree(res))
                         except:
                             return "Parse Error"
 
@@ -153,7 +153,6 @@ def updateStatement(problem, p, contest, conf):
                                 except:
                                     pass
 
-                            tttt += "-"
                             problem.content = ET.tostring(statement_node, encoding = 'utf-8').decode("utf-8")
                         problem.sample_tests = use_in_statement
                 except KeyError:
