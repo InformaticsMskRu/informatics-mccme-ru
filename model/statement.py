@@ -70,6 +70,6 @@ class StatementProblem(Base):
     problem = relationship("Problem", backref=backref("StatementProblems"))        
     
     def __init__(self, statement_id, problem_id, rank):
-    	self.statement_id = statement_id
-	self.problem_id = problem_id
-	self.rank = rank
+        self.statement_id = statement_id
+        self.problem_id = problem_id
+        self.rank = rank
