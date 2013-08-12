@@ -73,3 +73,4 @@ class StatementProblem(Base):
         self.statement_id = statement_id
         self.problem_id = problem_id
         self.rank = rank
+        self.hidden = 0
