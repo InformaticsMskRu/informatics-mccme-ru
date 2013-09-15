@@ -124,18 +124,18 @@ def updateStatement(problem, p, contest, conf):
                         except:
                             return "Parse Error"
 
-                        for statement_node in tree.findall(".//DIV[@class='problem-statement']"):
-                            for n in statement_node.findall(".//DIV[@class='header']"):
+                        for statement_node in tree.findall(".//div[@class='problem-statement']"):
+                            for n in statement_node.findall(".//div[@class='header']"):
                                 statement_node.remove(n)
                             if True or use_in_statement != "":
                                 flag = "---"
-                                for n in statement_node.findall(".//DIV[@class='sample-tests']"):
+                                for n in statement_node.findall(".//div[@class='sample-tests']"):
                                     statement_node.remove(n)
                             try:
                                 os.mkdir("/var/www/moodle_probpics/" + str(problem.id));
                             except OSError:
                                 pass
-                            for img in statement_node.findall(".//IMG[@class='tex-graphics']"):
+                            for img in statement_node.findall(".//img[@class='tex-graphics']"):
                                 file_name = img.attrib["src"]
                                 try:
                                     with open("/var/www/moodle_probpics/" + str(problem.id) + "/" + file_name, "wb") as f:
@@ -144,7 +144,7 @@ def updateStatement(problem, p, contest, conf):
                                 except:
                                     pass
                                     
-                            for img in statement_node.findall(".//IMG[@class='tex-formula']"):
+                            for img in statement_node.findall(".//img[@class='tex-formula']"):
                                 file_name = img.attrib["src"]
                                 try:
                                     with open("/var/www/moodle_probpics/" + str(problem.id) + "/" + file_name, "wb") as f:
