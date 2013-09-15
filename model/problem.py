@@ -48,7 +48,7 @@ class EjudgeProblem(Problem):
     __tablename__ = "mdl_ejudge_problem"
     __table_args__ = {'schema':'moodle'}
     __mapper_args__ = {'polymorphic_identity': 'ejudgeproblem'}
-    
+
 #    id = Column(Integer, ForeignKey('moodle.mdl_problems.pr_id'), primary_key=True)
     ejudge_prid = Column('id', Integer, primary_key=True)
     contest_id = Column(Integer, primary_key=True, nullable=False, autoincrement=False)
