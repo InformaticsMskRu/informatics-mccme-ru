@@ -148,7 +148,7 @@ class EjudgeContestCfg:
             self.st_path = EjudgeContestCfg.get_contest_path_conf(number)
             self.initProblem()
         else: 
-            raise IOError("File not found")
+            raise IOError("File not found '" + path + "'")
     
     def printconf(self):
         result = []

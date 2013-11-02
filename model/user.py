@@ -54,7 +54,14 @@ class User(SimpleUser):
     def _get_current_olymp(self): 
         return None
 
-        
+class PynformaticsUser(User):
+    __tablename__ = "mdl_user_settings"
+    __table_args__ = {'schema' : 'moodle'}
+    __mapper_args__ = {'polymorphic_identity': 'pynformaticsuser'}
+    
+    id = Column(Integer, ForeignKey('moodle.mdl_user.id'), primary_key=True)
+    main_page_settings = Column(Unicode)
+
 #    def __repr__(self):
 #        return "<Person(%s, '%s', '%s', '%s', '%s')" % (self.id, self.username, self.firstname, self.lastname, self.email, self.city)
 
