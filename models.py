@@ -18,7 +18,7 @@ from zope.sqlalchemy import ZopeTransactionExtension
 DBSession = scoped_session(sessionmaker(extension=ZopeTransactionExtension()))
 Base = declarative_base()
 
-from pynformatics.model.user import User, EjudgeUser, SimpleUser
+from pynformatics.model.user import User, SimpleUser
 from pynformatics.model.run import Run
 from pynformatics.model.statement import Statement
 from pynformatics.model.problem import Problem, EjudgeProblem

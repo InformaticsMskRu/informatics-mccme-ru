@@ -1,5 +1,5 @@
 from pyramid.view import view_config
-from pynformatics.model import User, EjudgeUser, EjudgeContest, Run, Comment, EjudgeProblem, Problem, Statement
+from pynformatics.model import User, EjudgeContest, Run, Comment, EjudgeProblem, Problem, Statement
 from pynformatics.contest.ejudge.serve_internal import EjudgeContestCfg
 from pynformatics.view.utils import *
 import sys, traceback
@@ -27,7 +27,7 @@ def get_protocol(request):
             run.tested_protocol
 #            if 1 == 1:
 #                return "1"
-            if (True or run.user.statement.filter(Statement.olympiad == 1).filter(Statement.timestop > time.time()).filter(Statement.timestart < time.time()).count() == 0):
+            if (run.user.statement.filter(Statement.olympiad == 1).filter(Statement.timestop > time.time()).filter(Statement.timestart < time.time()).count() == 0):
                 res = OrderedDict()
                 for num in range(1, len(run.tests.keys()) + 1):
                     res[str(num)] = run.tests[str(num)]

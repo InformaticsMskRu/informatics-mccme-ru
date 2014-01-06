@@ -1,5 +1,5 @@
 from pyramid.view import view_config
-from pynformatics.model import User, EjudgeUser, EjudgeContest, Run, Comment, EjudgeProblem, Problem
+from pynformatics.model import User, EjudgeContest, Run, Comment, EjudgeProblem, Problem
 from pynformatics.contest.ejudge.serve_internal import EjudgeContestCfg
 from pynformatics.view.utils import *
 import sys, traceback
@@ -37,6 +37,10 @@ def problem_show_limits(request):
     except Exception as e: 
         return {"result" : "error", "message" : e.__str__(), "stack" : traceback.format_exc()}
 
+	
+@view_config(route_name='problem.submit', renderer='string')
+def problem_show_limits(request):
+    return "result"	
 
 @view_config(route_name='problem.tests.set_preliminary', renderer='json')
 def problem_set_preliminary(request):
