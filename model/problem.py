@@ -74,26 +74,26 @@ class EjudgeProblem(Problem):
         self.ejudgeName = name
         Problem.__init__(self, name, timelimit, memorylimit, output_only, content, review, description, analysis, sample_tests, sample_tests_html)
        
-    def get_test(self, test_num):
+    def get_test(self, test_num, size = 255):
         conf = EjudgeContestCfg(number = self.ejudge_contest_id)
         prob = conf.getProblem(self.problem_id)
 
         test_file_name = (prob.tests_dir + prob.test_pat) % int(test_num)
         if os.path.exists(test_file_name):
             f = codecs.open(test_file_name, 'r', encoding='utf-8')
-            res = f.read(255)
+            res = f.read(size)
         else:
             res = test_file_name
         return res
        
-    def get_corr(self, test_num):
+    def get_corr(self, test_num, size = 255):
         conf = EjudgeContestCfg(number = self.ejudge_contest_id)
         prob = conf.getProblem(self.problem_id)
 
         corr_file_name = (prob.tests_dir + prob.corr_pat) % int(test_num)
         if os.path.exists(corr_file_name):
             f = codecs.open(corr_file_name, 'r', encoding='utf-8')
-            res = f.read(255)
+            res = f.read(size)
         else:
             res = corr_file_name
         return res       
@@ -106,9 +106,9 @@ class EjudgeProblem(Problem):
             for i in self.sample_tests.split(","):
                 res += "<div class='sample-test'>"
                 res += "<div class='input'><div class='title'>Входные данные</div><pre class='content'>"
-                res += self.get_test(i)
+                res += self.get_test(i, 4096)
                 res += "</pre></div><div class='output'><div class='title'>Выходные данные</div><pre class='content'>"
-                res += self.get_corr(i)
+                res += self.get_corr(i, 4096)
                 res += "</pre></div></div>"
         
             res += "</div></div>"
