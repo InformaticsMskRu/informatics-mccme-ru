@@ -49,7 +49,7 @@ def submit(run_file, contest_id, prob_id, lang_id, login, password, filename, ur
     if (res):
         SID = res.group(1)
     else:
-        report_error(ret_code, login_data, '', run_file, filename, user_id)
+        report_error(None, login_data, '', run_file, filename, user_id)
         return default_error_str
 
     cookies = c.cookies
@@ -79,4 +79,50 @@ def submit(run_file, contest_id, prob_id, lang_id, login, password, filename, ur
     else:
         report_error('common error', login_data, submit_data, run_file, filename, user_id)
         return default_error_str
+
+
+def rejudge(contest_id, run_id, status_id, login, password, url):
+    login_data = {
+        'contest_id' : contest_id,
+        'role' : '6',
+        'login' : login,
+        'password' : password,
+        'locale_id' : '1',
+    }
+
+    c = requests.post(url, data = login_data)
+
+#    return c.text
+
+    res = re.search("SID='([^']*)';", c.text)
+
+    if (res):
+        SID = res.group(1)
+    else:
+        return "login error"
+
+    cookies = c.cookies
+
+    submit_data = {
+        'SID' : SID,
+        'run_id' : run_id,
+        'status' : status_id,
+        'action_67' : 'action_67'
+    }
+
+    c = requests.post(url, data = submit_data, cookies = cookies)
+
+    if "method=\"post\"" in c.text:
+        return "ok"
+
+    ret_code = re.search('code\'\s\:\s(\d*)', c.text)
+
+    if (ret_code):
+        code = int(ret_code.group(1))
+        if code in status_repr:
+            return status_repr[code]
+        else:
+            return "error" + str(code)
+    else:
+        return "change error"
 
