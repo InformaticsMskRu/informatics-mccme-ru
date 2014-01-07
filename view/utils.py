@@ -10,14 +10,14 @@ def RequestGetUserId(request):
         fh = codecs.open('/var/moodledata/sessions/sess_'+request.cookies['MoodleSession'], "r", "utf-8")
         str = fh.read(512000)
         user = loads(bytes(str[str.find('USER|') + 5:], 'UTF-8'), object_hook = phpobject, decode_strings = True)
-        fh.close()        
+        fh.close()
         return user.id
     except:
         if fh != None:
-            fh.close()        
+            fh.close()
         return -1
 
-        
+
 def RequestCheckUserCapability(request, capability):
     fh = None
     try:
