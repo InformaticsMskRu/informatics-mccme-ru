@@ -60,19 +60,22 @@ def protocol_get_full(request):
         out_path = "/home/judges/{0:06d}/var/archive/output/{1}/{2}/{3}/{4:06d}.zip".format(
             contest_id, to32(run_id // (32 ** 3) % 32), to32(run_id // (32 ** 2) % 32), to32(run_id // 32 % 32), run_id
         )
-        out_arch = zipfile.ZipFile(out_path, "r")
-        
-        prot = get_protocol(request)
-        if "result" in prot and prot["result"] == "error":
-            return prot
-        
-        for test_num in prot:
-            for type in [("o", "output"), ("c", "checker-output"), ("e", "error-output")]:
-                prot[test_num][type[1]] = out_arch.read("{0:06d}.{1}".format(int(test_num), type[0])).decode("utf-8")
-            prot[test_num]["input"] = prob.get_test(int(test_num))
-            prot[test_num]["corr"] = prob.get_corr(int(test_num))
+        try:
+            out_arch = zipfile.ZipFile(out_path, "r")
+            
+            prot = get_protocol(request)
+            if "result" in prot and prot["result"] == "error":
+                return prot
+            
+            for test_num in prot:
+                for type in [("o", "output"), ("c", "checker-output"), ("e", "error-output")]:
+                    prot[test_num][type[1]] = out_arch.read("{0:06d}.{1}".format(int(test_num), type[0])).decode("utf-8")
+                prot[test_num]["input"] = prob.get_test(int(test_num))
+                prot[test_num]["corr"] = prob.get_corr(int(test_num))
 
-        out_arch.close()
-        return prot
+            out_arch.close()
+            return prot
+        except Exception as e:
+            return {"result": "error", "content": e.__str__(), "out_path": out_path}
     except Exception as e:
         return {"result": "error", "content": e.__str__()}
