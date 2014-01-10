@@ -1,6 +1,6 @@
 from pyramid.view import view_config
 from pynformatics.view.utils import *
-from pynformatics.model import User, EjudgeUser, Run, Comment, EjudgeProblem
+from pynformatics.model import User, Run, Comment, EjudgeProblem
 import sys, traceback
 from phpserialize import *
 import transaction

@@ -84,7 +84,7 @@ class Run(Base):
     __tablename__ = "runs"
     __table_args__ = (
         ForeignKeyConstraint(['contest_id', 'prob_id'], ['moodle.mdl_ejudge_problem.ejudge_contest_id', 'moodle.mdl_ejudge_problem.problem_id']),
-        ForeignKeyConstraint(['user_id'], ['moodle.mdl_user_ejudge.ejudge_id']),
+        ForeignKeyConstraint(['user_id'], ['moodle.mdl_user.ej_id']),
         {'schema':'ejudge'}
         )
 
@@ -93,7 +93,7 @@ class Run(Base):
     size = Column(Integer)
     create_time = Column(DateTime)
     user_id = Column(Integer)
-    user = relationship('EjudgeUser', backref = backref('ejudgeuser'), uselist=False)
+    user = relationship('SimpleUser', backref = backref('simpleuser'), uselist=False)
     comments = relation('Comment', backref = backref('comments'))
     contest_id = Column(Integer)
     prob_id = Column(Integer)

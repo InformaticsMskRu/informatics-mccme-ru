@@ -49,7 +49,7 @@ class StatementUser(Base):
 
     id = Column(Integer, primary_key=True)    
     statement_id = Column('contest_id', Integer, ForeignKey('moodle.mdl_statements.id'))
-    user_id = Column(Integer, ForeignKey('moodle.mdl_user_ejudge.id'))
+    user_id = Column(Integer, ForeignKey('moodle.mdl_user.id'))
 
 #    statement = relationship("Statement", backref=backref("StatementUsers1", lazy="dynamic"), lazy="dynamic")
 #    user = relationship("EjudgeUser", backref=backref("StatementUsers2", lazy="dynamic"), lazy="dynamic")             

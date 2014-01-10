@@ -1,6 +1,7 @@
 from pyramid.view import view_config
-from pynformatics.model import User, EjudgeUser, EjudgeContest, Run, Comment, EjudgeProblem, Problem
+from pynformatics.model import SimpleUser, User, EjudgeContest, Run, Comment, EjudgeProblem, Problem
 from pynformatics.contest.ejudge.serve_internal import EjudgeContestCfg
+from pynformatics.contest.ejudge.ejudge_proxy import submit
 from pynformatics.view.utils import *
 import sys, traceback
 #import jsonpickle, demjson
@@ -20,23 +21,35 @@ def checkCapability(request):
     if (not RequestCheckUserCapability(request, 'moodle/ejudge_contests:reload')):
         raise Exception("Auth Error")
 
-def setShowLimits(problem_id, show_limits):    
+def setShowLimits(problem_id, show_limits):
     problem = DBSession.query(Problem).filter(Problem.id == problem_id).first()
 
     problem.show_limits = show_limits
     with transaction.manager:
-        DBSession.merge(problem) 
+        DBSession.merge(problem)
     return "Ok"
-    
-        
+
+
 @view_config(route_name='problem.limits.show', renderer='string')
 def problem_show_limits(request):
     try:
         checkCapability(request)
         return setShowLimits(request.matchdict['problem_id'], 1)
-    except Exception as e: 
+    except Exception as e:
         return {"result" : "error", "message" : e.__str__(), "stack" : traceback.format_exc()}
 
+
+@view_config(route_name='problem.submit', renderer='json')
+def problem_submits(request):
+    user_id = RequestGetUserId(request)
+    user = DBSession.query(SimpleUser).filter(SimpleUser.id == user_id).first()
+    lang_id = request.params["lang_id"]
+    problem_id = request.matchdict["problem_id"]
+    problem = DBSession.query(EjudgeProblem).filter(EjudgeProblem.id == problem_id).first()
+    input_file = request.POST['file'].file
+    filename = request.POST['file'].filename
+    ejudge_url = request.registry.settings['ejudge.new_client_url']
+    return {'res' : submit(input_file, problem.ejudge_contest_id, problem.problem_id, lang_id, user.login, user.password, filename, ejudge_url, user_id)}
 
 @view_config(route_name='problem.tests.set_preliminary', renderer='json')
 def problem_set_preliminary(request):
@@ -46,9 +59,9 @@ def problem_set_preliminary(request):
 
         problem.sample_tests = request.params['sample_tests']
         with transaction.manager:
-           DBSession.merge(problem) 
+           DBSession.merge(problem)
         return {"result" : "ok", "content" : problem.sample_tests}
-    except Exception as e: 
+    except Exception as e:
         return {"result" : "error", "content" : e.__str__(), "stack" : traceback.format_exc()}
 
 
@@ -74,9 +87,9 @@ def problem_generate_samples(request):
 #
 #        problem.sample_tests_html = res
         with transaction.manager:
-           DBSession.merge(problem) 
+           DBSession.merge(problem)
         return {"result" : "ok", "content" : problem.sample_tests}
-    except Exception as e: 
+    except Exception as e:
         return {"result" : "error", "content" : e.__str__(), "stack" : traceback.format_exc()}
 
 
@@ -85,7 +98,7 @@ def problem_hide_limits(request):
     try:
         checkCapability(request)
         return setShowLimits(request.matchdict['problem_id'], 0)
-    except Exception as e: 
+    except Exception as e:
         return {"result" : "error", "message" : e.__str__(), "stack" : traceback.format_exc()}
 
 @view_config(route_name='problem.tests.count', renderer='string')
@@ -105,7 +118,7 @@ def problem_get_tests_count(request):
             else:
                 break
         return cnt - 1
-    except Exception as e: 
+    except Exception as e:
         return {"result" : "error", "message" : e.__str__(), "stack" : traceback.format_exc()}
 
 #def get_test(problem, test_num):
@@ -141,7 +154,7 @@ def problem_get_test(request):
 
         test_num = request.matchdict['test_num']
         return {"num" : int(test_num), "content" : problem.get_test(test_num)}
-    except Exception as e: 
+    except Exception as e:
         return {"result" : "error", "num" : int(request.matchdict['test_num']), "content" : e.__str__(), "stack" : traceback.format_exc()}
 
 
@@ -168,8 +181,8 @@ def problem_add_test(request):
         if flag:
             s.add_file(test_file_name, request.params['input_data'])
             s.add_file(corr_file_name, request.params['output_data'])
-        return {"result" : "ok", "content" : test_file_name}        
-    except Exception as e: 
+        return {"result" : "ok", "content" : test_file_name}
+    except Exception as e:
         return {"result" : "error", "content" : e.__str__(), "stack" : traceback.format_exc()}
 
 
@@ -178,8 +191,8 @@ def problem_get_corr(request):
     try:
         checkCapability(request)
         problem = DBSession.query(EjudgeProblem).filter(EjudgeProblem.id == request.matchdict['problem_id']).first()
-    
+
         test_num = request.matchdict['test_num']
         return {"num" : int(test_num), "content" : problem.get_corr(test_num)}
-    except Exception as e: 
+    except Exception as e:
         return {"result" : "error", "num" : int(request.matchdict['test_num']), "content" : e.__str__(), "stack" : traceback.format_exc()}
