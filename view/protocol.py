@@ -62,6 +62,7 @@ def protocol_get_full(request):
         )
         try:
             out_arch = zipfile.ZipFile(out_path, "r")
+            names = set(out_arch.namelist())
             
             prot = get_protocol(request)
             if "result" in prot and prot["result"] == "error":
@@ -69,7 +70,10 @@ def protocol_get_full(request):
             
             for test_num in prot:
                 for type in [("o", "output"), ("c", "checker-output"), ("e", "error-output")]:
-                    prot[test_num][type[1]] = out_arch.read("{0:06d}.{1}".format(int(test_num), type[0])).decode("utf-8")
+                    file_name = "{0:06d}.{1}".format(int(test_num), type[0])
+                    if file_name not in names:
+                        continue
+                    prot[test_num][type[1]] = out_arch.read(file_name).decode("utf-8")
                 prot[test_num]["input"] = prob.get_test(int(test_num))
                 prot[test_num]["corr"] = prob.get_corr(int(test_num))
 
