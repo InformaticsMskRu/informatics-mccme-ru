@@ -24,6 +24,7 @@ def main(global_config, **settings):
     config.add_route('comment.get_unread_limit_html', '/comment/unread/{start}/{stop}/html')
     config.add_route('comment.get_count_unread', '/comment/unread/count')
     config.add_route('protocol.get', '/protocol/get/{contest_id}/{run_id}')
+    config.add_route('protocol.get_full', '/protocol/get-full/{contest_id}/{run_id}')
     config.add_route('team_monitor.get', '/team_monitor/get/{statement_id}')
     config.add_route('contest.ejudge.reload.problem', '/contest/ejudge/reload/{contest_id}/{problem_id}')
     config.add_route('problem.limits.show', '/problem/{problem_id}/limits/show')
