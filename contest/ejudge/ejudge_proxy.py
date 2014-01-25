@@ -44,12 +44,14 @@ def submit(run_file, contest_id, prob_id, lang_id, login, password, filename, ur
 
     c = requests.post(url, data = login_data)
 
+#    return c.text
+
     res = re.search('SID="([^"]*)";', c.text)
 
     if (res):
         SID = res.group(1)
     else:
-        report_error(None, login_data, '', run_file, filename, user_id)
+        report_error(None, login_data, c.text, run_file, filename, user_id)
         return default_error_str
 
     cookies = c.cookies
@@ -77,7 +79,7 @@ def submit(run_file, contest_id, prob_id, lang_id, login, password, filename, ur
             report_error(ret_code, login_data, submit_data, run_file, filename, user_id)
             return default_error_str
     else:
-        report_error('common error', login_data, submit_data, run_file, filename, user_id)
+        report_error(None, login_data, submit_data, run_file, filename, user_id)
         return default_error_str
 
 
