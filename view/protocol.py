@@ -65,17 +65,37 @@ def protocol_get_full(request):
             names = set(out_arch.namelist())
             
             prot = get_protocol(request)
+            run.tested_protocol
             if "result" in prot and prot["result"] == "error":
                 return prot
             
             for test_num in prot:
-                for type in [("o", "output"), ("c", "checker-output"), ("e", "error-output")]:
+                judge_info = run.judge_tests_info[test_num]
+                if "input" in judge_info:
+                    prot[test_num]["input"] = judge_info["input"]
+                else:
+                    prot[test_num]["input"] = prob.get_test(int(test_num))
+
+                if "correct" in judge_info:
+                    prot[test_num]["corr"] = judge_info["correct"]
+                else:
+                    prot[test_num]["input"] = prob.get_corr(int(test_num))
+
+
+                if "checker" in judge_info:
+                    prot[test_num]["checker_output"] = judge_info["checker"]
+                if "stderr" in judge_info:
+                    prot[test_num]["error_output"] = judge_info["stderr"]
+                if "output" in judge_info:
+                    prot[test_num]["output"] = judge_info["output"]
+
+
+                for type in [("o", "output"), ("c", "checker_output"), ("e", "error_output")]:
                     file_name = "{0:06d}.{1}".format(int(test_num), type[0])
-                    if file_name not in names:
+                    if file_name not in names or type[1] in prot[test_num]:
                         continue
-                    prot[test_num][type[1]] = out_arch.read(file_name).decode("utf-8")
-                prot[test_num]["input"] = prob.get_test(int(test_num))
-                prot[test_num]["corr"] = prob.get_corr(int(test_num))
+                    with out_arch.open(file_name, 'r') as f:
+                        prot[test_num][type[1]] = f.read(512).decode("utf-8")
 
             out_arch.close()
             return prot

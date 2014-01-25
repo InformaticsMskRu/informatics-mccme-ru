@@ -164,6 +164,7 @@ class Run(Base):
     def parsetests(self):
         self.test_count = 0
         self.tests = {}
+        self.judge_tests_info = {}
         self.status_string = None
         self.maxtime = None
         if self.xml:
@@ -193,6 +194,21 @@ class Run(Base):
                         'time': time,
                         'max_memory_used' : max_memory_used
                        }
+                judge_info = {}
+                try:
+                    inp = node.getElementsByTagName('input')[0].firstChild.nodeValue
+                    outp = node.getElementsByTagName('output')[0].firstChild.nodeValue
+                    corr = node.getElementsByTagName('correct')[0].firstChild.nodeValue
+                    stderr = node.getElementsByTagName('stderr')[0].firstChild.nodeValue
+                    checker = node.getElementsByTagName('checker')[0].firstChild.nodeValue
+                    judge_info['input'] = inp
+                    judge_info['checker'] = checker
+                    judge_info['output'] = outp
+                    judge_info['correct'] = corr
+                    judge_info['srderr'] = stderr
+                except:
+                    pass
+                self.judge_tests_info[number] = judge_info
                 self.tests[number] = test
             try:
                 #print([test['time'] for test in self.tests.values()] + [test['real_time'] for test in self.tests.values()])
