@@ -205,7 +205,7 @@ class Run(Base):
                     judge_info['checker'] = checker
                     judge_info['output'] = outp
                     judge_info['correct'] = corr
-                    judge_info['srderr'] = stderr
+                    judge_info['stderr'] = stderr
                 except:
                     pass
                 self.judge_tests_info[number] = judge_info

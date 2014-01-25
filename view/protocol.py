@@ -61,8 +61,7 @@ def protocol_get_full(request):
             contest_id, to32(run_id // (32 ** 3) % 32), to32(run_id // (32 ** 2) % 32), to32(run_id // 32 % 32), run_id
         )
         try:
-            out_arch = zipfile.ZipFile(out_path, "r")
-            names = set(out_arch.namelist())
+            out_arch = None
             
             prot = get_protocol(request)
             run.tested_protocol
@@ -92,12 +91,18 @@ def protocol_get_full(request):
 
                 for type in [("o", "output"), ("c", "checker_output"), ("e", "error_output")]:
                     file_name = "{0:06d}.{1}".format(int(test_num), type[0])
+                    if out_arch is None:
+                        try:
+                            out_arch = zipfile.ZipFile(out_path, "r")
+                            names = set(out_arch.namelist())
+                        except:
+                            names = {}
                     if file_name not in names or type[1] in prot[test_num]:
                         continue
                     with out_arch.open(file_name, 'r') as f:
-                        prot[test_num][type[1]] = f.read(512).decode("utf-8")
-
-            out_arch.close()
+                        prot[test_num][type[1]] = f.read(1024).decode("utf-8")
+            if out_arch:
+                out_arch.close()
             return prot
         except Exception as e:
             return {"result": "error", "content": e.__str__(), "out_path": out_path}
