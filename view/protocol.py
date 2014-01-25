@@ -78,7 +78,7 @@ def protocol_get_full(request):
                 if "correct" in judge_info:
                     prot[test_num]["corr"] = judge_info["correct"]
                 else:
-                    prot[test_num]["input"] = prob.get_corr(int(test_num))
+                    prot[test_num]["corr"] = prob.get_corr(int(test_num))
 
 
                 if "checker" in judge_info:
