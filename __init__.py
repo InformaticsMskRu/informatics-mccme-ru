@@ -39,6 +39,8 @@ def main(global_config, **settings):
     config.add_route('problem.tests.get_corr', '/problem/{problem_id}/tests/corr/{test_num}')
     config.add_route('contest.ejudge.reload', '/contest/ejudge/reload/{contest_id}')
     config.add_route('contest.ejudge.get_table', '/contest/ejudge/get_table')
+    config.add_route('region.submit', '/region/res')
+    config.add_route('region.submit_test', '/region/res_test')
     config.add_route('home', '/')
     config.scan()
     return config.make_wsgi_app()
