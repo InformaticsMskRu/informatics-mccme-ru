@@ -16,6 +16,7 @@ status_repr = {
  81 : 'Эта посылка является копией предыдущей',# NEW_SRV_ERR_DUPLICATE_SUBMIT
  82 : 'Задача уже решена',             # NEW_SRV_ERR_PROB_ALREADY_SOLVED
  77 : 'Отправляемый файл превышает допустимый размер (64K) или превышена квота на число посылок (обратитесь к админимтратору)', # NEW_SRV_ERR_RUN_QUOTA_EXCEEDED
+112 : 'Отправляемый файл пустой', # SUBMIT_EMPTY 
 }
 
 def report_error(code, login_data, submit_data, file, filename, user_id, addon = ''):
@@ -92,7 +93,7 @@ def rejudge(contest_id, run_id, status_id, login, password, url):
         'locale_id' : '1',
     }
 
-    c = requests.post(url, data = login_data)
+    c = requests.post(url, data = login_data, allow_redirects = True)
 
 #    return c.text
 
@@ -112,7 +113,7 @@ def rejudge(contest_id, run_id, status_id, login, password, url):
         'action_67' : 'action_67'
     }
 
-    c = requests.post(url, data = submit_data, cookies = cookies)
+    c = requests.post(url, data = submit_data, cookies = cookies, allow_redirects=True)
 
     if "method=\"post\"" in c.text:
         return "ok"
