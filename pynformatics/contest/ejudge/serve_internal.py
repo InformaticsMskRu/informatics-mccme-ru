@@ -81,6 +81,8 @@ class EjudgeProblemCfg:
             else:
                 if self.abstract != None and "test_dir" in contest.abstract[self.abstract]:
                     self.test_dir = contest.abstract[self.abstract]["test_dir"][0].strip("\"")
+                else:
+                    self.test_dir = ""
                   
             if "corr_dir" in d:
                 self.corr_dir = d["corr_dir"][0].strip("\"")
