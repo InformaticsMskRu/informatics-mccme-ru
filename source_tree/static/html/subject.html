@@ -1,0 +1,187 @@
+<html>
+<head>
+	<script type="text/javascript" src="/py-source/js/jquery-1.9.1.min.js"></script>
+	<script type="text/javascript" src="/py-source/js/jsrender.js"></script>
+	<link rel="stylesheet" href="/py-source/css/problem/set_subject/main.css" type="text/css" media="screen" charset="utf-8" />
+</head>
+
+<script id="subject_option" type="text/x-jsrender">
+	<option id="subject_option_{{>id}}" value="{{>id}}" subject_name={{>name}}>
+		{{:shft}}({{>id}})&nbsp;{{>name}}
+	</option>
+</script>
+
+<script id="erase_subject_item" type="text/x-jsrender">
+	<div id="div_subject_erase_{{>id}}">
+		<span class="erase_title">(удалить)</span><input type="checkbox" id="checkbox_erase_{{>id}}" class="checkbox_erase" value="{{>id}}">
+		({{>id}}) {{>name}}
+	</div>
+</script>
+
+<script id="status_item" type="text/x-jsrender">
+	<div class="status_bar_text" style="background-color: {{>color}}">
+		<em>{{>prefix}}</em>&nbsp;
+		{{if title != ''}}
+			<strong>{{>title}}: </strong>
+		{{/if}}
+		{{>msg}}
+	</div>
+</script>
+
+<body>
+	<div id="title_frame">
+		<strong>Задача:</strong><em> (${problem.id}) ${problem.name}</em>
+	</div>
+
+	<div id="status_bar">
+
+	</div>
+
+	<div id="main_frame">
+		<div id="div_add_frame">
+			<strong>Добавить темы:</strong>
+			<br>
+			<div id="div_add">
+				
+			</div>
+		</div>
+		<div id="div_erase_frame">
+			<strong>Текущие темы:</strong>
+			<br>
+			<div id="div_erase">
+					<div id="div_subject_erase_${subject.id}">
+						<span class="erase_title">(удалить)</span><input type="checkbox" id="checkbox_erase_${subject.id}" class="checkbox_erase" value="${subject.id}">
+						(${subject.id}) ${subject.name}
+					</div>
+			</div>
+		</div>
+	</div>
+
+	<div id="submit_frame">
+		<input type="button" value="Сохранить изменения" onClick="save_changes();">
+		&nbsp;|&nbsp;
+		<input type="button" value="Отмена">
+	</div>
+</body>
+
+<script>
+	function status_clear() {
+		jQuery("#status_bar").html('');
+	}
+
+	function status_add(type, prefix, msg) {
+		var color_dict = {
+			'none': '#C0C0C0',
+			'ok': '#C0FFC0',
+			'error': '#FFC0C0'
+		};
+		var title_dict = {
+			'none': '',
+			'ok': '',
+			'error': 'Ошибка'
+		}
+		var status_render = {
+			color: color_dict[type],
+			prefix: prefix,
+			title: title_dict[type],
+			msg: msg
+		};
+		jQuery("#status_bar").append(jQuery("#status_item").render(status_render));
+	}
+
+	function get_subject_list() {
+		return jQuery.ajax({
+			type: "GET", 
+			url: "/py-source/source/get/all/subject",
+			dataType: "json",
+			async: false
+		});
+	}
+
+	function add_select(id, subject_list) {
+		var result = '';
+		result += '<div><select id="subject_select_' + id + '" style="width: 300px;">';
+		result += '<option value="-1">Выберите тему</option>';
+		var parent_stack = new Array();
+		var shft_cnt = 0;
+		for (var i = 0; i < subject_list.length; ++i) {
+			if (i) {
+				if (!parent_stack.length || subject_list[i].id != parent_stack[parent_stack.length - 1]) {
+					if (subject_list[i - 1].id == subject_list[i].parent_id) {
+						parent_stack.push(subject_list[i].id);
+						++shft_cnt;
+					}
+					else {
+						while (parent_stack.length && subject_list[i].id != parent_stack[parent_stack.length - 1]) {
+							
+							parent_stack.pop();
+							--shft_cnt;
+						}
+					}
+				}
+			}
+			var shft = '';
+			for (var j = 0; j < shft_cnt; ++j) {
+				for (var jj = 0; jj < 4; ++jj) {
+					shft += '&nbsp;';
+				}
+			}
+			var option_render = {
+				id: subject_list[i].id,
+				shft: shft,
+				name: subject_list[i].name
+			};
+			result += jQuery("#subject_option").render(option_render);
+		}
+		result += '</select></div>';
+		return result;
+	}
+
+	function refresh() {
+		// ADD
+		jQuery.getJSON("/py-source/source/get/all/subject", {}, function(subject_list) {
+			var obj = jQuery("#div_add");
+			var result = '';
+			for (var select_id = 0; select_id < 8; ++select_id) {
+				result += add_select(select_id, subject_list);
+			}
+			obj.html(result);
+		});
+
+		// ERASE
+		jQuery.getJSON("/py-source/problem/get/1/subject", {}, function(subject_list) {
+			jQuery("#div_erase").html(jQuery("#erase_subject_item").render(subject_list));
+		});
+	}	
+
+	function save_changes() {
+		status_clear();
+		// ADD
+		for (var select_id = 0; select_id < 8; ++select_id) {
+			var subject_id = jQuery("#subject_select_" + select_id).prop('value');
+			if (subject_id == -1) {
+				continue;
+			}
+
+			var result = JSON.parse(jQuery.ajax({
+				type: "GET",
+				url: "/py-source/problem/add/1/subject/" + subject_id,
+				async: false
+			}).responseText);
+			var prefix = 'Добавление источника (' + subject_id + ')' 
+				+ jQuery("#subject_option_" + subject_id).attr('subject_name') 
+				+ '..';
+			if (result.result == 'ok') {
+				result.content = 'OK';
+			}
+			status_add(result.result, prefix, result.content);
+		}
+		
+		refresh();
+	}
+
+	refresh();
+
+</script>
+
+</html>

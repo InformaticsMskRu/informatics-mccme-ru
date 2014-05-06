@@ -1,0 +1,226 @@
+#div-center {
+    position: absolute;
+    top: 20px;
+    left: 80px;
+    right: 80px;
+}
+
+.pages {
+    margin: 4px 0px;
+}
+
+.div-window {
+    border-radius: 3px;
+    border: 1px #C6BDA8 solid;
+    margin: 8px 0px;
+}
+
+.div-window > .title {
+    background-color: #E3DFD4;
+    border-radius: 3px 3px 0px 0px;
+    padding: 4px 10px;
+    font: 10pt "Arial";
+}
+
+.div-window > .content {
+    border: #C6BDA8 solid;
+    border-width: 0px 0px 0px 0px;
+    padding: 4px 10px;
+    font: 10pt "Arial";
+}
+
+.div-window > .content > hr {
+    border: #D0D0D0 solid;
+    border-width: 1px 0px 0px 0px;
+}
+
+.directory-window {
+    font-size: 9pt;
+}
+
+.directory-window > .path {
+}
+
+.directory-window > .children > .child-link {
+    padding: 2px;
+    margin: 2px;
+    border-radius: 2px;
+    /*text-decoration: none;*/
+}
+
+.directory-split-window {
+    text-align: center;
+}
+
+#problems-cnt {
+    position: relative;
+    top: 14px;
+}
+
+/* PROBLEM */
+
+.problem-window { 
+    
+}
+
+.problem-window > .title {
+    background-color: #F8F8D8;
+    border: #EBEBE0 solid;
+    border-width: 1px 0px;
+    padding: 4px 8px;
+    margin: 0px -10px;
+    font: 10pt "Arial";
+}
+
+.problem-window > .content {
+    padding: 4px 0px
+}
+
+.problem-window > .title > div {
+    display: inline;
+}
+
+.problem-window > .title > .id {
+    color: #707070;
+}
+
+.problem-window > .title a {
+    /*font-weight: bold;*/
+    text-decoration: none;
+}
+
+.problem-window > .title a:hover {
+    text-decoration: underline;
+}
+
+.problem-window > .title > .subjects {
+    margin: 6px 0px 0px 0px;
+    font-size: 9pt;
+}
+
+.problem-window > .title > .subjects a {
+    color: #107010;
+}
+
+.problem-window > .title > .subjects .sources a {
+    color: #701010;   
+}
+
+.problem-window > .content > .sources {
+    margin: 0px 10px;
+}
+
+.problem-window > .content > .sources > div {
+    display: inline-block;
+    vertical-align: middle;
+    font: 9pt "Arial";
+}
+
+.problem-window > .content > .sources > .source-path > .subject-link {
+    text-decoration: none;
+}
+
+.problem-window > .content > .sources > .source-path > subject-link:hover {
+    text-decoration: underline;
+}
+
+.problem-window .add-problem-button {
+    display: block;
+    padding: 0px 4px;
+    border-radius: 2px;
+    background-color: #E0E0A0;
+    cursor: hand;
+    color: #505050;
+}
+
+.problem-window .add-problem-button:hover {
+    background-color: #EFEFE8;
+}
+
+/* PROBLEM STATEMENT */
+
+.problem-statement > .header {
+    border: 1px #D0D0D0 solid;
+    border-radius: 2px;
+    font: 10pt "Arial";
+}
+
+.problem-statement > .header > div {
+    padding: 4px 0px;
+    /*font-weight: bold;*/
+}
+
+.problem-statement > .header > .time-limit {
+    border: inherit;
+    border-width: 0px 0px 0px 0px;
+}
+
+.problem-statement > .header > .time-limit > .property-title {
+    font-weight: bold;
+}
+
+/* NEW CONTEST */
+
+#new-contest {
+    /*display: none;*/
+    position: fixed;
+    width: 30%;
+    max-width: 450px;
+    right: 10px;
+    bottom: 10px;
+    background-color: #FFF;
+}
+
+#new-contest > .title {
+    font-size: 9pt;
+}
+
+#new-contest > .title > div {
+    display: inline-block;
+}
+
+.new-contest-title-button {
+    border-radius: 1px;
+    /*background-color: #E0E0A0;*/
+    cursor: hand;
+}
+
+.new-contest-title-button:hover {
+    background-color: #F8F8F0;
+}
+
+#new-contest > .content {
+    font-size: 10pt;
+}
+
+.new-contest-item {
+    height: 18px;
+    margin: 1px 0px;
+}
+
+.new-contest-item > div {
+    display: inline-block;
+}
+
+.new-contest-item > .id {
+    color: #A0A0A0;    
+}
+
+.new-contest-item > .buttons {
+}
+
+.new-contest-item > .buttons > .button {
+    display: inline-block;
+    border-radius: 1px;
+    /* background-color: #E0E0A0;*/
+    font: 9pt sans-serif;
+    /*text-align: center;*/
+    /*width: 55px;*/
+    color: #409040;
+    cursor: hand;
+}
+
+.new-contest-item > .buttons > .button:hover {
+   /* background-color: #F8F8F0;*/
+   color: #606060;
+}
