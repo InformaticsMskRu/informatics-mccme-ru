@@ -258,27 +258,41 @@ def course_adm(request):
     except Exception as e:
         return Response("Error: " + e.__str__())
 
+def get_children_by_map(childrenMap, id):
+    if not id in childrenMap:
+        return []
+    return childrenMap[id]
 
 @view_config(route_name='course.dump', renderer='course_dump.mak')
 def course_dump(request):
     try:
-        def course_update_count(course, course_count, show_hidden):
+        def course_update_count(course, course_count, show_hidden, childrenMap):
             course_count[course] = 1 if course.course and (show_hidden or course.course.visible) else 0
-            for child in course.children:
+            children = get_children_by_map(childrenMap, course.id)
+            for child in children:
                 if not show_hidden and not child.visible:
                     continue
-                course_count[course] += course_update_count(child, course_count, show_hidden)
+                course_count[course] += course_update_count(child, course_count, show_hidden, childrenMap)
             return course_count[course]
-                
+
         dump = request.params['dump'] if 'dump' in request.params else 0
         show_hidden = request.params['show_hidden'] if 'show_hidden' in request.params else 0
-        course = db_session.query(Course).filter(Course.id == request.matchdict['course_id']).one()
+        course_root = db_session.query(Course).filter(Course.id == request.matchdict['course_id']).one()
         displayed_courses = db_session.query(Course).filter(Course.displayed == 1).all()
         course_count = {}
-        course_update_count(course, course_count, show_hidden)
+        courses = db_session.query(Course).order_by(
+            Course.parent_id,
+            Course.order,
+        ).all()
+        childrenMap = {}
+        for course in courses:
+            if not course.parent_id in childrenMap:
+                childrenMap[course.parent_id] = []
+            childrenMap[course.parent_id].append(course)
+        course_update_count(course_root, course_count, show_hidden, childrenMap)
         default_storage = json.dumps({
-            "#region{0}".format(course.id): int(course.displayed) \
-                for course in displayed_courses 
+            "#region{0}".format(course_root.id): int(course_root.displayed) \
+                for course_root in displayed_courses 
         })
         
         if dump:
@@ -287,7 +301,7 @@ def course_dump(request):
             dump_file = open(filepath, "w", encoding="utf-8")
             dump_file.write(Template(filename=request.registry.settings["source_tree.project_path"] \
                     + "/source_tree/templates/course_dump.mak", input_encoding="utf-8").render_unicode(
-                course=course,
+                course=course_root,
                 show_hidden=show_hidden,
                 dump=dump,
                 course_count=course_count,
@@ -298,7 +312,7 @@ def course_dump(request):
             return Response("ok. dumped to {0}".format(filepath))
         else:
             return {
-                'course': course,
+                'course': course_root,
                 'show_hidden': show_hidden,
                 'dump': dump,
                 'course_count': course_count,
