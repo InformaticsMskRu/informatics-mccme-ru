@@ -301,22 +301,26 @@ def course_dump(request):
             dump_file = open(filepath, "w", encoding="utf-8")
             dump_file.write(Template(filename=request.registry.settings["source_tree.project_path"] \
                     + "/source_tree/templates/course_dump.mak", input_encoding="utf-8").render_unicode(
-                course=course_root,
+                course_root=course_root,
                 show_hidden=show_hidden,
                 dump=dump,
                 course_count=course_count,
                 default_storage=default_storage,
+                childrenMap=childrenMap,
+                get_children_by_map=get_children_by_map,
             ))
             dump_file.close()
 
             return Response("ok. dumped to {0}".format(filepath))
         else:
             return {
-                'course': course_root,
+                'course_root': course_root,
                 'show_hidden': show_hidden,
                 'dump': dump,
                 'course_count': course_count,
                 'default_storage': default_storage,
+                'childrenMap': childrenMap,
+                'get_children_by_map': get_children_by_map,
             }
     except Exception as e:
         return Response("Error: " + e.__str__())

@@ -48,7 +48,7 @@
                     <i class="icon-collapse"></i></a>
                 %endif
 				<ul class="${"main_node" if depth == 0 else ""}">
-					%for child in course.children:
+					%for child in get_children_by_map(childrenMap, course.id):
 						%if (not child.course_id or child.course) and (show_hidden or (child.visible and child.verified and (not child.course or child.course.visible))):	
 							%if depth > 0:
 								<li id="region${child.id}" class="starthidden">
@@ -66,7 +66,7 @@
         <a href="#" class="show_all_button" style="position: absolute; right: 6px; top: 6px; z-index: 1000;">
             Развернуть всё
         </a>
-		${show_tree(course, 0)}
+		${show_tree(course_root, 0)}
 	</div>
 </td></tr></table>
 
