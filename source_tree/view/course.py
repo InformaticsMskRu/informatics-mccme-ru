@@ -297,7 +297,7 @@ def course_dump(request):
         
         if dump:
             filename = "course_dump" + ("_show_hidden" if show_hidden else "") + ".php"
-            filepath = "/var/www/moodle/" + filename
+            filepath = request.registry.settings['source_tree.course.dump_path'] + filename
             dump_file = open(filepath, "w", encoding="utf-8")
             dump_file.write(Template(filename=request.registry.settings["source_tree.project_path"] \
                     + "/source_tree/templates/course_dump.mak", input_encoding="utf-8").render_unicode(
