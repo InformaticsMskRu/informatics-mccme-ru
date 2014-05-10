@@ -412,7 +412,8 @@ li > div.actions {
                         <i class="icon-minus-sign"></i>
                     </a>
                     <div class="actions" style="display: none;">
-                        <input type="text" class="node-name" value="${course.name}">
+                        Имя:
+                        <input type="text" class="input-small node-name" id="node-edit-name-${course.id}" value="${course.name}">
                         <br>
                         <a href="#" class="act-button action-save">Сохранить</a>
                     </div>
@@ -447,7 +448,9 @@ li > div.actions {
 	</div>
 
 
-<hr>
+<div class="bootstrap">
+    <hr>
+</div>
 
 <div class="bootstrap">
     <div>
@@ -469,7 +472,11 @@ li > div.actions {
             %endfor
         </div>
     </div>
+    <hr>
     <div id="adding-form">
+        <div style="font-size: 12pt;">
+            <strong>Добавить раздел:</strong>
+        </div>
         <div>
             Имя раздела:
             <input type="text" id="category_name" value="">
