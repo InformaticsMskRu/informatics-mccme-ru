@@ -285,13 +285,13 @@ a.show_all_button:hover {
 div.actions {
     padding: 6px 10px;
     border-radius: 3px;
-    background-color: #f8f8ff;
+    /*background-color: #f8f8ff;*/
 }
 
 div.add-son {
     padding: 6px 10px;
     border-radius: 3px;
-    background-color: #f8f8ff;
+    /*background-color: #f8f8ff;*/
 }
 
 a.act-button {
@@ -399,7 +399,7 @@ li > div.actions {
                         %if depth == 0:
                             <img src="/pix/i/course.gif" alt="">&nbsp;
                         %endif
-                        ${course.name}&nbsp;&nbsp;
+                        ${course.name if depth > 0 else course.full_name()}&nbsp;&nbsp;
                     <i class="icon-collapse"></i></a>
                     <a href="#" class="action action-add" style="color: #a20;">
                         <i class="icon-plus"></i>
@@ -446,13 +446,13 @@ li > div.actions {
 	</div>
 
 
-
+<hr>
 
 <div class="bootstrap">
     <div>
-        <label>
+        <label><strong>
             Мои неподтвержденные разделы:
-        </label>
+        </strong></label>
         <div slass="unverified-nodes-list">
             %for node in my_unverified_nodes:
                 <div class="unverified-node">
