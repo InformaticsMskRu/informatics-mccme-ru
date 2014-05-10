@@ -326,19 +326,20 @@ a.act-button:hover {
     -moz-border-radius: 2px;
 }
 
-li > a.action {
+a.action {
 }
 
-li > a.action:hover {
+a.action:hover {
     text-decoration: none;
 }
 
-li > a.action > i:hover {
+a.action > i:hover {
     color: #880;
 }
 
 li > div.actions {
 }
+
 
 /*Remove connectors before root*/
  .tree > ul > li::before, .tree > ul > li::after {
@@ -450,17 +451,19 @@ li > div.actions {
 
 <div class="bootstrap">
     <div>
-        <label><strong>
-            Мои неподтвержденные разделы:
-        </strong></label>
+        <div style="font-size: 12pt;">
+            <strong>Мои неподтвержденные разделы:</strong>
+        </div>
         <div slass="unverified-nodes-list">
             %for node in my_unverified_nodes:
                 <div class="unverified-node">
-                    <span style="padding: 4px 4px; background-color: #eee;">
-                        ${node.full_name()}
+                    <span style="padding: 4px 4px;">
+                        <strong>${node.full_name()}</strong>
                     </span>
                     <span>
-                        <a href="#">Удалить</a>
+                        <a href="#" class="action action-erase" style="color: #f00;" onClick="erase_category(${node.id});">
+                            <i class="icon-minus-sign"></i>
+                        </a>
                     </span>
                 </div>
             %endfor

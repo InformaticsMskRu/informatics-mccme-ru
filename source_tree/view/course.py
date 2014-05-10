@@ -100,19 +100,24 @@ def course_erase(request):
         return {'result': 'error', 'content': e.__str__()}
 
 
+def erase_tree(course):
+    for child in course.children:
+        erase_tree(child)
+    db_session.delete(course)
+
+
 @view_config(route_name='course.erase.all', renderer='json')
 def course_erase_all(request):
-    def erase_tree(course):
-        for child in course.children:
-            erase_tree(child)
-        db_session.delete(course)
     try:
         course = course_get_by_id(request.matchdict['course_id'])
-        if course_check_owner(course.course_id, int(RequestGetUserId(request))) \
-            or course_tree_check_owner(course.id, RequestGetUserId(request)):
-            check_capability_course(request, 'teacher')
-        else:
-            check_capability_course(request, 'admin')
+        teacher = False
+        teacher = teacher or (not course.verified \
+                              and course.author == int(RequestGetUserId(request)))
+        teacher = teacher or course_check_owner(course.course_id, 
+                                                int(RequestGetUserId(request)))
+        teacher = teacher or course_tree_check_owner(course.id, 
+                                                     RequestGetUserId(request))
+        check_capability_course(request, 'teacher' if teacher else 'admin')
         erase_tree(course)
         db_session.commit()
         course_make_dump(request)
