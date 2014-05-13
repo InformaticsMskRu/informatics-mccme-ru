@@ -240,6 +240,8 @@ def get_table(request):
         options = []
         
         for contest_id in sorted(all_contests()):
+            if contest_id in [1651, 1887, 1850, 1851]:
+                continue
             cfg_file = HOME_JUDGES + contest_id + '/conf/serve.cfg'
             try:
                 contest = EjudgeContestCfg(cfg_file)
@@ -251,20 +253,25 @@ def get_table(request):
                 print(cfg_file)
             section = 'language'
                 
-            for i in range(contest.config.get_sections_count(section)):
-                cur_options = contest.config.options(section, i)
-                cur_id =  contest.config.get(section, i, 'id')[0]
-                if cur_id not in langs:
-                    langs += [cur_id]
-                for opt in cur_options:
-                    if opt not in options:
-                        options += [opt]
+            try:
+                for i in range(contest.config.get_sections_count(section)):
+                    cur_options = contest.config.options(section, i)
+                    cur_id =  contest.config.get(section, i, 'id')[0]
+                    if cur_id not in langs:
+                        langs += [cur_id]
+                    for opt in cur_options:
+                        if opt not in options:
+                            options += [opt]
+            except:
+                return {"status": False, "message" : str(contest_id), "stack": ""}
             
         res = collections.defaultdict(lambda : collections.defaultdict(dict))
 
         strr = ""
         
         for contest_id in sorted(all_contests()):
+            if contest_id in [1651, 1881, 1850, 1851]:
+                continue
             cfg_file = HOME_JUDGES + contest_id + '/conf/serve.cfg'
             try:
                 contest = EjudgeContestCfg(cfg_file)

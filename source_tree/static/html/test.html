@@ -1,0 +1,50 @@
+<html>
+<head>
+	<script type="text/javascript" src="/static/jquery-1.9.1.min.js"></script>
+	<script type="text/javascript" src="/static/jsrender.js"></script>
+
+</head>
+
+
+<style>
+</style>
+
+<!-- SOME CODE -->
+
+<script type="text/javascript">
+
+function make_source_show(id) {
+	jQuery.post("/source/adm/form", {}, function(data) {
+		jQuery("#source_tree_div_body").html(data);
+		document.getElementById("make_contest_statement_id").value = id;
+		jQuery("#source_tree_div").show();
+	});
+}
+
+make_source_show(1);
+
+</script>
+
+<!-- SOME CODE -->
+
+<body>
+
+	<!-- SOME CODE -->
+
+	<div id="source_tree_div" style="display: none;">
+		<div id="source_tree_div_head">
+			<div id="source_tree_div_head_close" class="source_tree_div_head_button"
+				onClick="make_contest_cancel();" 
+				style="right: 5px;">
+				Закрыть
+			</div>
+		</div>
+		<div id="source_tree_div_body" style="position: absolute; left: 0px; right: 0px;
+			bottom: 0px; top: 20px; overflow: scroll;">
+		</div>
+	</div>
+
+
+	<!-- SOME CODE -->
+</body>
+</html>

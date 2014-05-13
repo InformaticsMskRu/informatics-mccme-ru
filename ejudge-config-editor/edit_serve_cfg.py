@@ -38,8 +38,13 @@ def regular_contests():
             except ValueError:
                 pass
 
+
+def TrueFilter(config):
+    return True
+
+
 def edit_serve_cfg(path = None, contests = None,
-                   function = None):
+                   function = None, filterF = TrueFilter):
     '''edit one or more serve.cfg files
 
     path - path to serve.cfg file, for example /home/judges/000001/conf/
@@ -96,13 +101,16 @@ def edit_serve_cfg(path = None, contests = None,
         except:
             print(path)
             raise
-
+        fl = False
         try:
-            log_message = function(contest.config)
+            if filterF(contest.config):
+                log_message = function(contest.config)
+                fl = True
         except:
             print(path)
             raise
-        rewrite_serve_cfg(path, contest.printconf(), log_message)
+        if fl:
+            rewrite_serve_cfg(path, contest.printconf(), log_message)
       else:
         print('no such file: ' + os.path.join(path, 'serve.cfg'))
 
@@ -266,13 +274,20 @@ def filter_by_lang_id(config, section, idx):
 def action_remove_item(config, section, idx):
     config.remove_option(section, idx, 'arch')
 
+
+def hasLangId(config):
+    for section in config['language']:
+        if (section['id'][0] == '31'):
+            return False
+    return True
+
 #create_serve_cfg_table('problem',2)
 #print(list(regular_contests()))
 #undo_serve_cfg(version = 543059717)
 config = EjudgeContestCfg('serve.cfg')
 #print(config.printconf())
 #edit_serve_cfg(contests='regular', section='default', section_no = 0, value = False, option = 'enable_full_archive')
-edit_serve_cfg(contests='regular', function=GroupCmd(AddSectionCmd('language',
+edit_serve_cfg(contests='regular', filterF=hasLangId, function=GroupCmd(AddSectionCmd('language',
 [
     ['id', '31'],
     ['compile_id', '63'],
