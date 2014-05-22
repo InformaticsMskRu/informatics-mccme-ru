@@ -77,10 +77,10 @@ def submit(run_file, contest_id, prob_id, lang_id, login, password, filename, ur
         if code in status_repr:
             return status_repr[code]
         else:
-            report_error(ret_code, login_data, submit_data, run_file, filename, user_id)
+            report_error(ret_code, login_data, submit_data, run_file, filename, user_id, c.text)
             return default_error_str
     else:
-        report_error(None, login_data, submit_data, run_file, filename, user_id)
+        report_error(None, login_data, submit_data, run_file, filename, user_id, c.text)
         return default_error_str
 
 
@@ -102,7 +102,7 @@ def rejudge(contest_id, run_id, status_id, login, password, url):
     if (res):
         SID = res.group(1)
     else:
-        return "login error"
+        return "login error " + c.text
 
     cookies = c.cookies
 
