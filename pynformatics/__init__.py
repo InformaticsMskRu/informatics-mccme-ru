@@ -1,8 +1,8 @@
 from pyramid.config import Configurator
-from sqlalchemy import engine_from_config
 
 from .models import DBSession
 from pynformatics.view.comment import *
+from sqlalchemy import engine_from_config
 
 def main(global_config, **settings):
     """ This function returns a Pyramid WSGI application.
@@ -15,6 +15,13 @@ def main(global_config, **settings):
     config.add_route('stars.delete', '/stars/delete')
     config.add_route('stars.get_by_user_id', '/stars/get_by_user_json')
     config.add_route('stars.get_by_user_id_html', '/stars/all')
+    config.add_route('ideal.add_form', '/ideal/add_form')
+    config.add_route('ideal.add', '/ideal/add')
+    config.add_route('ideal.approve', '/ideal/approve')
+    config.add_route('ideal.get_by_problem', '/ideal/get_by_problem')
+    config.add_route('ideal.get_by_problem_html', '/ideal/get_by_problem_html')
+    config.add_route('ideal.suggested', '/ideal/suggested')
+    config.add_route('ideal.suggested_html', '/ideal/suggested_html')
     config.add_route('comment.add', '/comment/add')
     config.add_route('comment.get', '/comment/get/{contest_id}/{run_id}')
     config.add_route('user_settings.add', '/user/settings/main/add')
