@@ -56,6 +56,7 @@ def problem_submits(request):
 def problem_ant_submits(request):
     user_id = RequestGetUserId(request)
     user = DBSession.query(SimpleUser).filter(SimpleUser.id == user_id).first()
+    lang_id = 67
     run_id1 = request.params["run_id1"]
     run_id2 = request.params["run_id2"]
     run_id3 = request.params["run_id3"]
