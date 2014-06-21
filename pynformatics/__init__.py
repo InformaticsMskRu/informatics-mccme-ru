@@ -53,6 +53,7 @@ def main(global_config, **settings):
     config.add_route('region.submit', '/region/res')
     config.add_route('raiting.get', '/raiting/get')
     config.add_route('region.submit_test', '/region/res_test')
+    config.add_route('problem.ant.submit', '/problem-ant/{problem_id}/submit')
     config.add_route('home', '/')
     config.scan()
     return config.make_wsgi_app()

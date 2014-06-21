@@ -16,6 +16,7 @@ from pynformatics.models import DBSession
 #from webhelpers.html import *
 from xml.etree.ElementTree import ElementTree
 import xmlrpc.client
+import io
 
 def checkCapability(request):
     if (not RequestCheckUserCapability(request, 'moodle/ejudge_contests:reload')):
@@ -50,6 +51,25 @@ def problem_submits(request):
     filename = request.POST['file'].filename
     ejudge_url = request.registry.settings['ejudge.new_client_url']
     return {'res' : submit(input_file, problem.ejudge_contest_id, problem.problem_id, lang_id, user.login, user.password, filename, ejudge_url, user_id)}
+
+@view_config(route_name='problem.ant.submit', renderer='json')
+def problem_ant_submits(request):
+    user_id = RequestGetUserId(request)
+    user = DBSession.query(SimpleUser).filter(SimpleUser.id == user_id).first()
+    run_id1 = request.params["run_id1"]
+    run_id2 = request.params["run_id2"]
+    run_id3 = request.params["run_id3"]
+    run_id4 = request.params["run_id4"]
+    json_names = request.params["json_names"]
+    problem_id = request.matchdict["problem_id"]
+    problem = DBSession.query(EjudgeProblem).filter(EjudgeProblem.id == problem_id).first()
+    #input_file = request.POST['file'].file
+    #filename = request.POST['file'].filename
+    filename = "input_file.txt"
+    input_file = io.StringIO("{0}\n{1}\n{2}\n{3}\n{4}".format(run_id1, run_id2, run_id3, run_id4, json_names))
+    ejudge_url = request.registry.settings['ejudge.new_client_url']
+    return {'res' : submit(input_file, problem.ejudge_contest_id, problem.problem_id, lang_id, user.login, user.password, filename, ejudge_url, user_id)}
+    
 
 @view_config(route_name='problem.tests.set_preliminary', renderer='json')
 def problem_set_preliminary(request):
