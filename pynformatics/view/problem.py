@@ -61,7 +61,11 @@ def problem_ant_submits(request):
     run_id2 = request.params["run_id2"]
     run_id3 = request.params["run_id3"]
     run_id4 = request.params["run_id4"]
-    map_index = request.params["map_index"]
+    map_index = 0
+    try:
+        map_index = request.params["map_index"]
+    except:
+        pass
     json_names = request.params["json_names"]
     problem_id = request.matchdict["problem_id"]
     problem = DBSession.query(EjudgeProblem).filter(EjudgeProblem.id == problem_id).first()
