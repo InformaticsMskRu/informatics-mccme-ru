@@ -61,13 +61,14 @@ def problem_ant_submits(request):
     run_id2 = request.params["run_id2"]
     run_id3 = request.params["run_id3"]
     run_id4 = request.params["run_id4"]
+    map_index = request.params["map_index"]
     json_names = request.params["json_names"]
     problem_id = request.matchdict["problem_id"]
     problem = DBSession.query(EjudgeProblem).filter(EjudgeProblem.id == problem_id).first()
     #input_file = request.POST['file'].file
     #filename = request.POST['file'].filename
     filename = "input_file.txt"
-    input_file = io.StringIO("{4}\n{0}\n{1}\n{2}\n{3}".format(run_id1, run_id2, run_id3, run_id4, json_names))
+    input_file = io.StringIO("{4}${5}\n{0}\n{1}\n{2}\n{3}".format(run_id1, run_id2, run_id3, run_id4, json_names, map_index))
     ejudge_url = request.registry.settings['ejudge.new_client_url']
     return {'res' : submit(input_file, problem.ejudge_contest_id, problem.problem_id, lang_id, user.login, user.password, filename, ejudge_url, user_id)}
     
