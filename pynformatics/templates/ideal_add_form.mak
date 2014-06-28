@@ -19,6 +19,6 @@
 <input type="hidden" name="problem_id" value="${problem_id}">
 <input type="hidden" name="run_id" value="${run_id}">
 <input type="hidden" name="contest_id" value="${contest_id}">
-<textarea cols="140" rows="4" name="comment"></textarea>
+<textarea cols="140" rows="4" name="comment" placeholder="Не нужно вставлять сюда код - только комментарий! Код берется автоматически из вашего решения."></textarea>
 <p><input type="submit" value="Отправить">
 </form>
