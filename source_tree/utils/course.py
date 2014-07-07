@@ -88,7 +88,9 @@ def course_tree_check_owner(node_id, user_id):
         CourseTreeCap.node_id.in_(node.parents()),
         CourseTreeCap.user_id == user_id,
     ).all()
-    return bool(cap)
+    acc_node = db_session.query(Course).filter(Course.id == cap[0].node_id).one() \
+                if cap else None
+    return acc_node
 
     
 def course_tree_get_user_nodes(user_id):

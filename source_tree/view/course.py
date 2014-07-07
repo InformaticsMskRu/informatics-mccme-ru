@@ -223,7 +223,7 @@ def course_add(request):
                 Course.course_id == course_id,
             ).all()
             verified = check_capability_ex_course(request, 'admin') \
-                    or course_tree_check_owner(parent_id, user_id)
+                    or bool(course_tree_check_owner(parent_id, user_id))
             if course_id:
                 if similar:
                     continue
@@ -392,23 +392,24 @@ def course_my_categories(request):
         course_root = db_session.query(Course).filter(Course.id == 1).one() 
         course_list = []
         make_course_list(course_root, course_list, 0)
-        my_unverified_nodes = db_session.query(Course).filter(
-            Course.verified == 0,
+        my_nodes = db_session.query(Course).filter(
             Course.course_id == 0,
             Course.author == RequestGetUserId(request),
-        ).all()
+        ).order_by(Course.verified).all()
+        my_verified_nodes = [node for node in my_nodes if node.verified]
+        my_unverified_nodes = [node for node in my_nodes if not node.verified]
         root_nodes = course_tree_get_root_nodes(RequestGetUserId(request))
-        course_get_status = lambda node: "не подтвержден" if not node.verified \
-            else "потвержден" if not course_tree_check_owner(node.id, 
-                                         node.author) \
-            else "подтвержден(полный доступ)"
+        '''
+        my_nodes = [node for node in my_nodes if node in root_nodes] + \
+                    [node for node in my_nodes if node not in root_nodes]
+        '''
         return {
             'frame': frame,
             'course_list': course_list,
+            'my_nodes': my_nodes,
             'my_unverified_nodes': my_unverified_nodes,
             'root_nodes': root_nodes,
             'default_storage': json.dumps({}),
-            'course_get_status': course_get_status,
         }
     except Exception as e:
         return Response("Error: " + e.__str__())

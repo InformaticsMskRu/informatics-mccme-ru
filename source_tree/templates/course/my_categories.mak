@@ -1,7 +1,7 @@
 %if not frame:
 <head>
     <script type="text/javascript" src="/py-source/js/jquery-1.9.1.min.js"></script>
-    <link href="/py-source/css/bootstrap.css" rel="stylesheet">
+    <!--<link href="/py-source/css/bootstrap.css" rel="stylesheet">-->
 
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
@@ -31,15 +31,6 @@ jQuery(function() {
     });
 });
 
-function erase_category(category_id) {
-    jQuery.post("/py-source/course/erase/" + category_id, {
-    }, function(data) {
-        if (data.result == "error") {
-            alert(data.content);
-        }   
-        document.location.reload(); 
-    });   
-}
 </script>
 
 <script>
@@ -124,21 +115,21 @@ jQuery(function () {
         e.stopPropagation();
     });
     
-    jQuery('.tree a.node').on('click', function(e) {
-        var p = jQuery(jQuery(this).parent());
+    jQuery('.tree .node-title > a.node').on('click', function(e) {
+        var p = jQuery(this).parent().parent();
         var id = p[0].id;
         var children = p.find('> ul > li');
         if (children.is(":visible")) {
             updateStorage(id, 0);       
             children.hide();
-            p.find('> a.node > i').removeClass("icon-collapse-top");
-            p.find('> a.node > i').addClass("icon-collapse");        
+            p.find('.node-title > a.node > i').removeClass("icon-collapse-top");
+            p.find('.node-title > a.node > i').addClass("icon-collapse");        
         } 
         else {
             updateStorage(id, 1);       
             children.show();
-            p.find('> a.node > i').removeClass("icon-collapse");
-            p.find('> a.node > i').addClass("icon-collapse-top");        
+            p.find('.node-title > a.node > i').removeClass("icon-collapse");
+            p.find('.node-title > a.node > i').addClass("icon-collapse-top");        
         }
         
         e.stopPropagation();
@@ -147,9 +138,9 @@ jQuery(function () {
         }
     });
 
-    jQuery('.tree a.action-add').on('click', function(e) {
-        var p = jQuery(jQuery(this).parent());
-        var add_son_bar = p.find('> div.add-son');
+    jQuery('.tree .node-title > a.action-add').on('click', function(e) {
+        var p = jQuery(this).parent().parent();
+        var add_son_bar = p.find('> .node-actionArea-addSon');
         if (add_son_bar.is(':visible')) {
             add_son_bar.hide();
         }
@@ -158,9 +149,9 @@ jQuery(function () {
         }
     });
 
-    jQuery('.tree a.action-edit').on('click', function(e) {
-        var p = jQuery(jQuery(this).parent());
-        var action_bar = p.find('> div.actions');
+    jQuery('.tree .node-title > a.action-edit').on('click', function(e) {
+        var p = jQuery(this).parent().parent();
+        var action_bar = p.find('> .node-actionArea-edit');
         if (action_bar.is(':visible')) {
             action_bar.hide();
         }
@@ -169,10 +160,11 @@ jQuery(function () {
         }
     });
 
-    jQuery('.tree a.action-erase').on('click', function(e) {
-        var p = jQuery(jQuery(this).parent());
+    jQuery('.tree .node-title > a.action-erase').on('click', function(e) {
+        var p = jQuery(this).parent().parent();
         var node_id = p.find('> .node-id').prop('value');
-        if (confirm("Вы уверены?")) {
+        var node_name = p.find('> .node-name').prop('value');
+        if (confirm("Вы уверены что хотите удалить " + node_name + "?")) {
             jQuery.post("/py-source/course/erase/" + node_id, {
             }, function(data) {
                 if (data.result == "error") {
@@ -181,14 +173,16 @@ jQuery(function () {
                 document.location.reload(); 
             });   
         }
+        else {
+        }
     });
 
-    jQuery('.tree div.add-son > a.action-add').on('click', function(e) {
-        var p = jQuery(jQuery(this).parent().parent());
+    jQuery('.tree .node-actionArea-addSon > a.action-add').on('click', function(e) {
+        var p = jQuery(this).parent().parent();
         var node_id = p.find('> .node-id').prop('value');
         jQuery.post("/py-source/course/add", {
             'parent_id': node_id,
-            'name': p.find('> div.add-son > .node-name').prop('value'),
+            'name': p.find('> .node-actionArea-addSon > .node-name').prop('value'),
             'order': 'end',
         }, function(data) {
             if (data.result == "error") {
@@ -199,11 +193,11 @@ jQuery(function () {
 
     });
 
-    jQuery('.tree div.actions > a.action-save').on('click', function(e) {
-        var p = jQuery(jQuery(this).parent().parent());
+    jQuery('.tree .node-actionArea-edit > a.action-save').on('click', function(e) {
+        var p = jQuery(this).parent().parent();
         var node_id = p.find('> .node-id').prop('value');
         jQuery.post("/py-source/course/update/" + node_id, {
-            'name': p.find('> div.actions > .node-name').prop('value'),
+            'name': p.find('> .node-actionArea-edit > .node-name').prop('value'),
         }, function(data) {
             if (data.result == "error") {
                 alert(data.content);
@@ -282,13 +276,13 @@ a.show_all_button:hover {
     background-color: #FEF6F0;
 }
 
-div.actions {
+.node-actionArea-edit {
     padding: 6px 10px;
     border-radius: 3px;
     /*background-color: #f8f8ff;*/
 }
 
-div.add-son {
+.node-actionArea-addSon {
     padding: 6px 10px;
     border-radius: 3px;
     /*background-color: #f8f8ff;*/
@@ -364,9 +358,23 @@ li > div.actions {
 
 .starthidden { display:none; }
 
+.node-status {
+    font-size: 10pt;
+    font-style: italic;
+}
+
+.node-status-verified {
+    color: #aa0;
+}
+
+.node-status-unverified {
+    color: #f44;
+}
+
 </style>
 
 <input type="hidden" id="default_storage" value='${default_storage | n}'>
+<div class="my_categories_window">
 	<div class="tree" style="position: relative; margin-left: -10px;">
 		<%def name="show_tree(course, depth=-1)">
 			%if course.course:
@@ -396,34 +404,41 @@ li > div.actions {
                 >
                     <input type="hidden" class="displayed" value="${int(course.displayed)}">
                     <input type="hidden" class="node-id" value="${course.id}">
-                    <a href="#" class="node ${"category" if depth == 0 else ""}" style="${"font-size: 1.2em;" if depth == 0 else ""}">
-                        %if depth == 0:
-                            <img src="/pix/i/course.gif" alt="">&nbsp;
-                        %endif
-                        ${course.name if depth > 0 else course.full_name()}&nbsp;&nbsp;
-                    <i class="icon-collapse"></i></a>
-                    <a href="#" class="action action-add" style="color: #a20;">
-                        <i class="icon-plus"></i>
-                    </a>
-                    <a href="#" class="action action-edit" style="color: #c40;">
-                        <i class="icon-edit"></i>
-                    </a>
-                    <a href="#" class="action action-erase" style="color: #f00;" onClick="erase_category(${course.id});">
-                        <i class="icon-minus-sign"></i>
-                    </a>
-                    <div class="actions" style="display: none;">
+                    <input type="hidden" class="node-name" value="${course.name if depth > 0 else course.full_name()}">
+                    <div class="node-title">
+                        <a href="#" class="node ${"category" if depth == 0 else ""}" style="${"font-size: 1.2em;" if depth == 0 else ""}">
+                            %if depth == 0:
+                                <img src="/pix/i/course.gif" alt="">&nbsp;
+                            %endif
+                            ${course.name if depth > 0 else course.full_name()}&nbsp;&nbsp;
+                        <i class="icon-collapse"></i></a>
+                        <a href="#" class="action action-add" style="color: #a20;">
+                            <i class="icon-plus"></i>
+                        </a>
+                        <a href="#" class="action action-edit" style="color: #c40;">
+                            <i class="icon-edit"></i>
+                        </a>
+                        <a href="#" class="action action-users" style="color: #0a0">
+                            <i class="icon-user"></i>
+                        </a>
+                        |
+                        <a href="#" class="action action-erase" style="color: #f00;">
+                            <i class="icon-minus-sign"></i>
+                        </a>
+                    </div>
+                    <div class="node-actionArea node-actionArea-edit" style="display: none;">
                         Имя:
                         <input type="text" class="input-small node-name" id="node-edit-name-${course.id}" value="${course.name}">
                         <br>
                         <a href="#" class="act-button action-save">Сохранить</a>
                     </div>
-                    <div class="add-son" style="display: none;">
+                    <div class="node-actionArea node-actionArea-addSon" style="display: none;">
                         <label>Добавить раздел</label>
                         <input type="text" class="node-name" value="" placeholder="Имя дочернего раздела">
                         <br>
                         <a href="#" class="act-button action-add">Добавить</a>
                     </div>
-                    <div class="loading" style="display: none;">
+                    <div class="node-actionArea node-actionArea-loading" style="display: none;">
                     </div>
                     <ul class="${"main_node" if depth == 0 else ""}">
                         %for child in course.children:
@@ -441,62 +456,87 @@ li > div.actions {
         </a>
         -->
         %for node in root_nodes:
-            <div>
+            <div class="row-fluid">
                 ${show_tree(node, 0)}
             </div>
         %endfor
 	</div>
 
 
-<div class="bootstrap">
-    <hr>
-</div>
+    <div class="bootstrap">
+        <hr>
+    </div>
 
-<div class="bootstrap">
-    <div>
-        <div style="font-size: 12pt;">
-            <strong>Мои неподтвержденные разделы:</strong>
-        </div>
-        <div slass="unverified-nodes-list">
-            %for node in my_unverified_nodes:
-                <div class="unverified-node">
-                    <span style="padding: 4px 4px;">
-                        <strong>${node.full_name()}</strong>
-                    </span>
-                    <span>
-                        <a href="#" class="action action-erase" style="color: #f00;" onClick="erase_category(${node.id});">
-                            <i class="icon-minus-sign"></i>
-                        </a>
-                    </span>
+    <div class="bootstrap">
+        <div class="row-fluid">
+            <div class="span8" style="padding: 10px;">
+                <table class="table table-striped table-bordered table-condensed table-hover">
+                    <caption>
+                        <b>Разделы, предложенные мной (${len(my_nodes)})</b>
+                    </caption>
+                    <thead>
+                        <tr>
+                            <td><i>Курс</i></td>
+                            <td><i>Статус</i></td>
+                            <td><i>Действия</i></td>
+                        </tr>
+                    </thead>
+                    <tbody style="font-size: 9pt;">
+                        %for node in my_nodes:
+                            <tr>
+                                <td>${node.full_name()}</td>
+                                <td>
+                                    %if node.verified:
+                                        <div class="node-status node-status-verified">
+                                            Подтвержден
+                                        </div>
+                                    %else:
+                                        <div class="node-status node-status-unverified">
+                                            Не подтвержден
+                                        </div>
+                                    %endif
+                                </td>
+                                <td>
+                                    %if not node.verified:
+                                        <a href="#" class="action action-erase" style="color: #f00;" onClick="erase_category(${node.id});">
+                                            <i class="icon-minus-sign"></i>
+                                        </a>
+                                    %endif
+                                </td>
+                            </tr>
+                        %endfor
+                    </tbody>
+                </table>
+            </div>
+            <div id="adding-form" class="span4" style="padding: 10px;">
+                <div style="font-size: 12pt;">
+                    <strong>Добавить раздел:</strong>
                 </div>
-            %endfor
+                <table>
+                    <tr>
+                        <td>Имя раздела:</td>
+                        <td><input type="text" id="category_name" value=""></td>
+                    </tr>
+                    <tr>
+                        <td>Добавить в:</td>
+                        <td>
+                            <select id="parent_categories">
+                                %for item in course_list:
+                                    <option id="course_node_${item[1].id}" value="${item[1].id}">
+                                        ${"&nbsp;" * item[0] * 2 | n}${item[1].name}
+                                    </option>
+                                %endfor
+                            </select>
+                        </td>
+                    </tr>
+                </table>
+                <div>
+                    <a id="add_category" class="btn" href="#">Добавить</a>
+                </div>
+            </div>
         </div>
     </div>
-    <hr>
-    <div id="adding-form">
-        <div style="font-size: 12pt;">
-            <strong>Добавить раздел:</strong>
-        </div>
-        <div>
-            Имя раздела:
-            <input type="text" id="category_name" value="">
-        </div>
-        <div>
-            Добавить в:
-            <select id="parent_categories">
-                %for item in course_list:
-                    <option id="course_node_${item[1].id}" value="${item[1].id}">
-                        ${"&nbsp;" * item[0] * 2 | n}${item[1].name}
-                    </option>
-                %endfor
-            </select>
-        </div>
-        <div>
-            <a id="add_category" class="btn" href="#">Добавить</a>
-        </div>
-    </div>
-    <div class="reload-status progress progress-striped active" style="display: none;">
-        <div class="bar bar-warning" style="width: 100%;">Загрузка...</div>
-    </div>
-<div>
-
+</div>
+<div class="reload-status progress progress-striped active" style="display: none;">
+    <div class="bar bar-warning" style="width: 100%;">Загрузка...</div>
+</div>
