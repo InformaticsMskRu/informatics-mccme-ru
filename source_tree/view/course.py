@@ -411,6 +411,7 @@ def course_my_categories(request):
             'my_unverified_nodes': my_unverified_nodes,
             'root_nodes': root_nodes,
             'default_storage': json.dumps({}),
+            'GetNodeUsers': GetNodeUsers,
         }
     except Exception as e:
         return Response("Error: " + e.__str__())

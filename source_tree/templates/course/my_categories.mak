@@ -160,6 +160,17 @@ jQuery(function () {
         }
     });
 
+    jQuery('.tree .node-title > a.action-editUsers').on('click', function(e) {
+        var p = jQuery(this).parent().parent();
+        var action_bar = p.find('> .node-actionArea-editUsers');
+        if (action_bar.is(':visible')) {
+            action_bar.hide();
+        }
+        else {
+            action_bar.show();
+        }
+    });
+
     jQuery('.tree .node-title > a.action-erase').on('click', function(e) {
         var p = jQuery(this).parent().parent();
         var node_id = p.find('> .node-id').prop('value');
@@ -418,7 +429,7 @@ li > div.actions {
                         <a href="#" class="action action-edit" title="Редактировать" style="color: #c40;">
                             <i class="icon-edit"></i>
                         </a>
-                        <a href="#" class="action action-users" title="Изменить права" style="color: #0a0">
+                        <a href="#" class="action action-editUsers" title="Изменить права" style="color: #0a0">
                             <i class="icon-user"></i>
                         </a>
                         |
@@ -437,6 +448,13 @@ li > div.actions {
                         <input type="text" class="node-name" value="" placeholder="Имя дочернего раздела">
                         <br>
                         <a href="#" class="act-button action-add">Добавить</a>
+                    </div>
+                    <div class="node-actionArea node-actionArea-editUsers" style="display: none;">
+                        %for user in GetNodeUsers(course.id):
+                            <div>
+                                <a href="/user/view.php?id=${user.id}">${user.firstname + " " + user.lastname}</a>
+                            </div>
+                        %endfor
                     </div>
                     <div class="node-actionArea node-actionArea-loading" style="display: none;">
                     </div>

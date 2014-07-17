@@ -122,3 +122,19 @@ def course_tree_get_root_nodes(user_id):
         Course.id.in_([cap.node_id for cap in caps]),
     )
     return root_nodes
+
+    
+def GetNodeUsers(nodeId):
+    node = db_session.query(Course).filter(Course.id == nodeId).one()
+    parents = node.parents()
+    users = []
+    for parentNodeId in parents:
+        caps = db_session.query(CourseTreeCap).filter(
+            CourseTreeCap.node_id == parentNodeId,
+        ).all()
+        currentUsers = db_session.query(User).filter(
+            User.id.in_([cap.user_id for cap in caps]),
+        ).all()
+        users += currentUsers
+    users = list(set(users))
+    return users
