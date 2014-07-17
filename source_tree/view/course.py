@@ -393,6 +393,7 @@ def course_my_categories(request):
         course_list = []
         make_course_list(course_root, course_list, 0)
         my_nodes = db_session.query(Course).filter(
+            Course.id != 1,
             Course.course_id == 0,
             Course.author == RequestGetUserId(request),
         ).order_by(Course.verified).all()

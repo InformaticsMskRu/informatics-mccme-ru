@@ -412,17 +412,17 @@ li > div.actions {
                             %endif
                             ${course.name if depth > 0 else course.full_name()}&nbsp;&nbsp;
                         <i class="icon-collapse"></i></a>
-                        <a href="#" class="action action-add" style="color: #a20;">
+                        <a href="#" class="action action-add" title="Добавить узел" style="color: #a20;">
                             <i class="icon-plus"></i>
                         </a>
-                        <a href="#" class="action action-edit" style="color: #c40;">
+                        <a href="#" class="action action-edit" title="Редактировать" style="color: #c40;">
                             <i class="icon-edit"></i>
                         </a>
-                        <a href="#" class="action action-users" style="color: #0a0">
+                        <a href="#" class="action action-users" title="Изменить права" style="color: #0a0">
                             <i class="icon-user"></i>
                         </a>
                         |
-                        <a href="#" class="action action-erase" style="color: #f00;">
+                        <a href="#" class="action action-erase" title="Удалить" style="color: #f00;">
                             <i class="icon-minus-sign"></i>
                         </a>
                     </div>
@@ -484,7 +484,7 @@ li > div.actions {
                     <tbody style="font-size: 9pt;">
                         %for node in my_nodes:
                             <tr>
-                                <td>${node.full_name()}</td>
+                                <td>(${node.id}) ${node.full_name()}</td>
                                 <td>
                                     %if node.verified:
                                         <div class="node-status node-status-verified">
