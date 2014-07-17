@@ -35,7 +35,11 @@ def add(request):
         contest_id = int(html.escape(request.params['contest_id'])) 
         run_id = int(html.escape(request.params['run_id'])) 
         comment = html.escape(request.params.get('comment', '')) 
-        ideal = Ideal(problem_id, run_id, contest_id, author_id, comment)
+        if is_admin(request):
+            status = 1
+        else:
+            status = 0
+        ideal = Ideal(problem_id, run_id, contest_id, author_id, comment, status)
         with transaction.manager:
             DBSession.add(ideal)
         return HTTPFound(location="/mod/statements/view3.php?chapterid=" + str(problem_id))
