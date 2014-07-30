@@ -450,11 +450,13 @@ li > div.actions {
                         <a href="#" class="act-button action-add">Добавить</a>
                     </div>
                     <div class="node-actionArea node-actionArea-editUsers" style="display: none;">
-                        %for user in GetNodeUsers(course.id):
-                            <div>
-                                <a href="/user/view.php?id=${user.id}">${user.firstname + " " + user.lastname}</a>
-                            </div>
-                        %endfor
+                        %if course:
+                            %for user in GetNodeUsers(course.id):
+                                <div>
+                                    <a href="/user/view.php?id=${user.id}">${user.firstname + " " + user.lastname}</a>
+                                </div>
+                            %endfor
+                        %endif
                     </div>
                     <div class="node-actionArea node-actionArea-loading" style="display: none;">
                     </div>
