@@ -429,7 +429,7 @@ li > div.actions {
                         <a href="#" class="action action-edit" title="Редактировать" style="color: #c40;">
                             <i class="icon-edit"></i>
                         </a>
-                        <a href="#" class="action action-editUsers" title="Изменить права" style="color: #0a0">
+                        <a href="#" class="action action-editUsers" title="Владельцы" style="color: #0a0">
                             <i class="icon-user"></i>
                         </a>
                         |
