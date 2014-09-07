@@ -135,8 +135,17 @@ class Run(Base):
                 try:
                     res = xml_file.read()
                     try:
+                        res = res.decode('cp1251').encode('utf8')
+                    except:
+                        pass
+
+                    try:
                         return str(res, encoding='UTF-8')
                     except TypeError:
+                        try:
+                            res = res.decode('cp1251').encode('utf8')
+                        except Exception:
+                            pass
                         return res
                 except Exception as e:
                     return e

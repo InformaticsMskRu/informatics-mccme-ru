@@ -1,6 +1,6 @@
 """User model"""
 from sqlalchemy import ForeignKey, Column
-from sqlalchemy.types import Integer, String, Unicode
+from sqlalchemy.types import Integer, String, Unicode, Boolean
 from sqlalchemy.orm import relationship, backref, relation
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.ext.declarative import declarative_base
@@ -34,8 +34,9 @@ class SimpleUser(Base):
     lastname = Column(Unicode)
     login = Column('ej_login', Unicode)
     password = Column('ej_password', Unicode)
+    deleted  = Column('deleted', Boolean)
     ejudge_id = Column('ej_id', Integer)
-
+    problems_solved = Column(Integer)
     statement = relationship("Statement", secondary=StatementUser.__table__, backref=backref("StatementUsers1"), lazy="dynamic")
     statements = association_proxy("StatementUsers2", 'statement')    
 
@@ -72,16 +73,16 @@ class PynformaticsUser(User):
 #        return "<Person(%s, '%s', '%s', '%s', '%s')" % (self.id, self.username, self.firstname, self.lastname, self.email, self.city)
 
 
-#class EjudgeUser(User):
-#    __tablename__ = "mdl_user_ejudge"
-#    __table_args__ = {'schema':'moodle'}
-#    __mapper_args__ = {'polymorphic_identity': 'ejudgeuser'}
-#    
-#    id = Column(Integer, ForeignKey('moodle.mdl_user.id'), primary_key=True)
-#    login = Column(Unicode)
-#    password = Column(Unicode)
-#    ejudge_id = Column(Integer)
-#
+class EjudgeUser(User):
+    __tablename__ = "mdl_user_ejudge"
+    __table_args__ = {'schema':'moodle'}
+    __mapper_args__ = {'polymorphic_identity': 'ejudgeuser'}
+
+    id = Column(Integer, ForeignKey('moodle.mdl_user.id'), primary_key=True)
+    login = Column(Unicode)
+    password = Column(Unicode)
+    ejudge_id = Column(Integer)
+    problems_solved = Column(Integer)
 #    statement = relationship("Statement", secondary=StatementUser.__table__, backref=backref("StatementUsers1"), lazy="dynamic")
 #    statements = association_proxy("StatementUsers2", 'statement')    
         
