@@ -74,7 +74,7 @@ def get_rating(request):
     #place generation
     res.sort(key=lambda el: -el['solved'])
     for ind in range(len(res)):
-        res[ind]['place'] = ind + 1 
+        res[ind]['place'] = ind + 1 + start
     
     return {
             "data" : res,
