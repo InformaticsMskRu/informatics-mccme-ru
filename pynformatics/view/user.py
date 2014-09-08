@@ -69,10 +69,15 @@ def get_rating(request):
         week_query = DBSession.execute("SELECT COUNT(DISTINCT contest_id, prob_id) FROM ejudge.runs as r WHERE r.user_id=:uid AND r.create_time > (NOW() - INTERVAL 7 DAY) AND (r.status=0 OR r.status=8)", 
            {"uid" : user.ejudge_id} )
         week_count = week_query.scalar()
-        res.append({'name':user.firstname + " " + user.lastname, 'solved':user.problems_solved, 'place': 1, 'city':user.city, 'solved_week' : week_count})
+        res.append({'name':user.firstname + " " + user.lastname, 'solved':user.problems_solved, 'place': None, 'city':user.city, 'solved_week' : week_count})
+
+    #place generation
+    res.sort(key=lambda el: -el['solved'])
+    for ind in range(len(res)):
+        res[ind]['place'] = ind + 1 
+    
     return {
             "data" : res,
-
             "recordsTotal" : user_count,
             "recordsFiltered" : filter_user_count,
             "dump" : str(request.params)
