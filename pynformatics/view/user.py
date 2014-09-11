@@ -78,8 +78,8 @@ def get_rating(request):
         week_solved_from_filter, week_solved_to_filter = None, None
         bad_params['week_solved_filter'] = request.params['week_solved_filter']
 
-    city = request.params['city']
-    name = request.params['name']
+    city = request.params['city_filter']
+    name = request.params['name_filter']
 
 
 
