@@ -17,6 +17,7 @@ status_repr = {
  82 : 'Задача уже решена',             # NEW_SRV_ERR_PROB_ALREADY_SOLVED
  77 : 'Отправляемый файл превышает допустимый размер (64K) или превышена квота на число посылок (обратитесь к админимтратору)', # NEW_SRV_ERR_RUN_QUOTA_EXCEEDED
 112 : 'Отправляемый файл пустой', # SUBMIT_EMPTY 
+1000: 'Отправляемый файл превышает допустимый размер. Требуется отправить исходный код или текстовый файл',
 }
 
 def report_error(code, login_data, submit_data, file, filename, user_id, addon = ''):
