@@ -41,24 +41,26 @@ def get(request):
 @view_config(route_name='rating.get', renderer='json')
 def get_rating(request):    
     #parse_params
-    bad_params = dict()
+    bad_params = list()
     try:
-        if  request.params['page'] != '':
+        if  request.params['length'] != '':
             length = int(request.params['length']  
         else:
             length = 10
     except Exception e:
         length = 10
-        bad_params['length'] = request.params['length']
+        bad_params.append('length')
+        return bad_params
 
     try:
-        if page in request.params and request.params['page'] != '':
+        if 'page' in request.params and request.params['page'] != '':
             start = int(request.params['page']) * length
         else:
             start = 0
     except Exception e:
         start = 0
-        bad_params['start'] = request.params['start']
+        bad_params.append('page')
+        return bad_params
 
     try:
         if '-' in request.params['solved_filter']:
@@ -67,19 +69,21 @@ def get_rating(request):
             solved_from_filter, solved_to_filter = int(request.params['solved_filter']), int(request.params['solved_filter'])
     except Exception e:
         solved_from_filter, solved_to_filter = None, None
-        bad_params['solved_filter'] = request.params['solved_filter']
+        bad_params.append('solved_filter')
+        return bad_params
 
     try:
-        if '-' in request.params['week_solved_filter']:
-            week_solved_from_filter, week_solved_to_filter = map(int, request.params['week_solved_filter'].split('-'))
+        if '-' in request.params['solved_week_filter']:
+            week_solved_from_filter, week_solved_to_filter = map(int, request.params['solved_week_filter'].split('-'))
         else:
             week_solved_from_filter, week_solved_to_filter = int(request.params['week_solved_filter']), int(request.params['week_solved'_filter])
     except Exception e:
         week_solved_from_filter, week_solved_to_filter = None, None
-        bad_params['week_solved_filter'] = request.params['week_solved_filter']
+        bad_params.append('solved_week_filter')
+        return bad_params
 
-    city = request.params['city']
-    name = request.params['name']
+    city = request.params['city_filter']
+    name = request.params['name_filter']
 
 
 
