@@ -39,26 +39,53 @@ def get(request):
         return json.dumps({"result" : "error", "message" : e.__str__(), "stack" : traceback.format_exc()})
 
 @view_config(route_name='rating.get', renderer='json')
-def get_rating(request):
-    if 'start' in  request.params:
-        start = int(request.params['start'])
-    else:
-        start = 0
-
-    if 'length' in request.params:
-        length = int(request.params['length'])
-    else:
+def get_rating(request):    
+    #parse_params
+    bad_params = dict()
+    try:
+        if  request.params['page'] != '':
+            length = int(request.params['length']  
+        else:
+            length = 10
+    except Exception e:
         length = 10
+        bad_params['length'] = request.params['length']
 
-    city_search = '';
+    try:
+        if page in request.params and request.params['page'] != '':
+            start = int(request.params['page']) * length
+        else:
+            start = 0
+    except Exception e:
+        start = 0
+        bad_params['start'] = request.params['start']
 
-    if 'search[value]' in request.params:
-        city_search = request.params['search[value]'] + '%'
+    try:
+        if '-' in request.params['solved_filter']:
+            solved_from_filter, solved_to_filter = map(int, request.params['solved_filter'].split('-'))
+        else:
+            solved_from_filter, solved_to_filter = int(request.params['solved_filter']), int(request.params['solved_filter'])
+    except Exception e:
+        solved_from_filter, solved_to_filter = None, None
+        bad_params['solved_filter'] = request.params['solved_filter']
+
+    try:
+        if '-' in request.params['week_solved_filter']:
+            week_solved_from_filter, week_solved_to_filter = map(int, request.params['week_solved_filter'].split('-'))
+        else:
+            week_solved_from_filter, week_solved_to_filter = int(request.params['week_solved_filter']), int(request.params['week_solved'_filter])
+    except Exception e:
+        week_solved_from_filter, week_solved_to_filter = None, None
+        bad_params['week_solved_filter'] = request.params['week_solved_filter']
+
+    city = request.params['city']
+    name = request.params['name']
+
 
 
     user_count = DBSession.query(User).filter(User.deleted == False).count()
 
-    if (city_search):
+    if (city):
         filter_user_count = DBSession.query(User).filter(User.deleted == False).filter(EjudgeUser.city.like(city_search)).count()
         users = DBSession.query(EjudgeUser).filter(EjudgeUser.deleted == False).filter(EjudgeUser.city.like(city_search)).order_by(desc(EjudgeUser.problems_solved)).slice(start, start + length)
     else:
@@ -81,5 +108,6 @@ def get_rating(request):
             "recordsTotal" : user_count,
             "recordsFiltered" : filter_user_count,
             "dump" : str(request.params)
+            "bad_params" : bad_params
             }
 
