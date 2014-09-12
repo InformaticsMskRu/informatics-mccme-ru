@@ -44,42 +44,42 @@ def get_rating(request):
     bad_params = dict()
     try:
         if  request.params['page'] != '':
-            length = int(request.params['length']  
+            length = int(request.params['length'])
         else:
             length = 10
-    except Exception e:
+    except Exception as e:
         length = 10
-        bad_params['length'] = request.params['length']
+        bad_params['length'] = request.params.get('length', None)
 
     try:
         if page in request.params and request.params['page'] != '':
             start = int(request.params['page']) * length
         else:
             start = 0
-    except Exception e:
+    except Exception as e:
         start = 0
-        bad_params['start'] = request.params['start']
+        bad_params['start'] = request.params.get('start', None)
 
     try:
         if '-' in request.params['solved_filter']:
             solved_from_filter, solved_to_filter = map(int, request.params['solved_filter'].split('-'))
         else:
             solved_from_filter, solved_to_filter = int(request.params['solved_filter']), int(request.params['solved_filter'])
-    except Exception e:
+    except Exception as e:
         solved_from_filter, solved_to_filter = None, None
-        bad_params['solved_filter'] = request.params['solved_filter']
+        bad_params['solved_filter'] = request.params.get('solved_filter', None)
 
     try:
         if '-' in request.params['week_solved_filter']:
             week_solved_from_filter, week_solved_to_filter = map(int, request.params['week_solved_filter'].split('-'))
         else:
-            week_solved_from_filter, week_solved_to_filter = int(request.params['week_solved_filter']), int(request.params['week_solved'_filter])
-    except Exception e:
+            week_solved_from_filter, week_solved_to_filter = int(request.params['week_solved_filter']), int(request.params['week_solved_filter'])
+    except Exception as e:
         week_solved_from_filter, week_solved_to_filter = None, None
-        bad_params['week_solved_filter'] = request.params['week_solved_filter']
+        bad_params['week_solved_filter'] = request.params.get('week_solved_filter', None)
 
-    city = request.params['city_filter']
-    name = request.params['name_filter']
+    city = request.params.get('city_filter', None)
+    name = request.params.get('name_filter', None)
 
 
 
@@ -107,7 +107,7 @@ def get_rating(request):
             "data" : res,
             "recordsTotal" : user_count,
             "recordsFiltered" : filter_user_count,
-            "dump" : str(request.params)
+            "dump" : str(request.params),
             "bad_params" : bad_params
             }
 
