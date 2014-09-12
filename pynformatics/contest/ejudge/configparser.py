@@ -379,7 +379,7 @@ class BasicInterpolation(Interpolation):
     The option values can contain format strings which refer to other values in
     the same section, or values in the special default section.
 
-    For example:
+    For rating-table:
 
         something: %(dir)s/whatever
 
