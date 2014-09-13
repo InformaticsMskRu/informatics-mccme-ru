@@ -74,7 +74,7 @@ def get_rating(request):
         filter_user_count = user_count
         users = DBSession.query(EjudgeUser).filter(EjudgeUser.deleted == False).order_by(desc(EjudgeUser.problems_solved)).slice(start, start + length)
     res = []
-    for user in current_selection:
+    for user in users:
         week_query = DBSession.execute("SELECT COUNT(DISTINCT contest_id, prob_id) FROM ejudge.runs as r WHERE r.user_id=:uid AND r.create_time > (NOW() - INTERVAL 7 DAY) AND (r.status=0 OR r.status=8)", 
            {"uid" : user.ejudge_id} )
         week_count = week_query.scalar()
