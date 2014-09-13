@@ -86,6 +86,7 @@ def get_rating(request):
     #place generation
     first, last, current_place = 0, 0, 1
     while first < len(res):
+        last = first + 1
         while res[last]['solved'] == res[first]['solved'] and last < len(res):
             last += 1
             res[last]['place'] = current_place
