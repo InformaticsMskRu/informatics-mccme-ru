@@ -53,7 +53,7 @@ def get_rating(request):
 
     try:
         if 'page' in request.params and request.params['page'] != '':
-            start = int(request.params['page']) * length
+            start = (int(request.params['page']) - 1) * length
         else:
             start = 0
     except Exception as e:
