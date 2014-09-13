@@ -53,7 +53,7 @@ def get_rating(request):
 
     try:
         if 'page' in request.params and request.params['page'] != '':
-            start = (int(request.params['page']) - 1) * length
+            start = int(request.params['page']) - 1) * length
         else:
             start = 0
     except Exception as e:
@@ -84,25 +84,38 @@ def get_rating(request):
 
 
     user_count = DBSession.query(User).filter(User.deleted == False).count()
+    current_selection = DBSession.query(User).filter(User.deleted == False)
 
-    if (city):
-        filter_user_count = DBSession.query(User).filter(User.deleted == False).filter(EjudgeUser.city.like(city_search)).count()
-        users = DBSession.query(EjudgeUser).filter(EjudgeUser.deleted == False).filter(EjudgeUser.city.like(city_search)).order_by(desc(EjudgeUser.problems_solved)).slice(start, start + length)
-    else:
-        filter_user_count = user_count
-        users = DBSession.query(EjudgeUser).filter(EjudgeUser.deleted == False).order_by(desc(EjudgeUser.problems_solved)).slice(start, start + length)
-    res = []
-    for user in users:
+    if city is not None:
+        current_selection = current_selection.filter(EjudgeUser.city.like('%' + city + '%'))
+    if name is not None:
+        current_selection = current_selection.filter(or_(EjudgeUser.firstname.like('%' + name + '%'), EjudgeUser.lastname.like('%' + name + '%')))
+    if None not in (solved_from_filter, solved_to_filter):
+        current_selection = current_selection.filter(solved_from_filer <= EjudgeUser.problems_solved <= solved_to_filter)
+    current_selection = current_selection.order_by(desc(EjudgeUser.problems_solved)).slice(start, start + length)
+    # if (city):
+    #     filter_user_count = DBSession.query(User).filter(User.deleted == False).filter(EjudgeUser.city.like(city_search)).count()
+    #     users = DBSession.query(EjudgeUser).filter(EjudgeUser.deleted == False).filter(EjudgeUser.city.like(city_search)).order_by(desc(EjudgeUser.problems_solved)).slice(start, start + length)
+    # else:
+    #     filter_user_count = user_count
+    #     users = DBSession.query(EjudgeUser).filter(EjudgeUser.deleted == False).order_by(desc(EjudgeUser.problems_solved)).slice(start, start + length)
+    # res = []
+    for user in current_selection:
         week_query = DBSession.execute("SELECT COUNT(DISTINCT contest_id, prob_id) FROM ejudge.runs as r WHERE r.user_id=:uid AND r.create_time > (NOW() - INTERVAL 7 DAY) AND (r.status=0 OR r.status=8)", 
            {"uid" : user.ejudge_id} )
         week_count = week_query.scalar()
-        res.append({'name':user.firstname + " " + user.lastname, 'solved':user.problems_solved, 'place': None, 'city':user.city, 'solved_week' : week_count})
+        if None not in (week_solved_from_filter, week_solved_to_filter) and week_solved_from_filter <= week_count <= week_solved_to_filter:
+            res.append({'name':user.firstname + " " + user.lastname, 'solved':user.problems_solved, 'place': None, 'city':user.city, 'solved_week' : week_count})
 
     #place generation
-    res.sort(key=lambda el: -el['solved'])
-    for ind in range(len(res)):
-        res[ind]['place'] = ind + 1 + start
-    
+    first, last, current_place = 0, 0, 1
+    while first < len(res):
+        while res[last]['solved'] == res[first]['solved'] and last < len(res):
+            last += 1
+            res[last]['place'] = current_place
+        current_place += 1
+        first = last
+
     return {
             "data" : res,
             "recordsTotal" : user_count,
