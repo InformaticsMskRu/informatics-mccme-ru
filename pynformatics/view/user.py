@@ -43,7 +43,7 @@ def get_rating(request):
     #parse_params
     bad_params = dict()
     try:
-        if  request.params['page'] != '':
+        if  request.params['length'] != '':
             length = int(request.params['length'])
         else:
             length = 10
@@ -52,13 +52,13 @@ def get_rating(request):
         bad_params['length'] = request.params.get('length', None)
 
     try:
-        if page in request.params and request.params['page'] != '':
+        if 'page' in request.params and request.params['page'] != '':
             start = int(request.params['page']) * length
         else:
             start = 0
     except Exception as e:
         start = 0
-        bad_params['start'] = request.params.get('start', None)
+        bad_params['page'] = request.params.get('page', None)
 
     try:
         if '-' in request.params['solved_filter']:
