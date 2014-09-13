@@ -61,7 +61,7 @@ def get_rating(request):
     current_selection = DBSession.query(User).filter(User.deleted == False)
 
      if city is not None:
-         current_selection = current_selection.filter(EjudgeUser.city.like('%' + city + '%'))
+        current_selection = current_selection.filter(EjudgeUser.city.like('%' + city + '%'))
     # if name is not None:
     #     current_selection = current_selection.filter(or_(EjudgeUser.firstname.like('%' + name + '%'), EjudgeUser.lastname.like('%' + name + '%')))
     # if None not in (solved_from_filter, solved_to_filter):
