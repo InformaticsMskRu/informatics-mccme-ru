@@ -46,6 +46,7 @@ class User(SimpleUser):
     username = Column(Unicode)
     email = Column(Unicode)
     city = Column(Unicode)
+    school = Column(Unicode)
 #    ejudge_users = relation('EjudgeUser', backref="moodle.mdl_user", uselist=False)
 #    ejudge_user = relation('EjudgeUser', backref = backref('moodle.mdl_user'), uselist=False, primaryjoin = "EjudgeUser.user_id == User.id")
     
