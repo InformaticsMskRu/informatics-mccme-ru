@@ -185,7 +185,7 @@ def get_rating(request):
         generate_places(res, current_selection, current_count_selection, filter_user_count, params.start)
     cuser_data = generate_current_user_data(current_selection, current_count_selection, filter_user_count, cuser_id, res)
     #sqltap statistic report
-    statistics = profiler.collect()
+    #statistics = profiler.collect()
     #sqltap.report(statistics, "report.html")
     
 
