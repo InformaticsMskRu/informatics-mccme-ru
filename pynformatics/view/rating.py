@@ -169,7 +169,12 @@ def get_rating(request):
 
     group_list = None
     if params.group_list is not None:
-        group_list = [{'name' : group.name, 'id' : group.id} for group, ug in DBSession.query(Group, UserGroup).filter(UserGroup.user_id == cuser_id).filter(Group.id == UserGroup.group_id).order_by(asc(Group.name)).all()]
+        group_dict = { group.id : group.name for group, ug in DBSession.query(Group, UserGroup).filter(UserGroup.user_id == cuser_id).filter(Group.id == UserGroup.group_id).all()}
+        for group in DBSession.query(Group).filter(Group.owner_id == cuser_id).all():
+            group_dict[group.id] = group.name
+        group_list = [{'name':group_dict[group_id], 'id':group_id} for group_id in group_dict]
+        group_list.sort(key=lambda a: a['name'])
+
 
     #forming result data
     res = []
