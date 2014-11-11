@@ -106,7 +106,10 @@ def generate_current_user_data(current_selection, current_count_selection, filte
         user = current_selection.filter(User.id == current_user_id).first()
         start_place = current_count_selection.filter(User.problems_solved > user.problems_solved).scalar() + 1
         last_place = start_place + current_count_selection.filter(User.problems_solved == user.problems_solved).scalar() - 1
-        user_data = { 'id':current_user_id, 'name':user.firstname + " " + user.lastname, 'solved':user.problems_solved, 'place': None, 'school':user.school, 'city':user.city, 'solved_week':user.problems_week_solved}
+        user_data = { 
+                        'id':current_user_id, 'name':user.firstname + " " + user.lastname, 'solved':user.problems_solved, 
+                        'place': None, 'school':user.school, 'city':user.city, 'solved_week':user.problems_week_solved
+                    }
         if start_place != last_place:
             user_data['place'] = "{0}-{1}".format(start_place, last_place)
         else:
@@ -119,20 +122,7 @@ def generate_current_user_data(current_selection, current_count_selection, filte
     return user_data
 
 
-#problems_week_solved
-
-@view_config(route_name='rating.get', renderer='json')
-def get_rating(request):
-    #star sqltap
-    #profiler = sqltap.start()
-
-    #parse_params
-    params = RatingRequestParams(request)
-
-    #quering from database
-    cuser_id = int(RequestGetUserId(request))
-    user_count = DBSession.query(func.count(User.id)).filter(User.deleted == False).scalar()
-
+def get_queries_by_params(params):
     current_selection = DBSession.query(User).filter(User.deleted == False)
     current_count_selection = DBSession.query(func.count(User.id)).filter(User.deleted == False)
 
@@ -160,20 +150,38 @@ def get_rating(request):
     if params.name is not None:
         current_selection = current_selection.filter(User.lastname.like('%' + params.name + '%'))
         current_count_selection = current_count_selection.filter(User.lastname.like('%' + params.name + '%'))
+ 
+    return current_selection, current_count_selection
+
+def get_group_list(params, cuser_id):
+    group_dict = { group.id : group.name for group, ug in DBSession.query(Group, UserGroup).filter(UserGroup.user_id == cuser_id).filter(Group.id == UserGroup.group_id).all()}
+    for group in DBSession.query(Group).filter(Group.owner_id == cuser_id).all():
+       group_dict[group.id] = group.name
+    group_list = [{'name':group_dict[group_id], 'id':group_id} for group_id in group_dict]
+    group_list.sort(key=lambda a: a['name'])
+    return group_list
+
+@view_config(route_name='rating.get', renderer='json')
+def get_rating(request):
+    #star sqltap
+    #profiler = sqltap.start()
+
+    #parse_params
+    params = RatingRequestParams(request)
+
+    #quering from database
+    cuser_id = int(RequestGetUserId(request))
+    user_count = DBSession.query(func.count(User.id)).filter(User.deleted == False).scalar()
+
+    current_selection, current_count_selection = get_queries_by_params(params)
 
     filter_user_count = current_count_selection.scalar()
     current_selection = current_selection.order_by(desc(User.problems_solved))
-    page_selection = current_selection.slice(params.start, params.start + params.length) 
-
-    query = str(current_count_selection)
+    page_selection = current_selection.slice(params.start, params.start + params.length)
 
     group_list = None
     if params.group_list is not None:
-        group_dict = { group.id : group.name for group, ug in DBSession.query(Group, UserGroup).filter(UserGroup.user_id == cuser_id).filter(Group.id == UserGroup.group_id).all()}
-        for group in DBSession.query(Group).filter(Group.owner_id == cuser_id).all():
-            group_dict[group.id] = group.name
-        group_list = [{'name':group_dict[group_id], 'id':group_id} for group_id in group_dict]
-        group_list.sort(key=lambda a: a['name'])
+        group_list = get_group_list(params, cuser_id)
 
 
     #forming result data
@@ -193,7 +201,6 @@ def get_rating(request):
     #statistics = profiler.collect()
     #sqltap.report(statistics, "report.html")
     
-
     return {
             "data" : res,
             "recordsTotal" : user_count,
@@ -201,7 +208,6 @@ def get_rating(request):
             "dump" : str(request.params),
             "bad_params" : params.bad_params,
             "current_user_data" : cuser_data,
-            "group_list" : group_list,
-            "query" : query
+            "group_list" : group_list
             }
 
