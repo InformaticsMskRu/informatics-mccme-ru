@@ -1,18 +1,18 @@
-from pyramid.view import view_config
-from pynformatics.view.utils import *
-from pynformatics.model import User, Run, PynformaticsUser, User, Group, UserGroup
 import sys, traceback
-import transaction
 import jsonpickle, demjson
 import json
 import datetime
-from pynformatics.models import DBSession
+import transaction
 import html
 from sqlalchemy.orm import noload, lazyload
 from sqlalchemy import desc, asc
 from sqlalchemy.ext.serializer import dumps, loads
-#import sqltap
 from sqlalchemy import func
+from pyramid.view import view_config
+from pynformatics.models import DBSession
+from pynformatics.view.utils import *
+from pynformatics.model import User, Run, PynformaticsUser, User, Group, UserGroup
+
 
 class RatingRequestParams:
     def __init__(self, request):
@@ -20,41 +20,41 @@ class RatingRequestParams:
 
         #parse length
         try:
-            if  request.params['length'] != '':
+            if  request.params.get('length', '') != '':
                 self.length = int(request.params['length'])
             else:
                 self.length = 10
-        except Exception as e:
+        except ValueError as e:
             self.length = 10
             self.bad_params['length'] = request.params.get('length', None)
 
         #calculate current page
         try:
-            if 'page' in request.params and request.params['page'] != '':
+            if 'page' in request.params and request.params.get('page', '') != '':
                 self.start = (int(request.params['page']) - 1) * self.length
             else:
                 self.start = 0
-        except Exception as e:
+        except ValueError as e:
             self.start = 0
             self.bad_params['page'] = request.params.get('page', None)
 
         #parse filter by count of solved problem params
         try:
-            if '-' in request.params['solved_filter']:
-                self.solved_from_filter, self.solved_to_filter = map(int, request.params['solved_filter'].split('-'))
+            if '-' in request.params.get('solved_filter', ''):
+                self.solved_from_filter, self.solved_to_filter = map(int, request.params.get('solved_filter', '').split('-'))
             else:
-                self.solved_from_filter, self.solved_to_filter = int(request.params['solved_filter']), int(request.params['solved_filter'])
-        except Exception as e:
+                self.solved_from_filter, self.solved_to_filter = int(request.params.get('solved_filter', '')), int(request.params.get('solved_filter', ''))
+        except ValueError as e:
             self.solved_from_filter, self.solved_to_filter = None, None
             self.bad_params['solved_filter'] = request.params.get('solved_filter', None)
 
         #parse filter by count of solved by week problem params
         try:
-            if '-' in request.params['solved_week_filter']:
-                self.week_solved_from_filter, self.week_solved_to_filter = sorted(list(map(int, request.params['solved_week_filter'].split('-'))))
+            if '-' in request.params.get('solved_week_filter', ''):
+                self.week_solved_from_filter, self.week_solved_to_filter = sorted(list(map(int, request.params.get('solved_week_filter', '').split('-'))))
             else:
-                self.week_solved_from_filter, self.week_solved_to_filter = int(request.params['solved_week_filter']), int(request.params['solved_week_filter'])
-        except Exception as e:
+                self.week_solved_from_filter, self.week_solved_to_filter = int(request.params.get('solved_week_filter', '')), int(request.params.get('solved_week_filter', ''))
+        except ValueError as e:
             self.week_solved_from_filter, self.week_solved_to_filter = None, None
             self.bad_params['solved_week_filter'] = request.params.get('solved_week_filter', None)
 
@@ -73,7 +73,7 @@ class RatingRequestParams:
                 self.group_filter = None
             else:
                 self.group_filter = int(self.group_filter)
-        except Exception as e:
+        except ValueError as e:
             self.group_filter = None
             self.bad_params['group_filter'] = self.group_filter
 
@@ -163,9 +163,6 @@ def get_group_list(params, cuser_id):
 
 @view_config(route_name='rating.get', renderer='json')
 def get_rating(request):
-    #star sqltap
-    #profiler = sqltap.start()
-
     #parse_params
     params = RatingRequestParams(request)
 
@@ -197,9 +194,6 @@ def get_rating(request):
             res.append({'id':user.id, 'name':firstname + " " + lastname, 'solved':user.problems_solved, 'school':user.school, 'place': None, 'city':user.city, 'solved_week':user.problems_week_solved})
         generate_places(res, current_selection, current_count_selection, filter_user_count, params.start)
     cuser_data = generate_current_user_data(current_selection, current_count_selection, filter_user_count, cuser_id, res)
-    #sqltap statistic report
-    #statistics = profiler.collect()
-    #sqltap.report(statistics, "report.html")
     
     return {
             "data" : res,
