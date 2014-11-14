@@ -59,14 +59,22 @@ class RatingRequestParams:
             self.bad_params['solved_week_filter'] = request.params.get('solved_week_filter', None)
 
         #parse city, name, school filters
-        self.city = request.params.get('city_filter', '')
-        self.name = request.params.get('name_filter', '')
-        self.school = request.params.get('school_filter', '')
+        self.city = request.params.get('city_filter', None)
+        if self.city == '':
+            self.city = None
 
+        self.name = request.params.get('name_filter', None)
+        if self.name == '':
+            self.name = None
+        
+        self.school = request.params.get('school_filter', None)
+        if self.school == '':
+            self.school = None
+        
         #parse group_list param (if it's not None, then we send list of group)
         self.group_list = request.params.get('group_list', None)
 
-        #parse filter 
+        #parse group filter 
         self.group_filter = request.params.get('group_filter', None)
         try:
             if self.group_filter == '':
