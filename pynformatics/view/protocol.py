@@ -32,10 +32,10 @@ def get_protocol(request):
             else:
                 try:
                     return [run.tests["1"]]
-                except Exception as e:
+                except KeyError as e:
                     return {"result" : "error", "message" : e.__str__(), "stack" : traceback.format_exc()}
         except Exception as e:
-            return {"message" : run.compilation_protocol, "error" : e.__str__(), "stack" : traceback.format_exc()}
+            return {"result" : "error", "message" : run.compilation_protocol, "error" : e.__str__(), "stack" : traceback.format_exc()}
     except Exception as e: 
         return {"result" : "error", "message" : e.__str__(), "stack" : traceback.format_exc()}
 
@@ -51,12 +51,12 @@ def protocol_get_full(request):
             contest_id, to32(run_id // (32 ** 3) % 32), to32(run_id // (32 ** 2) % 32), to32(run_id // 32 % 32), run_id
         )
         try:
-            out_arch = None
-            
             prot = get_protocol(request)
-            run.tested_protocol
             if "result" in prot and prot["result"] == "error":
                 return prot
+            
+            out_arch = None
+            run.tested_protocol
             
             for test_num in prot:
                 judge_info = run.judge_tests_info[test_num]
