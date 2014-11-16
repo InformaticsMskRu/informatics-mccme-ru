@@ -56,8 +56,7 @@ def protocol_get_full(request):
                 return prot
             
             out_arch = None
-            run.tested_protocol
-            
+
             for test_num in prot:
                 judge_info = run.judge_tests_info[test_num]
                 if "input" in judge_info:
