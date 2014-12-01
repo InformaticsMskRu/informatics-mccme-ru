@@ -84,6 +84,10 @@ class RatingRequestParams:
         except ValueError as e:
             self.group_filter = None
             self.bad_params['group_filter'] = self.group_filter
+        except TypeError as e:
+            self.group_filter = None
+            self.bad_params['group_filter'] = self.group_filter
+
 
 
 def generate_places(users_data_list, current_selection, current_count_selection, filter_user_count, start):
