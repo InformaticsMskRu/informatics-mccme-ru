@@ -217,6 +217,12 @@ class Run(Base):
                     judge_info['stderr'] = stderr
                 except:
                     pass
+
+                if node.hasAttribute('term-signal'):
+                    judge_info['term-signal'] = int(node.getAttribute('term-signal'))
+                if node.hasAttribute('exit-code'):
+                    judge_info['exit-code'] = int(node.getAttribute('exit-code'))
+
                 self.judge_tests_info[number] = judge_info
                 self.tests[number] = test
             try:

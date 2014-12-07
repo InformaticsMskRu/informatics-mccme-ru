@@ -85,7 +85,14 @@ class EjudgeProblem(Problem):
         else:
             res = test_file_name
         return res
-       
+
+    def get_test_size(self, test_num):
+        conf = EjudgeContestCfg(number = self.ejudge_contest_id)
+        prob = conf.getProblem(self.problem_id)
+
+        test_file_name = (prob.tests_dir + prob.test_pat) % int(test_num)
+        return os.stat(test_file_name).st_size
+        
     def get_corr(self, test_num, size = 255):
         conf = EjudgeContestCfg(number = self.ejudge_contest_id)
         prob = conf.getProblem(self.problem_id)
@@ -96,8 +103,15 @@ class EjudgeProblem(Problem):
             res = f.read(size)
         else:
             res = corr_file_name
-        return res       
-       
+        return res
+
+    def get_corr_size(self, test_num):
+        conf = EjudgeContestCfg(number = self.ejudge_contest_id)
+        prob = conf.getProblem(self.problem_id)
+
+        corr_file_name = (prob.tests_dir + prob.corr_pat) % int(test_num)
+        return os.stat(corr_file_name).st_size
+        
     def generateSamples(self):
         res = ""
         if self.sample_tests != '':

@@ -14,7 +14,21 @@ from pynformatics.view.utils import *
 from pynformatics.models import DBSession
 from pynformatics.models import DBSession
 from pynformatics.model.run import to32
+from pynformatics.utils.check_role import *
 
+signal_description = {
+    1 : "Hangup detected on controlling terminal or death of controlling process",
+    2 : "Interrupt from keyboard",
+    3 : "Quit from keyboard",
+    4 : "Illegal Instruction",
+    6 : "Abort signal",
+    8 : "Floating point exception",
+    9 : "Kill signal",
+    11 : "Invalid memory reference",
+    13 : "Broken pipe: write to pipe with no readers",
+    14 : "Timer signal",
+    15 : "Termination signal"
+}
 
 @view_config(route_name='protocol.get', renderer='json')
 def get_protocol(request):
@@ -39,8 +53,8 @@ def get_protocol(request):
     except Exception as e: 
         return {"result" : "error", "message" : e.__str__(), "stack" : traceback.format_exc()}
 
-
 @view_config(route_name="protocol.get_full", renderer='json')
+@check_global_role(('ejudge_teacher', 'admin'))
 def protocol_get_full(request):
     try:
         contest_id = int(request.matchdict['contest_id'])
@@ -62,12 +76,22 @@ def protocol_get_full(request):
                 if "input" in judge_info:
                     prot[test_num]["input"] = judge_info["input"]
                 else:
-                    prot[test_num]["input"] = prob.get_test(int(test_num))
+                    if prob.get_test_size(int(test_num)) <= 255:
+                        prot[test_num]["input"] = prob.get_test(int(test_num))
+                        prot[test_num]["input_big"] = False
+                    else:
+                        prot[test_num]["input"] = prob.get_test(int(test_num)) + "...\n"
+                        prot[test_num]["input_big"] = True
 
                 if "correct" in judge_info:
                     prot[test_num]["corr"] = judge_info["correct"]
                 else:
-                    prot[test_num]["corr"] = prob.get_corr(int(test_num))
+                    if prob.get_corr_size(int(test_num)) <= 255:
+                        prot[test_num]["corr"] = prob.get_corr(int(test_num))
+                        prot[test_num]["corr_big"] = False
+                    else:
+                        prot[test_num]["corr"] = prob.get_corr(int(test_num)) + "...\n"
+                        prot[test_num]["corr_big"] = True
 
 
                 if "checker" in judge_info:
@@ -77,19 +101,26 @@ def protocol_get_full(request):
                 if "output" in judge_info:
                     prot[test_num]["output"] = judge_info["output"]
 
+                if "term-signal" in judge_info:
+                    prot[test_num]["extra"] = "Signal {0}. ".format(judge_info["term-signal"]) + signal_description[judge_info["term-signal"]]
+                if "exit-code" in judge_info:
+                    if "extra" not in prot[test_num]:
+                        prot[test_num]["extra"] = str()
+                    prot[test_num]["extra"] = prot[test_num]["extra"] + "\n Exit code {0}. ".format(judge_info["exit-code"])
+            
 
-                for type in [("o", "output"), ("c", "checker_output"), ("e", "error_output")]:
-                    file_name = "{0:06d}.{1}".format(int(test_num), type[0])
+                for type_ in [("o", "output"), ("c", "checker_output"), ("e", "error_output")]:
+                    file_name = "{0:06d}.{1}".format(int(test_num), type_[0])
                     if out_arch is None:
                         try:
                             out_arch = zipfile.ZipFile(out_path, "r")
                             names = set(out_arch.namelist())
                         except:
                             names = {}
-                    if file_name not in names or type[1] in prot[test_num]:
+                    if file_name not in names or type_[1] in prot[test_num]:
                         continue
                     with out_arch.open(file_name, 'r') as f:
-                        prot[test_num][type[1]] = f.read(1024).decode("utf-8")
+                        prot[test_num][type_[1]] = f.read(1024).decode("utf-8") + "...\n"
             if out_arch:
                 out_arch.close()
             return prot

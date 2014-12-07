@@ -24,7 +24,7 @@ def check_global_role(roles):
             userid = RequestGetUserId(request)
             req = DBSession.query(RoleAssignment).filter_by(userid=userid)
 
-
+    
             for role in roles_list:
                 roleid = DBSession.query(Role).filter_by(shortname=role).one().id
                 if req.filter_by(roleid=roleid).all():
@@ -42,3 +42,4 @@ def is_admin(request):
     req = DBSession.query(RoleAssignment).filter_by(userid=userid)
     role_admin_id = DBSession.query(Role).filter_by(shortname='admin').one().id
     return bool(req.filter_by(roleid=role_admin_id).all())
+
