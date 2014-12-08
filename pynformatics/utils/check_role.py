@@ -22,8 +22,10 @@ def check_global_role(roles):
             else:
                 roles_list = roles
             userid = RequestGetUserId(request)
-            req = DBSession.query(RoleAssignment).filter_by(userid=userid)
+            if userid == -1:
+                return "guest" in roles_list
 
+            req = DBSession.query(RoleAssignment).filter_by(userid=userid)
     
             for role in roles_list:
                 roleid = DBSession.query(Role).filter_by(shortname=role).one().id
