@@ -53,8 +53,27 @@ def get_protocol(request):
     except Exception as e: 
         return {"result" : "error", "message" : e.__str__(), "stack" : traceback.format_exc()}
 
-@view_config(route_name="protocol.get_full", renderer='json')
-@check_global_role(('ejudge_teacher', 'admin'))
+
+@view_config(route_name="protocol.get_test", renderer="string")
+@check_global_role(("teacher", "ejudge_teacher", "admin"))
+def protocol_get_test(request):
+    contest_id = int(request.matchdict['contest_id'])
+    run_id = int(request.matchdict['run_id'])
+    run = Run.get_by(run_id = run_id, contest_id = contest_id)
+    prob = run.problem    
+    return prob.get_test(int(request.matchdict['test_num']), prob.get_test_size(int(request.matchdict['test_num'])))
+
+@view_config(route_name="protocol.get_corr", renderer="string")
+@check_global_role(("teacher", "ejudge_teacher", "admin"))
+def protocol_get_corr(request):
+    contest_id = int(request.matchdict['contest_id'])
+    run_id = int(request.matchdict['run_id'])
+    run = Run.get_by(run_id = run_id, contest_id = contest_id)
+    prob = run.problem    
+    return prob.get_corr(int(request.matchdict['test_num']), prob.get_corr_size(int(request.matchdict['test_num'])))
+
+@view_config(route_name="protocol.get_full", renderer="json")
+@check_global_role(("teacher", "ejudge_teacher", "admin"))
 def protocol_get_full(request):
     try:
         contest_id = int(request.matchdict['contest_id'])
@@ -78,20 +97,20 @@ def protocol_get_full(request):
                 else:
                     if prob.get_test_size(int(test_num)) <= 255:
                         prot[test_num]["input"] = prob.get_test(int(test_num))
-                        prot[test_num]["input_big"] = False
+                        prot[test_num]["big_input"] = False
                     else:
                         prot[test_num]["input"] = prob.get_test(int(test_num)) + "...\n"
-                        prot[test_num]["input_big"] = True
+                        prot[test_num]["big_input"] = True
 
                 if "correct" in judge_info:
                     prot[test_num]["corr"] = judge_info["correct"]
                 else:
                     if prob.get_corr_size(int(test_num)) <= 255:
                         prot[test_num]["corr"] = prob.get_corr(int(test_num))
-                        prot[test_num]["corr_big"] = False
+                        prot[test_num]["big_corr"] = False
                     else:
                         prot[test_num]["corr"] = prob.get_corr(int(test_num)) + "...\n"
-                        prot[test_num]["corr_big"] = True
+                        prot[test_num]["big_corr"] = True
 
 
                 if "checker" in judge_info:
