@@ -92,25 +92,20 @@ def protocol_get_full(request):
 
             for test_num in prot:
                 judge_info = run.judge_tests_info[test_num]
-                if "input" in judge_info:
-                    prot[test_num]["input"] = judge_info["input"]
-                else:
-                    if prob.get_test_size(int(test_num)) <= 255:
-                        prot[test_num]["input"] = prob.get_test(int(test_num))
-                        prot[test_num]["big_input"] = False
-                    else:
-                        prot[test_num]["input"] = prob.get_test(int(test_num)) + "...\n"
-                        prot[test_num]["big_input"] = True
 
-                if "correct" in judge_info:
-                    prot[test_num]["corr"] = judge_info["correct"]
+                if prob.get_test_size(int(test_num)) <= 255:
+                    prot[test_num]["input"] = prob.get_test(int(test_num))
+                    prot[test_num]["big_input"] = False
                 else:
-                    if prob.get_corr_size(int(test_num)) <= 255:
-                        prot[test_num]["corr"] = prob.get_corr(int(test_num))
-                        prot[test_num]["big_corr"] = False
-                    else:
-                        prot[test_num]["corr"] = prob.get_corr(int(test_num)) + "...\n"
-                        prot[test_num]["big_corr"] = True
+                    prot[test_num]["input"] = prob.get_test(int(test_num)) + "...\n"
+                    prot[test_num]["big_input"] = True
+
+                if prob.get_corr_size(int(test_num)) <= 255:
+                    prot[test_num]["corr"] = prob.get_corr(int(test_num))
+                    prot[test_num]["big_corr"] = False
+                else:
+                    prot[test_num]["corr"] = prob.get_corr(int(test_num)) + "...\n"
+                    prot[test_num]["big_corr"] = True
 
 
                 if "checker" in judge_info:
