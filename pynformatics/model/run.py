@@ -13,6 +13,7 @@ import gzip
 
 contest_path = '/home/judges/'
 protocols_path = 'var/archive/xmlreports'
+audit_path = 'var/archive/audit'
 
 def get_protocol_from_file(filename): 
     if os.path.isfile(filename):
@@ -58,6 +59,10 @@ def to32(num):
 
 def submit_protocol_path(contest, submit_id):
     return os.path.join(contest_path, '0' * (6 - len(str(contest))) + str(contest), protocols_path, to32(submit_id // 32 // 32 // 32 % 32), 
+    to32(submit_id // 32 // 32 % 32), to32(submit_id // 32 % 32), '0' * (6 - len(str(submit_id))) + str(submit_id))
+
+def submit_audit_path(contest, submit_id):
+    return os.path.join(contest_path, '0' * (6 - len(str(contest))) + str(contest), audit_path, to32(submit_id // 32 // 32 // 32 % 32), 
     to32(submit_id // 32 // 32 % 32), to32(submit_id // 32 % 32), '0' * (6 - len(str(submit_id))) + str(submit_id))
 
 class DoubleException(Exception):
@@ -170,6 +175,12 @@ class Run(Base):
         self.xml = xml.dom.minidom.parseString(str(self.protocol))
         self.parsetests()
 
+    @lazy
+    def get_audit(self):
+        return open(submit_audit_path(self.contest_id, self.run_id), "r").read();
+
+    
+
     def parsetests(self):
         self.test_count = 0
         self.tests = {}
@@ -232,7 +243,7 @@ class Run(Base):
                 pass        
     
     tested_protocol = property(_get_tested_protocol_data)
-          
+    
     def get_by(run_id, contest_id):
         try:
             return DBSession.query(Run).filter(Run.run_id == int(run_id)).filter(Run.contest_id == int(contest_id)).first()            

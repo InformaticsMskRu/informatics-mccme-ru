@@ -137,7 +137,7 @@ def protocol_get_full(request):
                         prot[test_num][type_[1]] = f.read(1024).decode("utf-8") + "...\n"
             if out_arch:
                 out_arch.close()
-            return prot
+            return {"tests": prot, "audit": run.get_audit()}
         except Exception as e:
             return {"result": "error", "content": e.__str__(), "out_path": out_path}
     except Exception as e:
