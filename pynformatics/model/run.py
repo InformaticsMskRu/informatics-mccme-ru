@@ -191,6 +191,8 @@ class Run(Base):
             rep = self.xml.getElementsByTagName('testing-report')[0]
             self.tests_count = int(rep.getAttribute('run-tests'))
             self.status_string = rep.getAttribute('status')
+            self.host = self.xml.getElementsByTagName('host')[0].firstChild.nodeValue
+
             for node in self.xml.getElementsByTagName('test'):
                 number = node.getAttribute('num')
                 status = node.getAttribute('status')

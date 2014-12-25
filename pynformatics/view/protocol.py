@@ -42,7 +42,8 @@ def get_protocol(request):
                 res = OrderedDict()
                 for num in range(1, len(run.tests.keys()) + 1):
                     res[str(num)] = run.tests[str(num)]
-                return res
+                print(run.host)
+                return {"tests": res, "host": run.host}
             else:
                 try:
                     return [run.tests["1"]]
@@ -135,6 +136,7 @@ def protocol_get_full(request):
                         continue
                     with out_arch.open(file_name, 'r') as f:
                         prot[test_num][type_[1]] = f.read(1024).decode("utf-8") + "...\n"
+
             if out_arch:
                 out_arch.close()
             return {"tests": prot, "audit": run.get_audit()}
