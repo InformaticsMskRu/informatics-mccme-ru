@@ -42,7 +42,6 @@ def get_protocol(request):
                 res = OrderedDict()
                 for num in range(1, len(run.tests.keys()) + 1):
                     res[str(num)] = run.tests[str(num)]
-                print(run.host)
                 return {"tests": res, "host": run.host}
             else:
                 try:
@@ -85,7 +84,7 @@ def protocol_get_full(request):
             contest_id, to32(run_id // (32 ** 3) % 32), to32(run_id // (32 ** 2) % 32), to32(run_id // 32 % 32), run_id
         )
         try:
-            prot = get_protocol(request)
+            prot = get_protocol(request)["tests"]
             if "result" in prot and prot["result"] == "error":
                 return prot
             
