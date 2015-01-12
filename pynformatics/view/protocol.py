@@ -84,7 +84,7 @@ def protocol_get_full(request):
             contest_id, to32(run_id // (32 ** 3) % 32), to32(run_id // (32 ** 2) % 32), to32(run_id // 32 % 32), run_id
         )
         try:
-            prot = get_protocol(request)["tests"]
+            prot = get_protocol(request)
             if "result" in prot and prot["result"] == "error":
                 return prot
             
