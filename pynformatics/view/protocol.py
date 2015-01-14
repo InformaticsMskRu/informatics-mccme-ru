@@ -15,6 +15,7 @@ from pynformatics.models import DBSession
 from pynformatics.models import DBSession
 from pynformatics.model.run import to32
 from pynformatics.utils.check_role import *
+from io import BytesIO
 
 signal_description = {
     1 : "Hangup detected on controlling terminal or death of controlling process",
@@ -53,25 +54,6 @@ def get_protocol(request):
     except Exception as e: 
         return {"result" : "error", "message" : e.__str__(), "stack" : traceback.format_exc()}
 
-
-@view_config(route_name="protocol.get_test", renderer="string")
-@check_global_role(("teacher", "ejudge_teacher", "admin"))
-def protocol_get_test(request):
-    contest_id = int(request.matchdict['contest_id'])
-    run_id = int(request.matchdict['run_id'])
-    run = Run.get_by(run_id = run_id, contest_id = contest_id)
-    prob = run.problem    
-    return prob.get_test(int(request.matchdict['test_num']), prob.get_test_size(int(request.matchdict['test_num'])))
-
-@view_config(route_name="protocol.get_corr", renderer="string")
-@check_global_role(("teacher", "ejudge_teacher", "admin"))
-def protocol_get_corr(request):
-    contest_id = int(request.matchdict['contest_id'])
-    run_id = int(request.matchdict['run_id'])
-    run = Run.get_by(run_id = run_id, contest_id = contest_id)
-    prob = run.problem    
-    return prob.get_corr(int(request.matchdict['test_num']), prob.get_corr_size(int(request.matchdict['test_num'])))
-
 @view_config(route_name="protocol.get_full", renderer="json")
 @check_global_role(("teacher", "ejudge_teacher", "admin"))
 def protocol_get_full(request):
@@ -87,6 +69,8 @@ def protocol_get_full(request):
             prot = get_protocol(request)
             if "result" in prot and prot["result"] == "error":
                 return prot
+
+            prot = prot["tests"]
             
             out_arch = None
 
@@ -143,3 +127,39 @@ def protocol_get_full(request):
             return {"result": "error", "content": e.__str__(), "out_path": out_path}
     except Exception as e:
         return {"result": "error", "content": e.__str__()}
+
+@view_config(route_name="protocol.get_test", renderer="string")
+@check_global_role(("teacher", "ejudge_teacher", "admin"))
+def protocol_get_test(request):
+    contest_id = int(request.matchdict['contest_id'])
+    run_id = int(request.matchdict['run_id'])
+    run = Run.get_by(run_id = run_id, contest_id = contest_id)
+    prob = run.problem    
+    return prob.get_test(int(request.matchdict['test_num']), prob.get_test_size(int(request.matchdict['test_num'])))
+
+@view_config(route_name="protocol.get_corr", renderer="string")
+@check_global_role(("teacher", "ejudge_teacher", "admin"))
+def protocol_get_corr(request):
+    contest_id = int(request.matchdict['contest_id'])
+    run_id = int(request.matchdict['run_id'])
+    run = Run.get_by(run_id = run_id, contest_id = contest_id)
+    prob = run.problem    
+    return prob.get_corr(int(request.matchdict['test_num']), prob.get_corr_size(int(request.matchdict['test_num'])))
+
+@view_config(route_name="protocol.get_submit_archive", renderer="string")
+@check_global_role(("teacher", "ejudge_teacher", "admin"))
+def get_submit_archive(request):
+    contest_id = int(request.matchdict['contest_id'])
+    run_id = int(request.matchdict['run_id'])
+    run = Run.get_by(run_id = run_id, contest_id = contest_id)
+    prob = run.problem
+    archive = BytesIO()
+    zf = zipfile.ZipFile(archive, "w")
+    for i in range(1, run.test_num + 1):
+        zf.writestr("{0:02}".format(i), prob.get_test(i, prob.get_test_size(i)))
+        zf.writestr("{0:02}.in".format(i), prob.get_corr(i, prob.get_corr_size(i)))
+    zf.close()
+    archive.seek(0)
+    return str(archive.read())
+
+

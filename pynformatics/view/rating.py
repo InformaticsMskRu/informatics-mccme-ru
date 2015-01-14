@@ -4,10 +4,13 @@ import json
 import datetime
 import transaction
 import html
+import operator
+
 from sqlalchemy.orm import noload, lazyload
 from sqlalchemy import desc, asc
 from sqlalchemy.ext.serializer import dumps, loads
 from sqlalchemy import func
+
 from pyramid.view import view_config
 from pynformatics.models import DBSession
 from pynformatics.view.utils import *
@@ -88,36 +91,41 @@ class RatingRequestParams:
             self.group_filter = None
             self.bad_params['group_filter'] = self.group_filter
 
+        #parce sorting params
+        self.sort_by = request.params.get('sort-by', "Решено задач").strip()
+        self.sort_by = {"Решено задач": "solved", "Решено за 7 дней":"solved_week"}[self.sort_by]
+        self.sort_type = request.params.get('sort-type', "desc").strip()
 
 
-def generate_places(users_data_list, current_selection, current_count_selection, filter_user_count, start):
-    first, last, start_place = start, start, current_count_selection.filter(User.problems_solved > users_data_list[0]['solved']).scalar() + 1
+def generate_places(users_data_list, current_selection, current_count_selection, filter_user_count, start, params):
+    first, last, start_place = start, start, current_count_selection.filter(get_cmp_operation(params)(get_sort_by_column(params), users_data_list[0][params.sort_by])).scalar() + 1
     while last - start < len(users_data_list):
         first = last
         last += 1
-        while last - start < len(users_data_list) and users_data_list[last - start]['solved'] == users_data_list[first - start]['solved']:
+        while last - start < len(users_data_list) and users_data_list[last - start][params.sort_by] == users_data_list[first - start][params.sort_by]:
             last += 1
         if last - start < len(users_data_list):
             for i in range(first - start, last - start):
                 if last != start_place:
-                    users_data_list[i]['place'] = "{0}-{1}".format(start_place, last)
+                    users_data_list[i]["place"] = "{0}-{1}".format(start_place, last)
                 else:
-                    users_data_list[i]['place'] = str(start_place)
+                    users_data_list[i]["place"] = str(start_place)
             start_place = last + 1
-    last_place = start_place + current_count_selection.filter(User.problems_solved == users_data_list[-1]['solved']).scalar() - 1
+    last_place = start_place + current_count_selection.filter(get_sort_by_column(params) == users_data_list[-1][params.sort_by]).scalar() - 1
     for i in range(first - start, last - start):
         if start_place != last_place:
-            users_data_list[i]['place'] = "{0}-{1}".format(start_place, last_place)
+            users_data_list[i]["place"] = "{0}-{1}".format(start_place, last_place)
         else:
-            users_data_list[i]['place'] = str(start_place)
+            users_data_list[i]["place"] = str(start_place)
     return users_data_list
 
-def generate_current_user_data(current_selection, current_count_selection, filter_user_count, current_user_id, res):
+def generate_current_user_data(current_selection, current_count_selection, filter_user_count, current_user_id, res, params):
     user_data = None
     if current_user_id != -1 and current_count_selection.filter(User.id == current_user_id).scalar():
         user = current_selection.filter(User.id == current_user_id).first()
-        start_place = current_count_selection.filter(User.problems_solved > user.problems_solved).scalar() + 1
-        last_place = start_place + current_count_selection.filter(User.problems_solved == user.problems_solved).scalar() - 1
+        user_column = {"solved": user.problems_solved, "solved_week": user.problems_week_solved}[params.sort_by]
+        start_place = current_count_selection.filter(get_cmp_operation(params)(get_sort_by_column(params), user_column)).scalar() + 1
+        last_place = start_place + current_count_selection.filter(get_sort_by_column(params) == user_column).scalar() - 1
         user_data = { 
                         'id':current_user_id, 'name':user.firstname + " " + user.lastname, 'solved':user.problems_solved, 
                         'place': None, 'school':user.school, 'city':user.city, 'solved_week':user.problems_week_solved
@@ -126,11 +134,13 @@ def generate_current_user_data(current_selection, current_count_selection, filte
             user_data['place'] = "{0}-{1}".format(start_place, last_place)
         else:
             user_data['place'] = str(start_place)
+
+        cmp_operation = get_cmp_operation(params)
         if user_data not in res:
-            if user_data['solved'] >= res[0]['solved']:
+            if cmp_operation(user_data[params.sort_by], res[0][params.sort_by]):
                 user_data['position'] = "first"
-            if user_data['solved']  < res[-1]['solved']:
-                user_data['position'] = "last"
+            else:
+                user_data['position'] = "last"    
     return user_data
 
 
@@ -158,7 +168,6 @@ def get_queries_by_params(params):
         current_selection = current_selection.filter(User.problems_week_solved.between(params.week_solved_from_filter, params.week_solved_to_filter))
         current_count_selection = current_count_selection.filter(User.problems_week_solved.between(params.week_solved_from_filter, params.week_solved_to_filter))
 
-
     if params.name is not None:
         current_selection = current_selection.filter(User.lastname.like('%' + params.name + '%'))
         current_count_selection = current_count_selection.filter(User.lastname.like('%' + params.name + '%'))
@@ -173,6 +182,17 @@ def get_group_list(params, cuser_id):
     group_list.sort(key=lambda a: a['name'])
     return group_list
 
+def get_cmp_operation(params):
+    return {"asc": operator.lt, "desc": operator.gt}[params.sort_type]
+
+def get_sort_by_column(params):
+    column = {'solved': User.problems_solved, 'solved_week': User.problems_week_solved}[params.sort_by]
+    return column
+
+def get_sort_type(params):
+    sort_type = {'asc': asc, 'desc': desc}[params.sort_type]
+    return sort_type(get_sort_by_column(params))
+
 @view_config(route_name='rating.get', renderer='json')
 def get_rating(request):
     #parse_params
@@ -185,7 +205,7 @@ def get_rating(request):
     current_selection, current_count_selection = get_queries_by_params(params)
 
     filter_user_count = current_count_selection.scalar()
-    current_selection = current_selection.order_by(desc(User.problems_solved))
+    current_selection = current_selection.order_by(get_sort_type(params))
     page_selection = current_selection.slice(params.start, params.start + params.length)
 
     group_list = None
@@ -204,8 +224,8 @@ def get_rating(request):
             if user.lastname != None:
                 lastname = user.lastname
             res.append({'id':user.id, 'name':firstname + " " + lastname, 'solved':user.problems_solved, 'school':user.school, 'place': None, 'city':user.city, 'solved_week':user.problems_week_solved})
-        generate_places(res, current_selection, current_count_selection, filter_user_count, params.start)
-    cuser_data = generate_current_user_data(current_selection, current_count_selection, filter_user_count, cuser_id, res)
+        generate_places(res, current_selection, current_count_selection, filter_user_count, params.start, params)
+    cuser_data = generate_current_user_data(current_selection, current_count_selection, filter_user_count, cuser_id, res, params)
     
     return {
             "data" : res,

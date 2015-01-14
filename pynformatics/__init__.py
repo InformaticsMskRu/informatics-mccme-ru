@@ -47,6 +47,7 @@ def main(global_config, **settings):
     config.add_route('protocol.get_full', '/protocol/get-full/{contest_id}/{run_id}')
     config.add_route('protocol.get_test', '/protocol/get_test/{contest_id}/{run_id}/{test_num}')
     config.add_route('protocol.get_corr', '/protocol/get_corr/{contest_id}/{run_id}/{test_num}')
+    config.add_route('protocol.get_submit_archive', '/protocol/get_submit_archive/{contest_id}/{run_id}')
     
     config.add_route('run.rejudge', '/run/rejudge/{contest_id}/{run_id}/{status_id}')
     
