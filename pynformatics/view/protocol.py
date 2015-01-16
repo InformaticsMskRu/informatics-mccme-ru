@@ -3,9 +3,13 @@ import time
 import json
 import transaction
 import zipfile
+from io import BytesIO
 from xml.etree.ElementTree import ElementTree
 from collections import OrderedDict
+
 from pyramid.view import view_config
+from pyramid.response import Response
+
 from pynformatics.model import User, EjudgeContest, Run, Comment, EjudgeProblem, Problem, Statement
 from pynformatics.contest.ejudge.serve_internal import EjudgeContestCfg
 from pynformatics.view.utils import *
@@ -15,7 +19,7 @@ from pynformatics.models import DBSession
 from pynformatics.models import DBSession
 from pynformatics.model.run import to32
 from pynformatics.utils.check_role import *
-from io import BytesIO
+
 
 signal_description = {
     1 : "Hangup detected on controlling terminal or death of controlling process",
@@ -151,15 +155,34 @@ def protocol_get_corr(request):
 def get_submit_archive(request):
     contest_id = int(request.matchdict['contest_id'])
     run_id = int(request.matchdict['run_id'])
+    sources = "sources" in request.params
+    all_tests = "all_tests" in request.params
+    tests = request.params.get("tests", "")
+    tests_set = set()
+    for i in tests.split(" "):
+        try:
+            tests_set.add(int(i))
+        except ValueError:
+            pass
+
     run = Run.get_by(run_id = run_id, contest_id = contest_id)
+    run.parsetests
     prob = run.problem
     archive = BytesIO()
-    zf = zipfile.ZipFile(archive, "w")
-    for i in range(1, run.test_num + 1):
-        zf.writestr("{0:02}".format(i), prob.get_test(i, prob.get_test_size(i)))
-        zf.writestr("{0:02}.in".format(i), prob.get_corr(i, prob.get_corr_size(i)))
+    zf = zipfile.ZipFile(archive, "w", zipfile.ZIP_DEFLATED)
+
+    run.tested_protocol
+    for i in range(1, run.tests_count + 1):
+        if all_tests or i in tests_set:
+            zf.writestr("{0:02}".format(i), prob.get_test(i, prob.get_test_size(i)))
+            zf.writestr("{0:02}.a".format(i), prob.get_corr(i, prob.get_corr_size(i)))
+
+    if sources:
+        zf.writestr("sources", run.get_sources())
+
     zf.close()
     archive.seek(0)
-    return str(archive.read())
+    response = Response(content_type="application/zip", content_disposition='attachment; filename="archive_{0}_{1}"'.format(contest_id, run_id), body=archive.read())
+    return response
 
 

@@ -22,9 +22,10 @@ def check_global_role(roles):
             else:
                 roles_list = roles
             userid = RequestGetUserId(request)
-            if userid == -1:
-                return "guest" in roles_list
 
+            if userid == -1 and "guest" not in roles_list:
+                return {'result': 'autherror', 'message': 'You do not have permissions for this operation'}
+            
             req = DBSession.query(RoleAssignment).filter_by(userid=userid)
     
             for role in roles_list:

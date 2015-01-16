@@ -14,6 +14,7 @@ import gzip
 contest_path = '/home/judges/'
 protocols_path = 'var/archive/xmlreports'
 audit_path = 'var/archive/audit'
+sources_path = 'var/archive/runs'
 
 def get_protocol_from_file(filename): 
     if os.path.isfile(filename):
@@ -63,6 +64,10 @@ def submit_protocol_path(contest, submit_id):
 
 def submit_audit_path(contest, submit_id):
     return os.path.join(contest_path, '0' * (6 - len(str(contest))) + str(contest), audit_path, to32(submit_id // 32 // 32 // 32 % 32), 
+    to32(submit_id // 32 // 32 % 32), to32(submit_id // 32 % 32), '0' * (6 - len(str(submit_id))) + str(submit_id))
+
+def submit_source_path(contest, submit_id):
+    return os.path.join(contest_path, '0' * (6 - len(str(contest))) + str(contest), sources_path, to32(submit_id // 32 // 32 // 32 % 32), 
     to32(submit_id // 32 // 32 % 32), to32(submit_id // 32 % 32), '0' * (6 - len(str(submit_id))) + str(submit_id))
 
 class DoubleException(Exception):
@@ -177,9 +182,11 @@ class Run(Base):
 
     @lazy
     def get_audit(self):
-        return open(submit_audit_path(self.contest_id, self.run_id), "r").read();
+        return open(submit_audit_path(self.contest_id, self.run_id), "r").read()
 
-    
+    @lazy
+    def get_sources(self):
+        return open(submit_source_path(self.contest_id, self.run_id), "r").read()
 
     def parsetests(self):
         self.test_count = 0
