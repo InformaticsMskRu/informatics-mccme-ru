@@ -7,6 +7,8 @@ contest_path = '/home/judges/'
 protocols_path = 'var/archive/xmlreports'
 audit_path = 'var/archive/audit'
 sources_path = 'var/archive/runs'
+output_path = 'var/archive/output'
+
 
 def get_protocol_from_file(filename): 
     if os.path.isfile(filename):

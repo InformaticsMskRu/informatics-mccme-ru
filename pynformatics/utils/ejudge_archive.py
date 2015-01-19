@@ -7,7 +7,7 @@ def strip_cstring(cstring):
     return cstring.split("\x00")[0]
 
 class VersionError(object):
-    """VersionError is exception class for error, when version of Ejujudge Archive
+    """VersionError is exception class for error, when version of Ejudge Archive
     is different from current version of EjudgeArchiveReader"""
     def __init__(self, arg):
         super (VersionError, self).__init__()
