@@ -94,29 +94,33 @@ def protocol_get_full(request):
                     prot[test_num]["corr"] = prob.get_corr(int(test_num)) + "...\n"
                     prot[test_num]["big_corr"] = True
 
-                if True:
+                try:
+                    if run.get_output_file_size(int(test_num), tp='o') <= 255:
+                        prot[test_num]["output"] = run.get_output_file(int(test_num), tp='o')
+                        prot[test_num]["big_output"] = False
+                    else:
+                        prot[test_num]["output"] = run.get_output_file(int(test_num), tp='o', size=255) + "...\n"
+                        prot[test_num]["big_output"] = True
+                except OSError as e:
                     prot[test_num]["output"] = judge_info.get("output", "")
                     prot[test_num]["big_output"] = False
-                elif run.get_output_file_size(int(test_num), tp='o') <= 255:
-                    prot[test_num]["output"] = run.get_output_file(int(test_num), tp='o')
-                    prot[test_num]["big_output"] = False
-                else:
-                    prot[test_num]["output"] = run.get_output_file(int(test_num), tp='o', size=255) + "...\n"
-                    prot[test_num]["big_output"] = True
-
-                if True:
-                    prot[test_num]["checker_output"] = judge_info.get("checker", "")
-                elif run.get_output_file_size(int(test_num), tp='c') <= 255:
-                    prot[test_num]["checker_output"] = run.get_output_file(int(test_num), tp='c')
-                else:
-                    prot[test_num]["checker_output"] = run.get_output_file(int(test_num), tp='c', size=255) + "...\n"
                 
-                if True:
-                    prot[test_num]["error_output"] = judge_info.get("stderr", "")
-                elif run.get_output_file_size(int(test_num), tp='e') <= 255:
-                    prot[test_num]["error_output"] = run.get_output_file(int(test_num), tp='e')
-                else:
-                    prot[test_num]["error_output"] = run.get_output_file(int(test_num), tp='e', size=255) + "...\n"
+                    
+                try:
+                    if run.get_output_file_size(int(test_num), tp='c') <= 255:
+                        prot[test_num]["checker_output"] = run.get_output_file(int(test_num), tp='c')
+                    else:
+                        prot[test_num]["checker_output"] = run.get_output_file(int(test_num), tp='c', size=255) + "...\n"
+                except OSError as e:
+                    prot[test_num]["checker_output"] = judge_info.get("checker", "")
+                
+                try:
+                    if run.get_output_file_size(int(test_num), tp='e') <= 255:
+                        prot[test_num]["error_output"] = run.get_output_file(int(test_num), tp='e')
+                    else:
+                        prot[test_num]["error_output"] = run.get_output_file(int(test_num), tp='e', size=255) + "...\n"
+                except OSError as e:
+                    prot[test_num]["stderr"] = judge_info.get("stderr", "")
 
                 if "term-signal" in judge_info:
                     prot[test_num]["extra"] = "Signal {0}. ".format(judge_info["term-signal"]) + signal_description[judge_info["term-signal"]]
