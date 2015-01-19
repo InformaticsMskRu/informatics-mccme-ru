@@ -6,6 +6,7 @@ from sqlalchemy.orm import *
 from pynformatics.model.meta import Base
 from pynformatics.models import DBSession
 from pynformatics.utils.run import *
+from pynformatics.utils.ejudge_archive import EjudgeArchiveReader
 
 import os
 import xml.dom.minidom
@@ -47,64 +48,36 @@ class Run(Base):
         self.score = score
         self.test_num = test_num
 
-    @lazy      
-    def _get_compilation_protocol(self): 
-        filename = submit_path(protocols_path, self.contest_id, self.run_id)
-        if filename:
-            if os.path.isfile(filename):
-                myopen = lambda x,y : open(x, y, encoding='utf-8')
-            else:
-                filename += '.gz'
-                myopen = gzip.open
-            try:
-                xml_file = myopen(filename, 'r')
-                try:
-                    res = xml_file.read()
-                    try:
-                        res = res.decode('cp1251').encode('utf8')
-                    except:
-                        pass
-
-                    try:
-                        return str(res, encoding='UTF-8')
-                    except TypeError:
-                        try:
-                            res = res.decode('cp1251').encode('utf8')
-                        except Exception:
-                            pass
-                        return res
-                except Exception as e:
-                    return e
-            except IOError as e:
-                return e
-        else:
-            return ''
-    
-    @lazy      
-    def _get_protocol(self): 
-        filename = submit_path(protocols_path, self.contest_id, self.run_id)
-        if filename != '':
-            return get_protocol_from_file(filename)
-        else:
-            return '<a></a>'
-            
-    protocol = property(_get_protocol)
-    compilation_protocol = property(_get_compilation_protocol)
-    
-    @lazy 
-    def _get_tested_protocol_data(self):
-        self.xml = xml.dom.minidom.parseString(str(self.protocol))
-        self.parsetests()
-
     @lazy
     def get_audit(self):
-        return safe_open(submit_path(audit_path, self.contest_id, self.run_id), "r").read()
-
+        data = safe_open(submit_path(audit_path, self.contest_id, self.run_id), "r").read()
+        if type(data) == bytes:
+            data = data.decode("ascii")
+        return data
     @lazy
     def get_sources(self):
-        return safe_open(submit_path(source_path, self.contest_id, self.run_id), "r").read()
+        data = safe_open(submit_path(source_path, self.contest_id, self.run_id), "r").read()
+        if type(data) == bytes:
+            data = data.decode("ascii")
+        return data
 
-    def parsetests(self):
+    def get_output_file(self, test_num, tp="o", size=None): #tp: o - output, e - stderr, c - checker
+        data = self.get_output_archive().getfile("{0:06}.{1}".format(test_num, tp)).decode('ascii')
+        if size is not None: 
+            data = data[:size]
+        return data
+
+    def get_output_file_size(self, test_num, tp="o"): #tp: o - output, e - stderr, c - checker
+        data = self.get_output_archive().getfile("{0:06}.{1}".format(test_num, tp)).decode('ascii')
+        return len(data)
+
+
+    def get_output_archive(self):
+        if "output_archive" not in self.__dict__:
+            self.output_archive = EjudgeArchiveReader(submit_path(output_path, self.contest_id, self.run_id))
+        return self.output_archive
+
+    def parsetests(self): #parse data from xml archive
         self.test_count = 0
         self.tests = {}
         self.judge_tests_info = {}
@@ -173,6 +146,58 @@ class Run(Base):
             return DBSession.query(Run).filter(Run.run_id == int(run_id)).filter(Run.contest_id == int(contest_id)).first()            
         except:
             return None
+
+    @lazy      
+    def _get_compilation_protocol(self): 
+        filename = submit_path(protocols_path, self.contest_id, self.run_id)
+        if filename:
+            if os.path.isfile(filename):
+                myopen = lambda x,y : open(x, y, encoding='utf-8')
+            else:
+                filename += '.gz'
+                myopen = gzip.open
+            try:
+                xml_file = myopen(filename, 'r')
+                try:
+                    res = xml_file.read()
+                    try:
+                        res = res.decode('cp1251').encode('utf8')
+                    except:
+                        pass
+
+                    try:
+                        return str(res, encoding='UTF-8')
+                    except TypeError:
+                        try:
+                            res = res.decode('cp1251').encode('utf8')
+                        except Exception:
+                            pass
+                        return res
+                except Exception as e:
+                    return e
+            except IOError as e:
+                return e
+        else:
+            return ''
+    
+    @lazy      
+    def _get_protocol(self): 
+        filename = submit_path(protocols_path, self.contest_id, self.run_id)
+        if filename != '':
+            return get_protocol_from_file(filename)
+        else:
+            return '<a></a>'
+            
+    protocol = property(_get_protocol)
+    compilation_protocol = property(_get_compilation_protocol)
+    
+    @lazy 
+    def _get_tested_protocol_data(self):
+        self.xml = xml.dom.minidom.parseString(str(self.protocol))
+        self.parsetests()
+
+    def _set_output_archive(self, val):
+        self.output_archive = val
 
     tested_protocol = property(_get_tested_protocol_data)
     get_by = staticmethod(get_by)

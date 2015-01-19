@@ -75,7 +75,6 @@ def protocol_get_full(request):
                 return prot
 
             prot = prot["tests"]
-            
             out_arch = None
 
             for test_num in prot:
@@ -95,13 +94,22 @@ def protocol_get_full(request):
                     prot[test_num]["corr"] = prob.get_corr(int(test_num)) + "...\n"
                     prot[test_num]["big_corr"] = True
 
+                if run.get_output_file_size(int(test_num), tp='o') <= 255:
+                    prot[test_num]["output"] = run.get_output_file(int(test_num), tp='o')
+                    prot[test_num]["big_output"] = False
+                else:
+                    prot[test_num]["output"] = run.get_output_file(int(test_num), tp='o', size=255) + "...\n"
+                    prot[test_num]["big_output"] = True
 
-                if "checker" in judge_info:
-                    prot[test_num]["checker_output"] = judge_info["checker"]
-                if "stderr" in judge_info:
-                    prot[test_num]["error_output"] = judge_info["stderr"]
-                if "output" in judge_info:
-                    prot[test_num]["output"] = judge_info["output"]
+                if run.get_output_file_size(int(test_num), tp='c') <= 255:
+                    prot[test_num]["checker_output"] = run.get_output_file(int(test_num), tp='c')
+                else:
+                    prot[test_num]["checker_output"] = run.get_output_file(int(test_num), tp='c', size=255) + "...\n"
+                
+                if run.get_output_file_size(int(test_num), tp='e') <= 255:
+                    prot[test_num]["error_output"] = run.get_output_file(int(test_num), tp='e')
+                else:
+                    prot[test_num]["error_output"] = run.get_output_file(int(test_num), tp='e', size=255) + "...\n"
 
                 if "term-signal" in judge_info:
                     prot[test_num]["extra"] = "Signal {0}. ".format(judge_info["term-signal"]) + signal_description[judge_info["term-signal"]]
@@ -149,6 +157,14 @@ def protocol_get_corr(request):
     run = Run.get_by(run_id = run_id, contest_id = contest_id)
     prob = run.problem    
     return prob.get_corr(int(request.matchdict['test_num']), prob.get_corr_size(int(request.matchdict['test_num'])))
+
+@view_config(route_name="protocol.get_outp", renderer="string")
+@check_global_role(("teacher", "ejudge_teacher", "admin"))
+def protocol_get_outp(request):
+    contest_id = int(request.matchdict['contest_id'])
+    run_id = int(request.matchdict['run_id'])
+    run = Run.get_by(run_id = run_id, contest_id = contest_id)    
+    return run.get_output_file(int(request.matchdict['test_num']), tp='o')
 
 @view_config(route_name="protocol.get_submit_archive", renderer="string")
 @check_global_role(("teacher", "ejudge_teacher", "admin"))
