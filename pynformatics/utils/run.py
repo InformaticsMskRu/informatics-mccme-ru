@@ -80,7 +80,8 @@ def get_string_status(s):
         "PE" : "Неправильный формат вывода",
         "RT" : "Ошибка во время выполнения программы",
         "TL" : "Превышено максимальное время работы",     
-        "WT" : "Превышено максимальное общее время работы",     
+        "WT" : "Превышено максимальное общее время работы",
+        "SK" : "Пропущено"    
     }[s]
 
 def submit_path(tp, contest_id, submit_id): #path to archive file with path to archive directory = tp, look up audit_path etc constants 
