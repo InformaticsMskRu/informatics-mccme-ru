@@ -205,7 +205,7 @@ def get_submit_archive(request):
             zf.writestr("{0:02}.a".format(i), prob.get_corr(i, prob.get_corr_size(i)))
 
     if sources:
-        zf.writestr("sources", run.get_sources())
+        zf.writestr("{0}.{1}".format(run_id, run.lang_id), run.get_sources())
 
     zf.close()
     archive.seek(0)

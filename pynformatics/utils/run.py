@@ -84,6 +84,28 @@ def get_string_status(s):
         "SK" : "Пропущено"    
     }[s]
 
+def get_lang_name_by_id(id):
+    langs = {
+        1: ".pas",
+        2: ".c",
+        3: ".cpp",
+        8: ".dpr",
+        23: ".py",
+        24: ".pl",
+        18: ".java",
+        25: ".cs",
+        26: ".rb",
+        22: ".php",
+        27: ".py",
+        28: ".hs",
+        30: ".pas",
+        29: ".bas",
+        31: ".1c"
+    }
+    if id not in langs:
+        return ""
+    return langs[id]
+
 def submit_path(tp, contest_id, submit_id): #path to archive file with path to archive directory = tp, look up audit_path etc constants 
     return os.path.join(contest_path, '0' * (6 - len(str(contest_id))) + str(contest_id), tp, to32(submit_id // 32 // 32 // 32 % 32), 
     to32(submit_id // 32 // 32 % 32), to32(submit_id // 32 % 32), '0' * (6 - len(str(submit_id))) + str(submit_id))
