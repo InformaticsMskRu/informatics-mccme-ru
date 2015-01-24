@@ -84,7 +84,7 @@ def get_string_status(s):
         "SK" : "Пропущено"    
     }[s]
 
-def get_lang_name_by_id(id):
+def get_lang_ext_by_id(id):
     langs = {
         1: ".pas",
         2: ".c",

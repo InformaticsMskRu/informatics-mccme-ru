@@ -56,7 +56,7 @@ class Run(Base):
         return data
     @lazy
     def get_sources(self):
-        data = safe_open(submit_path(source_path, self.contest_id, self.run_id), "r").read()
+        data = safe_open(submit_path(sources_path, self.contest_id, self.run_id), "r").read()
         if type(data) == bytes:
             data = data.decode("ascii")
         return data

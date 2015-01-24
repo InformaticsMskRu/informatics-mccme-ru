@@ -17,8 +17,9 @@ from phpserialize import *
 from pynformatics.view.utils import *
 from pynformatics.models import DBSession
 from pynformatics.models import DBSession
-from pynformatics.model.run import to32
+from pynformatics.model.run import to32, get_lang_ext_by_id
 from pynformatics.utils.check_role import *
+
 
 
 signal_description = {
@@ -205,7 +206,7 @@ def get_submit_archive(request):
             zf.writestr("{0:02}.a".format(i), prob.get_corr(i, prob.get_corr_size(i)))
 
     if sources:
-        zf.writestr("{0}.{1}".format(run_id, run.lang_id), run.get_sources())
+        zf.writestr("{0}{1}".format(run_id, get_lang_ext_by_id(run.lang_id)), run.get_sources())
 
     zf.close()
     archive.seek(0)
