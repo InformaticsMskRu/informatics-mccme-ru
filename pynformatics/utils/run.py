@@ -2,6 +2,7 @@ import os
 import xml.dom.minidom
 import xml
 import gzip
+import codecs
 
 contest_path = '/home/judges/'
 protocols_path = 'var/archive/xmlreports'
@@ -9,6 +10,15 @@ audit_path = 'var/archive/audit'
 sources_path = 'var/archive/runs'
 output_path = 'var/archive/output'
 
+def read_file_unknown_encoding(file_name, size=255):
+    try:
+        f = codecs.open(file_name, 'r', encoding='utf-8')
+        res = f.read(size)
+    except UnicodeDecodeError as err:
+        error_str = str(err)
+        f = codecs.open(file_name, 'r', encoding='koi8-r')
+        res = f.read(size)
+    return res
 
 def get_protocol_from_file(filename): 
     if os.path.isfile(filename):
