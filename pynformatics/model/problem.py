@@ -7,6 +7,7 @@ import os
 import codecs
 
 from pynformatics.model.meta import Base
+from pynformatics.utils.run import read_file_unknown_encoding
 
 class Problem(Base):
     __tablename__ = "mdl_problems"
@@ -73,15 +74,15 @@ class EjudgeProblem(Problem):
         self.short_id = short_id
         self.ejudgeName = name
         Problem.__init__(self, name, timelimit, memorylimit, output_only, content, review, description, analysis, sample_tests, sample_tests_html)
-       
+
     def get_test(self, test_num, size = 255):
         conf = EjudgeContestCfg(number = self.ejudge_contest_id)
         prob = conf.getProblem(self.problem_id)
 
         test_file_name = (prob.tests_dir + prob.test_pat) % int(test_num)
+        error_str = None
         if os.path.exists(test_file_name):
-            f = codecs.open(test_file_name, 'r', encoding='utf-8')
-            res = f.read(size)
+            res = read_file_unknown_encoding(test_file_name, size)
         else:
             res = test_file_name
         return res
@@ -98,9 +99,9 @@ class EjudgeProblem(Problem):
         prob = conf.getProblem(self.problem_id)
 
         corr_file_name = (prob.tests_dir + prob.corr_pat) % int(test_num)
+        error_str = None
         if os.path.exists(corr_file_name):
-            f = codecs.open(corr_file_name, 'r', encoding='utf-8')
-            res = f.read(size)
+            res = read_file_unknown_encoding(corr_file_name, size)
         else:
             res = corr_file_name
         return res

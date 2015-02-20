@@ -100,9 +100,9 @@ class EjudgeProblemCfg:
             problem_dir += self.test_dir.replace("%Ps", problem_id)
             
             if contest.advanced_layout:
-                self.tests_dir = contest.contest_path + 'problems/' + problem_dir + '/tests/'
+                self.tests_dir = contest.contest_path + 'problems/' + self.internal_name + '/tests/'
             else:
-                self.tests_dir = contest.contest_path + 'tests/' + problem_dir + '/'
+                self.tests_dir = contest.contest_path + 'tests/' + self.internal_name + '/'
                 
             self.tests_dir = os.path.normpath(self.tests_dir) + '/'
                 
