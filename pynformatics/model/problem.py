@@ -117,13 +117,19 @@ class EjudgeProblem(Problem):
         res = ""
         if self.sample_tests != '':
             res = "<div class='problem-statement'><div class='sample-tests'><div class='section-title'>Примеры</div>"
-        
+            
             for i in self.sample_tests.split(","):
+                inp = self.get_test(i, 4096)
+                if inp[-1] == '\n':
+                    inp = inp[:-1]
+                corr = self.get_corr(i, 4096)
+                if corr[-1] == '\n':
+                    corr = corr[:-1]
                 res += "<div class='sample-test'>"
                 res += "<div class='input'><div class='title'>Входные данные</div><pre class='content'>"
-                res += self.get_test(i, 4096).rstrip()
+                res += inp
                 res += "</pre></div><div class='output'><div class='title'>Выходные данные</div><pre class='content'>"
-                res += self.get_corr(i, 4096).rstrip()
+                res += corr
                 res += "</pre></div></div>"
         
             res += "</div></div>"
