@@ -121,9 +121,9 @@ class EjudgeProblem(Problem):
             for i in self.sample_tests.split(","):
                 res += "<div class='sample-test'>"
                 res += "<div class='input'><div class='title'>Входные данные</div><pre class='content'>"
-                res += self.get_test(i, 4096)
+                res += self.get_test(i, 4096).rstrip()
                 res += "</pre></div><div class='output'><div class='title'>Выходные данные</div><pre class='content'>"
-                res += self.get_corr(i, 4096)
+                res += self.get_corr(i, 4096).rstrip()
                 res += "</pre></div></div>"
         
             res += "</div></div>"
