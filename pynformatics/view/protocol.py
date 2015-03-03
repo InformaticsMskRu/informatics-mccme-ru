@@ -119,7 +119,7 @@ def protocol_get_full(request):
             else:
                 prot[test_num]["error_output"] = run.get_output_file(int(test_num), tp='e', size=255) + "...\n"
         except OSError as e:
-            prot[test_num]["stderr"] = judge_info.get("stderr", "")
+            prot[test_num]["error_output"] = judge_info.get("stderr", "")
 
         if "term-signal" in judge_info:
             prot[test_num]["extra"] = "Signal {0}. ".format(judge_info["term-signal"]) + signal_description[judge_info["term-signal"]]

@@ -113,19 +113,11 @@ class Run(Base):
                         'max_memory_used' : max_memory_used
                        }
                 judge_info = {}
-                try:
-                    inp = node.getElementsByTagName('input')[0].firstChild.nodeValue
-                    outp = node.getElementsByTagName('output')[0].firstChild.nodeValue
-                    corr = node.getElementsByTagName('correct')[0].firstChild.nodeValue
-                    stderr = node.getElementsByTagName('stderr')[0].firstChild.nodeValue
-                    checker = node.getElementsByTagName('checker')[0].firstChild.nodeValue
-                    judge_info['input'] = inp
-                    judge_info['checker'] = checker
-                    judge_info['output'] = outp
-                    judge_info['correct'] = corr
-                    judge_info['stderr'] = stderr
-                except:
-                    pass
+            
+                for _type in ('input', 'output', 'correct', 'stderr', 'checker'):
+                    lst = node.getElementsByTagName(_type)
+                    if lst:
+                        judge_info[_type] = lst[0].firstChild.nodeValue
 
                 if node.hasAttribute('term-signal'):
                     judge_info['term-signal'] = int(node.getAttribute('term-signal'))
