@@ -196,8 +196,8 @@ def get_submit_archive(request):
     run.tested_protocol
     for i in range(1, run.tests_count + 1):
         if all_tests or i in tests_set:
-            zf.writestr("{0:02}".format(i), prob.get_test(i, prob.get_test_size(i)))
-            zf.writestr("{0:02}.a".format(i), prob.get_corr(i, prob.get_corr_size(i)))
+            zf.writestr("tests/{0:02}".format(i), prob.get_test(i, prob.get_test_size(i)))
+            zf.writestr("tests/{0:02}.a".format(i), prob.get_corr(i, prob.get_corr_size(i)))
 
     if sources:
         zf.writestr("{0}{1}".format(run_id, get_lang_ext_by_id(run.lang_id)), run.get_sources())
