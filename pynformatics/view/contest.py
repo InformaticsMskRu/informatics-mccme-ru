@@ -174,8 +174,9 @@ def updateOrAddProblem(problem_id, contest, ejudgeCfg, update_statement = False)
     else:
         session = DBSession()
         problem.ejudge_name = "" + problemCfg.long_name
-#        if problem.name == "":
         problem.name = "" + problemCfg.long_name
+        if problem.name == "":
+            problem.name = " " #мы не хотим иметь пустые имена
         problem.timelimit = problemCfg.time_limit 
         problem.memorylimit = problemCfg.memory_limit
         problem.output_only = problemCfg.output_only
