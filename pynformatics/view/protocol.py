@@ -51,7 +51,7 @@ def get_protocol(request):
                 return {"tests": res, "host": run.host}
             else:
                 try:
-                    return [run.tests["1"]]
+                    return {"tests":run.tests["1"], "host": run.host}
                 except KeyError as e:
                     return {"result" : "error", "message" : e.__str__(), "stack" : traceback.format_exc()}
         except Exception as e:
