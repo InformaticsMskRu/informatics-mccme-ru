@@ -14,13 +14,18 @@ from sqlalchemy.orm import noload, lazyload
 from sqlalchemy import desc
 from pyramid.security import authenticated_userid
 from pyramid.httpexceptions import HTTPFound
+import sqlalchemy.orm.exc
+
 
 @view_config(route_name='recommendation.get', request_method='GET', renderer='json')
 @view_config(route_name='recommendation.get_html', request_method='GET', renderer='pynformatics:templates/recommendation.mak')
 def get_recommedation(request):
     try:
         user_id = RequestGetUserId(request)
-        user = DBSession.query(SimpleUser).filter(SimpleUser.id==user_id).one()
+        try:
+            user = DBSession.query(SimpleUser).filter(SimpleUser.id==user_id).one()
+        except sqlalchemy.orm.exc.NoResultFound:
+            return {"result": "error", "error": "Not logged in"}
         if user is None:
             return {"result": "error", "error": "No such user"}
         ejuser_id = user.ejudge_id
