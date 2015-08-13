@@ -79,6 +79,10 @@ def main(global_config, **settings):
     
     config.add_route('home', '/')
     
+    config.add_route('hint.get', '/hint/get')
+    config.add_route('hint.get_html', '/hint/get_html')
+    config.add_route('hint.add', '/hint/add')
+    
     config.scan()
     return config.make_wsgi_app()
 
