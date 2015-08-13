@@ -15,7 +15,7 @@ from pyramid.security import authenticated_userid
 from pyramid.httpexceptions import HTTPFound
 
 @view_config(route_name='recommendation.get', request_method='GET', renderer='json')
-# @view_config(route_name='recommendation.get_html', request_method='GET', renderer='pynformatics:templates/recommendation.mak')
+@view_config(route_name='recommendation.get_html', request_method='GET', renderer='pynformatics:templates/recommendation.mak')
 def get_recommedation(request):
     try:
         try:
