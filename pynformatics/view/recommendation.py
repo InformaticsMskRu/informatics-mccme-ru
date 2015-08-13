@@ -19,10 +19,7 @@ from pyramid.httpexceptions import HTTPFound
 @view_config(route_name='recommendation.get_html', request_method='GET', renderer='pynformatics:templates/recommendation.mak')
 def get_recommedation(request):
     try:
-        try:
-            user_id = request.params['user_id']
-        except KeyError:
-            return {"result": "error", "error": "user_id is missing"}
+        user_id = RequestGetUserId(request)
         user = DBSession.query(SimpleUser).filter(SimpleUser.id==user_id).one()
         if user is None:
             return {"result": "error", "error": "No such user"}
