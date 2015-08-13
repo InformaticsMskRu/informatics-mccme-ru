@@ -13,11 +13,11 @@ class Recommendation(Base):
     __tablename__ = "sis_most_popular_next_problems_recommendations"
     __table_args__ = {'schema': 'moodle'}
     id = Column(Integer, primary_key=True)
-    problem_id = Column(Integer, ForeignKey('moodle.sis_most_popular_next_problems_recommendations.problem_id'))
-    contest_id = Column(Integer, ForeignKey('moodle.sis_most_popular_next_problems_recommendations.contest_id'))
+    problem_id = Column(Integer)
+    contest_id = Column(Integer)
 
-    recommended_problem_id = Column(Integer, ForeignKey('moodle.sis_most_popular_next_problems_recommendations.recommended_problem_id'))
-    recommended_contest_id = Column(Integer, ForeignKey('moodle.sis_most_popular_next_problems_recommendations.recommended_contest_id'))
+    recommended_problem_id = Column(Integer)
+    recommended_contest_id = Column(Integer)
 
     def __init__(self, contest_id, problem_id, recommended_contest_id, recommended_problem_id):
         self.contest_id = contest_id
