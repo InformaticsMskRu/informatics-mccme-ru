@@ -1,10 +1,6 @@
 % if result:
-    <div align="center">${user_name}<br>${problem_name}</div>
-	% if hint:
-	    ${hint}
-	% else:
-	    К сожалению, по этой посылке нет подсказок
-	% endif
-% else:
-    ${message}
+    % if hint:
+        <div align="center">${user_name}<br>${problem_name}</div><br>
+        ${hint}
+    % endif
 % endif
