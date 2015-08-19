@@ -81,7 +81,11 @@ def main(global_config, **settings):
     
     config.add_route('hint.get', '/hint/get')
     config.add_route('hint.get_html', '/hint/get_html')
+    config.add_route('hint.get_by_problem', '/hint/get_by_problem')
+    config.add_route('hint.get_by_problem_html', '/hint/get_by_problem_html')
+    config.add_route('hint.get_run', '/hint/get_run')
     config.add_route('hint.add', '/hint/add')
+    config.add_route('hint.add_page', '/hint/add_page')
 
     config.add_route('recommendation.get', '/recommendation/get')
     config.add_route('recommendation.get_html', '/recommendation/get_html')
