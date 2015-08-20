@@ -51,7 +51,7 @@ def get_run_code(run_id, contest_id):
         run_id = '0' + run_id
 
     path = '/home/judges/' + contest_id + '/var/archive/runs/' + str(d1) + '/' + str(d2) + '/' + str(d3) + '/' + run_id
-    codefile = open(path)
+    codefile = open(path, encoding='utf-8')
     code = codefile.read()
     codefile.close()
     return code
