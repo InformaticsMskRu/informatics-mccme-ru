@@ -32,17 +32,23 @@ def get_recommedation(request):
 
 
 
-        run = DBSession.query(Run).filter(Run.user_id==ejuser_id).filter(Run.status==0).order_by(desc(Run.create_time)).first()
+        runs = DBSession.query(Run).filter(Run.user_id==ejuser_id).filter(Run.status==0).order_by(desc(Run.create_time)).all()
 
-        contest_id = run.contest_id
-        problem_id = run.prob_id
+        last_run = runs[0]
+        contest_id = last_run.contest_id
+        problem_id = last_run.prob_id
+
+        resolved_problems = set()
+        for run in runs:
+            resolved_problems.add((run.contest_id, run.prob_id))
 
         recommendations_row = DBSession.query(Recommendation).filter(Recommendation.contest_id==contest_id).filter(Recommendation.problem_id==problem_id).all()
         rec_result = []
         for recom in recommendations_row:
-            ej_problem = DBSession.query(EjudgeProblem).filter(EjudgeProblem.ejudge_contest_id == recom.recommended_contest_id).filter(EjudgeProblem.problem_id == recom.recommended_problem_id).first()
-            problem = DBSession.query(Problem).filter(Problem.pr_id == ej_problem.ejudge_prid).first()
-            rec_result.append([problem.id, problem.name])
+            if (recom.recommended_contest_id, recom.recommended_problem_id) not in resolved_problems:
+                ej_problem = DBSession.query(EjudgeProblem).filter(EjudgeProblem.ejudge_contest_id == recom.recommended_contest_id).filter(EjudgeProblem.problem_id == recom.recommended_problem_id).first()
+                problem = DBSession.query(Problem).filter(Problem.pr_id == ej_problem.ejudge_prid).first()
+                rec_result.append([problem.id, problem.name])
 
         if len(rec_result) == 0:
             return {"result": "ok"}
