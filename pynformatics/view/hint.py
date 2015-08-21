@@ -102,10 +102,22 @@ def get_run(request):
         return {"result" : "error", "error" : e.__str__(), "stack" : traceback.format_exc()}
         
 @view_config(route_name='hint.add_page', request_method='GET', renderer='pynformatics:templates/addhint.mak')
-@check_global_role("admin")
 def add_page(request):
     return {}
-    
+
+
+@view_config(route_name='hint.delete', request_method='POST', renderer='json')
+@check_global_role("admin")
+def delete(request):
+    try:
+        hint_id = request.params['id']
+        if DBSession.query(Hint).filter(Hint.id == hint_id).delete():
+            return {"result": "ok"}
+        else:
+            return {"result": "error", "error": "no such hint"}
+    except Exception as e:
+        return {"result" : "error", "error" : e.__str__(), "stack" : traceback.format_exc()}
+
     
 @view_config(route_name='hint.get_by_problem', request_method='GET', renderer='json')
 @view_config(route_name='hint.get_by_problem_html', request_method='GET', renderer='pynformatics:templates/hints_by_problem.mak')
@@ -118,7 +130,7 @@ def get_by_problem(request):
             return {"result": "error", "error": "problem_id is missing"}
         hints = DBSession.query(Hint, Problem, EjudgeProblem).filter(Problem.id == problem_id).filter(EjudgeProblem.ejudge_prid == Problem.pr_id)\
                   .filter(Hint.contest_id == EjudgeProblem.ejudge_contest_id).filter(Hint.problem_id == EjudgeProblem.problem_id).all()
-        hints = [[hint[0].test_signature, hint[0].comment] for hint in hints]
+        hints = [[hint[0].id, hint[0].test_signature, hint[0].comment] for hint in hints]
         return {"result": "ok", "hints": hints}
     except Exception as e:
         return {"result" : "error", "error" : e.__str__(), "stack" : traceback.format_exc()}

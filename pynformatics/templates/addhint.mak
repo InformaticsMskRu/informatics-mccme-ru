@@ -11,7 +11,7 @@ $.get("/py/hint/get_run?contest_id="+$('#contestid').val()+'&run_id='+$('#runid'
   $('input[name="contest_id"]').val(request.contest_id);
   $('input[name="problem_id"]').val(request.problem_id);
   $('input[name="signature"]').val(request.signature);
-  $('#problem_link').attr('href', '/mod/statements/view3.php?chapterid=' + request.moodle_problem_id).text('Problem ' + request.moodle_problem_id);
+  $('#problem_link').attr('href', '/mod/statements/view3.php?chapterid=' + request.moodle_problem_id + '&run_id=' + request.contest_id + 'r' + $('#runid').val()).text('Problem ' + request.moodle_problem_id);
   $('#code').text(request.code)
   $('#code_container').slideDown();
 });
