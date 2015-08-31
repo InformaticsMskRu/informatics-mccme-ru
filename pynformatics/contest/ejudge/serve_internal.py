@@ -9,12 +9,16 @@ HOME_JUDGES = '/home/judges/'
 SPECIAL_CONTEST = [14, 1651] #contests with special configs     
      
 def all_contests():
-    ''' Generates all contest_id '''
+    ''' Generates all contest_id as strings'''
     xmllist = os.listdir(os.path.join(HOME_JUDGES, 'data/contests/'))
     for filename in xmllist:
         if filename.endswith('.xml'):
-            contest_id = filename.split('.')[0]
-            yield contest_id     
+            try:
+                contest_id = filename.split('.')[0]
+                int(contest_id)
+                yield contest_id     
+            except ValueError:
+                pass
      
 def normalizeMemoryLimit(memotyLimit):
     if memotyLimit[-1:] == "G":
