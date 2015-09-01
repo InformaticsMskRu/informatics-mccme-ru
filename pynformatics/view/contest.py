@@ -1,25 +1,24 @@
-from pyramid.view import view_config
-from pynformatics.model import User, EjudgeContest, Run, Comment, EjudgeProblem, Problem
-from pynformatics.contest.ejudge.serve_internal import EjudgeContestCfg
-from pynformatics.contest.ejudge.serve_internal import *
-from pynformatics.contest.ejudge.configparser import ConfigParser
-from pynformatics.view.utils import *
-import sys, traceback, collections
-#import jsonpickle, demjson
-from phpserialize import *
-from pynformatics.view.utils import *
-from pynformatics.utils.problemParser import getCorrectTree
-from pynformatics.models import DBSession
-import transaction
-#import jsonpickle, demjson
+import sys
+import traceback
+import collections
 import json
-from pynformatics.models import DBSession
-#from webhelpers.html import *
-from xml.etree.ElementTree import ElementTree
+import transaction
 import zipfile
 import re
 import os
 import xml.etree.ElementTree as ET
+
+from xml.etree.ElementTree import ElementTree
+
+from pyramid.view import view_config
+from phpserialize import *
+
+from pynformatics.model import User, EjudgeContest, Run, Comment, EjudgeProblem, Problem, ContestsStatistic
+from pynformatics.contest.ejudge.serve_internal import *
+from pynformatics.contest.ejudge.configparser import ConfigParser
+from pynformatics.view.utils import *
+from pynformatics.utils.problemParser import getCorrectTree
+from pynformatics.models import DBSession
 
 
 
@@ -301,4 +300,18 @@ def get_table(request):
         return { "tmp":strr, "result" : res, "status": True, "langs" : langs, "options" : options, "contests" : sorted(all_contests())}
     except Exception as e: 
         return {"status": False, "result" : "error", "message" : e.__str__(), "stack" : traceback.format_exc()}
+
+@view_config(route_name="contest.ejudge.statistic", renderer="json")
+def contest_statistic(request):
+    statistic = DBSession.query(ContestsStatistic).order_by(ContestsStatistic.contest_id.asc()).all()
+    contests = {int(c_id) for c_id in all_contests()}
+
+    result = list()
+
+    for el in statistic:
+        if el.contest_id in contests:
+            result.append({"contest_id": el.contest_id, "submits_count": el.submits_count})
+
+    return result
+
 
