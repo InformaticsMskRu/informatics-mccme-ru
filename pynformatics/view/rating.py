@@ -12,9 +12,10 @@ from sqlalchemy.ext.serializer import dumps, loads
 from sqlalchemy import func
 
 from pyramid.view import view_config
+
 from pynformatics.models import DBSession
 from pynformatics.view.utils import *
-from pynformatics.model import User, Run, PynformaticsUser, User, Group, UserGroup
+from pynformatics.model import User, Run, PynformaticsUser, Group, UserGroup
 
 
 class RatingRequestParams:
