@@ -28,7 +28,7 @@ class Run(Base):
     user_id = Column(Integer)
     user = relationship('SimpleUser', backref = backref('simpleuser'), uselist=False)
     comments = relation('Comment', backref = backref('comments'))
-    contest_id = Column(Integer)
+    contest_id = Column(Integer, primary_key=True)
     prob_id = Column(Integer)
     problem = relationship('EjudgeProblem', backref = 'ejudgeproblem', uselist = False)
     lang_id = Column(Integer)
