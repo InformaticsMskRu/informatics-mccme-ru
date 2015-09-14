@@ -116,6 +116,31 @@ def get_lang_ext_by_id(id):
         return ""
     return langs[id]
 
+def get_status_by_id(status_id):
+    return {
+        0: "OK",
+        1: "CE",
+        2: "RE",
+        3: "TL",
+        4: "PE",
+        5: "WA",
+        6: "CF",
+        7: "Partial",
+        8: "AC",
+        9: "Ignored",
+        10:"Disqualified",
+        11:"Pending",
+        12:"ML",
+        13:"Security error",
+        14:"Style Violation",
+        15:"Wall Time Limit Exceeded",
+        16:"Pending Review",
+        17:"Rejected",
+        18:"Skipped",
+        96:"Running...",
+        98:"Compiling..."
+    }[status_id]
+
 def submit_path(tp, contest_id, submit_id): #path to archive file with path to archive directory = tp, look up audit_path etc constants 
     return os.path.join(contest_path, '0' * (6 - len(str(contest_id))) + str(contest_id), tp, to32(submit_id // 32 // 32 // 32 % 32), 
     to32(submit_id // 32 // 32 % 32), to32(submit_id // 32 % 32), '0' * (6 - len(str(submit_id))) + str(submit_id))

@@ -301,9 +301,10 @@ def get_table(request):
     except Exception as e: 
         return {"status": False, "result" : "error", "message" : e.__str__(), "stack" : traceback.format_exc()}
 
-@view_config(route_name="contest.ejudge.statistic", renderer="json")
+@view_config(route_name="contest.ejudge.statistic", renderer="pynformatics:templates/contest_statistic.mak")
 def contest_statistic(request):
-    statistic = DBSession.query(ContestsStatistic).order_by(ContestsStatistic.contest_id.asc()).all()
+    statistic = DBSession.query(ContestsStatistic)\
+   .order_by(ContestsStatistic.contest_id.asc()).all()
     contests = {int(c_id) for c_id in all_contests()}
 
     result = list()
@@ -312,6 +313,6 @@ def contest_statistic(request):
         if el.contest_id in contests:
             result.append({"contest_id": el.contest_id, "submits_count": el.submits_count})
 
-    return result
+    return {"contests": result}
 
 
