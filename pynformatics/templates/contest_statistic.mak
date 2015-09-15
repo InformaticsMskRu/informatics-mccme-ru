@@ -8,11 +8,13 @@
     <table border="1">
       <tr>
         <td>ID</td>
-         <td>Количество посылок</td>
+        <td>Название контеста</td>
+        <td>Количество посылок</td>
       </tr>
       %for contest in contests:
         <tr>
             <td>${contest["contest_id"]}</td> 
+            <td>${contest["name"]}</td> 
             <td>${contest["submits_count"]}</td> 
         </tr>
       %endfor

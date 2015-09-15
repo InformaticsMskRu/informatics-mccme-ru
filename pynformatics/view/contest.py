@@ -303,15 +303,16 @@ def get_table(request):
 
 @view_config(route_name="contest.ejudge.statistic", renderer="pynformatics:templates/contest_statistic.mak")
 def contest_statistic(request):
-    statistic = DBSession.query(ContestsStatistic)\
-   .order_by(ContestsStatistic.contest_id.asc()).all()
+    statistic = DBSession.query(ContestsStatistic, EjudgeContest)\
+    .join(EjudgeContest, EjudgeContest.ejudge_int_id == ContestsStatistic.contest_id)\
+    .order_by(ContestsStatistic.contest_id.asc()).all()
     contests = {int(c_id) for c_id in all_contests()}
 
     result = list()
 
-    for el in statistic:
+    for el, ej_contest in statistic:
         if el.contest_id in contests:
-            result.append({"contest_id": el.contest_id, "submits_count": el.submits_count})
+            result.append({"contest_id": el.contest_id, "name": ej_contest.name, "submits_count": el.submits_count})
 
     return {"contests": result}
 
