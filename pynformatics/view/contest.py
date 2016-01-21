@@ -310,9 +310,12 @@ def contest_statistic(request):
 
     result = list()
 
-    for el, ej_contest in statistic:
-        if el.contest_id in contests:
-            result.append({"contest_id": el.contest_id, "name": ej_contest.name, "submits_count": el.submits_count})
+    for statistic_elem, ej_contest in statistic:
+        if statistic_elem.contest_id in contests:
+            result.append({"contest_id": statistic_elem.contest_id, 
+                           "name": ej_contest.name, 
+                           "submits_count": statistic_elem.submits_count,
+                           "cloned": ej_contest.cloned})
 
     return {"contests": result}
 

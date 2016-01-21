@@ -1,6 +1,7 @@
 """Problem model"""
 from sqlalchemy import ForeignKey, Column
 from sqlalchemy.types import *
+from sqlalchemy.dialects.mysql import BIT
 from sqlalchemy.orm import relationship, backref, relation
 import datetime 
 from pynformatics.view.utils import *
@@ -15,10 +16,11 @@ class EjudgeContest(Base):
     ejudge_id = Column(Text)
     ejudge_int_id = Column(Integer, nullable=False, primary_key=True, autoincrement=False)
     load_time = Column(DateTime)
+    cloned = Column(BIT, nullable=False)
     
     def __init__(self, name='', ejudge_int_id = 0):
         self.name = name
         self.ejudge_id = getContestStrId(ejudge_int_id)
         self.ejudge_int_id = ejudge_int_id
         self.load_time = datetime.datetime.now()
-        
+        self.cloned = False

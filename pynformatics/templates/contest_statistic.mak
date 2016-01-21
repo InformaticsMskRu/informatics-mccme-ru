@@ -10,12 +10,15 @@
         <td>ID</td>
         <td>Название контеста</td>
         <td>Количество посылок</td>
+        <td>Клонирован</td>
       </tr>
       %for contest in contests:
-        <tr ${'style="background-color: #ff6666"' if contest["submits_count"] >= 1e5 else "" | n}>
+        <tr ${'style="background-color: #ff6666"' if contest["submits_count"] >= 1e5 and not contest["cloned"] else "" | n}
+            ${'style="background-color: #ffefb3"' if contest["cloned"] else "" | n}>
             <td>${contest["contest_id"]}</td> 
             <td>${contest["name"]}</td> 
             <td>${contest["submits_count"]}</td> 
+            <td>${contest["cloned"]}</td> 
         </tr>
       %endfor
     </table>
