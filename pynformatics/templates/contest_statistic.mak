@@ -12,7 +12,7 @@
         <td>Количество посылок</td>
       </tr>
       %for contest in contests:
-        <tr>
+        <tr ${'style="background-color: #ff6666"' if contest["submits_count"] >= 1e5 else "" | n}>
             <td>${contest["contest_id"]}</td> 
             <td>${contest["name"]}</td> 
             <td>${contest["submits_count"]}</td> 

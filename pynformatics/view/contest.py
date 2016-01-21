@@ -305,7 +305,7 @@ def get_table(request):
 def contest_statistic(request):
     statistic = DBSession.query(ContestsStatistic, EjudgeContest)\
     .join(EjudgeContest, EjudgeContest.ejudge_int_id == ContestsStatistic.contest_id)\
-    .order_by(ContestsStatistic.contest_id.asc()).all()
+    .order_by(ContestsStatistic.submits_count.desc()).all()
     contests = {int(c_id) for c_id in all_contests()}
 
     result = list()
