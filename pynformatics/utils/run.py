@@ -94,7 +94,7 @@ def get_string_status(s):
         "SK" : "Пропущено"    
     }[s]
 
-def get_lang_ext_by_id(id):
+def get_lang_ext_by_id(lang_id):
     langs = {
         1: ".pas",
         2: ".c",
@@ -112,9 +112,32 @@ def get_lang_ext_by_id(id):
         29: ".bas",
         31: ".1c"
     }
-    if id not in langs:
-        return ""
-    return langs[id]
+    return langs.get(lang_id, str())
+
+
+def get_lang_name_by_id(lang_id):
+    lang_names = { 
+        1: "Free Pascal 2.6.2", 
+        2: "GNU C 4.9", 
+        3: "GNU C++ 4.9", 
+        7: "Turbo Pascal", 
+        8: "Borland Delphi 6 - 14.5", 
+        9: "Borland C", 
+        10: "Borland C++", 
+        18: "Java JDK 1.7", 
+        22: "PHP 5.2.17", 
+        23: "Python 2.7", 
+        24: "Perl 5.10.1", 
+        25: "Mono C# 2.10.8.0", 
+        26: "Ruby 1.8.7", 
+        27: "Python 3.3", 
+        28: "Haskell GHC 7.4.2", 
+        29: "FreeBASIC 1.00.0", 
+        30: "PascalABC 1.8.0.496", 
+        31: "1C 8.3"    
+    }
+    return lang_names.get(lang_id, str())
+
 
 def get_status_by_id(status_id):
     return {
