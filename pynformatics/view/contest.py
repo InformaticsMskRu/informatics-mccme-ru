@@ -7,11 +7,13 @@ import zipfile
 import re
 import os
 import xml.etree.ElementTree as ET
+import shutil
 
 from xml.etree.ElementTree import ElementTree
 
 from pyramid.view import view_config
 from phpserialize import *
+from bs4 import BeautifulSoup
 
 from pynformatics.model import User, EjudgeContest, Run, Comment, EjudgeProblem, Problem, ContestsStatistic
 from pynformatics.contest.ejudge.serve_internal import *
@@ -23,6 +25,9 @@ from pynformatics.models import DBSession
 
 
 HOME_JUDGES = '/home/judges/'
+
+def get_contest_xml_config_path(number):
+    return "/home/judges/data/contests/{:06}.xml".format(number)
 
 def get_contest_path(number):
     return HOME_JUDGES + '0'*(6-len(str(number))) + str(number) + '/'
@@ -319,4 +324,60 @@ def contest_statistic(request):
 
     return {"contests": result}
 
+@view_config(route_name="contest.ejudge.clone", renderer="pynformatics:templates/cloned.mak")
+def clone_contest(request):
+    """
+    Копирует контест с contest_id из url, дает ему первый свободный id
+    Все moodle задачи ассоциированные с копируемым контестом, перенаправляет на контест копию
+    !!!Текущая версия невалидно работает с контестами, которые уже являются копиями
 
+    Требуется наличие папки empty_contest в /home/judges в которой хранится шаблон для пустого контеста
+    """
+    try:
+        contest_id = int(request.matchdict["contest_id"])
+    except ValueError:
+        return {"status": "error", "message": "contest_id must be int"}
+
+    contests = {int(c_id) for c_id in all_contests()}
+
+    if contest_id not in contests:
+        return {"status": "error", "message": "this contest does not exist"}        
+
+    # скопируем xml
+    new_contest_id = max(contests) + 1
+    shutil.copyfile(get_contest_xml_config_path(contest_id), get_contest_xml_config_path(new_contest_id))
+    os.chmod(get_contest_xml_config_path(new_contest_id), 0o777)
+    # изменим в нем имя и id
+    with open(get_contest_xml_config_path(new_contest_id)) as new_xml_file:
+        soup = BeautifulSoup(new_xml_file.read())
+    contest_tag = soup.find("contest")
+    contest_tag["id"] = str(new_contest_id)
+    name_tag = soup.find("name")
+    name_tag.string = name_tag.string + " (Копия 1)"
+    with open(get_contest_xml_config_path(new_contest_id), "w") as xml_file:
+        print(soup, file=xml_file, end="")
+
+    # создаем каталог контеста и копируем все кроме var
+    shutil.copytree(get_contest_path(contest_id), get_contest_path(new_contest_id), ignore=lambda src, names: ["var"])
+    # копируем пустой var
+    shutil.copytree("/home/judges/empty_contest/var", get_contest_path(new_contest_id) + "/var")
+
+    # изменяем contest_id в serve.cfg
+    with open(get_contest_path_conf(new_contest_id) + "serve.cfg", "r") as cfg_file:
+        serv_cfg_lines = cfg_file.readlines()
+    for i, line in enumerate(serv_cfg_lines):
+        if line.startswith("contest_id"):
+            serv_cfg_lines[i] = "contest_id = {}\n".format(new_contest_id)
+
+    with open(get_contest_path_conf(new_contest_id) + "serve.cfg", "w") as cfg_file:
+        cfg_file.write("".join(serv_cfg_lines))
+
+    # вносим изменения в базу
+    DBSession.query(EjudgeProblem)\
+                    .filter(EjudgeProblem.ejudge_contest_id==contest_id)\
+                    .update({"ejudge_contest_id": new_contest_id, "secondary_ejudge_contest_id": contest_id}) # переподвешиваем задачи
+    DBSession.query(EjudgeContest)\
+                    .filter(EjudgeContest.ejudge_int_id == contest_id)\
+                    .update({"cloned": 1}) # проставляем флаг cloned
+    
+    return {"status": "OK", "new_contest_id": new_contest_id, "contest_id": contest_id}

@@ -51,10 +51,11 @@ class EjudgeProblem(Problem):
     __mapper_args__ = {'polymorphic_identity': 'ejudgeproblem'}
 
 #    id = Column(Integer, ForeignKey('moodle.mdl_problems.pr_id'), primary_key=True)
-    ejudge_prid = Column('id', Integer, primary_key=True)
+    ejudge_prid = Column('id', Integer, primary_key=True) #global id in ejudge
     contest_id = Column(Integer, primary_key=True, nullable=False, autoincrement=False)
     ejudge_contest_id = Column(Integer, primary_key=True, nullable=False, autoincrement=False)
-    problem_id = Column(Integer, primary_key=True, nullable=False, autoincrement=False)
+    secondary_ejudge_contest_id = Column(Integer, primary_key=True, nullable=False, autoincrement=False)
+    problem_id = Column(Integer, primary_key=True, nullable=False, autoincrement=False) #id in contest
     short_id = Column(String(100))
     ejudgeName = Column('name', String(100))
     runs = relation('Run', backref='runs', uselist=True)

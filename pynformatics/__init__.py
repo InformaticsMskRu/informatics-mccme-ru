@@ -69,6 +69,7 @@ def main(global_config, **settings):
     config.add_route('contest.ejudge.reload', '/contest/ejudge/reload/{contest_id}')
     config.add_route('contest.ejudge.get_table', '/contest/ejudge/get_table')
     config.add_route('contest.ejudge.statistic', '/contest/ejudge/statistic')
+    config.add_route('contest.ejudge.clone', '/contest/ejudge/clone/{contest_id}')
     
     config.add_route('region.submit', '/region/res')
     config.add_route('region.submit_test', '/region/res_test')
