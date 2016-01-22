@@ -936,8 +936,10 @@ class RawConfigParser(MutableMapping):
             self._write_section(fp, self.default_section,
                                     self._defaults.items(), d)
         for section in self._sections:
+            union_of_dicts = [(k, v) for d in self._sections[section] for k, v in d.items()]
             self._write_section(fp, section,
-                                self._sections[section].items(), d)
+                                union_of_dicts, 
+                                d)
 
     def _write_section(self, fp, section_name, section_items, delimiter):
         """Write a single section to the specified `fp'."""
