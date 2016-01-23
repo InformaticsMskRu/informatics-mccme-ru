@@ -1,13 +1,12 @@
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import scoped_session, sessionmaker
 
-import pynformatics.model.meta
+from pynformatics.model.meta import Base
 
 DBSession = sessionmaker()
 # db_session = DBSession()
 
 # Base = declarative_base()
-Base = pynformatics.model.meta.Base
 
 # from pynformatics.model.problem import Problem
 from source_tree.model.problem import Problem
