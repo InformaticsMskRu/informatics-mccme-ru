@@ -348,13 +348,13 @@ def clone_contest(request):
     shutil.copyfile(get_contest_xml_config_path(contest_id), get_contest_xml_config_path(new_contest_id))
     os.chmod(get_contest_xml_config_path(new_contest_id), 0o777)
     # изменим в нем имя и id
-    with open(get_contest_xml_config_path(new_contest_id)) as new_xml_file:
+    with open(get_contest_xml_config_path(new_contest_id), encoding='utf8') as new_xml_file:
         soup = BeautifulSoup(new_xml_file.read())
     contest_tag = soup.find("contest")
     contest_tag["id"] = str(new_contest_id)
     name_tag = soup.find("name")
     name_tag.string = name_tag.string + " (Копия 1)"
-    with open(get_contest_xml_config_path(new_contest_id), "w") as xml_file:
+    with open(get_contest_xml_config_path(new_contest_id), "w", encoding='utf8') as xml_file:
         print(soup, file=xml_file, end="")
 
     # создаем каталог контеста и копируем все кроме var
@@ -363,7 +363,7 @@ def clone_contest(request):
     shutil.copytree("/home/judges/empty_contest/var", get_contest_path(new_contest_id) + "/var")
 
     # изменяем contest_id в serve.cfg
-    with open(get_contest_path_conf(new_contest_id) + "serve.cfg", "r") as cfg_file:
+    with open(get_contest_path_conf(new_contest_id) + "serve.cfg", "r", encoding='utf8') as cfg_file:
         serv_cfg_lines = cfg_file.readlines()
     for i, line in enumerate(serv_cfg_lines):
         if line.startswith("contest_id"):
