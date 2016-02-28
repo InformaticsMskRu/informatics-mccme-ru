@@ -1,13 +1,17 @@
 """Problem model"""
+import os
+import codecs
+import glob
+from zipfile import ZipFile
+
 from sqlalchemy import ForeignKey, Column
 from sqlalchemy.types import Integer, String, Text, Float, Unicode, Boolean
 from sqlalchemy.orm import relationship, backref, relation
 from pynformatics.contest.ejudge.serve_internal import EjudgeContestCfg
-import os
-import codecs
 
 from pynformatics.model.meta import Base
 from pynformatics.utils.run import read_file_unknown_encoding
+
 
 class Problem(Base):
     __tablename__ = "mdl_problems"
@@ -114,6 +118,51 @@ class EjudgeProblem(Problem):
         corr_file_name = (prob.tests_dir + prob.corr_pat) % int(test_num)
         return os.stat(corr_file_name).st_size
         
+    def get_checker(self):
+        conf = EjudgeContestCfg(number = self.ejudge_contest_id)
+        prob = conf.getProblem(self.problem_id)
+
+        #generate dir with checker
+        checker_dir = None
+        if conf.advanced_layout:
+            checker_dir = os.path.join(conf.contest_path, "problems", prob.internal_name)
+        else:
+            checker_dir = os.path.join(conf.contest_path, "checkers")
+
+        #trying to find checker
+        find_res = glob.glob(os.path.join(checker_dir, "check_{0}.*".format(prob.internal_name)))
+        check_src = None
+        checker_ext = None
+        if find_res:
+            check_src = open(find_res[0], "r").read()
+            checker_ext = os.path.splitext(find_res[0])[1]
+        
+        #if checker not found then try polygon package
+        downloads_dir = os.path.join(conf.contest_path, "download")
+        if check_src is None and os.path.exists(downloads_dir):
+            download_archive_mask = "{0}-*$linux.zip".format(prob.internal_name)
+            find_archive_result = glob.glob(os.path.join(downloads_dir, download_archive_mask))
+            download_archive_path = find_archive_result[0] if find_archive_result else None
+            archive = None
+            if download_archive_path is not None:
+                archive = ZipFile(download_archive_path)
+            if archive is not None:
+                member_path = None
+                for file in archive.namelist():
+                    if file.startswith("check."):
+                        member_path = file
+                        break
+                try:
+                    check_src = archive.open(member_path).read()
+                    checker_ext = os.path.splitext(member_path)[1]
+                except KeyError:
+                    check_src = None
+
+        if check_src is None:
+            check_src = "checker not found"
+
+        return check_src, checker_ext
+
     def generateSamples(self):
         res = ""
         if self.sample_tests != '':

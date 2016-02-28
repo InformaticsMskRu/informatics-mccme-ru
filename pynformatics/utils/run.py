@@ -114,6 +114,11 @@ def get_lang_ext_by_id(lang_id):
     }
     return langs.get(lang_id, str())
 
+def get_lag_exts(): 
+    return [".pas", ".c", ".cpp", ".dpr", ".py", ".pl", ".java", 
+            ".cs", ".rb", ".php", ".py", ".hs", ".pas", ".bas", ".1c"]
+
+
 
 def get_lang_name_by_id(lang_id):
     lang_names = { 
