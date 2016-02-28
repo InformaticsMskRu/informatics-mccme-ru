@@ -203,7 +203,7 @@ def get_submit_archive(request):
         zf.writestr("{0}{1}".format(run_id, get_lang_ext_by_id(run.lang_id)), run.get_sources())
 
     checker_src, checker_ext = prob.get_checker()
-    zf.writestr("checker.{}".format(checker_ext), checker_src)
+    zf.writestr("checker{}".format(checker_ext), checker_src)
 
     zf.close()
     archive.seek(0)
