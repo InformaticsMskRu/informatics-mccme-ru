@@ -18,7 +18,7 @@ from pynformatics.view.utils import *
 from pynformatics.models import DBSession
 from pynformatics.models import DBSession
 from pynformatics.model.run import to32, get_lang_ext_by_id
-from pynformatics.utils.check_role import *
+from pynformatics.utils.check_role import check_global_role
 
 
 

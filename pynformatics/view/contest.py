@@ -21,7 +21,7 @@ from pynformatics.contest.ejudge.configparser import ConfigParser
 from pynformatics.view.utils import *
 from pynformatics.utils.problemParser import getCorrectTree
 from pynformatics.models import DBSession
-
+from pynformatics.utils.check_role import check_global_role
 
 
 HOME_JUDGES = '/home/judges/'
@@ -325,6 +325,7 @@ def contest_statistic(request):
     return {"contests": result}
 
 @view_config(route_name="contest.ejudge.clone", renderer="pynformatics:templates/cloned.mak")
+@check_global_role(("admin"))
 def clone_contest(request):
     """
     Копирует контест с contest_id из url, дает ему первый свободный id
