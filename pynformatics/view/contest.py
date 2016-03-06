@@ -381,4 +381,4 @@ def clone_contest(request):
                     .filter(EjudgeContest.ejudge_int_id == contest_id)\
                     .update({"cloned": 1}) # проставляем флаг cloned
     
-    return {"status": "OK", "new_contest_id": new_contest_id, "contest_id": contest_id}
+    return {"result": "OK", "new_contest_id": new_contest_id, "contest_id": contest_id}

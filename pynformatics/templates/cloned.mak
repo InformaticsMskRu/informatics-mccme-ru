@@ -5,7 +5,7 @@
 </head>
 <body>
   <div id="content">
-    %if status == "OK":
+    %if result == "OK":
     Контест ${contest_id} удачно клонирован.<br/>
     ID копии - ${new_contest_id}.<br/>
     <b>Не забудьте стартовать контест копию!</b>
