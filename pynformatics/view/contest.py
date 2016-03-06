@@ -370,7 +370,7 @@ def clone_contest(request):
         if line.startswith("contest_id"):
             serv_cfg_lines[i] = "contest_id = {}\n".format(new_contest_id)
 
-    with open(get_contest_path_conf(new_contest_id) + "serve.cfg", "w") as cfg_file:
+    with open(get_contest_path_conf(new_contest_id) + "serve.cfg", "w", encoding='utf8') as cfg_file:
         cfg_file.write("".join(serv_cfg_lines))
 
     # вносим изменения в базу
