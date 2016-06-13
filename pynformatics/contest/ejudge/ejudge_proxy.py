@@ -14,6 +14,7 @@ status_repr = {
 119 : 'Отправка пустого файла',        # NEW_SRV_ERR_FILE_EMPTY
 104 : 'Отправка бинарного файла',      # NEW_SRV_ERR_BINARY_FILE
  81 : 'Эта посылка является копией предыдущей',# NEW_SRV_ERR_DUPLICATE_SUBMIT
+ 36 : 'Этот язык не может быть использован для этой задачи. Обратитесь к администраторам.',
  82 : 'Задача уже решена',             # NEW_SRV_ERR_PROB_ALREADY_SOLVED
  77 : 'Отправляемый файл превышает допустимый размер (64K) или превышена квота на число посылок (обратитесь к админимтратору)', # NEW_SRV_ERR_RUN_QUOTA_EXCEEDED
 112 : 'Отправляемый файл пустой', # SUBMIT_EMPTY 
@@ -23,7 +24,7 @@ status_repr = {
 def report_error(code, login_data, submit_data, file, filename, user_id, addon = ''):
     msg = MIMEMultipart()
     msg['From'] = 'ejudge.submitter'
-    msg['To'] = 'vrandik@gmail.com, gurovic@gmail.com'
+    msg['To'] = 'andrey.shestimerov@gmail.com'
     msg['Date'] = formatdate(localtime=True)
     subject = 'ejudge_submit from ' + user_id
     if (code):
