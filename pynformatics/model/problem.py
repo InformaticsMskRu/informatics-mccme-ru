@@ -32,7 +32,7 @@ class Problem(Base):
     pr_id = Column(Integer, ForeignKey('moodle.mdl_ejudge_problem.id'))
 #    ejudge_users = relation('EjudgeUser', backref="moodle.mdl_user", uselist=False)
 #    ejudge_user = relation('EjudgeUser', backref = backref('moodle.mdl_user'), uselist=False, primaryjoin = "EjudgeUser.user_id == User.id")
-    def __init__(self, name, timelimit, memorylimit, output_only, content='', review='', description='', analysis='', sample_tests='', sample_tests_html = ''):
+    def __init__(self, name, timelimit, memorylimit, output_only, content='', review='', description='', analysis='', sample_tests='', sample_tests_html='', pr_id=None):
         self.name = name
         self.content = content
         self.review = review
@@ -45,13 +45,34 @@ class Problem(Base):
         self.output_only = output_only
         self.sample_tests = sample_tests
         self.sample_tests_html = sample_tests_html
-
+        self.pr_id = pr_id
 #    def __repr__(self):
 #        return "<spam(%d, '%s')" % (self.id, self.name)
 
+class EjudgeProblemDummy(Base):
+    __tablename__ = "mdl_ejudge_problem"
+    __table_args__ = {'schema':'moodle', 'extend_existing': True}
+
+    ejudge_prid = Column('id', Integer, primary_key=True) #global id in ejudge
+    contest_id = Column(Integer, primary_key=True, nullable=False, autoincrement=False)
+    ejudge_contest_id = Column(Integer, primary_key=True, nullable=False, autoincrement=False)
+    secondary_ejudge_contest_id = Column(Integer, primary_key=True, nullable=False, autoincrement=False)
+    problem_id = Column(Integer, primary_key=True, nullable=False, autoincrement=False) #id in contest
+    short_id = Column(String(100))
+    ejudgeName = Column('name', String(100))
+#    runs = relation('Run', backref='runs', uselist=True)
+ 
+    def __init__(self, name, contest_id, problem_id, short_id, ejudge_contest_id):
+        self.contest_id = contest_id
+        self.ejudge_contest_id = ejudge_contest_id
+        self.problem_id = problem_id
+        self.short_id = short_id
+        self.ejudgeName = name
+
+
 class EjudgeProblem(Problem):
     __tablename__ = "mdl_ejudge_problem"
-    __table_args__ = {'schema':'moodle'}
+    __table_args__ = {'schema':'moodle', 'extend_existing': True}
     __mapper_args__ = {'polymorphic_identity': 'ejudgeproblem'}
 
 #    id = Column(Integer, ForeignKey('moodle.mdl_problems.pr_id'), primary_key=True)

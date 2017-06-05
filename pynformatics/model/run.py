@@ -116,8 +116,10 @@ class Run(Base):
             
                 for _type in ('input', 'output', 'correct', 'stderr', 'checker'):
                     lst = node.getElementsByTagName(_type)
-                    if lst:
+                    if lst and lst[0].firstChild:
                         judge_info[_type] = lst[0].firstChild.nodeValue
+                    else:
+                        judge_info[_type] = ""
 
                 if node.hasAttribute('term-signal'):
                     judge_info['term-signal'] = int(node.getAttribute('term-signal'))
@@ -175,6 +177,7 @@ class Run(Base):
     @lazy      
     def _get_protocol(self): 
         filename = submit_path(protocols_path, self.contest_id, self.run_id)
+#        return filename
         if filename != '':
             return get_protocol_from_file(filename)
         else:

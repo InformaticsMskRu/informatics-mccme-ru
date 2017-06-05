@@ -10,6 +10,7 @@ def main(global_config, **settings):
     engine = engine_from_config(settings, 'sqlalchemy.')
     DBSession.configure(bind=engine, expire_on_commit=False)
     config = Configurator(settings=settings)
+    config.include('pyramid_mako')
     config.add_static_view('static', 'static', cache_max_age=3600)
     config.add_route('stars.add', '/stars/add')
     config.add_route('stars.delete', '/stars/delete')

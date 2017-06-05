@@ -83,6 +83,7 @@ def main(global_config, **settings):
     models.db_session = DBSession()
 
     config = Configurator(settings=settings, session_factory=UnencryptedCookieSessionFactoryConfig('source_tree_session'))
+    config.include('pyramid_mako')
     config.include(py_source_include, route_prefix=settings['source_tree.route_prefix'])
 
     config.scan()

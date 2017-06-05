@@ -53,16 +53,13 @@ class EjudgeProblemCfg:
                 self.long_name = d["long_name"][0].strip("\"")
             self.time_limit = -1
             
+            self.output_only = False
             if "type" in d:
                 if (d["type"][0].strip("\"") == "output-only"):
                     self.output_only = True
             else:
                 if self.abstract != None and "type" in contest.abstract[self.abstract] and contest.abstract[self.abstract]["type"][0].strip("\"") == 'output-only':
                     self.output_only = True
-#                    raise Exception(contest.abstract[self.abstract]["type"])
-                else:
-                    self.output_only = False
-#                    raise Exception(contest.abstract[self.abstract]["type"])
                     
             if "time_limit_millis" in d:
                 self.time_limit = float(d["time_limit_millis"][0]) / 1000

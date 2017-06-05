@@ -27,7 +27,7 @@ def get_protocol_from_file(filename):
         filename += '.gz'
         myopen = gzip.open
     try:
-        xml_file = myopen(filename, 'rb')
+        xml_file = myopen(filename, 'rb', encoding='utf-8')
         try:
             xml_file.readline()
             xml_file.readline()
@@ -38,8 +38,8 @@ def get_protocol_from_file(filename):
                 return res
         except Exception as e:
             return str(e)
-    except IOError:
-        return ''
+    except IOError as e:
+        return str(e)
 
 def lazy(func):
         """ A decorator function designed to wrap attributes that need to be

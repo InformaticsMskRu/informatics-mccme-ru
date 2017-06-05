@@ -18,16 +18,21 @@ jQuery(function() {
     jQuery("#add_category").on('click', function(e) {
         jQuery("#adding-form").hide();
         jQuery(".reload-status").show();
-        jQuery.post("/py-source/course/add", {
-            parent_id: jQuery("#parent_categories").prop("value"),
-            order: "end",
-            name: jQuery("#category_name").prop("value"),
-        }, function(data) {
-            if (data.result == "error") {
-                alert(data.content);
-            }   
-            document.location.reload(); 
-        });
+        namee = jQuery("#category_name").prop("value");
+        if (namee.trim().length == 0) {
+            alert("Empty name");
+        } else {
+            jQuery.post("/py-source/course/add", {
+                parent_id: jQuery("#parent_categories").prop("value"),
+                order: "end",
+                name: jQuery("#category_name").prop("value"),
+            }, function(data) {
+                if (data.result == "error") {
+                    alert(data.content);
+                }   
+                document.location.reload(); 
+            });
+        }
     });
 });
 

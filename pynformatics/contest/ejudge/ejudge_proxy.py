@@ -21,6 +21,8 @@ status_repr = {
 1000: 'Отправляемый файл превышает допустимый размер. Требуется отправить исходный код или текстовый файл',
 }
 
+import codecs
+
 def report_error(code, login_data, submit_data, file, filename, user_id, addon = ''):
     msg = MIMEMultipart()
     msg['From'] = 'ejudge.submitter'
@@ -32,8 +34,11 @@ def report_error(code, login_data, submit_data, file, filename, user_id, addon =
     msg['Subject'] = subject
     t = str({'info' : addon, 'login_data' : login_data, 'submit_data' : submit_data, 'filename' : filename})
     msg.attach(MIMEText(t))
+    log=codecs.open('/tmp/python.log', 'a', 'utf-8')
+    log.write(t)
+    log.close()
     smtp = smtplib.SMTP('localhost')
-    smtp.sendmail('ejudge.submitter', 'vrandik@gmail.com', msg.as_string())
+#    smtp.sendmail('ejudge.submitter', 'vrandik@gmail.com', msg.as_string())
     smtp.close()
 
 def submit(run_file, contest_id, prob_id, lang_id, login, password, filename, url, user_id):

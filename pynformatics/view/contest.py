@@ -15,7 +15,7 @@ from pyramid.view import view_config
 from phpserialize import *
 from bs4 import BeautifulSoup
 
-from pynformatics.model import User, EjudgeContest, Run, Comment, EjudgeProblem, Problem, ContestsStatistic
+from pynformatics.model import User, EjudgeContest, Run, Comment, EjudgeProblem, Problem, ContestsStatistic, EjudgeProblemDummy
 from pynformatics.contest.ejudge.serve_internal import *
 from pynformatics.contest.ejudge.configparser import ConfigParser
 from pynformatics.view.utils import *
@@ -169,10 +169,17 @@ def updateOrAddProblem(problem_id, contest, ejudgeCfg, update_statement = False)
     problem = DBSession.query(EjudgeProblem).filter(EjudgeProblem.contest_id == contest.id).filter(EjudgeProblem.problem_id == problem_id).first()
     problemCfg = ejudgeCfg.getProblem(problem_id)
     if problem == None:
-        problem = EjudgeProblem(problemCfg.long_name, problemCfg.time_limit, problemCfg.memory_limit, problemCfg.output_only, contest.id, problem_id, problemCfg.short_name, contest.ejudge_int_id, "<p>Условие пока не опубликовано...</p>")
+        ejudge_problem = EjudgeProblemDummy(problemCfg.long_name, contest.id, problem_id, problemCfg.short_name, contest.ejudge_int_id)
+        with transaction.manager:
+	        DBSession.add(ejudge_problem)
+        transaction.commit()
+
+        ejudge_problem = DBSession.query(EjudgeProblemDummy).filter(EjudgeProblemDummy.contest_id == contest.id).filter(EjudgeProblemDummy.problem_id == problem_id).first()
+        problem = Problem(problemCfg.long_name, problemCfg.time_limit, problemCfg.memory_limit, problemCfg.output_only, "<p>Условие пока не опубликовано...</p>", pr_id=ejudge_problem.ejudge_prid)
         with transaction.manager:
             DBSession.add(problem)
         transaction.commit()
+        problem = DBSession.query(EjudgeProblem).filter(EjudgeProblem.contest_id == contest.id).filter(EjudgeProblem.problem_id == problem_id).first()
         action = "add"
         content = ""
     else:

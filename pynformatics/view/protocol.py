@@ -28,6 +28,7 @@ signal_description = {
     3 : "Quit from keyboard",
     4 : "Illegal Instruction",
     6 : "Abort signal",
+    7 : "Bus error (bad memory access)",
     8 : "Floating point exception",
     9 : "Kill signal",
     11 : "Invalid memory reference",
@@ -55,9 +56,9 @@ def get_protocol(request):
                 except KeyError as e:
                     return {"result" : "error", "message" : e.__str__(), "stack" : traceback.format_exc()}
         except Exception as e:
-            return {"result" : "error", "message" : run.compilation_protocol, "error" : e.__str__(), "stack" : traceback.format_exc()}
+            return {"result" : "error", "message" : run.compilation_protocol, "error" : e.__str__(), "stack" : traceback.format_exc(), "protocol": run.protocol}
     except Exception as e: 
-        return {"result" : "error", "message" : e.__str__(), "stack" : traceback.format_exc()}
+        return {"result" : "error", "message" : e.__str__(), "stack" : traceback.format_exc(), "protocol": run.protocol}
 
 @view_config(route_name="protocol.get_full", renderer="json")
 @check_global_role(("teacher", "ejudge_teacher", "admin"))
@@ -207,7 +208,7 @@ def get_submit_archive(request):
 
     zf.close()
     archive.seek(0)
-    response = Response(content_type="application/zip", content_disposition='attachment; filename="archive_{0}_{1}"'.format(contest_id, run_id), body=archive.read())
+    response = Response(content_type="application/zip", content_disposition='attachment; filename="archive_{0}_{1}.zip"'.format(contest_id, run_id), body=archive.read())
     return response
 
 
