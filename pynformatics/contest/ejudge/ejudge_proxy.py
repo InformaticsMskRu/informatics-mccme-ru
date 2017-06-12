@@ -117,7 +117,7 @@ def rejudge(contest_id, run_id, status_id, login, password, url):
         'SID' : SID,
         'run_id' : run_id,
         'status' : status_id,
-        'action_67' : 'action_67'
+        'action_68' : 'action_68'
     }
 
     c = requests.post(url, data = submit_data, cookies = cookies, allow_redirects=True)
