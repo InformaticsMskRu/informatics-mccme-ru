@@ -97,8 +97,8 @@ class EjudgeProblemCfg:
                 problem_id = self.internal_name
             else: 
                 problem_id = self.short_name
-            
-            problem_dir += self.test_dir.replace("%Ps", problem_id)
+
+            problem_dir += self.test_dir.replace("%lPs", problem_id.lower()).replace("%Ps", problem_id)
             
             if contest.advanced_layout:
                 self.tests_dir = contest.contest_path + 'problems/' + self.internal_name + '/tests/'
