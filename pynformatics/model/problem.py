@@ -56,7 +56,7 @@ class EjudgeProblemDummy(Base):
     ejudge_prid = Column('id', Integer, primary_key=True) #global id in ejudge
     contest_id = Column(Integer, primary_key=True, nullable=False, autoincrement=False)
     ejudge_contest_id = Column(Integer, primary_key=True, nullable=False, autoincrement=False)
-    secondary_ejudge_contest_id = Column(Integer, primary_key=True, nullable=False, autoincrement=False)
+    secondary_ejudge_contest_id = Column(Integer, nullable=True)
     problem_id = Column(Integer, primary_key=True, nullable=False, autoincrement=False) #id in contest
     short_id = Column(String(100))
     ejudgeName = Column('name', String(100))
@@ -79,7 +79,7 @@ class EjudgeProblem(Problem):
     ejudge_prid = Column('id', Integer, primary_key=True) #global id in ejudge
     contest_id = Column(Integer, primary_key=True, nullable=False, autoincrement=False)
     ejudge_contest_id = Column(Integer, primary_key=True, nullable=False, autoincrement=False)
-    secondary_ejudge_contest_id = Column(Integer, primary_key=True, nullable=False, autoincrement=False)
+    secondary_ejudge_contest_id = Column(Integer, nullable=True)
     problem_id = Column(Integer, primary_key=True, nullable=False, autoincrement=False) #id in contest
     short_id = Column(String(100))
     ejudgeName = Column('name', String(100))
