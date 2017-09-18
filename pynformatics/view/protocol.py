@@ -21,7 +21,6 @@ from pynformatics.model.run import to32, get_lang_ext_by_id
 from pynformatics.utils.check_role import check_global_role
 
 
-
 signal_description = {
     1 : "Hangup detected on controlling terminal or death of controlling process",
     2 : "Interrupt from keyboard",
@@ -37,28 +36,45 @@ signal_description = {
     15 : "Termination signal"
 }
 
+
 @view_config(route_name='protocol.get', renderer='json')
 def get_protocol(request):
     try:
         contest_id = int(request.matchdict['contest_id'])
         run_id = int(request.matchdict['run_id'])
-        run = Run.get_by(run_id = run_id, contest_id = contest_id)
+        run = Run.get_by(run_id=run_id, contest_id=contest_id)
         try:
-            run.tested_protocol
-            if (run.user.statement.filter(Statement.olympiad == 1).filter(Statement.timestop > time.time()).filter(Statement.timestart < time.time()).count() == 0):
+            run.fetch_tested_protocol_data()
+            if run.user.statement.filter(
+                        Statement.olympiad == 1
+                    ).filter(
+                        Statement.timestop > time.time()
+                    ).filter(
+                        Statement.timestart < time.time()
+                    ).count() == 0:
                 res = OrderedDict()
-                for num in range(1, len(run.tests.keys()) + 1):
-                    res[str(num)] = run.tests[str(num)]
-                return {"tests": res, "host": run.host}
+                if run.tests:
+                    for num in range(1, len(run.tests.keys()) + 1):
+                        res[str(num)] = run.tests[str(num)]
+                return {
+                    'tests': res,
+                    'host': run.host,
+                    'compiler_output': run.compiler_output,
+                }
             else:
                 try:
-                    return {"tests":run.tests["1"], "host": run.host}
+                    return {
+                        'tests': run.tests['1'],
+                        'host': run.host,
+                        'compiler_output': run.compiler_output,
+                    }
                 except KeyError as e:
                     return {"result" : "error", "message" : e.__str__(), "stack" : traceback.format_exc()}
         except Exception as e:
             return {"result" : "error", "message" : run.compilation_protocol, "error" : e.__str__(), "stack" : traceback.format_exc(), "protocol": run.protocol}
-    except Exception as e: 
+    except Exception as e:
         return {"result" : "error", "message" : e.__str__(), "stack" : traceback.format_exc(), "protocol": run.protocol}
+
 
 @view_config(route_name="protocol.get_full", renderer="json")
 @check_global_role(("teacher", "ejudge_teacher", "admin"))
@@ -70,11 +86,11 @@ def protocol_get_full(request):
     out_path = "/home/judges/{0:06d}/var/archive/output/{1}/{2}/{3}/{4:06d}.zip".format(
         contest_id, to32(run_id // (32 ** 3) % 32), to32(run_id // (32 ** 2) % 32), to32(run_id // 32 % 32), run_id
     )
-    prot = get_protocol(request)
-    if "result" in prot and prot["result"] == "error":
-        return prot
+    protocol = get_protocol(request)
+    if protocol.get('result') == "error":
+        return protocol
 
-    prot = prot["tests"]
+    prot = protocol.get('tests', [])
     out_arch = None
 
     for test_num in prot:
@@ -104,8 +120,8 @@ def protocol_get_full(request):
         except OSError as e:
             prot[test_num]["output"] = judge_info.get("output", "")
             prot[test_num]["big_output"] = False
-        
-            
+
+
         try:
             if run.get_output_file_size(int(test_num), tp='c') <= 255:
                 prot[test_num]["checker_output"] = run.get_output_file(int(test_num), tp='c')
@@ -113,7 +129,7 @@ def protocol_get_full(request):
                 prot[test_num]["checker_output"] = run.get_output_file(int(test_num), tp='c', size=255) + "...\n"
         except OSError as e:
             prot[test_num]["checker_output"] = judge_info.get("checker", "")
-        
+
         try:
             if run.get_output_file_size(int(test_num), tp='e') <= 255:
                 prot[test_num]["error_output"] = run.get_output_file(int(test_num), tp='e')
@@ -145,7 +161,15 @@ def protocol_get_full(request):
 
     if out_arch:
         out_arch.close()
-    return {"tests": prot, "audit": run.get_audit()}
+
+    full_protocol = {
+        'tests': prot,
+        'audit': run.get_audit(),
+    }
+    if protocol.get('compiler_output'):
+        full_protocol['compiler_output'] = protocol['compiler_output']
+    return full_protocol
+
 
 @view_config(route_name="protocol.get_test", renderer="string")
 @check_global_role(("teacher", "ejudge_teacher", "admin"))
@@ -153,8 +177,9 @@ def protocol_get_test(request):
     contest_id = int(request.matchdict['contest_id'])
     run_id = int(request.matchdict['run_id'])
     run = Run.get_by(run_id = run_id, contest_id = contest_id)
-    prob = run.problem    
+    prob = run.problem
     return prob.get_test(int(request.matchdict['test_num']), prob.get_test_size(int(request.matchdict['test_num'])))
+
 
 @view_config(route_name="protocol.get_corr", renderer="string")
 @check_global_role(("teacher", "ejudge_teacher", "admin"))
@@ -162,16 +187,18 @@ def protocol_get_corr(request):
     contest_id = int(request.matchdict['contest_id'])
     run_id = int(request.matchdict['run_id'])
     run = Run.get_by(run_id = run_id, contest_id = contest_id)
-    prob = run.problem    
+    prob = run.problem
     return prob.get_corr(int(request.matchdict['test_num']), prob.get_corr_size(int(request.matchdict['test_num'])))
+
 
 @view_config(route_name="protocol.get_outp", renderer="string")
 @check_global_role(("teacher", "ejudge_teacher", "admin"))
 def protocol_get_outp(request):
     contest_id = int(request.matchdict['contest_id'])
     run_id = int(request.matchdict['run_id'])
-    run = Run.get_by(run_id = run_id, contest_id = contest_id)    
+    run = Run.get_by(run_id = run_id, contest_id = contest_id)
     return run.get_output_file(int(request.matchdict['test_num']), tp='o')
+
 
 @view_config(route_name="protocol.get_submit_archive", renderer="string")
 @check_global_role(("teacher", "ejudge_teacher", "admin"))
@@ -194,7 +221,7 @@ def get_submit_archive(request):
     archive = BytesIO()
     zf = zipfile.ZipFile(archive, "w", zipfile.ZIP_DEFLATED)
 
-    run.tested_protocol
+    run.fetch_tested_protocol_data()
     for i in range(1, run.tests_count + 1):
         if all_tests or i in tests_set:
             zf.writestr("tests/{0:02}".format(i), prob.get_test(i, prob.get_test_size(i)))
@@ -210,5 +237,3 @@ def get_submit_archive(request):
     archive.seek(0)
     response = Response(content_type="application/zip", content_disposition='attachment; filename="archive_{0}_{1}.zip"'.format(contest_id, run_id), body=archive.read())
     return response
-
-

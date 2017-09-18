@@ -95,6 +95,6 @@ def main(global_config, **settings):
 
     config.add_route('submits.get', '/submits/get')
     
-    config.scan()
+    config.scan(ignore='pynformatics.tests')
     return config.make_wsgi_app()
 

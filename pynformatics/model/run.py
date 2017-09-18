@@ -1,4 +1,3 @@
-"""Run model"""
 from sqlalchemy import *
 from sqlalchemy.types import Integer, String, DateTime
 from sqlalchemy.orm import *
@@ -13,7 +12,11 @@ import xml.dom.minidom
 import xml
 import gzip
 
+
 class Run(Base):
+    """
+    Run model
+    """
     __tablename__ = "runs"
     __table_args__ = (
         ForeignKeyConstraint(['contest_id', 'prob_id'], ['moodle.mdl_ejudge_problem.ejudge_contest_id', 'moodle.mdl_ejudge_problem.problem_id']),
@@ -77,17 +80,30 @@ class Run(Base):
             self.output_archive = EjudgeArchiveReader(submit_path(output_path, self.contest_id, self.run_id))
         return self.output_archive
 
-    def parsetests(self): #parse data from xml archive
+    def parsetests(self):
+        """
+        Parse tests data from xml archive
+        """
         self.test_count = 0
         self.tests = {}
         self.judge_tests_info = {}
         self.status_string = None
+        self.compiler_output = None
+        self.host = None
         self.maxtime = None
+
         if self.xml:
             rep = self.xml.getElementsByTagName('testing-report')[0]
             self.tests_count = int(rep.getAttribute('run-tests'))
             self.status_string = rep.getAttribute('status')
-            self.host = self.xml.getElementsByTagName('host')[0].firstChild.nodeValue
+
+            compiler_output_elements = self.xml.getElementsByTagName('compiler_output')
+            if compiler_output_elements:
+                self.compiler_output = getattr(compiler_output_elements[0].firstChild, 'nodeValue', '')
+
+            host_elements = self.xml.getElementsByTagName('host')
+            if host_elements:
+                self.host = host_elements[0].firstChild.nodeValue
 
             for node in self.xml.getElementsByTagName('test'):
                 number = node.getAttribute('num')
@@ -96,6 +112,7 @@ class Run(Base):
                 real_time = node.getAttribute('real-time')
                 max_memory_used = node.getAttribute('max-memory-used')
                 self.test_count += 1
+
                 try:
                    time = int(time)
                 except ValueError:
@@ -106,12 +123,13 @@ class Run(Base):
                 except ValueError:
                    real_time = 0
                    
-                test = {'status': status, 
-                        'string_status': get_string_status(status), 
-                        'real_time': real_time, 
-                        'time': time,
-                        'max_memory_used' : max_memory_used
-                       }
+                test = {
+                    'status': status,
+                    'string_status': get_string_status(status),
+                    'real_time': real_time,
+                    'time': time,
+                    'max_memory_used' : max_memory_used,
+                }
                 judge_info = {}
             
                 for _type in ('input', 'output', 'correct', 'stderr', 'checker'):
@@ -119,7 +137,7 @@ class Run(Base):
                     if lst and lst[0].firstChild:
                         judge_info[_type] = lst[0].firstChild.nodeValue
                     else:
-                        judge_info[_type] = ""
+                        judge_info[_type] = ''
 
                 if node.hasAttribute('term-signal'):
                     judge_info['term-signal'] = int(node.getAttribute('term-signal'))
@@ -134,7 +152,7 @@ class Run(Base):
             except ValueError:
                 pass        
     
-    
+    @staticmethod
     def get_by(run_id, contest_id):
         try:
             return DBSession.query(Run).filter(Run.run_id == int(run_id)).filter(Run.contest_id == int(contest_id)).first()            
@@ -174,25 +192,22 @@ class Run(Base):
         else:
             return ''
     
-    @lazy      
-    def _get_protocol(self): 
+    @lazy
+    def _get_protocol(self):
         filename = submit_path(protocols_path, self.contest_id, self.run_id)
 #        return filename
         if filename != '':
             return get_protocol_from_file(filename)
         else:
             return '<a></a>'
-            
+
     protocol = property(_get_protocol)
     compilation_protocol = property(_get_compilation_protocol)
     
-    @lazy 
-    def _get_tested_protocol_data(self):
+    @lazy
+    def fetch_tested_protocol_data(self):
         self.xml = xml.dom.minidom.parseString(str(self.protocol))
         self.parsetests()
 
     def _set_output_archive(self, val):
         self.output_archive = val
-
-    tested_protocol = property(_get_tested_protocol_data)
-    get_by = staticmethod(get_by)
