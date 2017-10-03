@@ -36,6 +36,7 @@ class TestView__get_protocol(TestCase):
                         status_string,
                         host=None,
                         tests=None,
+                        sample_tests=None,
                         ):
         """
         Создает замоканый run
@@ -46,6 +47,8 @@ class TestView__get_protocol(TestCase):
         run.status_string = status_string
         run.tests = tests or {}
         run.host = host
+        run.problem.sample_tests = ','.join(list(map(str, sample_tests or [1])))
+        run.get_test_full_protocol = lambda str_num: 'full %s' % str_num
         return run
 
     def test_compilation_error(self):
@@ -76,6 +79,7 @@ class TestView__get_protocol(TestCase):
             '1': 'first',
             '2': 'second',
         }
+        tests_protocol = {**tests, '1': 'full 1'}
         host = 'some host'
         run = self._get_mocked_run(
             count=0,
@@ -94,7 +98,35 @@ class TestView__get_protocol(TestCase):
             has_entries({
                 'compiler_output': compiler_output,
                 'host': host,
-                'tests': OrderedDict(sorted(tests.items())),
+                'tests': OrderedDict(sorted(tests_protocol.items())),
+            })
+        )
+
+    def test_samples(self):
+        """
+        Проверка обработки тестов из условия
+        """
+        tests = {
+            '1': 'first',
+            '2': 'second',
+            '3': 'third',
+            '4': 'forth'
+        }
+        tests_protocol = {**tests, '2': 'full 2', '3': 'full 3'}
+        run = self._get_mocked_run(
+            count=0,
+            status_string='OK',
+            tests=tests,
+            sample_tests=[2, 3],
+        )
+
+        with mock.patch.object(Run, 'get_by', mock.Mock(return_value=run)):
+            result = get_protocol(self.request)
+
+        assert_that(
+            result,
+            has_entries({
+                'tests': OrderedDict(sorted(tests_protocol.items())),
             })
         )
 

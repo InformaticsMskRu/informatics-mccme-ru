@@ -101,8 +101,8 @@ class EjudgeProblem(Problem):
         self.ejudgeName = name
         Problem.__init__(self, name, timelimit, memorylimit, output_only, content, review, description, analysis, sample_tests, sample_tests_html)
 
-    def get_test(self, test_num, size = 255):
-        conf = EjudgeContestCfg(number = self.ejudge_contest_id)
+    def get_test(self, test_num, size=255):
+        conf = EjudgeContestCfg(number=self.ejudge_contest_id)
         prob = conf.getProblem(self.problem_id)
 
         test_file_name = (prob.tests_dir + prob.test_pat) % int(test_num)
@@ -131,6 +131,26 @@ class EjudgeProblem(Problem):
         else:
             res = corr_file_name
         return res
+
+    def get_test_full(self, test_num, size=255):
+        """
+        Возвращает словарь с полной информацией о тесте
+        """
+        test = {}
+        if self.get_test_size(int(test_num)) <= 255:
+            test["input"] = self.get_test(int(test_num), size=size)
+            test["big_input"] = False
+        else:
+            test["input"] = self.get_test(int(test_num), size=size) + "...\n"
+            test["big_input"] = True
+
+        if self.get_corr_size(int(test_num)) <= 255:
+            test["corr"] = self.get_corr(int(test_num), size=size)
+            test["big_corr"] = False
+        else:
+            test["corr"] = self.get_corr(int(test_num), size=size) + "...\n"
+            test["big_corr"] = True
+        return test
 
     def get_corr_size(self, test_num):
         conf = EjudgeContestCfg(number = self.ejudge_contest_id)

@@ -21,20 +21,20 @@ from pynformatics.model.run import to32, get_lang_ext_by_id
 from pynformatics.utils.check_role import check_global_role
 
 
-signal_description = {
-    1 : "Hangup detected on controlling terminal or death of controlling process",
-    2 : "Interrupt from keyboard",
-    3 : "Quit from keyboard",
-    4 : "Illegal Instruction",
-    6 : "Abort signal",
-    7 : "Bus error (bad memory access)",
-    8 : "Floating point exception",
-    9 : "Kill signal",
-    11 : "Invalid memory reference",
-    13 : "Broken pipe: write to pipe with no readers",
-    14 : "Timer signal",
-    15 : "Termination signal"
-}
+# signal_description = {
+#     1 : "Hangup detected on controlling terminal or death of controlling process",
+#     2 : "Interrupt from keyboard",
+#     3 : "Quit from keyboard",
+#     4 : "Illegal Instruction",
+#     6 : "Abort signal",
+#     7 : "Bus error (bad memory access)",
+#     8 : "Floating point exception",
+#     9 : "Kill signal",
+#     11 : "Invalid memory reference",
+#     13 : "Broken pipe: write to pipe with no readers",
+#     14 : "Timer signal",
+#     15 : "Termination signal"
+# }
 
 
 @view_config(route_name='protocol.get', renderer='json')
@@ -54,8 +54,13 @@ def get_protocol(request):
                     ).count() == 0:
                 res = OrderedDict()
                 if run.tests:
+                    sample_tests = run.problem.sample_tests.split(',')
                     for num in range(1, len(run.tests.keys()) + 1):
-                        res[str(num)] = run.tests[str(num)]
+                        str_num = str(num)
+                        if str_num in sample_tests:
+                            res[str_num] = run.get_test_full_protocol(str_num)
+                        else:
+                            res[str_num] = run.tests[str_num]
                 return {
                     'tests': res,
                     'host': run.host,
@@ -81,83 +86,16 @@ def get_protocol(request):
 def protocol_get_full(request):
     contest_id = int(request.matchdict['contest_id'])
     run_id = int(request.matchdict['run_id'])
-    run = Run.get_by(run_id = run_id, contest_id = contest_id)
-    prob = run.problem
-    out_path = "/home/judges/{0:06d}/var/archive/output/{1}/{2}/{3}/{4:06d}.zip".format(
-        contest_id, to32(run_id // (32 ** 3) % 32), to32(run_id // (32 ** 2) % 32), to32(run_id // 32 % 32), run_id
-    )
+    run = Run.get_by(run_id=run_id, contest_id=contest_id)
     protocol = get_protocol(request)
     if protocol.get('result') == "error":
         return protocol
 
-    prot = protocol.get('tests', [])
+    prot = protocol.get('tests', {})
     out_arch = None
 
     for test_num in prot:
-        judge_info = run.judge_tests_info[test_num]
-
-        if prob.get_test_size(int(test_num)) <= 255:
-            prot[test_num]["input"] = prob.get_test(int(test_num))
-            prot[test_num]["big_input"] = False
-        else:
-            prot[test_num]["input"] = prob.get_test(int(test_num)) + "...\n"
-            prot[test_num]["big_input"] = True
-
-        if prob.get_corr_size(int(test_num)) <= 255:
-            prot[test_num]["corr"] = prob.get_corr(int(test_num))
-            prot[test_num]["big_corr"] = False
-        else:
-            prot[test_num]["corr"] = prob.get_corr(int(test_num)) + "...\n"
-            prot[test_num]["big_corr"] = True
-
-        try:
-            if run.get_output_file_size(int(test_num), tp='o') <= 255:
-                prot[test_num]["output"] = run.get_output_file(int(test_num), tp='o')
-                prot[test_num]["big_output"] = False
-            else:
-                prot[test_num]["output"] = run.get_output_file(int(test_num), tp='o', size=255) + "...\n"
-                prot[test_num]["big_output"] = True
-        except OSError as e:
-            prot[test_num]["output"] = judge_info.get("output", "")
-            prot[test_num]["big_output"] = False
-
-
-        try:
-            if run.get_output_file_size(int(test_num), tp='c') <= 255:
-                prot[test_num]["checker_output"] = run.get_output_file(int(test_num), tp='c')
-            else:
-                prot[test_num]["checker_output"] = run.get_output_file(int(test_num), tp='c', size=255) + "...\n"
-        except OSError as e:
-            prot[test_num]["checker_output"] = judge_info.get("checker", "")
-
-        try:
-            if run.get_output_file_size(int(test_num), tp='e') <= 255:
-                prot[test_num]["error_output"] = run.get_output_file(int(test_num), tp='e')
-            else:
-                prot[test_num]["error_output"] = run.get_output_file(int(test_num), tp='e', size=255) + "...\n"
-        except OSError as e:
-            prot[test_num]["error_output"] = judge_info.get("stderr", "")
-
-        if "term-signal" in judge_info:
-            prot[test_num]["extra"] = "Signal {0}. ".format(judge_info["term-signal"]) + signal_description[judge_info["term-signal"]]
-        if "exit-code" in judge_info:
-            if "extra" not in prot[test_num]:
-                prot[test_num]["extra"] = str()
-            prot[test_num]["extra"] = prot[test_num]["extra"] + "\n Exit code {0}. ".format(judge_info["exit-code"])
-    
-
-        for type_ in [("o", "output"), ("c", "checker_output"), ("e", "error_output")]:
-            file_name = "{0:06d}.{1}".format(int(test_num), type_[0])
-            if out_arch is None:
-                try:
-                    out_arch = zipfile.ZipFile(out_path, "r")
-                    names = set(out_arch.namelist())
-                except:
-                    names = {}
-            if file_name not in names or type_[1] in prot[test_num]:
-                continue
-            with out_arch.open(file_name, 'r') as f:
-                prot[test_num][type_[1]] = f.read(1024).decode("utf-8") + "...\n"
+        prot[test_num] = run.get_test_full_protocol(test_num)
 
     if out_arch:
         out_arch.close()

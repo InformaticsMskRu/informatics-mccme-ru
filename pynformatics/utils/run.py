@@ -169,9 +169,17 @@ def get_status_by_id(status_id):
         98:"Compiling..."
     }[status_id]
 
-def submit_path(tp, contest_id, submit_id): #path to archive file with path to archive directory = tp, look up audit_path etc constants 
-    return os.path.join(contest_path, '0' * (6 - len(str(contest_id))) + str(contest_id), tp, to32(submit_id // 32 // 32 // 32 % 32), 
-    to32(submit_id // 32 // 32 % 32), to32(submit_id // 32 % 32), '0' * (6 - len(str(submit_id))) + str(submit_id))
+def submit_path(tp, contest_id, submit_id):
+    #path to archive file with path to archive directory = tp, look up audit_path etc constants
+    return os.path.join(
+        contest_path,
+        '0' * (6 - len(str(contest_id))) + str(contest_id),
+        tp,
+        to32(submit_id // 32 // 32 // 32 % 32),
+        to32(submit_id // 32 // 32 % 32),
+        to32(submit_id // 32 % 32),
+        '0' * (6 - len(str(submit_id))) + str(submit_id)
+    )
 
 def safe_open(path, tp):
     """ Funtion for open file with path is equal to parametr path. It tries to open as plain file,

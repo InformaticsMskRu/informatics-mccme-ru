@@ -1,3 +1,9 @@
+import os
+import xml.dom.minidom
+import xml
+import gzip
+import zipfile
+
 from sqlalchemy import *
 from sqlalchemy.types import Integer, String, DateTime
 from sqlalchemy.orm import *
@@ -6,11 +12,6 @@ from pynformatics.model.meta import Base
 from pynformatics.models import DBSession
 from pynformatics.utils.run import *
 from pynformatics.utils.ejudge_archive import EjudgeArchiveReader
-
-import os
-import xml.dom.minidom
-import xml
-import gzip
 
 
 class Run(Base):
@@ -38,6 +39,21 @@ class Run(Base):
     status = Column(Integer)
     score = Column(Integer)
     test_num = Column(Integer)
+
+    SIGNAL_DESCRIPTION = {
+        1: "Hangup detected on controlling terminal or death of controlling process",
+        2: "Interrupt from keyboard",
+        3: "Quit from keyboard",
+        4: "Illegal Instruction",
+        6: "Abort signal",
+        7: "Bus error (bad memory access)",
+        8: "Floating point exception",
+        9: "Kill signal",
+        11: "Invalid memory reference",
+        13: "Broken pipe: write to pipe with no readers",
+        14: "Timer signal",
+        15: "Termination signal"
+    }
     
     def __init__(self, run_id, contest_id, size, create_time, user_id, prob_id, lang_id, status, score, test_num):
         self.run_id = run_id
@@ -50,6 +66,19 @@ class Run(Base):
         self.status = status
         self.score = score
         self.test_num = test_num
+        self.init_on_load()
+
+    @reconstructor
+    def init_on_load(self):
+        self.out_path = "/home/judges/{0:06d}/var/archive/output/{1}/{2}/{3}/{4:06d}.zip".format(
+            self.contest_id,
+            to32(self.run_id // (32 ** 3) % 32),
+            to32(self.run_id // (32 ** 2) % 32),
+            to32(self.run_id // 32 % 32),
+            self.run_id
+        )
+        self._out_arch = None
+        self._out_arch_file_names = set()
 
     @lazy
     def get_audit(self):
@@ -74,11 +103,71 @@ class Run(Base):
         data = self.get_output_archive().getfile("{0:06}.{1}".format(test_num, tp)).decode('ascii')
         return len(data)
 
-
     def get_output_archive(self):
         if "output_archive" not in self.__dict__:
             self.output_archive = EjudgeArchiveReader(submit_path(output_path, self.contest_id, self.run_id))
         return self.output_archive
+
+    def get_test_full_protocol(self, test_num):
+        """
+        Возвращает полный протокол по номеру теста
+        :param test_num: - str
+        """
+        judge_info = self.judge_tests_info[test_num]
+        test_protocol = self.problem.get_test_full(test_num)
+
+        test_protocol.update(self.tests[test_num])
+
+        test_protocol['big_output'] = False
+        try:
+            if self.get_output_file_size(int(test_num), tp='o') <= 255:
+                test_protocol['output'] = self.get_output_file(int(test_num), tp='o')
+            else:
+                test_protocol['output'] = self.get_output_file(int(test_num), tp='o', size=255) + '...\n'
+                test_protocol['big_output'] = True
+        except OSError as e:
+            test_protocol['output'] = judge_info.get('output', '')
+
+        try:
+            if self.get_output_file_size(int(test_num), tp='c') <= 255:
+                test_protocol['checker_output'] = self.get_output_file(int(test_num), tp='c')
+            else:
+                test_protocol['checker_output'] = self.get_output_file(int(test_num), tp='c', size=255) + '...\n'
+        except OSError as e:
+            test_protocol['checker_output'] = judge_info.get('checker', '')
+
+        try:
+            if self.get_output_file_size(int(test_num), tp='e') <= 255:
+                test_protocol['error_output'] = self.get_output_file(int(test_num), tp='e')
+            else:
+                test_protocol['error_output'] = self.get_output_file(int(test_num), tp='e', size=255) + '...\n'
+        except OSError as e:
+            test_protocol['error_output'] = judge_info.get('stderr', '')
+
+        if 'term-signal' in judge_info:
+            test_protocol['extra'] = 'Signal %(signal)s. %(description)s' % {
+                'signal': judge_info['term-signal'],
+                'description': self.SIGNAL_DESCRIPTION[judge_info['term-signal']],
+            }
+        if 'exit-code' in judge_info:
+            test_protocol['extra'] = test_protocol.get('extra', '') + '\n Exit code %(exit_code)s. ' % {
+                'exit_code': judge_info['exit-code']
+            }
+
+        for type_ in [('o', 'output'), ('c', 'checker_output'), ('e', 'error_output')]:
+            file_name = '{0:06d}.{1}'.format(int(test_num), type_[0])
+            if self._out_arch is None:
+                try:
+                    self._out_arch = zipfile.ZipFile(self.out_path, 'r')
+                    self._out_arch_file_names = set(self._out_arch.namelist())
+                except:
+                    pass
+            if file_name not in self._out_arch_file_names or type_[1] in test_protocol:
+                continue
+            with self._out_arch.open(file_name, 'r') as f:
+                test_protocol[type_[1]] = f.read(1024).decode("utf-8") + "...\n"
+
+        return test_protocol
 
     def parsetests(self):
         """
