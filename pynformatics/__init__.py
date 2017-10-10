@@ -1,16 +1,33 @@
 from pyramid.config import Configurator
+from pyramid.events import NewRequest
 
 from .models import DBSession
 from pynformatics.view.comment import *
 from sqlalchemy import engine_from_config
+
+
+def add_cors_headers_response_callback(event):
+    def cors_headers(request, response):
+        response.headers.update({
+        'Access-Control-Allow-Origin': 'http://informatics.msk.ru',
+        'Access-Control-Allow-Methods': 'POST,GET,DELETE,PUT,OPTIONS',
+        'Access-Control-Allow-Headers': 'Origin, Content-Type, Accept, Authorization',
+        'Access-Control-Allow-Credentials': 'true',
+        'Access-Control-Max-Age': '1728000',
+        })
+    event.request.add_response_callback(cors_headers)
+
 
 def main(global_config, **settings):
     """ This function returns a Pyramid WSGI application.
     """
     engine = engine_from_config(settings, 'sqlalchemy.')
     DBSession.configure(bind=engine, expire_on_commit=False)
+
     config = Configurator(settings=settings)
     config.include('pyramid_mako')
+    config.add_subscriber(add_cors_headers_response_callback, NewRequest)
+
     config.add_static_view('static', 'static', cache_max_age=3600)
     config.add_route('stars.add', '/stars/add')
     config.add_route('stars.delete', '/stars/delete')
@@ -55,7 +72,8 @@ def main(global_config, **settings):
     config.add_route('team_monitor.get', '/team_monitor/get/{statement_id}')
     
     config.add_route('contest.ejudge.reload.problem', '/contest/ejudge/reload/{contest_id}/{problem_id}')
-    
+
+    config.add_route('problem.get', '/problem/{problem_id}')
     config.add_route('problem.submit', '/problem/{problem_id}/submit')
     config.add_route('problem.limits.show', '/problem/{problem_id}/limits/show')
     config.add_route('problem.limits.hide', '/problem/{problem_id}/limits/hide')
