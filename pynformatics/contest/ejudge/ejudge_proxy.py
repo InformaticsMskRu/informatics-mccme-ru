@@ -66,13 +66,13 @@ def submit(run_file, contest_id, prob_id, lang_id, login, password, filename, ur
     files = {'file' : (filename, run_file) }
 
     submit_data = {
-        'SID' : SID,
-        'prob_id' : prob_id,
-        'lang_id' : lang_id,
-        'action_40' : 'action_40'
+        'SID': SID,
+        'prob_id': prob_id,
+        'lang_id': lang_id,
+        'action_40': 'action_40',
     }
 
-    c = requests.post(url, data = submit_data, cookies = cookies, files = files)
+    c = requests.post(url, data=submit_data, cookies=cookies, files=files)
 
     if "method=\"post\"" in c.text:
         return "ok"

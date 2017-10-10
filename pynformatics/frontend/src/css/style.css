@@ -1,0 +1,21 @@
+.main-content {
+    margin: auto;
+    width: 1200px;
+}
+
+.problem .section-title {
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.sample-tests .title {
+    font-weight: bold;
+}
+
+.problem-submit-form {
+    margin-top: 10px;
+}
+.problem-submit-form div {
+    margin-bottom: 5px;
+    font-family: monospace;
+}
