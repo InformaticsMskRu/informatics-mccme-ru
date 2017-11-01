@@ -1,10 +1,10 @@
 import { combineReducers } from 'redux';
 import { reducer as form } from 'redux-form';
 
-import problem from './problemReducer';
+import problems from './problemsReducer';
 
 
 export default combineReducers({
-    problem,
+    problems,
     form,
 })

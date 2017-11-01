@@ -18,9 +18,7 @@ from pynformatics.model import SimpleUser, User, EjudgeContest, Run, Comment, Ej
 from pynformatics.models import DBSession
 from pynformatics.view.utils import *
 from pynformatics.utils.context import with_context
-from pynformatics.utils.exceptions import (
-    BaseApiException
-)
+from pynformatics.utils.run import get_status_by_id
 
 
 def checkCapability(request):
@@ -256,3 +254,28 @@ def problem_get(request, context):
     }
     problem_dict['languages'] = context.get_languages()
     return problem_dict
+
+
+@view_config(route_name='problem.runs', renderer='json')
+@with_context(require_auth=True)
+def problem_runs(request, context):
+    runs = context.problem.runs.filter_by(user_id=int(context.user.ejudge_id))
+    runs_dict = {}
+    attrs = [
+        'size',
+        'create_time',
+        'contest_id',
+        'prob_id',
+        'lang_id',
+        'status',
+        'score',
+    ]
+    for run in runs:
+        run_dict = {
+            attr: getattr(run, attr, 'undefined')
+            for attr in attrs
+        }
+        run_dict['create_time'] = str(run_dict['create_time'])
+        run_dict['status'] = get_status_by_id(run_dict['status'])
+        runs_dict[str(run.run_id)] = run_dict
+    return runs_dict

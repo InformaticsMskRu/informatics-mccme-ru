@@ -7,8 +7,11 @@ export function fetchProblem(problemId) {
     const url = `${config.apiUrl}/problem/${problemId}`;
 
     return {
-        type: 'PROBLEM',
+        type: 'GET_PROBLEM',
         payload: axios.get(url),
+        meta: {
+            problemId,
+        }
     }
 }
 
@@ -34,10 +37,34 @@ export function submitProblem(problemId, data) {
                 }
             ),
             meta: {
+                problemId,
                 handleErrors: true,
             }
+        }).then(response => dispatch(fetchProblemRuns(problemId))).catch(error => {
+            // alert(`${code}: ${message}`);
+        });
+    }
+}
+
+
+export function fetchProblemRuns(problemId) {
+    console.log("FETCHING RUNS");
+    return dispatch => {
+        const url = `${config.apiUrl}/problem/${problemId}/runs`;
+
+        dispatch({
+            type: 'GET_PROBLEM_RUNS',
+            payload: axios.get(
+                url,
+                {
+                    withCredentials: true,
+                }
+            ),
+            meta: {
+                problemId,
+            }
         }).catch(error => {
-            alert(`${code}: ${message}`);
+            // alert(`${code}: ${message}`);
         });
     }
 }

@@ -1,23 +1,30 @@
 import React from 'react';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 
-import * as problem from '../actions/problemActions';
+import * as problemActions from '../actions/problemActions';
 
+import ProblemRuns from './ProblemRuns';
 import ProblemSubmitForm from './ProblemSubmitForm';
 
 
 @connect((state) => {
     return {
-        problem: state.problem,
+        problems: state.problems,
     }
 })
 export default class Problem extends React.Component {
+    constructor(props) {
+        super(props);
+        this.problemId = props.match.params.problemId;
+    }
+
     componentWillMount() {
-        this.props.dispatch(problem.fetchProblem(this.props.match.params.problemId));
+        this.props.dispatch(problemActions.fetchProblem(this.problemId));
+        this.props.dispatch(problemActions.fetchProblemRuns(this.problemId));
     }
 
     renderLimits() {
-        const {data} = this.props.problem;
+        const {data} = this.props.problems[this.problemId];
 
         if (!data.show_limits)
             return;
@@ -31,20 +38,24 @@ export default class Problem extends React.Component {
     }
 
     render() {
-        const {fetching, fetched, data} = this.props.problem;
+        const problem = this.props.problems[this.problemId];
 
-        if (fetching) {
+        if (!problem || problem.fetching) {
             return <div>
                 fetching problem...
             </div>
         }
-        else if (!fetched) {
+
+        const {fetched, data, runs} = problem;
+
+        if (!fetched) {
             return <div>
                 some error occured...
             </div>
         }
         return <div class="problem">
-            <ProblemSubmitForm problem={data}/>
+            <ProblemSubmitForm problem={problem}/>
+            <ProblemRuns problem={problem}/>
             <h1 class="problem-title">Задача {data.id}: {data.name}</h1>
             {this.renderLimits()}
             <div dangerouslySetInnerHTML={{__html: data.content}} />

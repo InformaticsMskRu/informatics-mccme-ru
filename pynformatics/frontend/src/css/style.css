@@ -19,3 +19,10 @@
     margin-bottom: 5px;
     font-family: monospace;
 }
+
+table, th, td {
+    border: 1px solid black;
+}
+td {
+    padding: 4px;
+}

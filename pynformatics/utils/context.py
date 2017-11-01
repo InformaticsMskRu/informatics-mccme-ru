@@ -6,7 +6,7 @@ from pynformatics.model import (
 )
 from pynformatics.models import DBSession
 from pynformatics.utils.constants import (
-    LANG_NAMES,
+    LANG_NAME_BY_ID,
 )
 from pynformatics.view.utils import RequestGetUserId
 from pynformatics.utils.exceptions import (
@@ -52,7 +52,7 @@ class Context:
         """
         Returns dict (id -> language name) of allowed languages for this context
         """
-        return LANG_NAMES
+        return LANG_NAME_BY_ID
 
 
 def with_context(view_function=None, require_auth=False):

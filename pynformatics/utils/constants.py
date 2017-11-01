@@ -1,4 +1,4 @@
-LANG_NAMES = {
+LANG_NAME_BY_ID = {
     1: "Free Pascal 2.6.2",
     2: "GNU C 4.9",
     3: "GNU C++ 4.9",
@@ -18,3 +18,28 @@ LANG_NAMES = {
     30: "PascalABC 1.8.0.496",
     31: "1C 8.3"
 }
+
+STATUS_BY_ID = {
+    0: "OK",
+    1: "CE",
+    2: "RE",
+    3: "TL",
+    4: "PE",
+    5: "WA",
+    6: "CF",
+    7: "Partial",
+    8: "AC",
+    9: "Ignored",
+    10: "Disqualified",
+    11: "Pending",
+    12: "ML",
+    13: "Security error",
+    14: "Style Violation",
+    15: "Wall Time Limit Exceeded",
+    16: "Pending Review",
+    17: "Rejected",
+    18: "Skipped",
+    96: "Running...",
+    98: "Compiling...",
+}
+

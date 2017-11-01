@@ -14,7 +14,7 @@ import xml
 import gzip
 
 class Run(Base):
-    __tablename__ = "runs"
+    __tablename__ = 'runs'
     __table_args__ = (
         ForeignKeyConstraint(['contest_id', 'prob_id'], ['moodle.mdl_ejudge_problem.ejudge_contest_id', 'moodle.mdl_ejudge_problem.problem_id']),
         ForeignKeyConstraint(['user_id'], ['moodle.mdl_user.ej_id']),
@@ -30,7 +30,7 @@ class Run(Base):
     comments = relation('Comment', backref=backref('comments'))
     contest_id = Column(Integer, primary_key=True)
     prob_id = Column(Integer)
-    problem = relationship('EjudgeProblem', backref='runs', uselist=False)
+    problem = relationship('EjudgeProblem', backref=backref('runs', lazy='dynamic'), uselist=False)
     lang_id = Column(Integer)
     status = Column(Integer)
     score = Column(Integer)
