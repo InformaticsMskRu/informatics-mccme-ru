@@ -113,6 +113,8 @@ def main(global_config, **settings):
     config.add_route('recommendation.get_html', '/recommendation/get_html')
 
     config.add_route('submits.get', '/submits/get')
+
+    config.add_route('statement.get', '/statement/{statement_id}')
     
     config.scan()
     return config.make_wsgi_app()

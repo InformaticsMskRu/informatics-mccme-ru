@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
 
 import * as problemActions from '../actions/problemActions';
 
@@ -12,9 +13,11 @@ import ProblemSubmitForm from './ProblemSubmitForm';
         problems: state.problems,
     }
 })
+@withRouter
 export default class Problem extends React.Component {
     constructor(props) {
         super(props);
+        console.log('problem', props);
         this.problemId = props.match.params.problemId;
     }
 

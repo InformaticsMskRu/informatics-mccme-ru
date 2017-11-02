@@ -3,6 +3,7 @@ from functools import wraps, partial
 from pynformatics.model import (
     EjudgeProblem,
     SimpleUser,
+    Statement,
 )
 from pynformatics.models import DBSession
 from pynformatics.utils.constants import (
@@ -24,6 +25,9 @@ class Context:
         self._problem_id = request.matchdict.get('problem_id')
         self._problem = None
 
+        self._statement_id = request.matchdict.get('statement_id')
+        self._statement = None
+
     @property
     def user_id(self):
         return self._user_id
@@ -40,9 +44,19 @@ class Context:
 
     @property
     def problem(self):
-        if not self._problem and self.problem_id:
+        if not self._problem and self._problem_id:
             self._problem = DBSession.query(EjudgeProblem).filter(EjudgeProblem.id == self._problem_id).first()
         return self._problem
+
+    @property
+    def statement_id(self):
+        return self._statement_id
+
+    @property
+    def statement(self):
+        if not self._statement and self._statement_id:
+            self._statement = DBSession.query(Statement).filter(Statement.id == self._statement_id).first()
+        return self._statement
 
     def check_auth(self):
         if self._user_id == -1:
@@ -60,7 +74,7 @@ def with_context(view_function=None, require_auth=False):
     Passes context as additional argument to the view_function
     """
     if view_function is None:
-        return partial(with_context, require_auth=require_auth)
+        return partial(with_context, require_auth=False)
 
     @wraps(view_function)
     def wrapper(request):

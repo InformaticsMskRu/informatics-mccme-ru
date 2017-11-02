@@ -10,8 +10,8 @@ from sqlalchemy.orm.collections import attribute_mapped_collection
 from pynformatics.model.meta import Base
 
 class Statement(Base):
-    __tablename__ = "mdl_statements"
-    __table_args__ = {'schema':'moodle'}
+    __tablename__ = 'mdl_statements'
+    __table_args__ = {'schema': 'moodle'}
     id = Column(Integer, primary_key=True)
     course = Column(Integer)
     name = Column(Unicode)
@@ -30,8 +30,8 @@ class Statement(Base):
 #    ejudge_users = relation('EjudgeUser', backref="moodle.mdl_user", uselist=False)
 #    ejudge_user = relation('EjudgeUser', backref = backref('moodle.mdl_user'), uselist=False, primaryjoin = "EjudgeUser.user_id == User.id")
     
-    problems = association_proxy("StatementProblems", 'problem')
-    user = association_proxy("StatementUsers1", 'user')
+    problems = association_proxy('StatementProblems', 'problem')
+    user = association_proxy('StatementUsers1', 'user')
     
     def __init__(self, name, timelimit, memorylimit, content='', review='', description='', analysis=''):
         self.name = name
@@ -45,7 +45,7 @@ class Statement(Base):
 
 class StatementUser(Base):
     __tablename__ = 'mdl_olympiad'
-    __table_args__ = {'schema':'moodle'}
+    __table_args__ = {'schema': 'moodle'}
 
     id = Column(Integer, primary_key=True)    
     statement_id = Column('contest_id', Integer, ForeignKey('moodle.mdl_statements.id'))
@@ -56,7 +56,7 @@ class StatementUser(Base):
         
 class StatementProblem(Base):
     __tablename__ = 'mdl_statements_problems_correlation'
-    __table_args__ = {'schema':'moodle'}
+    __table_args__ = {'schema': 'moodle'}
 
     id = Column(Integer, primary_key=True)    
     statement_id = Column(Integer, ForeignKey('moodle.mdl_statements.id'))
@@ -64,10 +64,10 @@ class StatementProblem(Base):
     rank = Column('rank', Integer)
     hidden = Column('hidden', Integer)
 
-    statement = relationship("Statement", backref=backref("StatementProblems", collection_class=attribute_mapped_collection("rank")))
+    statement = relationship('Statement', backref=backref('StatementProblems', collection_class=attribute_mapped_collection("rank")))
 
     # reference to the "Keyword" object
-    problem = relationship("Problem", backref=backref("StatementProblems"))        
+    problem = relationship('Problem', backref=backref('StatementProblems'))
     
     def __init__(self, statement_id, problem_id, rank):
         self.statement_id = statement_id
