@@ -21,7 +21,8 @@ def statement_get(request, context):
         for attr in attrs
     }
     statement_dict['problems'] = {
-        rank: problem.id
-        for rank, problem in context.statement.problems.items()
+        rank: statement_problem.problem.id
+        for rank, statement_problem in context.statement.StatementProblems.items()
+        if not statement_problem.hidden
     }
     return statement_dict

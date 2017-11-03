@@ -74,7 +74,7 @@ def with_context(view_function=None, require_auth=False):
     Passes context as additional argument to the view_function
     """
     if view_function is None:
-        return partial(with_context, require_auth=False)
+        return partial(with_context, require_auth=require_auth)
 
     @wraps(view_function)
     def wrapper(request):

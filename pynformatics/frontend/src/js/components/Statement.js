@@ -16,7 +16,6 @@ import Problem from './Problem';
 export default class Statement extends React.Component {
     constructor(props) {
         super();
-        console.log(props);
         this.statementId = props.match.params.statementId;
     }
 
@@ -36,7 +35,6 @@ export default class Statement extends React.Component {
                 <Link to={`${url}/problem/${problemId}`}>{problemId}</Link>
             </li>;
         });
-        console.log(this.props);
         return <div>
             <h1>{statement.name}</h1>
             <div>

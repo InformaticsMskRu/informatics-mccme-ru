@@ -17,22 +17,31 @@ import ProblemSubmitForm from './ProblemSubmitForm';
 export default class Problem extends React.Component {
     constructor(props) {
         super(props);
-        console.log('problem', props);
-        this.problemId = props.match.params.problemId;
+        this.fetchProblemData(props);
     }
 
-    componentWillMount() {
-        this.props.dispatch(problemActions.fetchProblem(this.problemId));
-        this.props.dispatch(problemActions.fetchProblemRuns(this.problemId));
+    fetchProblemData(props) {
+        const { problemId } = props.match.params;
+        this.props.dispatch(problemActions.fetchProblem(problemId));
+        this.props.dispatch(problemActions.fetchProblemRuns(problemId));
+    }
+
+    componentWillReceiveProps(nextProps) {
+        const problemId = this.props.match.params.problemId;
+        const nextProblemId = nextProps.match.params.problemId;
+        if (problemId !== nextProblemId) {
+            this.fetchProblemData(nextProps);
+        }
     }
 
     renderLimits() {
-        const {data} = this.props.problems[this.problemId];
+        const { problemId } = this.props.match.params;
+        const {data} = this.props.problems[problemId];
 
         if (!data.show_limits)
             return;
 
-        const {memorylimit, timelimit} = data;
+        const { memorylimit, timelimit } = data;
 
         return <div>
             <div>Ограничение по времени, сек: {timelimit}</div>
@@ -41,9 +50,10 @@ export default class Problem extends React.Component {
     }
 
     render() {
-        const problem = this.props.problems[this.problemId];
+        const { problemId } = this.props.match.params;
+        const problem = this.props.problems[problemId];
 
-        if (!problem || problem.fetching) {
+        if (!problem || (!problem.fetched && problem.fetching)) {
             return <div>
                 fetching problem...
             </div>
