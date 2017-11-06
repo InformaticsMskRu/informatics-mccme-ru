@@ -1,6 +1,7 @@
 import axios from 'axios';
 
 import * as config from 'Config';
+import { LANGUAGES } from '../constants';
 
 
 export function fetchProblem(problemId) {
@@ -19,7 +20,16 @@ export function submitProblem(problemId, data) {
 
         let formData = new FormData;
         formData.append('lang_id', data.langId);
-        formData.append('file', data.file);
+        if (data.file)
+            formData.append('file', data.file);
+        else if (data.source) {
+            const blob = new Blob([data.source], {type: 'text/plain'});
+            formData.append('file', blob, `source${LANGUAGES[data.langId].extension}`);
+        }
+        else {
+            alert('nothing to submit');
+            return;
+        }
 
         dispatch({
             type: 'PROBLEM_SUBMIT',
