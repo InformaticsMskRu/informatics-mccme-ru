@@ -79,6 +79,7 @@ def main(global_config, **settings):
     config.add_route('problem.limits.hide', '/problem/{problem_id}/limits/hide')
     config.add_route('problem.runs', '/problem/{problem_id}/runs')
     config.add_route('problem.submit', '/problem/{problem_id}/submit')
+    config.add_route('problem.submit_v2', '/problem/{problem_id}/submit_v2')
     config.add_route('problem.tests.add', '/problem/{problem_id}/tests/add')
     config.add_route('problem.tests.count', '/problem/{problem_id}/tests/count')
     config.add_route('problem.tests.get_corr', '/problem/{problem_id}/tests/corr/{test_num}')

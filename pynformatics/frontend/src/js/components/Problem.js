@@ -1,6 +1,5 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
 
 import * as problemActions from '../actions/problemActions';
 
@@ -13,29 +12,27 @@ import ProblemSubmitForm from './ProblemSubmitForm';
         problems: state.problems,
     }
 })
-@withRouter
 export default class Problem extends React.Component {
     constructor(props) {
         super(props);
-        this.fetchProblemData(props);
+        this.fetchProblemData(props.problemId);
     }
 
-    fetchProblemData(props) {
-        const { problemId } = props.match.params;
+    fetchProblemData(problemId) {
         this.props.dispatch(problemActions.fetchProblem(problemId));
         this.props.dispatch(problemActions.fetchProblemRuns(problemId));
     }
 
     componentWillReceiveProps(nextProps) {
-        const problemId = this.props.match.params.problemId;
-        const nextProblemId = nextProps.match.params.problemId;
+        const { problemId } = this.props;
+        const nextProblemId = nextProps.problemId;
         if (problemId !== nextProblemId) {
-            this.fetchProblemData(nextProps);
+            this.fetchProblemData(nextProps.problemId);
         }
     }
 
     renderLimits() {
-        const { problemId } = this.props.match.params;
+        const { problemId } = this.props;
         const {data} = this.props.problems[problemId];
 
         if (!data.show_limits)
@@ -50,7 +47,7 @@ export default class Problem extends React.Component {
     }
 
     render() {
-        const { problemId } = this.props.match.params;
+        const { problemId } = this.props;
         const problem = this.props.problems[problemId];
 
         if (!problem || (!problem.fetched && problem.fetching)) {

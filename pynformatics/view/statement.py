@@ -15,6 +15,7 @@ def statement_get(request, context):
     attrs = [
         'course',
         'name',
+        'settings',
     ]
     statement_dict = {
         attr: getattr(context.statement, attr)

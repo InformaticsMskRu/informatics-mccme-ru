@@ -18,6 +18,7 @@ from pynformatics.model import SimpleUser, User, EjudgeContest, Run, Comment, Ej
 from pynformatics.models import DBSession
 from pynformatics.view.utils import *
 from pynformatics.utils.context import with_context
+from pynformatics.utils.exceptions import Forbidden
 from pynformatics.utils.run import get_status_by_id
 
 
@@ -63,6 +64,31 @@ def problem_submits(request, context):
             user_id=context.user_id,
         )
     }
+
+
+@view_config(route_name='problem.submit_v2', renderer='json')
+@with_context(require_auth=True)
+def problem_submits_v2(request, context):
+    lang_id = request.params['lang_id']
+    input_file = request.POST['file'].file
+    filename = request.POST['file'].filename
+    ejudge_url = request.registry.settings['ejudge.new_client_url']
+    if lang_id not in context.get_allowed_languages():
+        raise Forbidden('Language id "%s" is not allowed' % lang_id)
+    return {
+        'res': submit(
+            run_file=input_file,
+            contest_id=context.problem.ejudge_contest_id,
+            prob_id=context.problem.problem_id,
+            lang_id=lang_id,
+            login=context.user.login,
+            password=context.user.password,
+            filename=filename,
+            url=ejudge_url,
+            user_id=context.user_id,
+        )
+    }
+
 
 @view_config(route_name='problem.ant.submit', renderer='json')
 def problem_ant_submits(request):
@@ -252,7 +278,7 @@ def problem_get(request, context):
         attr: getattr(context.problem, attr, 'undefined')
         for attr in attrs
     }
-    problem_dict['languages'] = context.get_languages()
+    problem_dict['languages'] = context.get_allowed_languages()
     return problem_dict
 
 

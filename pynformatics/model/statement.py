@@ -8,6 +8,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm.collections import attribute_mapped_collection
 
 from pynformatics.model.meta import Base
+from pynformatics.utils.json_type import JsonType
 
 class Statement(Base):
     __tablename__ = 'mdl_statements'
@@ -25,6 +26,8 @@ class Statement(Base):
     timestart = Column(Integer)
     timestop = Column(Integer)
     olympiad = Column(Integer)
+    settings = Column(JsonType)
+
 #    analysis = Column(Unicode)
 #    pr_id = Column(Integer, ForeignKey('moodle.mdl_ejudge_problem.id'))
 #    ejudge_users = relation('EjudgeUser', backref="moodle.mdl_user", uselist=False)
@@ -42,6 +45,12 @@ class Statement(Base):
         self.hidden = 1
         self.timelimit = timelimit
         self.memorylimit = memorylimit
+
+    def get_allowed_languages(self):
+        if not (self.settings and 'allowed_languages' in self.settings):
+            return None
+        return self.settings['allowed_languages']
+
 
 class StatementUser(Base):
     __tablename__ = 'mdl_olympiad'

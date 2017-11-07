@@ -1,10 +1,8 @@
-import axios from 'axios';
-
-import * as config from 'Config';
+import axios from '../utils/axios';
 
 
 export function fetchProblem(problemId) {
-    const url = `${config.apiUrl}/problem/${problemId}`;
+    const url = `/problem/${problemId}`;
 
     return {
         type: 'GET_PROBLEM',
@@ -18,7 +16,7 @@ export function fetchProblem(problemId) {
 
 export function submitProblem(problemId, data) {
     return dispatch => {
-        const url = `${config.apiUrl}/problem/${problemId}/submit`;
+        const url = `/problem/${problemId}/submit_v2`;
 
         let formData = new FormData;
         formData.append('lang_id', data.langId);
@@ -50,7 +48,7 @@ export function submitProblem(problemId, data) {
 export function fetchProblemRuns(problemId) {
     console.log("FETCHING RUNS");
     return dispatch => {
-        const url = `${config.apiUrl}/problem/${problemId}/runs`;
+        const url = `/problem/${problemId}/runs`;
 
         dispatch({
             type: 'GET_PROBLEM_RUNS',

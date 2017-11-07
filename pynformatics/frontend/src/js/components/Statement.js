@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Switch, Route, Redirect, Link, withRouter } from 'react-router-dom';
+import { Link, withRouter } from 'react-router-dom';
 
 import * as statementActions from '../actions/statementActions';
 
@@ -14,36 +14,32 @@ import Problem from './Problem';
 })
 @withRouter
 export default class Statement extends React.Component {
-    constructor(props) {
-        super();
-        this.statementId = props.match.params.statementId;
-    }
-
     componentWillMount() {
-        this.props.dispatch(statementActions.fetchStatement(this.statementId));
+        const { statementId } = this.props.match.params;
+        this.props.dispatch(statementActions.fetchStatement(statementId));
     }
 
     render() {
-        const { match: {path, url} } = this.props;
-        const statement = this.props.statements[this.statementId];
+        const {problemRank, statementId} = this.props.match.params;
+        const statement = this.props.statements[statementId];
+
         if (!statement) {
             return <h1>...</h1>
         }
+
         const problemLis = Object.keys(statement.problems).map(problemRank => {
-            const problemId = statement.problems[problemRank];
-            return <li key={problemId}>
-                <Link to={`${url}/problem/${problemId}`}>{problemId}</Link>
+            return <li key={problemRank}>
+                <Link to={`/statement/${statementId}/problem/${problemRank}`}>{problemRank}</Link>
             </li>;
         });
+
         return <div>
             <h1>{statement.name}</h1>
             <div>
                 <ol>{problemLis}</ol>
             </div>
             <div>
-                <Switch>
-                    <Route exact path={`${path}/problem/:problemId`} component={Problem}/>
-                </Switch>
+                <Problem problemId={statement.problems[problemRank]}/>
             </div>
         </div>;
     }
