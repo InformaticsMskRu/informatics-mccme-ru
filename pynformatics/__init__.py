@@ -116,6 +116,6 @@ def main(global_config, **settings):
 
     config.add_route('statement.get', '/statement/{statement_id}')
     
-    config.scan()
+    config.scan(ignore='pynformatics.tests')
     return config.make_wsgi_app()
 
