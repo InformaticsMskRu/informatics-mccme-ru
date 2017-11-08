@@ -65,7 +65,7 @@ export default class Problem extends React.Component {
         }
         return <div class="problem">
             <ProblemSubmitForm problem={problem}/>
-            <ProblemRuns problem={problem}/>
+            <ProblemRuns problemId={problemId}/>
             <h1 class="problem-title">Задача {data.id}: {data.name}</h1>
             {this.renderLimits()}
             <div dangerouslySetInnerHTML={{__html: data.content}} />

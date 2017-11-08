@@ -2,7 +2,9 @@ const initialState = {
 };
 
 export default function reducer(state=initialState, action) {
-    const problemId = action.meta ? action.meta.problemId : undefined;
+    if (!action.meta)
+        return state;
+    const {problemId, runId} = action.meta;
     switch (action.type) {
         case 'GET_PROBLEM_PENDING':
             return {
@@ -66,6 +68,26 @@ export default function reducer(state=initialState, action) {
                     fetchedRuns: false,
                 },
             };
+
+
+        case 'GET_PROBLEM_RUN_PROTOCOL_PENDING':
+            return state;
+        case 'GET_PROBLEM_RUN_PROTOCOL_FULFILLED':
+            return {
+                ...state,
+                [problemId]: {
+                    ...state[problemId],
+                    runs: {
+                        ...state[problemId].runs,
+                        [runId]: {
+                            ...state[problemId].runs[runId],
+                            protocol: action.payload.data,
+                        }
+                    }
+                }
+            };
+        case 'GET_PROBLEM_RUN_PROTOCOL_REJECTED':
+            return state;
     }
     return state;
 }

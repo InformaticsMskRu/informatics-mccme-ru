@@ -34,10 +34,7 @@ export function submitProblem(problemId, data) {
                     withCredentials: true,
                 }
             ),
-            meta: {
-                problemId,
-                handleErrors: true,
-            }
+            meta: { problemId }
         }).then(response => dispatch(fetchProblemRuns(problemId))).catch(error => {
             // alert(`${code}: ${message}`);
         });
@@ -46,7 +43,6 @@ export function submitProblem(problemId, data) {
 
 
 export function fetchProblemRuns(problemId) {
-    console.log("FETCHING RUNS");
     return dispatch => {
         const url = `/problem/${problemId}/runs`;
 
@@ -58,11 +54,27 @@ export function fetchProblemRuns(problemId) {
                     withCredentials: true,
                 }
             ),
-            meta: {
-                problemId,
-            }
+            meta: { problemId }
         }).catch(error => {
             // alert(`${code}: ${message}`);
         });
+    }
+}
+
+
+export function fetchProblemRunProtocol(problemId, contestId, runId) {
+    return dispatch => {
+        const url = `${config.apiUrl}/protocol/get/${contestId}/${runId}`;
+
+        dispatch({
+            type: 'GET_PROBLEM_RUN_PROTOCOL',
+            payload: axios.get(
+                url,
+                {
+                    withCredentials: true,
+                }
+            ),
+            meta: { problemId, runId },
+        })
     }
 }
