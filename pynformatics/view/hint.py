@@ -16,7 +16,7 @@ from pyramid.httpexceptions import HTTPFound
 
 
 def get_test_signature(run):
-    run.tested_protocol  # magic
+    run.fetch_tested_protocol_data()
     return ''.join(test[1]['status'] for test in sorted(run.tests.items(), key=lambda x:int(x[0])))
     
 def get_run_code(run_id, contest_id):

@@ -1,22 +1,25 @@
-import axios from 'axios';
+import axios from '../utils/axios';
 
 import * as config from 'Config';
 import { LANGUAGES } from '../constants';
 
 
 export function fetchProblem(problemId) {
-    const url = `${config.apiUrl}/problem/${problemId}`;
+    const url = `/problem/${problemId}`;
 
     return {
-        type: 'PROBLEM',
+        type: 'GET_PROBLEM',
         payload: axios.get(url),
+        meta: {
+            problemId,
+        }
     }
 }
 
 
 export function submitProblem(problemId, data) {
     return dispatch => {
-        const url = `${config.apiUrl}/problem/${problemId}/submit`;
+        const url = `/problem/${problemId}/submit_v2`;
 
         let formData = new FormData;
         formData.append('lang_id', data.langId);
@@ -43,11 +46,47 @@ export function submitProblem(problemId, data) {
                     withCredentials: true,
                 }
             ),
-            meta: {
-                handleErrors: true,
-            }
-        }).catch(error => {
-            alert(`${code}: ${message}`);
+            meta: { problemId }
+        }).then(response => dispatch(fetchProblemRuns(problemId))).catch(error => {
+            // alert(`${code}: ${message}`);
         });
+    }
+}
+
+
+export function fetchProblemRuns(problemId) {
+    return dispatch => {
+        const url = `/problem/${problemId}/runs`;
+
+        dispatch({
+            type: 'GET_PROBLEM_RUNS',
+            payload: axios.get(
+                url,
+                {
+                    withCredentials: true,
+                }
+            ),
+            meta: { problemId }
+        }).catch(error => {
+            // alert(`${code}: ${message}`);
+        });
+    }
+}
+
+
+export function fetchProblemRunProtocol(problemId, contestId, runId) {
+    return dispatch => {
+        const url = `${config.apiUrl}/protocol/get/${contestId}/${runId}`;
+
+        dispatch({
+            type: 'GET_PROBLEM_RUN_PROTOCOL',
+            payload: axios.get(
+                url,
+                {
+                    withCredentials: true,
+                }
+            ),
+            meta: { problemId, runId },
+        })
     }
 }

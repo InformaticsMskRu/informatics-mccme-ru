@@ -1,28 +1,44 @@
 import React from 'react';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 
-import * as problem from '../actions/problemActions';
+import * as problemActions from '../actions/problemActions';
 
+import ProblemRuns from './ProblemRuns';
 import ProblemSubmitForm from './ProblemSubmitForm';
 
 
 @connect((state) => {
     return {
-        problem: state.problem,
+        problems: state.problems,
     }
 })
 export default class Problem extends React.Component {
-    componentWillMount() {
-        this.props.dispatch(problem.fetchProblem(this.props.match.params.problemId));
+    constructor(props) {
+        super(props);
+        this.fetchProblemData(props.problemId);
+    }
+
+    fetchProblemData(problemId) {
+        this.props.dispatch(problemActions.fetchProblem(problemId));
+        this.props.dispatch(problemActions.fetchProblemRuns(problemId));
+    }
+
+    componentWillReceiveProps(nextProps) {
+        const { problemId } = this.props;
+        const nextProblemId = nextProps.problemId;
+        if (problemId !== nextProblemId) {
+            this.fetchProblemData(nextProps.problemId);
+        }
     }
 
     renderLimits() {
-        const {data} = this.props.problem;
+        const { problemId } = this.props;
+        const {data} = this.props.problems[problemId];
 
         if (!data.show_limits)
             return;
 
-        const {memorylimit, timelimit} = data;
+        const { memorylimit, timelimit } = data;
 
         return <div>
             <div>Ограничение по времени, сек: {timelimit}</div>
@@ -31,20 +47,25 @@ export default class Problem extends React.Component {
     }
 
     render() {
-        const {fetching, fetched, data} = this.props.problem;
+        const { problemId } = this.props;
+        const problem = this.props.problems[problemId];
 
-        if (fetching) {
+        if (!problem || (!problem.fetched && problem.fetching)) {
             return <div>
                 fetching problem...
             </div>
         }
-        else if (!fetched) {
+
+        const {fetched, data, runs} = problem;
+
+        if (!fetched) {
             return <div>
                 some error occured...
             </div>
         }
         return <div class="problem">
-            <ProblemSubmitForm problem={data}/>
+            <ProblemSubmitForm problem={problem}/>
+            <ProblemRuns problemId={problemId}/>
             <h1 class="problem-title">Задача {data.id}: {data.name}</h1>
             {this.renderLimits()}
             <div dangerouslySetInnerHTML={{__html: data.content}} />

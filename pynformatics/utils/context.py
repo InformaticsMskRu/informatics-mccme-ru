@@ -3,26 +3,52 @@ from functools import wraps, partial
 from pynformatics.model import (
     EjudgeProblem,
     SimpleUser,
+    Statement,
 )
 from pynformatics.models import DBSession
 from pynformatics.utils.constants import (
-    LANG_NAMES,
+    LANG_NAME_BY_ID,
 )
 from pynformatics.view.utils import RequestGetUserId
 from pynformatics.utils.exceptions import (
-    UnauthorizedException,
+    Unauthorized,
 )
 
 
 class Context:
+    REQUEST_KEYS = [
+        'problem_id',
+        'statement_id',
+    ]
+
     def __init__(self, request):
         self._request = request
 
         self._user_id = RequestGetUserId(self._request)
         self._user = None
 
-        self._problem_id = request.matchdict.get('problem_id')
         self._problem = None
+        self._statement = None
+
+        for request_key in self.REQUEST_KEYS:
+            setattr(
+                self,
+                '_' + request_key,
+                self._get_request_key_value(request, request_key)
+            )
+
+        print('*'*20, request.GET, request.POST)
+
+
+    @staticmethod
+    def _get_request_key_value(request, key):
+        value = request.matchdict.get(key)
+        if request.method == 'GET':
+            value = value or request.GET.get(key)
+        elif request.method == 'POST':
+            value = value or request.POST.get(key)
+        return value
+
 
     @property
     def user_id(self):
@@ -40,19 +66,35 @@ class Context:
 
     @property
     def problem(self):
-        if not self._problem and self.problem_id:
+        if not self._problem and self._problem_id:
             self._problem = DBSession.query(EjudgeProblem).filter(EjudgeProblem.id == self._problem_id).first()
         return self._problem
 
+    @property
+    def statement_id(self):
+        return self._statement_id
+
+    @property
+    def statement(self):
+        if not self._statement and self._statement_id:
+            self._statement = DBSession.query(Statement).filter(Statement.id == self._statement_id).first()
+        return self._statement
+
     def check_auth(self):
         if self._user_id == -1:
-            raise UnauthorizedException
+            raise Unauthorized
 
-    def get_languages(self):
+    def get_allowed_languages(self):
         """
         Returns dict (id -> language name) of allowed languages for this context
         """
-        return LANG_NAMES
+        allowed_languages = set(LANG_NAME_BY_ID.keys())
+        if self.statement:
+            allowed_languages &= set(self.statement.get_allowed_languages())
+        return {
+            allowed_language: LANG_NAME_BY_ID[allowed_language]
+            for allowed_language in allowed_languages
+        }
 
 
 def with_context(view_function=None, require_auth=False):

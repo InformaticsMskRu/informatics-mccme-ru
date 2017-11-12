@@ -28,16 +28,16 @@ def RequestCheckUserCapability(request, capability):
         return int(user.capabilities[1][capability]) >= 1
     except:
        if fh != None:
-           fh.close() 
-#       raise       
+           fh.close()
+#       raise
        return False
-       
+
 def getContestStrId(id):
     res = str(id)
     while len(res) < 6:
         res = "0" + res
     return res
-        
+
 #def RequestGetUserCapability(request, capability):
 #    str = "+++"
 #    try:
@@ -49,7 +49,7 @@ def getContestStrId(id):
 #        fh.close()
 #        return user.capabilities[1]
 #    except ValueError as (e):
-#        fh.close() 
+#        fh.close()
 #        return "".join(traceback.format_exception(sys.exc_info()[0], sys.exc_info()[1], sys.exc_info()[2]))
 #    except:
 #        return "".join(traceback.format_exception(sys.exc_info()[0], sys.exc_info()[1], sys.exc_info()[2]))

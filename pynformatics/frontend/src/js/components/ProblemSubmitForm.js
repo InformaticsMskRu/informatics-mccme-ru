@@ -77,12 +77,11 @@ export default class ProblemSubmitForm extends React.Component {
             source,
             file: file ? file[0] : undefined,
         };
-
-        this.props.dispatch(problem.submitProblem(this.props.problem.id, data));
+        this.props.dispatch(problem.submitProblem(this.props.problem.data.id, data));
     }
 
     render() {
-        const {handleSubmit, problem: {languages}} = this.props;
+        const {handleSubmit, problem: {data: {languages}}} = this.props;
         const options = Object.keys(languages).map(
             langId => (<option key={langId} value={langId}>{languages[langId]}</option>)
         );
