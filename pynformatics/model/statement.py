@@ -26,6 +26,8 @@ class Statement(Base):
     timestart = Column(Integer)
     timestop = Column(Integer)
     olympiad = Column(Integer)
+    virtual_olympiad = Column(Integer)
+    virtual_duration = Column(Integer)
     settings = Column(JsonType)
 
 #    analysis = Column(Unicode)
@@ -50,6 +52,23 @@ class Statement(Base):
         if not (self.settings and 'allowed_languages' in self.settings):
             return None
         return self.settings['allowed_languages']
+
+    def get_full_settings(self):
+        full_settings = self.settings or {}
+        attrs = [
+            'olympiad',
+            'virtual_olympiad',
+            'virtual_duration',
+        ]
+        timestamps = [
+            'timestart',
+            'timestop',
+        ]
+        for attr in attrs + timestamps:
+            full_settings[attr] = getattr(self, attr, None)
+        for timestamp in timestamps:
+            full_settings[timestamp] *= 1000
+        return full_settings
 
 
 class StatementUser(Base):

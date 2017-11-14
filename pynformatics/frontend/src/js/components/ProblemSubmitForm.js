@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import React from 'react';
-import {connect} from 'react-redux';
-import {Field, reduxForm, formValueSelector, getFormMeta} from 'redux-form';
+import { connect } from 'react-redux';
+import { Field, reduxForm, formValueSelector, getFormMeta, initialize } from 'redux-form';
 
 import * as problem from '../actions/problemActions';
 import { LANGUAGES } from '../constants';
@@ -15,10 +15,6 @@ const metaSelector = getFormMeta(formName);
 
 @reduxForm({
     form: formName,
-    initialValues: {
-        submit: 'submit',
-        langId: 1,
-    },
 })
 @connect((state) => ({
     formMeta: metaSelector(state),
@@ -31,13 +27,19 @@ const metaSelector = getFormMeta(formName);
 export default class ProblemSubmitForm extends React.Component {
     constructor(props) {
         super(props);
-        // console.log(props.initialValues);
         try {
             this.languageInfo = JSON.parse(localStorage.getItem('languageInfo')) || {};
         }
         catch(error) {
             this.languageInfo = {};
         }
+
+        const {problem: {data: {languages}}} = props;
+        const lastUsedLanguage = _.maxBy(
+            _.keys(languages),
+            key => _.get(this.languageInfo[key], 'lastUsed', 0)
+        );
+        props.dispatch(initialize(formName, {langId: lastUsedLanguage, submit: 'submit'}));
     }
 
     fileFieldChange(event, newValue, previousValue) {
@@ -95,7 +97,7 @@ export default class ProblemSubmitForm extends React.Component {
                 </div>
                 <div><Field component={FileInput} type="file" name="file" onChange={this.fileFieldChange.bind(this)}/></div>
                 <div><Field component="textarea" name="source"/></div>
-                <div><Field component="input" type="submit" name="submit" value="submit"/></div>
+                <div><Field component="input" type="submit" name="submit" /></div>
             </form>
         </div>
     }

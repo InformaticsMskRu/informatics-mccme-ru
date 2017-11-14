@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Link, withRouter } from 'react-router-dom';
 
+import * as contextActions from '../actions/contextActions';
 import * as statementActions from '../actions/statementActions';
 
 import Problem from './Problem';
@@ -16,8 +17,17 @@ import Problem from './Problem';
 export default class Statement extends React.Component {
     componentWillMount() {
         const { statementId } = this.props.match.params;
+        this.props.dispatch(contextActions.setContextStatement(statementId));
         this.props.dispatch(statementActions.fetchStatement(statementId));
     }
+
+    componentWillReceiveProps(nextProps) {
+        const {statementId} = this.props.match.params;
+        const nextStatementId = nextProps.match.params.statementId;
+        if (statementId !== nextStatementId)
+            this.props.dispatch(contextActions.setContextStatement(statementId));
+    }
+
 
     render() {
         const {problemRank, statementId} = this.props.match.params;

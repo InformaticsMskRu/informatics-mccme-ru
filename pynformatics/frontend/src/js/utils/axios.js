@@ -11,17 +11,10 @@ const axiosInstance = axios.create({
 
 axiosInstance.interceptors.request.use(config => {
     const { context } = store.getState();
-
-    switch (config.method) {
-        case 'get':
-            config.params = {
-                ...config.params,
-                ...context,
-            };
-            break;
-        case 'post':
-            break;
-    }
+    config.params = {
+        ...config.params,
+        ...context,
+    };
     return config;
 });
 

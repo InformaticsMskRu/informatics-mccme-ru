@@ -34,21 +34,8 @@ class Context:
             setattr(
                 self,
                 '_' + request_key,
-                self._get_request_key_value(request, request_key)
+                request.matchdict.get(request_key) or request.GET.get(request_key)
             )
-
-        print('*'*20, request.GET, request.POST)
-
-
-    @staticmethod
-    def _get_request_key_value(request, key):
-        value = request.matchdict.get(key)
-        if request.method == 'GET':
-            value = value or request.GET.get(key)
-        elif request.method == 'POST':
-            value = value or request.POST.get(key)
-        return value
-
 
     @property
     def user_id(self):
@@ -90,7 +77,7 @@ class Context:
         """
         allowed_languages = set(LANG_NAME_BY_ID.keys())
         if self.statement:
-            allowed_languages &= set(self.statement.get_allowed_languages())
+            allowed_languages &= set(self.statement.get_allowed_languages() or allowed_languages)
         return {
             allowed_language: LANG_NAME_BY_ID[allowed_language]
             for allowed_language in allowed_languages

@@ -15,12 +15,13 @@ def statement_get(request, context):
     attrs = [
         'course',
         'name',
-        'settings',
     ]
     statement_dict = {
         attr: getattr(context.statement, attr)
         for attr in attrs
     }
+    statement_dict['settings'] = context.statement.get_full_settings()
+
     statement_dict['problems'] = {
         rank: statement_problem.problem.id
         for rank, statement_problem in context.statement.StatementProblems.items()
