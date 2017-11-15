@@ -1,22 +1,26 @@
-from pyramid.view import view_config
-from pynformatics.model import SimpleUser, User, EjudgeContest, Run, Comment, EjudgeProblem, Problem
-from pynformatics.contest.ejudge.serve_internal import EjudgeContestCfg
-from pynformatics.contest.ejudge.ejudge_proxy import submit
-from pynformatics.view.utils import *
-import sys, traceback
-#import jsonpickle, demjson
-from phpserialize import *
-from pynformatics.view.utils import *
-from pynformatics.models import DBSession
-import transaction
-#import jsonpickle, demjson
+import io
 import json
 import os
-from pynformatics.models import DBSession
+import sys
+import traceback
+import transaction
+import xmlrpc.client
+#import jsonpickle, demjson
+
+from phpserialize import *
 #from webhelpers.html import *
 from xml.etree.ElementTree import ElementTree
-import xmlrpc.client
-import io
+from pyramid.view import view_config
+
+from pynformatics.contest.ejudge.ejudge_proxy import submit
+from pynformatics.contest.ejudge.serve_internal import EjudgeContestCfg
+from pynformatics.model import SimpleUser, User, EjudgeContest, Run, Comment, EjudgeProblem, Problem
+from pynformatics.models import DBSession
+from pynformatics.view.utils import *
+from pynformatics.utils.context import with_context
+from pynformatics.utils.exceptions import Forbidden
+from pynformatics.utils.run import get_status_by_id
+
 
 def checkCapability(request):
     if (not RequestCheckUserCapability(request, 'moodle/ejudge_contests:reload')):
@@ -41,16 +45,50 @@ def problem_show_limits(request):
 
 
 @view_config(route_name='problem.submit', renderer='json')
-def problem_submits(request):
-    user_id = RequestGetUserId(request)
-    user = DBSession.query(SimpleUser).filter(SimpleUser.id == user_id).first()
-    lang_id = request.params["lang_id"]
-    problem_id = request.matchdict["problem_id"]
-    problem = DBSession.query(EjudgeProblem).filter(EjudgeProblem.id == problem_id).first()
+@with_context(require_auth=True)
+def problem_submits(request, context):
+    lang_id = request.params['lang_id']
     input_file = request.POST['file'].file
     filename = request.POST['file'].filename
     ejudge_url = request.registry.settings['ejudge.new_client_url']
-    return {'res' : submit(input_file, problem.ejudge_contest_id, problem.problem_id, lang_id, user.login, user.password, filename, ejudge_url, user_id)}
+    return {
+        'res': submit(
+            run_file=input_file,
+            contest_id=context.problem.ejudge_contest_id,
+            prob_id=context.problem.problem_id,
+            lang_id=lang_id,
+            login=context.user.login,
+            password=context.user.password,
+            filename=filename,
+            url=ejudge_url,
+            user_id=context.user_id,
+        )
+    }
+
+
+@view_config(route_name='problem.submit_v2', renderer='json')
+@with_context(require_auth=True)
+def problem_submits_v2(request, context):
+    lang_id = request.params['lang_id']
+    input_file = request.POST['file'].file
+    filename = request.POST['file'].filename
+    ejudge_url = request.registry.settings['ejudge.new_client_url']
+    if lang_id not in context.get_allowed_languages():
+        raise Forbidden('Language id "%s" is not allowed' % lang_id)
+    return {
+        'res': submit(
+            run_file=input_file,
+            contest_id=context.problem.ejudge_contest_id,
+            prob_id=context.problem.problem_id,
+            lang_id=lang_id,
+            login=context.user.login,
+            password=context.user.password,
+            filename=filename,
+            url=ejudge_url,
+            user_id=context.user_id,
+        )
+    }
+
 
 @view_config(route_name='problem.ant.submit', renderer='json')
 def problem_ant_submits(request):
@@ -222,3 +260,48 @@ def problem_get_corr(request):
         return {"num" : int(test_num), "content" : problem.get_corr(test_num)}
     except Exception as e:
         return {"result" : "error", "num" : int(request.matchdict['test_num']), "content" : e.__str__(), "stack" : traceback.format_exc()}
+
+
+@view_config(route_name='problem.get', renderer='json')
+@with_context
+def problem_get(request, context):
+    attrs = [
+        'id',
+        'name',
+        'content',
+        'timelimit',
+        'memorylimit',
+        'sample_tests_html',
+        'show_limits',
+    ]
+    problem_dict = {
+        attr: getattr(context.problem, attr, 'undefined')
+        for attr in attrs
+    }
+    problem_dict['languages'] = context.get_allowed_languages()
+    return problem_dict
+
+
+@view_config(route_name='problem.runs', renderer='json')
+@with_context(require_auth=True)
+def problem_runs(request, context):
+    runs = context.problem.runs.filter_by(user_id=int(context.user.ejudge_id))
+    runs_dict = {}
+    attrs = [
+        'size',
+        'create_time',
+        'contest_id',
+        'prob_id',
+        'lang_id',
+        'status',
+        'score',
+    ]
+    for run in runs:
+        run_dict = {
+            attr: getattr(run, attr, 'undefined')
+            for attr in attrs
+        }
+        run_dict['create_time'] = str(run_dict['create_time'])
+        run_dict['status'] = get_status_by_id(run_dict['status'])
+        runs_dict[str(run.run_id)] = run_dict
+    return runs_dict
