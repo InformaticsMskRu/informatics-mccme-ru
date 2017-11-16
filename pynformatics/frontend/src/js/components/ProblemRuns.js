@@ -16,6 +16,7 @@ export default class ProblemRuns extends React.Component {
 
         this.state = {
             current_run_id: undefined,
+            verbose: undefined,
         };
     }
 
@@ -27,6 +28,7 @@ export default class ProblemRuns extends React.Component {
         this.setState({
             ...this.state,
             current_run_id: runId,
+            verbose: undefined,
         })
     }
 
@@ -34,7 +36,32 @@ export default class ProblemRuns extends React.Component {
         this.setState({
             ...this.state,
             current_run_id: undefined,
+            verbose: undefined,
         })
+    }
+
+    showFullRunProtocol(test) {
+        this.setState({
+            ...this.state,
+            verbose: test,
+        })
+    }
+    
+    verboseProtocol() {
+        if (!_.get(this, 'state.verbose'))
+            return null;
+        const problem = this.props.problems[this.props.problemId];
+        const test = problem.runs[this.state.current_run_id].protocol.tests[this.state.verbose];
+        return <div>
+            <h3>input</h3>
+            <div>{test.input}</div>
+
+            <h3>output</h3>
+            <div>{test.output}</div>
+
+            <h3>correct</h3>
+            <div>{test.correct}</div>
+        </div>
     }
 
     render() {
@@ -82,7 +109,8 @@ export default class ProblemRuns extends React.Component {
                     <td>{value.status}</td>
                     <td>{value.time}</td>
                     <td>{value.max_memory_used}</td>
-                </tr>
+                    <td><button disabled={!value.input} onClick={this.showFullRunProtocol.bind(this, key)}>подробнее</button></td>
+                </tr>;
             });
 
             const protocolTable = <table>
@@ -92,6 +120,7 @@ export default class ProblemRuns extends React.Component {
                         <th>Статус</th>
                         <th>Время</th>
                         <th>Память</th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>{protocolTestsRows}</tbody>
@@ -101,7 +130,14 @@ export default class ProblemRuns extends React.Component {
                 <div>{runTable}</div>
                 <div>
                     <div><button onClick={this.hideRunProtocol.bind(this)}>close</button></div>
-                    <div>{protocolTable}</div>
+                    <div>
+                        <div>{this.verboseProtocol()}</div>
+                        <div>{protocolTable}</div>
+                        <div>
+                            <h3>compiler output</h3>
+                            <div>{protocol.compiler_output}</div>
+                        </div>
+                    </div>
                 </div>
             </div>;
         }
