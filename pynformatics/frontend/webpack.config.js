@@ -31,7 +31,7 @@ module.exports = {
     externals: {
         'Config': JSON.stringify(debug ? {
             baseUrl: '/frontend/',
-            apiUrl: 'http://informatics.msk.ru:6546',
+            apiUrl: 'http://informatics.msk.ru/backend',
         } : {
         }),
     }

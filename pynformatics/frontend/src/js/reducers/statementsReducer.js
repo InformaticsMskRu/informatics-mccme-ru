@@ -10,10 +10,22 @@ export default function reducer(state=initialState, action) {
             return state;
 
         case 'GET_STATEMENT_FULFILLED':
-            return {...state, [statementId]: action.payload.data};
+            return {
+                ...state,
+                [statementId]: {
+                    ...action.payload.data,
+                    fetched: true,
+                }
+            };
 
         case 'GET_STATEMENT_REJECTED':
-            return state;
+            return {
+                ...state,
+                [statementId]: {
+                    ...state[statementId],
+                    fetched: false,
+                }
+            };
     }
 
     return state;

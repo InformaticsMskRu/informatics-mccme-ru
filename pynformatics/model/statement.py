@@ -1,4 +1,6 @@
 """Problem model"""
+from jsonschema import Draft4Validator
+
 from sqlalchemy import ForeignKey, Column
 from sqlalchemy.types import Integer, String, Text, Float, Unicode
 from sqlalchemy.orm import relationship, backref, relation
@@ -8,6 +10,8 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm.collections import attribute_mapped_collection
 
 from pynformatics.model.meta import Base
+from pynformatics.utils.constants import LANG_NAME_BY_ID
+from pynformatics.utils.exceptions import BadRequest
 from pynformatics.utils.json_type import JsonType
 
 class Statement(Base):
@@ -37,6 +41,36 @@ class Statement(Base):
     
     problems = association_proxy('StatementProblems', 'problem')
     user = association_proxy('StatementUsers1', 'user')
+
+    SETTINGS_SCHEMA = {
+        'type': 'object',
+        'properties': {
+            'allowed_languages': {
+                'type': 'array',
+                'uniqueItems': True,
+                'items': {
+                    'type': 'string',
+                    'enum': LANG_NAME_BY_ID.keys(),
+                }
+            },
+            'type': {
+                'oneOf': [
+                    {
+                        'type': 'null',
+                    },
+                    {
+                        'type': 'string',
+                        'enum': [
+                            'olympiad',
+                            'virtual',
+                        ],
+                    }
+                ],
+            }
+        },
+        'additionalProperties': False,
+    }
+    SETTINGS_SCHEMA_VALIDATOR = Draft4Validator(SETTINGS_SCHEMA)
     
     def __init__(self, name, timelimit, memorylimit, content='', review='', description='', analysis=''):
         self.name = name
@@ -53,22 +87,29 @@ class Statement(Base):
             return None
         return self.settings['allowed_languages']
 
-    def get_full_settings(self):
-        full_settings = self.settings or {}
+    def set_settings(self, settings):
+        if not self.SETTINGS_SCHEMA_VALIDATOR.is_valid(settings):
+            raise BadRequest('Bad settings format')
+        if self.id == 11928:
+            self.settings = settings
+        return {}
+
+    def serialize(self, context):
         attrs = [
-            'olympiad',
-            'virtual_olympiad',
-            'virtual_duration',
+            'course',
+            'name',
+            'settings',
         ]
-        timestamps = [
-            'timestart',
-            'timestop',
-        ]
-        for attr in attrs + timestamps:
-            full_settings[attr] = getattr(self, attr, None)
-        for timestamp in timestamps:
-            full_settings[timestamp] *= 1000
-        return full_settings
+        serialized = {
+            attr: getattr(self, attr)
+            for attr in attrs
+        }
+        serialized['problems'] = {
+            rank: statement_problem.problem.id
+            for rank, statement_problem in context.statement.StatementProblems.items()
+            if not statement_problem.hidden
+        }
+        return serialized
 
 
 class StatementUser(Base):

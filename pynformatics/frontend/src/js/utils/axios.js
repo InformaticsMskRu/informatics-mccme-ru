@@ -7,6 +7,7 @@ import store from '../store';
 
 const axiosInstance = axios.create({
     baseURL: config.apiUrl,
+    withCredentials: true,
 });
 
 axiosInstance.interceptors.request.use(config => {

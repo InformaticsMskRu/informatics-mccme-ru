@@ -6,18 +6,6 @@ from pynformatics.view.comment import *
 from sqlalchemy import engine_from_config
 
 
-def add_cors_headers_response_callback(event):
-    def cors_headers(request, response):
-        response.headers.update({
-        'Access-Control-Allow-Origin': 'http://informatics.msk.ru',
-        'Access-Control-Allow-Methods': 'POST,GET,DELETE,PUT,OPTIONS',
-        'Access-Control-Allow-Headers': 'Origin, Content-Type, Accept, Authorization',
-        'Access-Control-Allow-Credentials': 'true',
-        'Access-Control-Max-Age': '1728000',
-        })
-    event.request.add_response_callback(cors_headers)
-
-
 def main(global_config, **settings):
     """ This function returns a Pyramid WSGI application.
     """
@@ -26,7 +14,6 @@ def main(global_config, **settings):
 
     config = Configurator(settings=settings)
     config.include('pyramid_mako')
-    config.add_subscriber(add_cors_headers_response_callback, NewRequest)
 
     config.add_static_view('static', 'static', cache_max_age=3600)
     config.add_route('stars.add', '/stars/add')
@@ -116,7 +103,9 @@ def main(global_config, **settings):
     config.add_route('submits.get', '/submits/get')
 
     config.add_route('statement.get', '/statement/{statement_id}')
-    
+    config.add_route('statement.set_settings', '/statement/{statement_id}/set_settings')
+    config.add_route('statement.start_olympiad', '/statement/{statement_id}/start_olympiad')
+
     config.scan(ignore='pynformatics.tests')
     return config.make_wsgi_app()
 

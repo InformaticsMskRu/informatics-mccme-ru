@@ -22,10 +22,17 @@ export default class Statement extends React.Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        const {statementId} = this.props.match.params;
-        const nextStatementId = nextProps.match.params.statementId;
+        const { statementId } = this.props.match.params;
+        const { statementId: nextStatementId, problemRank: nextProblemRank } = nextProps.match.params;
+        const { statements: nextStatements } = nextProps;
+
         if (statementId !== nextStatementId)
             this.props.dispatch(contextActions.setContextStatement(statementId));
+
+        if (!nextProblemRank && nextStatements && nextStatements[nextStatementId]) {
+            const newProblemRank = _.min(_.keys(nextStatements[nextStatementId].problems));
+            nextProps.history.replace(`/statement/${nextStatementId}/problem/${newProblemRank}`);
+        }
     }
 
 
@@ -33,10 +40,9 @@ export default class Statement extends React.Component {
         const {problemRank, statementId} = this.props.match.params;
         const statement = this.props.statements[statementId];
 
-        if (!statement) {
+        if (!statement || !problemRank) {
             return <h1>...</h1>
         }
-
         const problemLis = Object.keys(statement.problems).map(problemRank => {
             return <li key={problemRank}>
                 <Link to={`/statement/${statementId}/problem/${problemRank}`}>{problemRank}</Link>

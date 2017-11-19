@@ -2,6 +2,7 @@ import React from 'react';
 import { Switch, Route, Redirect } from 'react-router-dom';
 
 import Statement from './Statement';
+import StatementAdmin from '../pages/StatementAdmin';
 
 
 export default class App extends React.Component {
@@ -9,10 +10,9 @@ export default class App extends React.Component {
         return <div>
             <div class="main-content">
                 <Switch>
+                    <Route exact path="/statement/:statementId" component={Statement}/>
                     <Route exact path="/statement/:statementId/problem/:problemRank" component={Statement}/>
-                    <Route exact path="/statement/:statementId" render={({ match }) => (
-                        <Redirect to={`/statement/${match.params.statementId}/problem/1`}/>
-                    )}/>
+                    <Route exact path="/admin/statement/:statementId" component={StatementAdmin}/>
                 </Switch>
             </div>
         </div>

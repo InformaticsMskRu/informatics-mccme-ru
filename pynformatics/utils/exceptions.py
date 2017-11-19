@@ -6,6 +6,11 @@ class BaseApiException(Exception):
             self.message = message
 
 
+class BadRequest(BaseApiException):
+    message = 'Bad Request'
+    code = 400
+
+
 class Unauthorized(BaseApiException):
     message = 'Unauthorized'
     code = 401
