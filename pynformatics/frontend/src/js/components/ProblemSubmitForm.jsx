@@ -24,10 +24,11 @@ const metaSelector = getFormMeta(formName);
     langId: valueSelector(state, 'langId'),
     source: valueSelector(state, 'source'),
   },
+  problems: state.problems,
 }))
 export default class ProblemSubmitForm extends React.Component {
   static propTypes = {
-    problem: PropTypes.object.isRequired,
+    problemId: PropTypes.number.isRequired,
     dispatch: PropTypes.func,
     handleSubmit: PropTypes.func,
     autofill: PropTypes.func,
@@ -42,12 +43,15 @@ export default class ProblemSubmitForm extends React.Component {
       this.languageInfo = {};
     }
 
-    const { problem: { data: { languages } } } = props;
-    const lastUsedLanguage = _.maxBy(
-      _.keys(languages),
-      key => _.get(this.languageInfo[key], 'lastUsed', 0)
-    );
-    props.dispatch(initialize(formName, {langId: lastUsedLanguage, submit: 'submit'}));
+    const { problemId } = props;
+    const languages = _.get(props, `problems[${problemId}].data.languages`);
+    if (languages) {
+      const lastUsedLanguage = _.maxBy(
+        _.keys(languages),
+        key => _.get(this.languageInfo[key], 'lastUsed', 0),
+      );
+      props.dispatch(initialize(formName, {langId: lastUsedLanguage, submit: 'submit'}));
+    }
   }
 
   fileFieldChange(event, newValue) {
@@ -80,7 +84,7 @@ export default class ProblemSubmitForm extends React.Component {
   }
 
   submitProblem() {
-    const {langId, file, source} = this.props.formValues;
+    const { problemId, formValues: { langId, file, source } } = this.props;
 
     _.set(this.languageInfo, `${langId}.lastUsed`, Date.now());
     localStorage.setItem('languageInfo', JSON.stringify(this.languageInfo));
@@ -90,25 +94,33 @@ export default class ProblemSubmitForm extends React.Component {
       source,
       file: file ? file[0] : undefined,
     };
-    this.props.dispatch(problem.submitProblem(this.props.problem.data.id, data));
+    this.props.dispatch(problem.submitProblem(problemId, data));
   }
 
   render() {
-    const {handleSubmit, problem: {data: {languages}}} = this.props;
-    const options = Object.keys(languages).map(
-      langId => (<option key={langId} value={langId}>{languages[langId]}</option>)
-    );
+    const { handleSubmit, problemId } = this.props;
+    const problem = _.get(this.props, `problems[${problemId}].data`, {});
+    const { languages, output_only } = problem;
+    const options = Object.keys(languages).map(langId =>
+      <option key={langId} value={langId}>{languages[langId]}</option>);
 
     return (
-      <div class="problem-submit-form">
+      <div className="problem-submit-form">
         <form onSubmit={handleSubmit(this.submitProblem.bind(this))}>
-          <div>
+          <div style={{ display: output_only ? 'none' : 'block' }}>
             <Field component="select" name="langId">
               {options}
             </Field>
           </div>
-          <div><Field component={FileInput} type="file" name="file" onChange={this.fileFieldChange.bind(this)}/></div>
-          <div><Field component="textarea" name="source"/></div>
+          <div>
+            <Field
+              component={FileInput}
+              type="file"
+              name="file"
+              onChange={this.fileFieldChange.bind(this)}
+            />
+          </div>
+          <div><Field component="textarea" name="source" /></div>
           <div><Field component="input" type="submit" name="submit" /></div>
         </form>
       </div>
