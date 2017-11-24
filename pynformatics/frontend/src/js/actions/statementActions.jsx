@@ -41,3 +41,27 @@ export function setSettings(statementId, settings) {
     });
   };
 }
+
+
+export function startVirtual(statementId) {
+  return (dispatch) => {
+    const url = `/statement/${statementId}/start_virtual`;
+    return dispatch({
+      type: 'POST_STATEMENT_START_VIRTUAL',
+      payload: axios.post(url),
+      meta: { statementId },
+    }).then(() => dispatch(fetchStatement(statementId)));
+  };
+}
+
+
+export function finishVirtual(statementId) {
+  return (dispatch) => {
+    const url = `/statement/${statementId}/finish_virtual`;
+    return dispatch({
+      type: 'POST_STATEMENT_FINISH_VIRTUAL',
+      payload: axios.post(url),
+      meta: { statementId },
+    }).then(() => dispatch(fetchStatement(statementId)));
+  };
+}

@@ -9,7 +9,11 @@ from sqlalchemy import engine_from_config
 def main(global_config, **settings):
     """ This function returns a Pyramid WSGI application.
     """
-    engine = engine_from_config(settings, 'sqlalchemy.')
+    if global_config.get('TEST'):
+        engine = global_config.get('engine')
+    else:
+        engine = engine_from_config(settings, 'sqlalchemy.')
+
     DBSession.configure(bind=engine, expire_on_commit=False)
 
     config = Configurator(settings=settings)
@@ -104,7 +108,10 @@ def main(global_config, **settings):
 
     config.add_route('statement.get', '/statement/{statement_id}')
     config.add_route('statement.set_settings', '/statement/{statement_id}/set_settings')
-    config.add_route('statement.start_olympiad', '/statement/{statement_id}/start_olympiad')
+    config.add_route('statement.start_virtual', '/statement/{statement_id}/start_virtual')
+    config.add_route('statement.finish_virtual', '/statement/{statement_id}/finish_virtual')
+
+    config.add_route('bootstrap', '/bootstrap')
 
     config.scan(ignore='pynformatics.tests')
     return config.make_wsgi_app()

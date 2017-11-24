@@ -28,3 +28,15 @@ class NotFound(BaseApiException):
 
 class StatementNotFound(NotFound):
     message = 'No statement with this id'
+
+class StatementNotVirtual(BadRequest):
+    message = 'Not a virtual contest'
+
+class StatementVirtualCanOnlyStartOnce(Forbidden):
+    message = 'Can only start virtual contest once'
+
+class StatementOnlyOneOngoingVirtual(Forbidden):
+    message = 'Can only have one ongoing virtual contest'
+
+class StatementNothingToFinish(Forbidden):
+    message = 'No ongoing virtual contests'
