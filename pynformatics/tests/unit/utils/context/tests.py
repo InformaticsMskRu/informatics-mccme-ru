@@ -15,11 +15,11 @@ class TestContext__get_languages(TestCase):
     def setUp(self):
         super(TestContext__get_languages, self).setUp()
 
-    def test__all(self):
+    def test_all(self):
         context = Context(self.request)
         assert_that(context.get_allowed_languages(), equal_to(LANG_NAME_BY_ID))
 
-    def test__statement(self):
+    def test_statement(self):
         allowed_languages = ['1', '2']
         mock_statement = mock.Mock()
         mock_statement.get_allowed_languages = mock.Mock(return_value=allowed_languages)

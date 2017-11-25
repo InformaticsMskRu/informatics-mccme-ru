@@ -54,4 +54,5 @@ if __name__ == '__main__':
         tests = unittest.TestLoader().discover('tests')
     else:
         tests = unittest.TestLoader().loadTestsFromName(sys.argv[1])
-    unittest.TextTestRunner(verbosity=2).run(tests)
+    result = unittest.TextTestRunner(verbosity=2).run(tests).wasSuccessful()
+    sys.exit(not result)
