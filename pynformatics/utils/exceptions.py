@@ -6,6 +6,11 @@ class BaseApiException(Exception):
             self.message = message
 
 
+class BadRequest(BaseApiException):
+    message = 'Bad Request'
+    code = 400
+
+
 class Unauthorized(BaseApiException):
     message = 'Unauthorized'
     code = 401
@@ -23,3 +28,15 @@ class NotFound(BaseApiException):
 
 class StatementNotFound(NotFound):
     message = 'No statement with this id'
+
+class StatementNotVirtual(BadRequest):
+    message = 'Not a virtual contest'
+
+class StatementVirtualCanOnlyStartOnce(Forbidden):
+    message = 'Can only start virtual contest once'
+
+class StatementOnlyOneOngoingVirtual(Forbidden):
+    message = 'Can only have one ongoing virtual contest'
+
+class StatementNothingToFinish(Forbidden):
+    message = 'No ongoing virtual contests'
