@@ -271,9 +271,8 @@ def problem_get(request, context):
         'content',
         'timelimit',
         'memorylimit',
-        'show_limits',
         'sample_tests_html',
-        'output_only',
+        'show_limits',
     ]
     problem_dict = {
         attr: getattr(context.problem, attr, 'undefined')

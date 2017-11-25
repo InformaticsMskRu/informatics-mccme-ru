@@ -12,6 +12,7 @@ from pynformatics.models import DBSession
 import html
 from sqlalchemy.orm import noload, lazyload
 from sqlalchemy import desc
+from pyramid.security import authenticated_userid
 from pyramid.httpexceptions import HTTPFound
 import sqlalchemy.orm.exc
 
