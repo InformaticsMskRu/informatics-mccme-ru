@@ -11,6 +11,8 @@ import html
 from sqlalchemy.orm import noload, lazyload
 from sqlalchemy import desc
 from sqlalchemy.ext.serializer import dumps, loads
+from pynformatics.utils.context import with_context
+
 
 @view_config(route_name='user_settings.add', request_method='POST', renderer='json')
 def add(request):

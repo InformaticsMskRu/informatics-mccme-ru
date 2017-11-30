@@ -10,9 +10,9 @@ from pynformatics.model.user import SimpleUser
 from pynformatics.model.statement import Statement
 
 
-class TestAPI__Statement_start_virtual(TestCase):
+class TestAPI__statement_start_virtual(TestCase):
     def setUp(self):
-        super(TestAPI__Statement_start_virtual, self).setUp()
+        super(TestAPI__statement_start_virtual, self).setUp()
 
         self.virtual_statement = Statement(
             id=1,

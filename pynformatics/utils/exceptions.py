@@ -40,3 +40,13 @@ class StatementOnlyOneOngoingVirtual(Forbidden):
 
 class StatementNothingToFinish(Forbidden):
     message = 'No ongoing virtual contests'
+
+
+class AuthWrongUsernameOrPassword(Forbidden):
+    message = 'Wrong username or password'
+
+class AuthOAuthUserNotFound(NotFound):
+    message = 'No user with this OAuth'
+
+class AuthOAuthBadProvider(BadRequest):
+    message = 'Unknown OAuth provider'

@@ -32,7 +32,7 @@ module.exports = {
     'Config': JSON.stringify(
       debug ? {
         baseUrl: '/frontend/',
-        apiUrl: 'http://informatics.msk.ru/backend',
+        apiUrl: 'https://informatics.msk.ru/backend',
       } : {}
     ),
   },

@@ -11,9 +11,9 @@ from pynformatics.model.statement import Statement
 from pynformatics.model.virtual_participant import VirtualParticipant
 
 
-class TestAPI__Statement_finish_virtual(TestCase):
+class TestAPI__statement_finish_virtual(TestCase):
     def setUp(self):
-        super(TestAPI__Statement_finish_virtual, self).setUp()
+        super(TestAPI__statement_finish_virtual, self).setUp()
 
         self.virtual_statement = Statement(
             id=1,

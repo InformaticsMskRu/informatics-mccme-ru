@@ -24,7 +24,12 @@ class Context:
     def __init__(self, request):
         self._request = request
 
-        self._user_id = RequestGetUserId(self._request)
+        if request.session.get('user_id'):
+            self._user_id = request.session.get('user_id')
+        else:
+            self._user_id = RequestGetUserId(self._request)
+            if self._user_id != -1:
+                request.session['user_id'] = self._user_id
         self._user = None
 
         self._problem = None
@@ -40,6 +45,11 @@ class Context:
     @property
     def user_id(self):
         return self._user_id
+
+    @user_id.setter
+    def user_id(self, user_id):
+        self._user_id = user_id
+        self._user = None
 
     @property
     def user(self):
@@ -68,7 +78,7 @@ class Context:
         return self._statement
 
     def check_auth(self):
-        if self._user_id == -1:
+        if self._user_id == -1 or not self.user:
             raise Unauthorized
 
     def get_allowed_languages(self):
@@ -92,8 +102,8 @@ def with_context(view_function=None, require_auth=False):
         return partial(with_context, require_auth=require_auth)
 
     @wraps(view_function)
-    def wrapper(request):
-        context = Context(request)
+    def wrapper(request, context=None):
+        context = context or Context(request)
         if require_auth:
             context.check_auth()
         return view_function(request, context)

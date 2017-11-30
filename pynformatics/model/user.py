@@ -43,6 +43,8 @@ class SimpleUser(Base):
     statement = relationship("Statement", secondary=StatementUser.__table__, backref=backref("StatementUsers1"), lazy="dynamic")
     statements = association_proxy("StatementUsers2", 'statement')
 
+    password_md5 = Column('password', Unicode)
+
     def get_active_virtual_participant(self):
         """
         Возвращает последний virtual_participant, если он еще не закончен
@@ -80,13 +82,13 @@ class User(SimpleUser):
 #    ejudge_users = relation('EjudgeUser', backref="moodle.mdl_user", uselist=False)
 #    ejudge_user = relation('EjudgeUser', backref = backref('moodle.mdl_user'), uselist=False, primaryjoin = "EjudgeUser.user_id == User.id")
     
-    def __init__(self, id, username='', firstname='', lastname='', email='', city=''):
-        self.id = id
-        self.username = username
-        self.firstname = firstname
-        self.lastname = lastname
-        self.email = email
-        self.city = city
+    # def __init__(self, id, username='', firstname='', lastname='', email='', city=''):
+    #     self.id = id
+    #     self.username = username
+    #     self.firstname = firstname
+    #     self.lastname = lastname
+    #     self.email = email
+    #     self.city = city
 
     @lazy      
     def _get_current_olymp(self): 

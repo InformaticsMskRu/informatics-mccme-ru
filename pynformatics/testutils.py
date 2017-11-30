@@ -2,6 +2,7 @@ import mock
 import unittest
 import sys
 import transaction
+from beaker.session import Session
 from pyramid import testing
 from sqlalchemy import create_engine, MetaData, event
 from unittest.mock import PropertyMock
@@ -16,16 +17,21 @@ class TestCase(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         engine = create_engine('sqlite:///', echo=False)
-        engine.execute('attach database "moodle.db" as moodle;')
-        engine.execute('attach database "ejudge.db" as ejudge;')
+        engine.execute('attach database "temp/moodle.db" as moodle;')
+        engine.execute('attach database "temp/ejudge.db" as ejudge;')
+        engine.execute('attach database "temp/pynformatics.db" as pynformatics;')
 
         Base.metadata.create_all(engine)
 
-        app = main({
-            'TEST': True,
-            'engine': engine
-        })
-        cls.app = TestApp(app)
+        cls._app = main(
+            {
+                'TEST': True,
+                'engine': engine,
+            },
+            **{
+                'session.key': 'session',
+            }
+        )
 
         cls.session = DBSession
 
@@ -36,6 +42,7 @@ class TestCase(unittest.TestCase):
     def setUp(self):
         self.config = testing.setUp()
         self.request = testing.DummyRequest()
+        self.app = TestApp(self._app)
 
         self.mock_context_check_auth = mock.patch('pynformatics.utils.context.Context.check_auth')
         self.mock_context_user = mock.patch('pynformatics.utils.context.Context.user', new_callable=PropertyMock)
@@ -44,6 +51,22 @@ class TestCase(unittest.TestCase):
         testing.tearDown()
         transaction.abort()
 
+    def get_session(self):
+        session_id = self.app.cookies.get('session', None)
+
+        # При вызове set_cookie значение всегда обрамляется кавычками, из-за чего нужен этот костыль
+        # https://github.com/Pylons/webtest/issues/171
+        if len(session_id) == 34:
+            session_id = session_id[1:-1]
+        return Session({}, id=str(session_id))
+
+    def set_session(self, data):
+        # При вызове set_cookie значение всегда обрамляется кавычками
+        # https://github.com/Pylons/webtest/issues/171
+        session = Session({})
+        session.update(data)
+        session.save()
+        self.app.set_cookie('session', session.id)
 
 def dummy_decorator(*args, **kwargs):
     return lambda func: func

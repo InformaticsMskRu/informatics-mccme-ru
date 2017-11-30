@@ -1,9 +1,10 @@
 from pyramid.config import Configurator
-from pyramid.events import NewRequest
+from pyramid_beaker import session_factory_from_settings
+from sqlalchemy import engine_from_config
 
 from .models import DBSession
 from pynformatics.view.comment import *
-from sqlalchemy import engine_from_config
+from pynformatics.utils.oauth import fill_oauth_config_secrets
 
 
 def main(global_config, **settings):
@@ -17,6 +18,10 @@ def main(global_config, **settings):
     DBSession.configure(bind=engine, expire_on_commit=False)
 
     config = Configurator(settings=settings)
+
+    session_factory = session_factory_from_settings(settings)
+    config.set_session_factory(session_factory)
+
     config.include('pyramid_mako')
 
     config.add_static_view('static', 'static', cache_max_age=3600)
@@ -113,6 +118,13 @@ def main(global_config, **settings):
 
     config.add_route('bootstrap', '/bootstrap')
 
+    config.add_route('auth.login', 'auth/login')
+    config.add_route('auth.logout', 'auth/logout')
+    config.add_route('auth.oauth_login', 'auth/oauth_login')
+
     config.scan(ignore='pynformatics.tests')
+
+    fill_oauth_config_secrets(settings)
+
     return config.make_wsgi_app()
 
