@@ -3,6 +3,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { reduxForm, formValueSelector, Field } from 'redux-form';
+import * as _ from 'lodash';
 
 import { getRedirectUrl } from '../utils/oauth';
 import * as userActions from '../actions/userActions';
@@ -21,9 +22,12 @@ const valueSelector = formValueSelector(formName);
     username: valueSelector(state, 'username'),
     password: valueSelector(state, 'password'),
   },
+  user: state.user,
 }))
 export default class LoginForm extends React.Component {
   static propTypes = {
+    user: PropTypes.any,
+    handleSubmit: PropTypes.func,
     dispatch: PropTypes.func,
     formValues: PropTypes.any,
     location: PropTypes.any,
@@ -37,8 +41,16 @@ export default class LoginForm extends React.Component {
         props.location.search.slice(1).split('&'),
         param => param.split('='),
       ));
-      const { code, state: provider } = params;
-      props.dispatch(userActions.oauthLogin(provider, code));
+      const { code, state } = params;
+      const { provider, loggedIn } = JSON.parse(decodeURI(state));
+
+      console.log(loggedIn);
+
+      if (!loggedIn) {
+        props.dispatch(userActions.oauthLogin(provider, code));
+      } else {
+        props.dispatch(userActions.oauthConnect(provider, code));
+      }
       props.history.replace(props.location.path);
     }
     this.login = this.login.bind(this);
@@ -55,7 +67,19 @@ export default class LoginForm extends React.Component {
   }
 
   render() {
-    const { handleSubmit } = this.props;
+    const { handleSubmit, user } = this.props;
+
+    if (!_.isEmpty(user)) {
+      return (
+        <div>
+          Connect account
+          <ul>
+            <li><a href={getRedirectUrl('vk', { loggedIn: true })}>VK</a></li>
+            <li><a href={getRedirectUrl('google', { loggedIn: true })}>google</a></li>
+          </ul>
+        </div>
+      );
+    }
 
     return (
       <div>

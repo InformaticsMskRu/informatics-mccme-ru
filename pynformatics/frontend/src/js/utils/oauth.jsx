@@ -10,7 +10,6 @@ export const OAUTH_CONFIG = {
       redirect_uri: 'https://informatics.msk.ru/frontend/login',
       response_type: 'code',
       scope: 0,
-      state: 'vk',
       v: 5.69,
     },
   },
@@ -20,14 +19,20 @@ export const OAUTH_CONFIG = {
       client_id: '629729803861-vilqpepmi33rdd5jtguq9cv0aifseera.apps.googleusercontent.com',
       redirect_uri: 'https://informatics.msk.ru/frontend/login',
       response_type: 'code',
-      state: 'google',
       scope: 'profile',
     },
   },
 };
 
-export function getRedirectUrl(provider) {
+export function getRedirectUrl(provider, state) {
   const config = OAUTH_CONFIG[provider];
-  const params = _.join(_.map(config.params, (value, key) => `${key}=${value}`), '&');
+  const stateParams = {
+    ...config.params,
+    state: JSON.stringify({
+      ...state,
+      provider,
+    }),
+  };
+  const params = _.join(_.map(stateParams, (value, key) => `${key}=${value}`), '&');
   return `${config.url}?${params}`;
 }

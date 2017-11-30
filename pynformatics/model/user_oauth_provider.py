@@ -13,4 +13,4 @@ class UserOAuthProvider(Base):
     provider = Column(String, primary_key=True)
     oauth_id = Column(String)
 
-    user = relationship('User', backref=backref('oauth_ids', lazy='select'))
+    user = relationship('SimpleUser', backref=backref('oauth_ids', lazy='dynamic'))

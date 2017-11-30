@@ -44,3 +44,19 @@ export function oauthLogin(provider, code) {
     });
   };
 }
+
+export function oauthConnect(provider, code) {
+  return (dispatch) => {
+    const url = '/user/set_oauth_id';
+    return dispatch({
+      type: 'POST_SET_OAUTH_ID',
+      payload: axios.post(
+        url,
+        {
+          provider,
+          code,
+        },
+      ),
+    });
+  };
+}

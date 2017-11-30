@@ -46,7 +46,10 @@ class AuthWrongUsernameOrPassword(Forbidden):
     message = 'Wrong username or password'
 
 class AuthOAuthUserNotFound(NotFound):
-    message = 'No user with this OAuth'
+    message = 'No user with this OAuth ID'
 
 class AuthOAuthBadProvider(BadRequest):
     message = 'Unknown OAuth provider'
+
+class UserOAuthIdAlreadyUsed(Forbidden):
+    message = 'OAuth ID already in use'

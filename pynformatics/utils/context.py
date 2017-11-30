@@ -2,7 +2,7 @@ from functools import wraps, partial
 
 from pynformatics.model import (
     EjudgeProblem,
-    SimpleUser,
+    User,
     Statement,
 )
 from pynformatics.models import DBSession
@@ -54,7 +54,7 @@ class Context:
     @property
     def user(self):
         if not self._user:
-            self._user = DBSession.query(SimpleUser).filter(SimpleUser.id == self._user_id).first()
+            self._user = DBSession.query(User).filter(User.id == self._user_id).first()
         return self._user
 
     @property
