@@ -1,32 +1,28 @@
 from pyramid.config import Configurator
-from pyramid.events import NewRequest
+from pyramid_beaker import session_factory_from_settings
+from sqlalchemy import engine_from_config
 
 from .models import DBSession
 from pynformatics.view.comment import *
-from sqlalchemy import engine_from_config
-
-
-def add_cors_headers_response_callback(event):
-    def cors_headers(request, response):
-        response.headers.update({
-        'Access-Control-Allow-Origin': 'http://informatics.msk.ru',
-        'Access-Control-Allow-Methods': 'POST,GET,DELETE,PUT,OPTIONS',
-        'Access-Control-Allow-Headers': 'Origin, Content-Type, Accept, Authorization',
-        'Access-Control-Allow-Credentials': 'true',
-        'Access-Control-Max-Age': '1728000',
-        })
-    event.request.add_response_callback(cors_headers)
+from pynformatics.utils.oauth import fill_oauth_config_secrets
 
 
 def main(global_config, **settings):
     """ This function returns a Pyramid WSGI application.
     """
-    engine = engine_from_config(settings, 'sqlalchemy.')
+    if global_config.get('TEST'):
+        engine = global_config.get('engine')
+    else:
+        engine = engine_from_config(settings, 'sqlalchemy.')
+
     DBSession.configure(bind=engine, expire_on_commit=False)
 
     config = Configurator(settings=settings)
+
+    session_factory = session_factory_from_settings(settings)
+    config.set_session_factory(session_factory)
+
     config.include('pyramid_mako')
-    config.add_subscriber(add_cors_headers_response_callback, NewRequest)
 
     config.add_static_view('static', 'static', cache_max_age=3600)
     config.add_route('stars.add', '/stars/add')
@@ -48,6 +44,7 @@ def main(global_config, **settings):
     
     config.add_route('user_settings.add', '/user/settings/main/add')
     config.add_route('user_settings.get', '/user/settings/main/get/{user_id}')
+    config.add_route('user.set_oauth_id', '/user/set_oauth_id')
     
     config.add_route('comment.add', '/comment/add')
     config.add_route('comment.get', '/comment/get/{contest_id}/{run_id}')
@@ -116,7 +113,19 @@ def main(global_config, **settings):
     config.add_route('submits.get', '/submits/get')
 
     config.add_route('statement.get', '/statement/{statement_id}')
-    
+    config.add_route('statement.set_settings', '/statement/{statement_id}/set_settings')
+    config.add_route('statement.start_virtual', '/statement/{statement_id}/start_virtual')
+    config.add_route('statement.finish_virtual', '/statement/{statement_id}/finish_virtual')
+
+    config.add_route('bootstrap', '/bootstrap')
+
+    config.add_route('auth.login', 'auth/login')
+    config.add_route('auth.logout', 'auth/logout')
+    config.add_route('auth.oauth_login', 'auth/oauth_login')
+
     config.scan(ignore='pynformatics.tests')
+
+    fill_oauth_config_secrets(settings)
+
     return config.make_wsgi_app()
 

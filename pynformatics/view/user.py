@@ -1,16 +1,20 @@
-from pyramid.view import view_config
-from pynformatics.view.utils import *
-from pynformatics.model import User, Run, PynformaticsUser, EjudgeUser
-import sys, traceback
-import transaction
-import jsonpickle, demjson
-import json
-import datetime
-from pynformatics.models import DBSession
 import html
-from sqlalchemy.orm import noload, lazyload
-from sqlalchemy import desc
-from sqlalchemy.ext.serializer import dumps, loads
+import json
+import traceback
+import transaction
+from pyramid.view import view_config
+
+from pynformatics.model.user import User
+from pynformatics.model.user_oauth_provider import UserOAuthProvider
+from pynformatics.model.run import Run
+from pynformatics.models import DBSession
+from pynformatics.view.utils import *
+from pynformatics.utils.context import with_context
+from pynformatics.utils.exceptions import (
+    UserOAuthIdAlreadyUsed,
+)
+from pynformatics.utils.oauth import get_oauth_id
+
 
 @view_config(route_name='user_settings.add', request_method='POST', renderer='json')
 def add(request):
@@ -37,3 +41,31 @@ def get(request):
             raise Exception("Auth Error")
     except Exception as e:
         return json.dumps({"result" : "error", "message" : e.__str__(), "stack" : traceback.format_exc()})
+
+
+@view_config(route_name='user.set_oauth_id', renderer='json', request_method='POST')
+@with_context(require_auth=True)
+def user_set_oauth_id(request, context):
+    provider = request.json_body.get('provider')
+    code = request.json_body.get('code')
+    oauth_id = get_oauth_id(provider, code)
+
+    if DBSession.query(UserOAuthProvider).filter(
+                UserOAuthProvider.provider == provider
+            ).filter(
+                UserOAuthProvider.oauth_id == oauth_id
+            ).first():
+        raise UserOAuthIdAlreadyUsed
+
+    user_oauth_provider = context.user.oauth_ids.filter(UserOAuthProvider.provider == provider).first()
+    if user_oauth_provider:
+        user_oauth_provider.oauth_id = oauth_id
+    else:
+        user_oauth_provider = UserOAuthProvider(
+            user_id=context.user.id,
+            provider=provider,
+            oauth_id=oauth_id,
+        )
+        DBSession.add(user_oauth_provider)
+
+    return {}

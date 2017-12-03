@@ -10,7 +10,7 @@ import datetime
 from pynformatics.models import DBSession
 import html
 from sqlalchemy.orm import noload, lazyload
-from pyramid.security import authenticated_userid
+
 
 @view_config(route_name='stars.add', request_method='GET', renderer='json')
 def add(request):

@@ -11,9 +11,9 @@ from pynformatics.utils.exceptions import Forbidden
 from pynformatics.view.problem import problem_submits_v2
 
 
-class TestView_problem_submits_v2(TestCase):
+class TestView__problem_submits_v2(TestCase):
     def setUp(self):
-        super(TestView_problem_submits_v2, self).setUp()
+        super(TestView__problem_submits_v2, self).setUp()
 
         self.ejudge_submit_patcher = mock.patch('pynformatics.view.problem.submit', mock.Mock())
         self.ejudge_submit_patcher.start()
@@ -28,7 +28,7 @@ class TestView_problem_submits_v2(TestCase):
         self.get_languages_mock = self.get_languages_patcher.start()
 
     def tearDown(self):
-        super(TestView_problem_submits_v2, self).tearDown()
+        super(TestView__problem_submits_v2, self).tearDown()
         self.ejudge_submit_patcher.stop()
         self.check_auth_patcher.stop()
         self.get_languages_patcher.stop()

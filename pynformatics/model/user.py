@@ -1,4 +1,3 @@
-"""User model"""
 from sqlalchemy import ForeignKey, Column
 from sqlalchemy.types import Integer, String, Unicode, Boolean
 from sqlalchemy.orm import relationship, backref, relation
@@ -6,9 +5,12 @@ from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm.collections import attribute_mapped_collection
 
-from pynformatics.model.statement import StatementUser
-
 from pynformatics.model.meta import Base
+from pynformatics.model.statement import StatementUser
+from pynformatics.model.virtual_participant import VirtualParticipant
+from pynformatics.models import DBSession
+from pynformatics.utils.functions import attrs_to_dict
+
 
 def lazy(func):
         """ A decorator function designed to wrap attributes that need to be
@@ -25,6 +27,7 @@ def lazy(func):
                         return value
         return cached
 
+
 class SimpleUser(Base):
     __tablename__ = "mdl_user"
     __table_args__ = {'schema':'moodle'}
@@ -38,7 +41,35 @@ class SimpleUser(Base):
     ejudge_id = Column('ej_id', Integer)
     problems_solved = Column(Integer)
     statement = relationship("Statement", secondary=StatementUser.__table__, backref=backref("StatementUsers1"), lazy="dynamic")
-    statements = association_proxy("StatementUsers2", 'statement')    
+    statements = association_proxy("StatementUsers2", 'statement')
+
+    password_md5 = Column('password', Unicode)
+
+    def get_active_virtual_participant(self):
+        """
+        Возвращает последний virtual_participant, если он еще не закончен
+        """
+        latest_virtual_participant = DBSession.query(VirtualParticipant).filter(
+            VirtualParticipant.user_id == self.id
+        ).order_by(
+            VirtualParticipant.id.desc()
+        ).first()
+        if latest_virtual_participant and not latest_virtual_participant.finished():
+            return latest_virtual_participant
+        return None
+
+    def serialize(self, context):
+        serialized = attrs_to_dict(
+            self,
+            'id',
+            'firstname',
+            'lastname',
+        )
+        virtual_participant = self.get_active_virtual_participant()
+        if virtual_participant:
+            serialized['active_virtual'] = virtual_participant.serialize(context)
+        return serialized
+
 
 
 class User(SimpleUser):
@@ -51,13 +82,13 @@ class User(SimpleUser):
 #    ejudge_users = relation('EjudgeUser', backref="moodle.mdl_user", uselist=False)
 #    ejudge_user = relation('EjudgeUser', backref = backref('moodle.mdl_user'), uselist=False, primaryjoin = "EjudgeUser.user_id == User.id")
     
-    def __init__(self, id, username='', firstname='', lastname='', email='', city=''):
-        self.id = id
-        self.username = username
-        self.firstname = firstname
-        self.lastname = lastname
-        self.email = email
-        self.city = city
+    # def __init__(self, id, username='', firstname='', lastname='', email='', city=''):
+    #     self.id = id
+    #     self.username = username
+    #     self.firstname = firstname
+    #     self.lastname = lastname
+    #     self.email = email
+    #     self.city = city
 
     @lazy      
     def _get_current_olymp(self): 
