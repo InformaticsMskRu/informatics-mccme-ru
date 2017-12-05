@@ -6,7 +6,7 @@ from hamcrest import (
 import time
 
 from pynformatics.testutils import TestCase
-from pynformatics.model.user import SimpleUser
+from pynformatics.model.user import User
 from pynformatics.model.statement import Statement
 
 
@@ -15,14 +15,17 @@ class TestAPI__statement_start_virtual(TestCase):
         super(TestAPI__statement_start_virtual, self).setUp()
 
         self.virtual_statement = Statement(
-            id=1,
             virtual_olympiad=1,
-            virtual_duration=123,
+            virtual_duration=300,
+            timestart=0,
+            timestop=int(time.time()) + 100,
         )
         self.session.add(self.virtual_statement)
 
-        self.user = SimpleUser(id=1)
+        self.user = User()
         self.session.add(self.user)
+
+        self.session.flush()
 
     def test_simple(self):
         with self.mock_context_check_auth, \

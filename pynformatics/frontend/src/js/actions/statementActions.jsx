@@ -43,11 +43,11 @@ export function setSettings(statementId, settings) {
 }
 
 
-export function startVirtual(statementId) {
+export function start(statementId, virtual = false) {
   return (dispatch) => {
-    const url = `/statement/${statementId}/start_virtual`;
+    const url = `/statement/${statementId}/start${virtual ? '_virtual' : ''}`;
     return dispatch({
-      type: 'POST_STATEMENT_START_VIRTUAL',
+      type: `POST_STATEMENT_START${virtual ? '_VIRTUAL' : ''}`,
       payload: axios.post(url),
       meta: { statementId },
     }).then(() => dispatch(fetchStatement(statementId)));
@@ -55,11 +55,11 @@ export function startVirtual(statementId) {
 }
 
 
-export function finishVirtual(statementId) {
+export function finish(statementId, virtual = false) {
   return (dispatch) => {
-    const url = `/statement/${statementId}/finish_virtual`;
+    const url = `/statement/${statementId}/finish${virtual ? '_virtual' : ''}`;
     return dispatch({
-      type: 'POST_STATEMENT_FINISH_VIRTUAL',
+      type: `POST_STATEMENT_FINISH${virtual ? '_VIRTUAL' : ''}`,
       payload: axios.post(url),
       meta: { statementId },
     }).then(() => dispatch(fetchStatement(statementId)));

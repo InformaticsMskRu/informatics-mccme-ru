@@ -116,6 +116,8 @@ def main(global_config, **settings):
     config.add_route('statement.set_settings', '/statement/{statement_id}/set_settings')
     config.add_route('statement.start_virtual', '/statement/{statement_id}/start_virtual')
     config.add_route('statement.finish_virtual', '/statement/{statement_id}/finish_virtual')
+    config.add_route('statement.start', '/statement/{statement_id}/start')
+    config.add_route('statement.finish', '/statement/{statement_id}/finish')
 
     config.add_route('bootstrap', '/bootstrap')
 

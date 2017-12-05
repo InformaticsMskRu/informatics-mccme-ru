@@ -7,7 +7,7 @@ from sqlalchemy.orm.collections import attribute_mapped_collection
 
 from pynformatics.model.meta import Base
 from pynformatics.model.statement import StatementUser
-from pynformatics.model.virtual_participant import VirtualParticipant
+from pynformatics.model.participant import Participant
 from pynformatics.models import DBSession
 from pynformatics.utils.functions import attrs_to_dict
 
@@ -45,17 +45,17 @@ class SimpleUser(Base):
 
     password_md5 = Column('password', Unicode)
 
-    def get_active_virtual_participant(self):
+    def get_active_participant(self):
         """
-        Возвращает последний virtual_participant, если он еще не закончен
+        Возвращает последний participant, если он еще не закончен
         """
-        latest_virtual_participant = DBSession.query(VirtualParticipant).filter(
-            VirtualParticipant.user_id == self.id
+        latest_participant = DBSession.query(Participant).filter(
+            Participant.user_id == self.id
         ).order_by(
-            VirtualParticipant.id.desc()
+            Participant.id.desc()
         ).first()
-        if latest_virtual_participant and not latest_virtual_participant.finished():
-            return latest_virtual_participant
+        if latest_participant and not latest_participant.finished():
+            return latest_participant
         return None
 
     def serialize(self, context):
@@ -65,9 +65,9 @@ class SimpleUser(Base):
             'firstname',
             'lastname',
         )
-        virtual_participant = self.get_active_virtual_participant()
-        if virtual_participant:
-            serialized['active_virtual'] = virtual_participant.serialize(context)
+        participant = self.get_active_participant()
+        if participant:
+            serialized['active_virtual'] = participant.serialize(context)
         return serialized
 
 

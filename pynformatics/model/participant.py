@@ -1,4 +1,4 @@
-import datetime
+import time
 
 from sqlalchemy import Column, ForeignKey
 from sqlalchemy.orm import backref, relationship
@@ -8,7 +8,7 @@ from pynformatics.model.meta import Base
 from pynformatics.utils.functions import attrs_to_dict
 
 
-class VirtualParticipant(Base):
+class Participant(Base):
     __table_args__ = {'schema': 'moodle'}
     __tablename__ = 'mdl_virtualcontest'
 
@@ -18,11 +18,10 @@ class VirtualParticipant(Base):
     start = Column(Integer)
     duration = Column(Integer)
 
-    statement = relationship('Statement', backref=backref('virtual_participants', lazy='dynamic'))
+    statement = relationship('Statement', backref=backref('participants', lazy='dynamic'))
 
     def finished(self):
-        finish_time = datetime.datetime.fromtimestamp(self.start) + datetime.timedelta(minutes=self.duration)
-        return datetime.datetime.now() >= finish_time
+        return time.time() >= self.start + self.duration
 
     def serialize(self, context):
         return attrs_to_dict(

@@ -32,14 +32,23 @@ class StatementNotFound(NotFound):
 class StatementNotVirtual(BadRequest):
     message = 'Not a virtual contest'
 
-class StatementVirtualCanOnlyStartOnce(Forbidden):
-    message = 'Can only start virtual contest once'
+class StatementCanOnlyStartOnce(Forbidden):
+    message = 'Can only start contest once'
 
-class StatementOnlyOneOngoingVirtual(Forbidden):
-    message = 'Can only have one ongoing virtual contest'
+class StatementOnlyOneOngoing(Forbidden):
+    message = 'Can only have one ongoing contest'
 
 class StatementNothingToFinish(Forbidden):
     message = 'No ongoing virtual contests'
+
+class StatementNotOlympiad(BadRequest):
+    message = 'Not an olympiad'
+
+class StatementFinished(Forbidden):
+    message = 'Contest already finished'
+
+class StatementNotStarted(Forbidden):
+    message = 'Contest not started'
 
 
 class AuthWrongUsernameOrPassword(Forbidden):
