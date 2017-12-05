@@ -10,25 +10,60 @@ import * as statementActions from '../actions/statementActions';
 import Problem from './Problem';
 
 
-const VIRTUAL_STATEMENT_STATUS = {
+const STATEMENT_STATUS = {
+  NOT_STARTED: 0,
+  ACTIVE: 1,
+  FINISHED: 2,
+};
+
+const PARTICIPANT_STATUS = {
   NOT_STARTED: 0,
   ACTIVE: 1,
   FINISHED: 2,
 };
 
 
-function getStatementStatus(statement) {
-  if (!statement.virtual_olympiad) {
-    return undefined;
+function getStatus(statement) {
+  if (!statement.olympiad && !statement.virtual_olympiad) {
+    return {};
   }
-  const { virtual_participant: virtualParticipant } = statement;
-  if (!virtualParticipant) {
-    return VIRTUAL_STATEMENT_STATUS.NOT_STARTED;
+
+  const nowDate = new Date();
+
+  const {
+    participant,
+    timestart: timeStart,
+    timestop: timeStop,
+  } = statement;
+  const statementStartDate = new Date(timeStart * 1000);
+  const statementStopDate = new Date(timeStop * 1000);
+
+  let statementStatus;
+  if (nowDate < statementStartDate) {
+    statementStatus = STATEMENT_STATUS.NOT_STARTED;
+  } else if (nowDate >= statementStartDate && nowDate < statementStopDate) {
+    statementStatus = STATEMENT_STATUS.ACTIVE;
+  } else {
+    statementStatus = STATEMENT_STATUS.FINISHED;
   }
-  const { start, duration } = virtualParticipant;
-  const finishDate = new Date((start + (duration * 60)) * 1000);
-  return finishDate > new Date() ?
-    VIRTUAL_STATEMENT_STATUS.ACTIVE : VIRTUAL_STATEMENT_STATUS.FINISHED;
+
+  let participantStatus;
+  if (!participant) {
+    participantStatus = STATEMENT_STATUS.NOT_STARTED;
+  } else {
+    const { start, duration } = participant;
+    const participantStopDate = new Date((start + duration) * 1000);
+    if (participantStopDate > nowDate) {
+      participantStatus = PARTICIPANT_STATUS.ACTIVE;
+    } else {
+      participantStatus = PARTICIPANT_STATUS.FINISHED;
+    }
+  }
+  
+  return {
+    participantStatus,
+    statementStatus,
+  };
 }
 
 
@@ -48,8 +83,8 @@ export default class Statement extends React.Component {
 
   constructor(props) {
     super(props);
-    this.startVirtual = this.startVirtual.bind(this);
-    this.finishVirtual = this.finishVirtual.bind(this);
+    this.start = this.start.bind(this);
+    this.finish = this.finish.bind(this);
   }
 
   componentWillMount() {
@@ -73,14 +108,19 @@ export default class Statement extends React.Component {
     }
   }
 
-  startVirtual() {
+  getStatement() {
     const { statementId } = this.props.match.params;
-    this.props.dispatch(statementActions.startVirtual(statementId));
+    return this.props.statements[statementId];
   }
 
-  finishVirtual() {
-    const { statementId } = this.props.match.params;
-    this.props.dispatch(statementActions.finishVirtual(statementId));
+  start() {
+    const statement = this.getStatement();
+    this.props.dispatch(statementActions.start(statement.id, statement.virtual_olympiad));
+  }
+
+  finish() {
+    const statement = this.getStatement();
+    this.props.dispatch(statementActions.finish(statement.id, statement.virtual_olympiad));
   }
 
   render() {
@@ -110,16 +150,20 @@ export default class Statement extends React.Component {
           {
             (() => {
               const activeStatementId = _.get(user, 'active_virtual.statement_id');
-              switch (getStatementStatus(statement)) {
-                case VIRTUAL_STATEMENT_STATUS.NOT_STARTED:
-                  return (
-                    <button onClick={this.startVirtual} disabled={activeStatementId}>start</button>
-                  );
-                case VIRTUAL_STATEMENT_STATUS.ACTIVE:
-                  return <button onClick={this.finishVirtual}>finish</button>;
-                case VIRTUAL_STATEMENT_STATUS.FINISHED:
-                  return <span> (finished)</span>;
-                default:
+              const { participantStatus, statementStatus } = getStatus(statement);
+              if (statementStatus === STATEMENT_STATUS.NOT_STARTED) {
+                return <span> (соревнование не началось)</span>;
+              } else if (statementStatus === STATEMENT_STATUS.FINISHED) {
+                return <span> (соревнование завершено)</span>;
+              } else {
+                switch (participantStatus) {
+                  case PARTICIPANT_STATUS.NOT_STARTED:
+                    return <button onClick={this.start} disabled={activeStatementId}>start</button>;
+                  case PARTICIPANT_STATUS.ACTIVE:
+                    return <button onClick={this.finish}>finish</button>;
+                  case PARTICIPANT_STATUS.FINISHED:
+                    return <span> (finished)</span>;
+                }
               }
             })()
           }

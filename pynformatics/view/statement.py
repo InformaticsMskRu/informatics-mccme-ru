@@ -25,12 +25,25 @@ def statement_set_settings(request, context):
 @view_config(route_name='statement.start_virtual', renderer='json', request_method='POST')
 @with_context(require_auth=True)
 def statement_start_virtual(request, context):
-    new_virtual_participant = context.statement.start_virtual(context.user)
-    return new_virtual_participant.serialize(context)
+    new_participant = context.statement.start_virtual(context.user)
+    return new_participant.serialize(context)
 
 
 @view_config(route_name='statement.finish_virtual', renderer='json', request_method='POST')
 @with_context(require_auth=True)
 def statement_finish_virtual(request, context):
-    virtual_participant = context.statement.finish_virtual(context.user)
-    return virtual_participant.serialize(context)
+    participant = context.statement.finish_virtual(context.user)
+    return participant.serialize(context)
+
+
+@view_config(route_name='statement.start', renderer='json', request_method='POST')
+@with_context(require_auth=True)
+def statement_start(request, context):
+    participant = context.statement.start(context.user)
+    return participant.serialize(context)
+
+@view_config(route_name='statement.finish', renderer='json', request_method='POST')
+@with_context(require_auth=True)
+def statement_finish(request, context):
+    participant = context.statement.finish(context.user)
+    return participant.serialize(context)

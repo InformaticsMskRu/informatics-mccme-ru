@@ -4,7 +4,7 @@ import sys
 import transaction
 from beaker.session import Session
 from pyramid import testing
-from sqlalchemy import create_engine, MetaData, event
+from sqlalchemy import create_engine
 from unittest.mock import PropertyMock
 from webtest import TestApp
 

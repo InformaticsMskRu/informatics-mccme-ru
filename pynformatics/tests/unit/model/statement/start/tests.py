@@ -11,24 +11,24 @@ from pynformatics.model.statement import Statement
 from pynformatics.model.user import User
 from pynformatics.testutils import TestCase
 from pynformatics.utils.exceptions import (
+    StatementFinished,
     StatementNotStarted,
-    StatementNotVirtual,
+    StatementNotOlympiad,
 )
 
 
-
-class TestModel__Statement_start_virtual(TestCase):
+class TestModel__statement_start(TestCase):
     def setUp(self):
-        super(TestModel__Statement_start_virtual, self).setUp()
+        super(TestModel__statement_start, self).setUp()
 
         self.now = int(time.time())
-        self.virtual_duration = 60
         self.timestart = self.now - 60
+        self.timestop = self.now + 30
 
         self.statement = Statement(
-            virtual_olympiad=1,
-            virtual_duration=self.virtual_duration,
+            olympiad=1,
             timestart=self.timestart,
+            timestop=self.timestop,
         )
         self.session.add(self.statement)
 
@@ -40,23 +40,17 @@ class TestModel__Statement_start_virtual(TestCase):
     def test_simple(self):
         with mock.patch('pynformatics.model.statement.time.time', mock.Mock(return_value=self.now)), \
                 mock.patch('pynformatics.model.statement.Statement.start_participant', mock.Mock()) as mock_start:
-            self.statement.start_virtual(self.user)
+            self.statement.start(self.user)
+
         mock_start.assert_called_once_with(
             user=self.user,
-            duration=self.virtual_duration,
+            duration=self.timestop - self.now,
         )
 
-    def test_not_virtual(self):
-        statement = Statement(virtual_olympiad=0)
+    def test_not_olympiad(self):
+        statement = Statement(olympiad=0)
         self.session.add(statement)
         assert_that(
-            calling(statement.start_virtual).with_args(self.user),
-            raises(StatementNotVirtual)
+            calling(statement.start).with_args(self.user),
+            raises(StatementNotOlympiad)
         )
-
-    def test_not_started(self):
-        with mock.patch('pynformatics.model.statement.time.time', mock.Mock(return_value=self.timestart - 1)):
-            assert_that(
-                calling(self.statement.start_virtual).with_args(self.user),
-                raises(StatementNotStarted),
-            )

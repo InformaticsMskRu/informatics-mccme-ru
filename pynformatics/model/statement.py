@@ -12,15 +12,18 @@ from sqlalchemy.orm.collections import attribute_mapped_collection
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 
 from pynformatics.model.meta import Base
-from pynformatics.model.virtual_participant import VirtualParticipant
+from pynformatics.model.participant import Participant
 from pynformatics.models import DBSession
 from pynformatics.utils.constants import LANG_NAME_BY_ID
 from pynformatics.utils.exceptions import (
     BadRequest,
     StatementNothingToFinish,
+    StatementNotOlympiad,
     StatementNotVirtual,
-    StatementOnlyOneOngoingVirtual,
-    StatementVirtualCanOnlyStartOnce,
+    StatementFinished,
+    StatementNotStarted,
+    StatementOnlyOneOngoing,
+    StatementCanOnlyStartOnce,
 )
 from pynformatics.utils.functions import attrs_to_dict
 from pynformatics.utils.json_type import JsonType
@@ -112,60 +115,96 @@ class Statement(Base):
             self.settings = settings
         return {}
 
+    def start_participant(self, user, duration):
+        now = time.time()
+        if now < self.timestart:
+            raise StatementNotStarted
+        if now >= self.timestop:
+            raise StatementFinished
+
+        if self.participants.filter(Participant.user_id == user.id).count():
+            raise StatementCanOnlyStartOnce
+
+        if user.get_active_participant():
+            raise StatementOnlyOneOngoing
+
+        new_participant = Participant(
+            user_id=user.id,
+            statement_id=self.id,
+            start=int(time.time()),
+            duration=duration,
+        )
+        DBSession.add(new_participant)
+
+        return new_participant
+
+    def finish_participant(self, user):
+        active_participant = user.get_active_participant()
+        if not active_participant or active_participant.statement_id != self.id:
+            raise StatementNothingToFinish
+
+        active_participant.duration = int(time.time() - active_participant.start)
+        return active_participant
+
+    def start(self, user):
+        if not self.olympiad:
+            raise StatementNotOlympiad
+
+        return self.start_participant(
+            user=user,
+            duration=self.timestop - int(time.time())
+        )
+
+    def finish(self, user):
+        if not self.olympiad:
+            raise StatementNotOlympiad
+
+        return self.finish_participant(user)
+
     def start_virtual(self, user):
         if not self.virtual_olympiad:
             raise StatementNotVirtual
 
-        if self.virtual_participants.filter(VirtualParticipant.user_id==user.id).count():
-            raise StatementVirtualCanOnlyStartOnce
-
-        if user.get_active_virtual_participant():
-            raise StatementOnlyOneOngoingVirtual
-
-        new_virtual_participant = VirtualParticipant(
-            user_id=user.id,
-            statement_id=self.id,
-            start=int(time.time()),
-            duration=self.virtual_duration,
+        return self.start_participant(
+            user=user,
+            duration=self.virtual_duration
         )
-        DBSession.add(new_virtual_participant)
-
-        return new_virtual_participant
 
     def finish_virtual(self, user):
-        current_virtual = user.get_active_virtual_participant()
-        if not current_virtual:
-            raise StatementNothingToFinish
+        if not self.virtual_olympiad:
+            raise StatementNotVirtual
 
-        actual_duration = datetime.datetime.now() - datetime.datetime.fromtimestamp(current_virtual.start)
-        current_virtual.duration = int(actual_duration.total_seconds() // 60)
-        return current_virtual
+        return self.finish_participant(user)
 
     def serialize(self, context):
         serialized = attrs_to_dict(
             self,
             'course',
+            'id',
             'name',
+            'olympiad',
             'settings',
+            'timestart',
+            'timestop',
             'virtual_olympiad',
             'virtual_duration',
         )
         serialized['course_module_id'] = self.course_module.id
 
-        if self.virtual_olympiad:
+        if self.olympiad or self.virtual_olympiad:
             if not context.user:
                 return serialized
 
             try:
-                virtual_participant = self.virtual_participants.filter(VirtualParticipant.user_id==context.user_id).one()
+                participant = self.participants.filter(Participant.user_id==context.user_id).one()
             except NoResultFound:
                 return serialized
 
-            serialized['virtual_participant'] = virtual_participant.serialize(context)
+            serialized['participant'] = participant.serialize(context)
 
         serialized['problems'] = {
             rank: statement_problem.problem.id
-            for rank, statement_problem in context.statement.StatementProblems.items()
+            for rank, statement_problem in self.StatementProblems.items()
             if not statement_problem.hidden
         }
         return serialized

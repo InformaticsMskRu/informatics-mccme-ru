@@ -1,33 +1,23 @@
-import mock
 import time
-from hamcrest import (
-    assert_that,
-    calling,
-    close_to,
-    equal_to,
-    raises,
-)
+import mock
 
-from pynformatics.model.participant import Participant
 from pynformatics.model.statement import Statement
 from pynformatics.model.user import User
 from pynformatics.testutils import TestCase
-from pynformatics.utils.exceptions import (
-    StatementNothingToFinish,
-)
 
 
-class TestModel__Statement_start_virtual(TestCase):
+class TestModel__statement_finish(TestCase):
     def setUp(self):
-        super(TestModel__Statement_start_virtual, self).setUp()
+        super(TestModel__statement_finish, self).setUp()
 
         self.now = int(time.time())
-        self.virtual_duration = 100
         self.timestart = self.now - 60
+        self.timestop = self.now + 30
+
         self.statement = Statement(
-            virtual_olympiad=1,
-            virtual_duration=self.virtual_duration,
+            olympiad=1,
             timestart=self.timestart,
+            timestop=self.timestop,
         )
         self.session.add(self.statement)
 
@@ -38,5 +28,5 @@ class TestModel__Statement_start_virtual(TestCase):
 
     def test_simple(self):
         with mock.patch('pynformatics.model.statement.Statement.finish_participant', mock.Mock()) as mock_finish:
-            self.statement.finish_virtual(self.user)
+            self.statement.finish(self.user)
         mock_finish.assert_called_once_with(self.user)

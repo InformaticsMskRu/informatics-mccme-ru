@@ -6,7 +6,7 @@ from hamcrest import (
 )
 
 from pynformatics.model.user import SimpleUser
-from pynformatics.model.virtual_participant import VirtualParticipant
+from pynformatics.model.participant import Participant
 from pynformatics.testutils import TestCase
 
 
@@ -40,13 +40,13 @@ class TestAPI__bootstrap(TestCase):
         )
 
     def test_with_active_virtual(self):
-        virtual_participant = VirtualParticipant(
+        participant = Participant(
             user_id=self.user.id,
             statement_id=123,
             start=int(time.time()),
             duration=456,
         )
-        self.session.add(virtual_participant)
+        self.session.add(participant)
 
         with self.mock_context_check_auth, \
                 self.mock_context_user as mock_context_user:
@@ -59,9 +59,9 @@ class TestAPI__bootstrap(TestCase):
             has_entries({
                 'user': has_entries({
                     'active_virtual': {
-                        'start': virtual_participant.start,
-                        'duration': virtual_participant.duration,
-                        'statement_id': virtual_participant.statement_id,
+                        'start': participant.start,
+                        'duration': participant.duration,
+                        'statement_id': participant.statement_id,
                     }
                 }),
             })
