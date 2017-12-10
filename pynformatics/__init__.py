@@ -125,6 +125,8 @@ def main(global_config, **settings):
     config.add_route('auth.logout', 'auth/logout')
     config.add_route('auth.oauth_login', 'auth/oauth_login')
 
+    config.add_route('group.get', '/group/{group_id}')
+
     config.scan(ignore='pynformatics.tests')
 
     fill_oauth_config_secrets(settings)
