@@ -1,10 +1,11 @@
-import { combineReducers } from 'redux';
-import { reducer as form } from 'redux-form';
+import {combineReducers} from 'redux';
+import {reducer as form} from 'redux-form';
 
 import context from './contextReducer';
 import problems from './problemsReducer';
 import statements from './statementsReducer';
 import user from './userReducer';
+import groups from './groupsReducer';
 
 
 export default combineReducers({
@@ -13,4 +14,5 @@ export default combineReducers({
   problems,
   statements,
   user,
+  groups,
 })
