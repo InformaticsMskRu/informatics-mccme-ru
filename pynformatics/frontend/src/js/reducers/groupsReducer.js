@@ -8,16 +8,34 @@ export default function reducer(state = initialState, action) {
     const {groupId} = action.meta;
 
     switch (action.type) {
-        case 'GET_GROUP_FULFILLED':
-            const payload = action.payload;
-            console.log(payload);
+        case 'GET_GROUP_PENDING':
             return {
                 ...state,
                 [groupId]: {
                     ...state[groupId],
-                    data: payload.data,
+                    fetching: true,
+                }
+            };
+
+        case 'GET_GROUP_FULFILLED':
+            return {
+                ...state,
+                [groupId]: {
+                    ...state[groupId],
+                    data: action.payload.data,
+                    fetching: false,
                     fetched: true,
-                },
+                }
+            };
+
+        case 'GET_GROUP_REJECTED':
+            return {
+                ...state,
+                [groupId]: {
+                    ...state[groupId],
+                    fetching: false,
+                    fetched: false,
+                }
             };
 
         default:

@@ -19,8 +19,12 @@ export default class Group extends React.Component {
 
     render() {
         const group = this.props.groups[this.groupId];
-        if (!group) {
-            return <div/>
+        if (!group || group && group.fetching) {
+            return <div>Fetching...</div>
+        }
+
+        if (!group.fetched) {
+            return <div>Some error</div>
         }
 
         const {data} = group;
