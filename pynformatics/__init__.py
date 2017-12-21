@@ -95,7 +95,9 @@ def main(global_config, **settings):
     config.add_route('rating.get', '/rating/get')
     
     config.add_route('user.query', '/myuser')
-    
+
+    config.add_route('search.user', '/search/user')
+
     config.add_route('home', '/')
     
     config.add_route('hint.get', '/hint/get')

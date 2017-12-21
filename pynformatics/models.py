@@ -1,4 +1,4 @@
-__all__ = ['Base', 'Session']
+__all__ = ['Base', 'DBSession']
 
 from sqlalchemy import (
     Column,

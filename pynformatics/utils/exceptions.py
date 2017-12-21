@@ -1,9 +1,13 @@
 class BaseApiException(Exception):
     message = ''
     code = 500
+
     def __init__(self, message=None):
         if message:
             self.message = message
+
+    def __str__(self):
+        return self.message
 
 
 class BadRequest(BaseApiException):
@@ -62,3 +66,14 @@ class AuthOAuthBadProvider(BadRequest):
 
 class UserOAuthIdAlreadyUsed(Forbidden):
     message = 'OAuth ID already in use'
+
+
+class SearchQueryIsEmpty(BadRequest):
+    message = 'Search query is empty'
+
+
+class PaginationPageOutOfRange(BadRequest):
+    message = 'Page number is out of range'
+
+class PaginationPageSizeNegativeOrZero(BadRequest):
+    message = 'Page size is negative or zero'

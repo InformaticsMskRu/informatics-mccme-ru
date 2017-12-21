@@ -1,10 +1,9 @@
-from sqlalchemy import ForeignKey, Column
-from sqlalchemy.types import Integer, String, Unicode, Boolean
-from sqlalchemy.orm import relationship, backref, relation
-from sqlalchemy.ext.associationproxy import association_proxy
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm.collections import attribute_mapped_collection
+from typing import Callable
 
+from sqlalchemy import ForeignKey, Column, or_, and_
+from sqlalchemy.types import Integer, Unicode, Boolean
+from sqlalchemy.orm import relationship, backref, Query
+from sqlalchemy.ext.associationproxy import association_proxy
 from pynformatics.model.meta import Base
 from pynformatics.model.statement import StatementUser
 from pynformatics.model.participant import Participant
@@ -30,17 +29,18 @@ def lazy(func):
 
 class SimpleUser(Base):
     __tablename__ = "mdl_user"
-    __table_args__ = {'schema':'moodle'}
+    __table_args__ = {'schema': 'moodle'}
 #    __mapper_args__ = {'polymorphic_on': discriminator}    
     id = Column(Integer, primary_key=True)
     firstname = Column(Unicode)
     lastname = Column(Unicode)
     login = Column('ej_login', Unicode)
     password = Column('ej_password', Unicode)
-    deleted  = Column('deleted', Boolean)
+    deleted = Column('deleted', Boolean)
     ejudge_id = Column('ej_id', Integer)
     problems_solved = Column(Integer)
-    statement = relationship("Statement", secondary=StatementUser.__table__, backref=backref("StatementUsers1"), lazy="dynamic")
+    statement = relationship("Statement", secondary=StatementUser.__table__,
+                             backref=backref("StatementUsers1"), lazy="dynamic")
     statements = association_proxy("StatementUsers2", 'statement')
 
     password_md5 = Column('password', Unicode)
@@ -58,18 +58,15 @@ class SimpleUser(Base):
             return latest_participant
         return None
 
-    def serialize(self, context):
-        serialized = attrs_to_dict(
-            self,
-            'id',
-            'firstname',
-            'lastname',
-        )
-        participant = self.get_active_participant()
-        if participant:
-            serialized['active_virtual'] = participant.serialize(context)
+    def serialize(self, context=None, attributes=('id', 'firstname', 'lastname', 'active_virtual')):
+        serialized = attrs_to_dict(self, *attributes)
+        if 'active_virtual' in attributes:  # TODO Убрать во внешний сериалайзер
+            participant = self.get_active_participant()
+            if participant:
+                serialized['active_virtual'] = participant.serialize(context)
+            else:
+                serialized.pop('active_virtual')
         return serialized
-
 
 
 class User(SimpleUser):
@@ -90,13 +87,42 @@ class User(SimpleUser):
     #     self.email = email
     #     self.city = city
 
-    @lazy      
+    @classmethod
+    def search(cls, filter_func: Callable[[Query], Query], filter_deleted=True):
+        if filter_deleted:
+            users_query = filter_func(DBSession.query(cls).filter(cls.deleted == False))
+        else:
+            users_query = filter_func(DBSession.query(cls))
+        return users_query
+
+    @classmethod
+    def search_by_string(cls, search_string):
+        def filter_func(query: Query):
+            if search_string.count(' '):
+                str1, str2 = search_string.split(' ', 1)
+                query = query.filter(or_(
+                    and_(cls.firstname.like("%{}%".format(str1)), cls.lastname.like("%{}%".format(str2))),
+                    and_(cls.lastname.like("%{}%".format(str1)), cls.firstname.like("%{}%".format(str2))),
+                ))
+            else:
+                query = query.filter(or_(
+                    cls.email.like("%{}%".format(search_string)),
+                    cls.username.like("%{}%".format(search_string)),
+                    cls.firstname.like("%{}%".format(search_string)),
+                    cls.lastname.like("%{}%".format(search_string)),
+                ))
+            return query
+
+        return cls.search(filter_func)
+
+    @lazy
     def _get_current_olymp(self): 
         return None
 
+
 class PynformaticsUser(User):
     __tablename__ = "mdl_user_settings"
-    __table_args__ = {'schema' : 'moodle'}
+    __table_args__ = {'schema': 'moodle'}
     __mapper_args__ = {'polymorphic_identity': 'pynformaticsuser'}
     
     id = Column(Integer, ForeignKey('moodle.mdl_user.id'), primary_key=True)
@@ -108,7 +134,7 @@ class PynformaticsUser(User):
 
 class EjudgeUser(User):
     __tablename__ = "mdl_user_ejudge"
-    __table_args__ = {'schema':'moodle'}
+    __table_args__ = {'schema': 'moodle'}
     __mapper_args__ = {'polymorphic_identity': 'ejudgeuser'}
 
     id = Column(Integer, ForeignKey('moodle.mdl_user.id'), primary_key=True)
@@ -117,5 +143,4 @@ class EjudgeUser(User):
     ejudge_id = Column(Integer)
     problems_solved = Column(Integer)
 #    statement = relationship("Statement", secondary=StatementUser.__table__, backref=backref("StatementUsers1"), lazy="dynamic")
-#    statements = association_proxy("StatementUsers2", 'statement')    
-        
+#    statements = association_proxy("StatementUsers2", 'statement')
