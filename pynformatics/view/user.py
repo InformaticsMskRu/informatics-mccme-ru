@@ -3,6 +3,10 @@ import json
 import traceback
 import transaction
 from pyramid.view import view_config
+from sqlalchemy.orm.exc import (
+    MultipleResultsFound,
+    NoResultFound,
+)
 
 from pynformatics.model.user import User
 from pynformatics.model.user_oauth_provider import UserOAuthProvider
@@ -12,6 +16,7 @@ from pynformatics.view.utils import *
 from pynformatics.utils.context import with_context
 from pynformatics.utils.exceptions import (
     UserOAuthIdAlreadyUsed,
+    UserNotFound,
 )
 from pynformatics.utils.oauth import get_oauth_id
 
@@ -67,5 +72,20 @@ def user_set_oauth_id(request, context):
             oauth_id=oauth_id,
         )
         DBSession.add(user_oauth_provider)
-
     return {}
+
+
+@view_config(route_name='user.reset_password', renderer='json', request_method='POST')
+@with_context(require_auth=True, require_roles='admin')
+def user_reset_password(request, context):
+    id = request.json_body.get('id')
+
+    user = DBSession.query(User).filter(User.id == id).first()
+    if not user:
+        raise UserNotFound
+
+    new_password = user.reset_password()
+    return {
+        'id': user.id,
+        'password': new_password,
+    }

@@ -70,6 +70,9 @@ class AuthOAuthBadProvider(BadRequest):
 class UserOAuthIdAlreadyUsed(Forbidden):
     message = 'OAuth ID already in use'
 
+class UserNotFound(NotFound):
+    message = 'No such user'
+
 
 class SearchQueryIsEmpty(BadRequest):
     message = 'Search query is empty'

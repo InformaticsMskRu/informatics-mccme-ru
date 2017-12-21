@@ -45,6 +45,7 @@ def main(global_config, **settings):
     config.add_route('user_settings.add', '/user/settings/main/add')
     config.add_route('user_settings.get', '/user/settings/main/get/{user_id}')
     config.add_route('user.set_oauth_id', '/user/set_oauth_id')
+    config.add_route('user.reset_password', '/user/reset_password')
     
     config.add_route('comment.add', '/comment/add')
     config.add_route('comment.get', '/comment/get/{contest_id}/{run_id}')

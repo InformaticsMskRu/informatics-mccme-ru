@@ -1,4 +1,12 @@
 from typing import Callable
+from sqlalchemy import ForeignKey, Column
+from sqlalchemy.ext.associationproxy import association_proxy
+from sqlalchemy.orm import relationship, backref
+from sqlalchemy.orm.exc import (
+    MultipleResultsFound,
+    NoResultFound,
+)
+from sqlalchemy.types import Integer, Unicode, Boolean
 
 from sqlalchemy import ForeignKey, Column, or_, and_
 from sqlalchemy.types import Integer, Unicode, Boolean
@@ -8,7 +16,11 @@ from pynformatics.model.meta import Base
 from pynformatics.model.statement import StatementUser
 from pynformatics.model.participant import Participant
 from pynformatics.models import DBSession
-from pynformatics.utils.functions import attrs_to_dict
+from pynformatics.utils.functions import (
+    attrs_to_dict,
+    hash_password,
+    random_password,
+)
 
 
 def lazy(func):
@@ -28,6 +40,8 @@ def lazy(func):
 
 
 class SimpleUser(Base):
+    RESET_PASSWORD_LENGTH = 20
+
     __tablename__ = "mdl_user"
     __table_args__ = {'schema': 'moodle'}
 #    __mapper_args__ = {'polymorphic_on': discriminator}    
@@ -67,6 +81,14 @@ class SimpleUser(Base):
             else:
                 serialized.pop('active_virtual')
         return serialized
+
+    def reset_password(self):
+        """
+        Генерирует случайный пароль для пользователя и возвращает его
+        """
+        new_password = random_password(self.RESET_PASSWORD_LENGTH)
+        self.password_md5 = hash_password(new_password)
+        return new_password
 
 
 class User(SimpleUser):
