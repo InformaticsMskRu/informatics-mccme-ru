@@ -23,11 +23,11 @@ class TestModel__Statement_start_virtual(TestCase):
 
         self.now = int(time.time())
         self.virtual_duration = 100
-        self.timestart = self.now - 60
+        self.time_start = self.now - 60
         self.statement = Statement(
             virtual_olympiad=1,
             virtual_duration=self.virtual_duration,
-            timestart=self.timestart,
+            time_start=self.time_start,
         )
         self.session.add(self.statement)
 

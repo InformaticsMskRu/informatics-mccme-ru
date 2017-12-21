@@ -54,6 +54,9 @@ class StatementFinished(Forbidden):
 class StatementNotStarted(Forbidden):
     message = 'Contest not started'
 
+class StatementSettingsValidationError(BadRequest):
+    message = 'Invalid settings format'
+
 
 class AuthWrongUsernameOrPassword(Forbidden):
     message = 'Wrong username or password'

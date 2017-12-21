@@ -21,18 +21,16 @@ class TestAPI__statement_start(TestCase):
         self.duration = 290
         self.statement = Statement(
             olympiad=1,
-            timestart=self.now - 10,
-            timestop=self.now + self.duration,
+            time_start=self.now - 10,
+            time_stop=self.now + self.duration,
         )
         self.session.add(self.statement)
 
         self.session.flush()
 
     def test_simple(self):
-        with self.mock_context_user as mock_context_user, \
-                self.mock_context_check_auth:
-            mock_context_user.return_value = self.user
-            response = self.app.post('/statement/%s/start' % self.statement.id, {})
+        self.set_session({'user_id': self.user.id})
+        response = self.app.post('/statement/%s/start' % self.statement.id, {})
         assert_that(
             response.json,
             has_entries({

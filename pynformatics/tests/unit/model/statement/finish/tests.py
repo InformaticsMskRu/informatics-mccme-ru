@@ -11,13 +11,13 @@ class TestModel__statement_finish(TestCase):
         super(TestModel__statement_finish, self).setUp()
 
         self.now = int(time.time())
-        self.timestart = self.now - 60
-        self.timestop = self.now + 30
+        self.time_start = self.now - 60
+        self.time_stop = self.now + 30
 
         self.statement = Statement(
             olympiad=1,
-            timestart=self.timestart,
-            timestop=self.timestop,
+            time_start=self.time_start,
+            time_stop=self.time_stop,
         )
         self.session.add(self.statement)
 

@@ -22,13 +22,13 @@ class TestModel__statement_start(TestCase):
         super(TestModel__statement_start, self).setUp()
 
         self.now = int(time.time())
-        self.timestart = self.now - 60
-        self.timestop = self.now + 30
+        self.time_start = self.now - 60
+        self.time_stop = self.now + 30
 
         self.statement = Statement(
             olympiad=1,
-            timestart=self.timestart,
-            timestop=self.timestop,
+            time_start=self.time_start,
+            time_stop=self.time_stop,
         )
         self.session.add(self.statement)
 
@@ -44,7 +44,7 @@ class TestModel__statement_start(TestCase):
 
         mock_start.assert_called_once_with(
             user=self.user,
-            duration=self.timestop - self.now,
+            duration=self.time_stop - self.now,
         )
 
     def test_not_olympiad(self):

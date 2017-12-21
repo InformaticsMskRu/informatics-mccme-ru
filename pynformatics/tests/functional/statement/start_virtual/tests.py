@@ -17,8 +17,8 @@ class TestAPI__statement_start_virtual(TestCase):
         self.virtual_statement = Statement(
             virtual_olympiad=1,
             virtual_duration=300,
-            timestart=0,
-            timestop=int(time.time()) + 100,
+            time_start=0,
+            time_stop=int(time.time()) + 100,
         )
         self.session.add(self.virtual_statement)
 
@@ -28,10 +28,8 @@ class TestAPI__statement_start_virtual(TestCase):
         self.session.flush()
 
     def test_simple(self):
-        with self.mock_context_check_auth, \
-                self.mock_context_user as mock_context_user:
-            mock_context_user.return_value=self.user
-            response = self.app.post('/statement/1/start_virtual')
+        self.set_session({'user_id': self.user.id})
+        response = self.app.post('/statement/1/start_virtual')
         assert_that(
             response.json,
             has_entries({

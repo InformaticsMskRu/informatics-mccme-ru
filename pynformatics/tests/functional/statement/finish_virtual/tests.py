@@ -36,10 +36,8 @@ class TestAPI__statement_finish_virtual(TestCase):
         self.session.add(self.participant)
 
     def test_simple(self):
-        with self.mock_context_check_auth, \
-                self.mock_context_user as mock_context_user:
-            mock_context_user.return_value=self.user
-            response = self.app.post('/statement/1/finish_virtual')
+        self.set_session({'user_id': self.user.id})
+        response = self.app.post('/statement/1/finish_virtual')
         assert_that(
             response.json,
             has_entries({

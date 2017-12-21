@@ -1,6 +1,5 @@
 import axios from '../utils/axios';
 
-import * as config from 'Config';
 import { LANGUAGES } from '../constants';
 
 
@@ -75,7 +74,7 @@ export function submitProblem(problemId, data) {
 
 export function fetchProblemRunProtocol(problemId, contestId, runId) {
   return (dispatch) => {
-    const url = `${config.apiUrl}/protocol/get/${contestId}/${runId}`;
+    const url = `/protocol/get/${contestId}/${runId}`;
 
     return dispatch({
       type: 'GET_PROBLEM_RUN_PROTOCOL',

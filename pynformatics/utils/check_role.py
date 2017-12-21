@@ -21,16 +21,16 @@ def check_global_role(roles):
                 roles_list = (roles, )
             else:
                 roles_list = roles
-            userid = RequestGetUserId(request)
+            user_id = RequestGetUserId(request)
 
-            if userid == -1 and "guest" not in roles_list:
+            if user_id == -1 and "guest" not in roles_list:
                 return {'result': 'autherror', 'message': 'You do not have permissions for this operation'}
             
-            req = DBSession.query(RoleAssignment).filter_by(userid=userid)
+            req = DBSession.query(RoleAssignment).filter_by(user_id=user_id)
     
             for role in roles_list:
-                roleid = DBSession.query(Role).filter_by(shortname=role).one().id
-                if req.filter_by(roleid=roleid).all():
+                role_id = DBSession.query(Role).filter_by(shortname=role).one().id
+                if req.filter_by(role_id=role_id).all():
                     result = func(request, *args, **kwargs)
                     return result    
 
@@ -41,8 +41,8 @@ def check_global_role(roles):
     return wrapper
 
 def is_admin(request):
-    userid = RequestGetUserId(request)
-    req = DBSession.query(RoleAssignment).filter_by(userid=userid)
+    user_id = RequestGetUserId(request)
+    req = DBSession.query(RoleAssignment).filter_by(user_id=user_id)
     role_admin_id = DBSession.query(Role).filter_by(shortname='admin').one().id
-    return bool(req.filter_by(roleid=role_admin_id).all())
+    return bool(req.filter_by(role_id=role_admin_id).all())
 

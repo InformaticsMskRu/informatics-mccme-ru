@@ -37,8 +37,8 @@ def course_get_by_user(user_id):
     contextlevel = 50
     role = db_session.query(Role).filter(Role.shortname == 'editingteacher').one() 
     role_assignments = db_session.query(RoleAssignment).filter(
-        RoleAssignment.userid == user_id, 
-        RoleAssignment.roleid == role.id,
+        RoleAssignment.user_id == user_id,
+        RoleAssignment.role_id == role.id,
     ).all()
     courses_id = [item.context.instanceid for item in role_assignments \
         if item.context.contextlevel == contextlevel]
@@ -56,10 +56,10 @@ def course_get_users(course_id):
     ).all()
     contexts_id = [item.id for item in contexts]
     role_assignments = db_session.query(RoleAssignment).filter(
-        RoleAssignment.roleid == role.id,
-        RoleAssignment.contextid.in_(contexts_id),
+        RoleAssignment.role_id == role.id,
+        RoleAssignment.context_id.in_(contexts_id),
     ).all()
-    users_id = [item.userid for item in role_assignments]
+    users_id = [item.user_id for item in role_assignments]
     users = db_session.query(User).filter(User.id.in_(users_id)).all()
     return users
     
@@ -70,8 +70,8 @@ def course_check_owner(course_id, user_id):
     contextlevel = 50
     role = db_session.query(Role).filter(Role.shortname == 'editingteacher').one() 
     role_assignments = db_session.query(RoleAssignment).filter(
-        RoleAssignment.userid == user_id, 
-        RoleAssignment.roleid == role.id,
+        RoleAssignment.user_id == user_id,
+        RoleAssignment.role_id == role.id,
     ).all()
     for role_assignment in role_assignments:
         if role_assignment.context.contextlevel == contextlevel\

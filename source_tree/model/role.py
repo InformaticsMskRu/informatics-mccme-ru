@@ -1,7 +1,6 @@
 from sqlalchemy import ForeignKey, Column
-from sqlalchemy.types import Integer, String, Unicode, Boolean, DateTime
-from sqlalchemy.orm import relationship, backref, relation
-from datetime import datetime
+from sqlalchemy.types import Integer, Unicode
+from sqlalchemy.orm import relationship
 
 from source_tree.models import Base
 
@@ -31,9 +30,10 @@ class RoleAssignment(Base):
     __table_args__ = {'schema': 'moodle'}
     
     id = Column(Integer, primary_key=True)
-    roleid = Column(Integer, ForeignKey("moodle.mdl_role.id"))
-    contextid = Column(Integer, ForeignKey("moodle.mdl_context.id"))
-    userid = Column(Integer, ForeignKey("moodle.mdl_user.id"))
+    role_id = Column('roleid', Integer, ForeignKey('moodle.mdl_role.id'))
+    context_id = Column('contextid', Integer, ForeignKey('moodle.mdl_context.id'))
+    user_id = Column('userid', Integer, ForeignKey('moodle.mdl_user.id'))
+
 
     role = relationship('Role', lazy='joined')
     context = relationship('Context', lazy='joined')

@@ -59,7 +59,6 @@ function getStatus(statement) {
       participantStatus = PARTICIPANT_STATUS.FINISHED;
     }
   }
-  
   return {
     participantStatus,
     statementStatus,
