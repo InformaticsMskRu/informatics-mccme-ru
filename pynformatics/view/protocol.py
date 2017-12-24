@@ -48,9 +48,9 @@ def get_protocol(request):
             if run.user.statement.filter(
                         Statement.olympiad == 1
                     ).filter(
-                        Statement.timestop > time.time()
+                Statement.time_stop > time.time()
                     ).filter(
-                        Statement.timestart < time.time()
+                Statement.time_start < time.time()
                     ).count() == 0:
                 res = OrderedDict()
                 if run.tests:

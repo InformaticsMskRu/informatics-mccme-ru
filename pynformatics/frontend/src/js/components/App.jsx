@@ -8,6 +8,7 @@ import Statement from './Statement';
 import Login from './LoginForm';
 
 import StatementAdmin from '../pages/StatementAdmin';
+import StatementSettingsForm from './StatementSettingsForm';
 
 import * as bootstrapActions from '../actions/bootstrapActions';
 import * as userActions from '../actions/userActions';
@@ -57,8 +58,19 @@ export default class App extends React.Component {
                 <Problem {...props} problemId={parseInt(props.match.params.problemId, 10)} />
               }
             />
-            <Route exact path="/admin/statement/:statementId" component={StatementAdmin} />
             <Route exact path="/login" component={Login} />
+            <Route
+              exact
+              path="/admin/statement/:statementId"
+              render={props =>
+                (
+                  <StatementSettingsForm
+                    {...props}
+                    statementId={parseInt(props.match.params.statementId, 10)}
+                  />
+                )
+              }
+            />
           </Switch>
         </div>
       </div>

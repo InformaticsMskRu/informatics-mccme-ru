@@ -1,4 +1,3 @@
-import datetime
 import time
 from jsonschema import Draft4Validator
 
@@ -16,14 +15,14 @@ from pynformatics.model.participant import Participant
 from pynformatics.models import DBSession
 from pynformatics.utils.constants import LANG_NAME_BY_ID
 from pynformatics.utils.exceptions import (
-    BadRequest,
+    StatementCanOnlyStartOnce,
+    StatementFinished,
     StatementNothingToFinish,
     StatementNotOlympiad,
     StatementNotVirtual,
-    StatementFinished,
     StatementNotStarted,
     StatementOnlyOneOngoing,
-    StatementCanOnlyStartOnce,
+    StatementSettingsValidationError,
 )
 from pynformatics.utils.functions import attrs_to_dict
 from pynformatics.utils.json_type import JsonType
@@ -37,13 +36,13 @@ class Statement(Base):
     name = Column(Unicode)
     summary = Column(Unicode)
     numbering = Column(Integer)
-    disableprinting = Column(Integer)
-    customtitles = Column(Integer)
-    timecreated = Column(Integer)
-    timemodified = Column(Integer)
+    disable_printing = Column('disableprinting', Integer)
+    custom_titles = Column('customtitles', Integer)
+    time_created = Column('timecreated', Integer)
+    time_modified = Column('timemodified', Integer)
     contest_id = Column(Integer)
-    timestart = Column(Integer)
-    timestop = Column(Integer)
+    time_start = Column('timestart', Integer)
+    time_stop = Column('timestop', Integer)
     olympiad = Column(Integer)
     virtual_olympiad = Column(Integer)
     virtual_duration = Column(Integer)
@@ -70,8 +69,8 @@ class Statement(Base):
                 'type': 'array',
                 'uniqueItems': True,
                 'items': {
-                    'type': 'string',
-                    'enum': LANG_NAME_BY_ID.keys(),
+                    'type': 'integer',
+                    'enum': list(LANG_NAME_BY_ID.keys()),
                 }
             },
             'type': {
@@ -87,6 +86,39 @@ class Statement(Base):
                         ],
                     }
                 ],
+            },
+            'group': {
+                'type': 'integer',
+            },
+            'team': {
+                'type': 'boolean',
+            },
+            'time_start': {
+                'type': 'integer',
+            },
+            'time_stop': {
+                'type': 'integer',
+            },
+            'freeze_time': {
+                'type': 'integer',
+            },
+            'standings': {
+                'type': 'boolean',
+            },
+            'test_only_samples': {
+                'type': 'boolean',
+            },
+            'reset_submits_on_start': {
+                'type': 'boolean',
+            },
+            'test_until_fail': {
+                'type': 'boolean',
+            },
+            'start_from_scratch': {
+                'type': 'boolean',
+            },
+            'restrict_view': {
+                'type': 'boolean',
             }
         },
         'additionalProperties': False,
@@ -109,17 +141,36 @@ class Statement(Base):
         return self.settings['allowed_languages']
 
     def set_settings(self, settings):
-        if not self.SETTINGS_SCHEMA_VALIDATOR.is_valid(settings):
-            raise BadRequest('Bad settings format')
-        if self.id == 11928:
-            self.settings = settings
-        return {}
+        validation_error = next(self.SETTINGS_SCHEMA_VALIDATOR.iter_errors(settings), None)
+        if validation_error:
+            raise StatementSettingsValidationError(validation_error.message)
+        self.settings = settings
+
+        if settings.get('time_start'):
+            self.time_start = settings['time_start']
+
+        if settings.get('time_stop'):
+            self.time_stop = settings['time_stop']
+
+        if 'type' in settings:
+            type_ = settings['type']
+            if type_ == None:
+                self.olympiad = False
+                self.virtual_olympiad = False
+            elif type_ == 'olympiad':
+                self.olympiad = True
+                self.virtual_olympiad = False
+            else:
+                self.olympiad = False
+                self.virtual_olympiad = True
+
+        self.time_modified = int(time.time())
 
     def start_participant(self, user, duration):
         now = time.time()
-        if now < self.timestart:
+        if now < self.time_start:
             raise StatementNotStarted
-        if now >= self.timestop:
+        if now >= self.time_stop:
             raise StatementFinished
 
         if self.participants.filter(Participant.user_id == user.id).count():
@@ -152,7 +203,7 @@ class Statement(Base):
 
         return self.start_participant(
             user=user,
-            duration=self.timestop - int(time.time())
+            duration=self.time_stop - int(time.time())
         )
 
     def finish(self, user):
@@ -184,12 +235,12 @@ class Statement(Base):
             'name',
             'olympiad',
             'settings',
-            'timestart',
-            'timestop',
+            'time_start',
+            'time_stop',
             'virtual_olympiad',
             'virtual_duration',
         )
-        serialized['course_module_id'] = self.course_module.id
+        serialized['course_module_id'] = getattr(self.course_module, 'id', None)
 
         if self.olympiad or self.virtual_olympiad:
             if not context.user:

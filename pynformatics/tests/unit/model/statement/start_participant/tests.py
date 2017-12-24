@@ -29,11 +29,11 @@ class TestModel__statement_start_participant(TestCase):
         self.user = User()
         self.session.add(self.user)
 
-        self.timestart = self.now
-        self.timestop = self.now + 100
+        self.time_start = self.now
+        self.time_stop = self.now + 100
         self.statement = Statement(
-            timestart=self.timestart,
-            timestop=self.timestop,
+            time_start=self.time_start,
+            time_stop=self.time_stop,
         )
         self.session.add(self.statement)
 
@@ -104,7 +104,7 @@ class TestModel__statement_start_participant(TestCase):
         )
 
     def test_not_started(self):
-        with mock.patch('pynformatics.model.statement.time.time', mock.Mock(return_value=self.timestart - 1)):
+        with mock.patch('pynformatics.model.statement.time.time', mock.Mock(return_value=self.time_start - 1)):
             assert_that(
                 calling(self.statement.start_participant).with_args(
                     user=self.user,
@@ -114,7 +114,7 @@ class TestModel__statement_start_participant(TestCase):
             )
 
     def test_finished(self):
-        with mock.patch('pynformatics.model.statement.time.time', mock.Mock(return_value=self.timestop)):
+        with mock.patch('pynformatics.model.statement.time.time', mock.Mock(return_value=self.time_stop)):
             assert_that(
                 calling(self.statement.start_participant).with_args(
                     user=self.user,
@@ -123,7 +123,7 @@ class TestModel__statement_start_participant(TestCase):
                 raises(StatementFinished)
             )
 
-        with mock.patch('pynformatics.model.statement.time.time', mock.Mock(return_value=self.timestop + 10)):
+        with mock.patch('pynformatics.model.statement.time.time', mock.Mock(return_value=self.time_stop + 10)):
             assert_that(
                 calling(self.statement.start_participant).with_args(
                     user=self.user,

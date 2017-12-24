@@ -23,12 +23,12 @@ class TestModel__Statement_start_virtual(TestCase):
 
         self.now = int(time.time())
         self.virtual_duration = 60
-        self.timestart = self.now - 60
+        self.time_start = self.now - 60
 
         self.statement = Statement(
             virtual_olympiad=1,
             virtual_duration=self.virtual_duration,
-            timestart=self.timestart,
+            time_start=self.time_start,
         )
         self.session.add(self.statement)
 
@@ -55,7 +55,7 @@ class TestModel__Statement_start_virtual(TestCase):
         )
 
     def test_not_started(self):
-        with mock.patch('pynformatics.model.statement.time.time', mock.Mock(return_value=self.timestart - 1)):
+        with mock.patch('pynformatics.model.statement.time.time', mock.Mock(return_value=self.time_start - 1)):
             assert_that(
                 calling(self.statement.start_virtual).with_args(self.user),
                 raises(StatementNotStarted),

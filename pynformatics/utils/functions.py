@@ -1,4 +1,5 @@
 import hashlib
+import random
 
 
 def attrs_to_dict(obj, *attrs):
@@ -8,7 +9,16 @@ def attrs_to_dict(obj, *attrs):
     }
 
 
-def check_password(password, hashed_password):
+def random_password(length):
+    SYMBOLS = 'poiuytrewqlkjhgfdsmnbvcxzQWERTYUIOPASDFGHJKLZXCVBNM1234567890'
+    return ''.join([random.choice(SYMBOLS) for i in range(length)])
+
+
+def hash_password(password):
     md5 = hashlib.md5()
     md5.update(password.encode('utf-8'))
-    return md5.hexdigest() == hashed_password
+    return md5.hexdigest()
+
+
+def check_password(password, hashed_password):
+    return hash_password(password) == hashed_password

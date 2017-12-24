@@ -1,4 +1,12 @@
 from typing import Callable
+from sqlalchemy import ForeignKey, Column
+from sqlalchemy.ext.associationproxy import association_proxy
+from sqlalchemy.orm import relationship, backref
+from sqlalchemy.orm.exc import (
+    MultipleResultsFound,
+    NoResultFound,
+)
+from sqlalchemy.types import Integer, Unicode, Boolean
 
 from sqlalchemy import ForeignKey, Column, or_, and_
 from sqlalchemy.types import Integer, Unicode, Boolean
@@ -8,7 +16,11 @@ from pynformatics.model.meta import Base
 from pynformatics.model.statement import StatementUser
 from pynformatics.model.participant import Participant
 from pynformatics.models import DBSession
-from pynformatics.utils.functions import attrs_to_dict
+from pynformatics.utils.functions import (
+    attrs_to_dict,
+    hash_password,
+    random_password,
+)
 
 
 def lazy(func):
@@ -28,6 +40,8 @@ def lazy(func):
 
 
 class SimpleUser(Base):
+    RESET_PASSWORD_LENGTH = 20
+
     __tablename__ = "mdl_user"
     __table_args__ = {'schema': 'moodle'}
 #    __mapper_args__ = {'polymorphic_on': discriminator}    
@@ -68,6 +82,14 @@ class SimpleUser(Base):
                 serialized.pop('active_virtual')
         return serialized
 
+    def reset_password(self):
+        """
+        Генерирует случайный пароль для пользователя и возвращает его
+        """
+        new_password = random_password(self.RESET_PASSWORD_LENGTH)
+        self.password_md5 = hash_password(new_password)
+        return new_password
+
 
 class User(SimpleUser):
     __mapper_args__ = {'polymorphic_identity': 'user'}
@@ -76,16 +98,6 @@ class User(SimpleUser):
     city = Column(Unicode)
     school = Column(Unicode)
     problems_week_solved = Column(Unicode)
-#    ejudge_users = relation('EjudgeUser', backref="moodle.mdl_user", uselist=False)
-#    ejudge_user = relation('EjudgeUser', backref = backref('moodle.mdl_user'), uselist=False, primaryjoin = "EjudgeUser.user_id == User.id")
-    
-    # def __init__(self, id, username='', firstname='', lastname='', email='', city=''):
-    #     self.id = id
-    #     self.username = username
-    #     self.firstname = firstname
-    #     self.lastname = lastname
-    #     self.email = email
-    #     self.city = city
 
     @classmethod
     def search(cls, filter_func: Callable[[Query], Query], filter_deleted=True):
@@ -132,15 +144,16 @@ class PynformaticsUser(User):
 #        return "<Person(%s, '%s', '%s', '%s', '%s')" % (self.id, self.username, self.firstname, self.lastname, self.email, self.city)
 
 
-class EjudgeUser(User):
-    __tablename__ = "mdl_user_ejudge"
-    __table_args__ = {'schema': 'moodle'}
-    __mapper_args__ = {'polymorphic_identity': 'ejudgeuser'}
-
-    id = Column(Integer, ForeignKey('moodle.mdl_user.id'), primary_key=True)
-    login = Column(Unicode)
-    password = Column(Unicode)
-    ejudge_id = Column(Integer)
-    problems_solved = Column(Integer)
+# TODO: поправить SAWarning. Нужно ли наследование от User? Если да, можно убрать id
+# class EjudgeUser(User):
+#     __tablename__ = "mdl_user_ejudge"
+#     __table_args__ = {'schema':'moodle'}
+#     __mapper_args__ = {'polymorphic_identity': 'ejudgeuser'}
+#
+#     id = Column(Integer, ForeignKey('moodle.mdl_user.id'), primary_key=True)
+#     ejudge_login = Column(Unicode)
+#     ejudge_password = Column(Unicode)
+#     ejudge_id = Column(Integer)
+#     ejudge_problems_solved = Column(Integer)
 #    statement = relationship("Statement", secondary=StatementUser.__table__, backref=backref("StatementUsers1"), lazy="dynamic")
 #    statements = association_proxy("StatementUsers2", 'statement')
