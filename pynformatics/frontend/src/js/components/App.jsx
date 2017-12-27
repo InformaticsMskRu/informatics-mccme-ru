@@ -8,6 +8,7 @@ import Statement from './Statement';
 import Login from './LoginForm';
 
 import MainPage from '../pages/Main/Main';
+import PasswordReset from './PasswordReset';
 
 import StatementAdmin from '../pages/StatementAdmin';
 import StatementSettingsForm from './StatementSettingsForm';
@@ -47,7 +48,10 @@ export default class App extends React.Component {
           <Content
             className="isomorphicContent"
           >
-            <Switch><Route exact path="/" component={MainPage} /></Switch>
+            <Switch>
+              <Route exact path="/" component={MainPage} />
+              <Route exact path="/admin/password_reset" component={PasswordReset} />
+            </Switch>
           </Content>
         </Layout>
       </ThemeProvider>

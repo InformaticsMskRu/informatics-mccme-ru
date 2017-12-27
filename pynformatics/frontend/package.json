@@ -38,7 +38,7 @@
     "webpack": "^3.6.0"
   },
   "scripts": {
-    "dev": "rm -r dist/* && cp src/index.html dist/index.html && cp -r src/css dist/css && cp -r src/fonts dist/fonts && ./node_modules/.bin/webpack-dev-server --hot --inline",
+    "dev": "rm -rf dist && mkdir dist && cp src/index.html dist/index.html && cp -r src/css dist/css && cp -r src/fonts dist/fonts && ./node_modules/.bin/webpack-dev-server --hot --inline",
     "test": "jest",
     "test:watch": "npm test -- --watch"
   },
