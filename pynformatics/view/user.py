@@ -10,6 +10,7 @@ from sqlalchemy.orm.exc import (
 
 from pynformatics.model.user import User
 from pynformatics.model.user_oauth_provider import UserOAuthProvider
+from pynformatics.model.group import UserGroup
 from pynformatics.model.run import Run
 from pynformatics.models import DBSession
 from pynformatics.view.utils import *
@@ -19,6 +20,9 @@ from pynformatics.utils.exceptions import (
     UserNotFound,
 )
 from pynformatics.utils.oauth import get_oauth_id
+
+
+from pynformatics.utils.context import with_context
 
 
 @view_config(route_name='user_settings.add', request_method='POST', renderer='json')
@@ -89,3 +93,43 @@ def user_reset_password(request, context):
         'id': user.id,
         'password': new_password,
     }
+
+@view_config(route_name='user_data.get', renderer='json')
+@with_context
+def user_get(request, context):
+    user_id = request.matchdict.get('user_id')
+    user = DBSession.query(User).filter(User.id == user_id).first()
+
+    if not user:
+        raise UserNotFound
+
+    user_attrs = [
+        'id',
+        'firstname',
+        'lastname',
+        'username',
+        'email'
+    ]
+
+    user_dict = {
+        attr: getattr(user, attr, 'undefined')
+        for attr in user_attrs
+    }
+
+    groups = DBSession.query(UserGroup).filter(UserGroup.user_id == user_id).all()
+
+    groups_dict = {
+        'group_id': [
+            getattr(groups[i], 'group_id', 'undefined')
+            for i in range(len(groups))
+        ],
+        'name': [
+            getattr(groups[i].group, 'name', 'undefined')
+            for i in range(len(groups))
+        ]
+    }
+
+    user_dict['groups'] = groups_dict
+
+    return user_dict
+
