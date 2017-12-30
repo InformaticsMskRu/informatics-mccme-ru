@@ -15,4 +15,5 @@ export default combineReducers({
   statements,
   ui,
   user,
+  userdata,
 })
