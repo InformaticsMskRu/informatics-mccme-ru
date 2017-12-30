@@ -94,6 +94,7 @@ def user_reset_password(request, context):
         'password': new_password,
     }
 
+
 @view_config(route_name='user_data.get', renderer='json')
 @with_context
 def user_get(request, context):
