@@ -5,7 +5,7 @@ import context from './contextReducer';
 import problems from './problemsReducer';
 import statements from './statementsReducer';
 import user from './userReducer';
-
+import userdata from './userdataReducer';
 
 export default combineReducers({
   context,
@@ -13,4 +13,5 @@ export default combineReducers({
   problems,
   statements,
   user,
+  userdata,
 })
