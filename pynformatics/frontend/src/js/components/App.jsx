@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import Problem from './Problem';
 import Statement from './Statement';
 import Login from './LoginForm';
+import Userdata from './Userdata';
 
 import StatementAdmin from '../pages/StatementAdmin';
 
@@ -59,6 +60,7 @@ export default class App extends React.Component {
             />
             <Route exact path="/admin/statement/:statementId" component={StatementAdmin} />
             <Route exact path="/login" component={Login} />
+            <Route exact path="/user/:userId" component={Userdata} />
           </Switch>
         </div>
       </div>
