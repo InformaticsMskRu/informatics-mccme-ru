@@ -73,7 +73,6 @@ class UserOAuthIdAlreadyUsed(Forbidden):
 class UserNotFound(NotFound):
     message = 'No such user'
 
-
 class SearchQueryIsEmpty(BadRequest):
     message = 'Search query is empty'
 
@@ -83,3 +82,4 @@ class PaginationPageOutOfRange(BadRequest):
 
 class PaginationPageSizeNegativeOrZero(BadRequest):
     message = 'Page size is negative or zero'
+
