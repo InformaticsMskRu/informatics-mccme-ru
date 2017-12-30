@@ -45,7 +45,7 @@ def main(global_config, **settings):
     config.add_route('user_settings.add', '/user/settings/main/add')
     config.add_route('user_settings.get', '/user/settings/main/get/{user_id}')
     config.add_route('user.set_oauth_id', '/user/set_oauth_id')
-    
+
     config.add_route('comment.add', '/comment/add')
     config.add_route('comment.get', '/comment/get/{contest_id}/{run_id}')
     config.add_route('comment.get_count', '/comment/count')
@@ -124,6 +124,9 @@ def main(global_config, **settings):
     config.add_route('auth.login', 'auth/login')
     config.add_route('auth.logout', 'auth/logout')
     config.add_route('auth.oauth_login', 'auth/oauth_login')
+
+
+    config.add_route('user_data.get', '/user/{user_id}')
 
     config.scan(ignore='pynformatics.tests')
 
