@@ -6,6 +6,9 @@ class BaseApiException(Exception):
         if message:
             self.message = message
 
+    def __str__(self):
+        return self.message
+
 
 class BadRequest(BaseApiException):
     message = 'Bad Request'
@@ -58,6 +61,9 @@ class StatementFinished(Forbidden):
 class StatementNotStarted(Forbidden):
     message = 'Contest not started'
 
+class StatementSettingsValidationError(BadRequest):
+    message = 'Invalid settings format'
+
 
 class AuthWrongUsernameOrPassword(Forbidden):
     message = 'Wrong username or password'
@@ -73,6 +79,20 @@ class AuthOAuthBadProvider(BadRequest):
 
 class UserOAuthIdAlreadyUsed(Forbidden):
     message = 'OAuth ID already in use'
+
+class UserNotFound(NotFound):
+    message = 'No such user'
+
+
+class SearchQueryIsEmpty(BadRequest):
+    message = 'Search query is empty'
+
+
+class PaginationPageOutOfRange(BadRequest):
+    message = 'Page number is out of range'
+
+class PaginationPageSizeNegativeOrZero(BadRequest):
+    message = 'Page size is negative or zero'
 
 
 class GroupNotFound(NotFound):

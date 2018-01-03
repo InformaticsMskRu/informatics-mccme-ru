@@ -27,6 +27,15 @@ export default function reducer(state=initialState, action) {
         },
       };
 
+    case 'POST_STATEMENT_SET_SETTINGS':
+      return {
+        ...state,
+        [statementId]: {
+          ...action.payload.data,
+          fetched: true,
+        },
+      };
+
     default:
       return state;
   }

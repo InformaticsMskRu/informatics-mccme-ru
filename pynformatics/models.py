@@ -1,4 +1,4 @@
-__all__ = ['Base', 'Session']
+__all__ = ['Base', 'DBSession']
 
 from sqlalchemy import (
     Column,
@@ -25,7 +25,3 @@ from pynformatics.model.problem import Problem, EjudgeProblem
 from pynformatics.model.comment import Comment
 from pynformatics.model.stars import Stars
 from pynformatics.model.ejudgeContest import EjudgeContest
-
-
-
-

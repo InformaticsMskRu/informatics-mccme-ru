@@ -1,6 +1,6 @@
 """The application's model objects"""
 from pynformatics.model.meta import Session, Base
-from pynformatics.model.user import User, SimpleUser, PynformaticsUser, EjudgeUser
+from pynformatics.model.user import User, SimpleUser, PynformaticsUser
 from pynformatics.model.run import Run
 from pynformatics.model.problem import Problem, EjudgeProblem, EjudgeProblemDummy
 from pynformatics.model.statement import Statement

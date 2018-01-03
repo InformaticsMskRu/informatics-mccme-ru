@@ -11,6 +11,7 @@ from webtest import TestApp
 from pynformatics import main
 from pynformatics.model.meta import Base
 from pynformatics.models import DBSession
+from source_tree.model.role import Role
 
 
 class TestCase(unittest.TestCase):
@@ -45,6 +46,7 @@ class TestCase(unittest.TestCase):
         self.app = TestApp(self._app)
 
         self.mock_context_check_auth = mock.patch('pynformatics.utils.context.Context.check_auth')
+        self.mock_context_check_roles = mock.patch('pynformatics.utils.context.Context.check_roles')
         self.mock_context_user = mock.patch('pynformatics.utils.context.Context.user', new_callable=PropertyMock)
 
     def tearDown(self):
@@ -68,14 +70,25 @@ class TestCase(unittest.TestCase):
         session.save()
         self.app.set_cookie('session', session.id)
 
+    def create_roles(self):
+        self.admin_role = Role(shortname='admin')
+        self.session.add_all((self.admin_role,))
+
+
 def dummy_decorator(*args, **kwargs):
     return lambda func: func
 
 
 if __name__ == '__main__':
     if len(sys.argv) <= 1:
-        tests = unittest.TestLoader().discover('tests')
+        path = 'tests'
     else:
-        tests = unittest.TestLoader().loadTestsFromName(sys.argv[1])
+        path = sys.argv[1]
+
+    try:
+        tests = unittest.TestLoader().discover(path)
+    except:
+        tests = unittest.TestLoader().loadTestsFromName(path)
+
     result = unittest.TextTestRunner(verbosity=2).run(tests).wasSuccessful()
     sys.exit(not result)

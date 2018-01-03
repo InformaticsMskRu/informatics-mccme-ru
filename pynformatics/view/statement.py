@@ -15,11 +15,12 @@ def statement_get(request, context):
         raise StatementNotFound
     return context.statement.serialize(context)
 
+
 @view_config(route_name='statement.set_settings', renderer='json')
-@check_global_role(('admin'))
-@with_context(require_auth=True)
+@with_context(require_auth=True, require_roles='admin')
 def statement_set_settings(request, context):
-    return context.statement.set_settings(request.json_body)
+    context.statement.set_settings(request.json_body)
+    return context.statement.serialize(context)
 
 
 @view_config(route_name='statement.start_virtual', renderer='json', request_method='POST')
@@ -41,6 +42,7 @@ def statement_finish_virtual(request, context):
 def statement_start(request, context):
     participant = context.statement.start(context.user)
     return participant.serialize(context)
+
 
 @view_config(route_name='statement.finish', renderer='json', request_method='POST')
 @with_context(require_auth=True)

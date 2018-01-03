@@ -20,10 +20,6 @@ export function fetchStatement(statementId) {
 export function setSettings(statementId, settings) {
   return (dispatch) => {
     const url = `/statement/${statementId}/set_settings`;
-
-    const formData = new FormData();
-    _.each(settings, (value, key) => formData.append(key, value));
-
     return dispatch({
       type: 'POST_STATEMENT_SET_SETTINGS',
       payload: axios.post(

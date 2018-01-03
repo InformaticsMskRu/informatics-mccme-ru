@@ -51,8 +51,8 @@ class TestModel__statement_serialize(TestCase):
                 'olympiad': None,
                 'problems': {},
                 'settings': None,
-                'timestart': None,
-                'timestop': None,
+                'time_start': None,
+                'time_stop': None,
                 'virtual_duration': None,
                 'virtual_olympiad': None,
             })
