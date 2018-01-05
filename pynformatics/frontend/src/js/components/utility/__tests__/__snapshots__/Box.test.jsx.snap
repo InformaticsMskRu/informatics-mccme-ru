@@ -1,0 +1,357 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders correctly when empty 1`] = `
+.c0 {
+  width: 100%;
+  height: 100%;
+  padding: 20px;
+  background-color: #ffffff;
+  border: 1px solid;
+  margin: 0 17px 30px;
+  border-radius: 4px;
+}
+
+.c0:last-child {
+  margin-bottom: 0;
+}
+
+.c0.half {
+  width: calc(50% - 34px);
+}
+
+.c0.c0.c0 {
+  margin: 0;
+}
+
+@media only screen and (max-width:767px) {
+  .c0 {
+    padding: 20px;
+    margin: 0 10px 30px;
+  }
+}
+
+@media (max-width:767px) {
+  .c0.half {
+    width: 100%;
+  }
+}
+
+<div
+  className="c0"
+  style={undefined}
+/>
+`;
+
+exports[`renders correctly with children 1`] = `
+.c0 {
+  width: 100%;
+  height: 100%;
+  padding: 20px;
+  background-color: #ffffff;
+  border: 1px solid;
+  margin: 0 17px 30px;
+  border-radius: 4px;
+}
+
+.c0:last-child {
+  margin-bottom: 0;
+}
+
+.c0.half {
+  width: calc(50% - 34px);
+}
+
+.c0.c0.c0 {
+  margin: 0;
+}
+
+.c2 {
+  font-size: 14px;
+  font-weight: 500;
+  margin: 0;
+  margin-bottom: 5px;
+  font-size: 22px;
+  margin-right: 10px;
+  display: inline-block;
+  margin-bottom: 0;
+}
+
+.c3 {
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 24px;
+  font-size: 14px;
+  display: inline-block;
+  margin-bottom: 0;
+}
+
+.c1 {
+  margin-bottom: 20px;
+}
+
+@media only screen and (max-width:767px) {
+  .c0 {
+    padding: 20px;
+    margin: 0 10px 30px;
+  }
+}
+
+@media (max-width:767px) {
+  .c0.half {
+    width: 100%;
+  }
+}
+
+<div
+  className="c0"
+  style={undefined}
+>
+  <div
+    className="c1"
+  >
+    <h3
+      className="c2"
+    >
+       
+      Some title
+       
+    </h3>
+    <p
+      className="c3"
+    >
+       
+      Some subtitle
+       
+    </p>
+  </div>
+  <div>
+    child 1
+  </div>
+  <div>
+    child 2
+  </div>
+</div>
+`;
+
+exports[`renders correctly with subtitle 1`] = `
+.c0 {
+  width: 100%;
+  height: 100%;
+  padding: 20px;
+  background-color: #ffffff;
+  border: 1px solid;
+  margin: 0 17px 30px;
+  border-radius: 4px;
+}
+
+.c0:last-child {
+  margin-bottom: 0;
+}
+
+.c0.half {
+  width: calc(50% - 34px);
+}
+
+.c0.c0.c0 {
+  margin: 0;
+}
+
+.c2 {
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 24px;
+  font-size: 14px;
+  display: inline-block;
+  margin-bottom: 0;
+}
+
+.c1 {
+  margin-bottom: 20px;
+}
+
+@media only screen and (max-width:767px) {
+  .c0 {
+    padding: 20px;
+    margin: 0 10px 30px;
+  }
+}
+
+@media (max-width:767px) {
+  .c0.half {
+    width: 100%;
+  }
+}
+
+<div
+  className="c0"
+  style={undefined}
+>
+  <div
+    className="c1"
+  >
+    
+    <p
+      className="c2"
+    >
+       
+      Some subtitle
+       
+    </p>
+  </div>
+</div>
+`;
+
+exports[`renders correctly with title 1`] = `
+.c0 {
+  width: 100%;
+  height: 100%;
+  padding: 20px;
+  background-color: #ffffff;
+  border: 1px solid;
+  margin: 0 17px 30px;
+  border-radius: 4px;
+}
+
+.c0:last-child {
+  margin-bottom: 0;
+}
+
+.c0.half {
+  width: calc(50% - 34px);
+}
+
+.c0.c0.c0 {
+  margin: 0;
+}
+
+.c2 {
+  font-size: 14px;
+  font-weight: 500;
+  margin: 0;
+  margin-bottom: 5px;
+  font-size: 22px;
+  margin-right: 10px;
+  display: inline-block;
+  margin-bottom: 0;
+}
+
+.c1 {
+  margin-bottom: 20px;
+}
+
+@media only screen and (max-width:767px) {
+  .c0 {
+    padding: 20px;
+    margin: 0 10px 30px;
+  }
+}
+
+@media (max-width:767px) {
+  .c0.half {
+    width: 100%;
+  }
+}
+
+<div
+  className="c0"
+  style={undefined}
+>
+  <div
+    className="c1"
+  >
+    <h3
+      className="c2"
+    >
+       
+      Some title
+       
+    </h3>
+    
+  </div>
+</div>
+`;
+
+exports[`renders correctly with title and subtitle 1`] = `
+.c0 {
+  width: 100%;
+  height: 100%;
+  padding: 20px;
+  background-color: #ffffff;
+  border: 1px solid;
+  margin: 0 17px 30px;
+  border-radius: 4px;
+}
+
+.c0:last-child {
+  margin-bottom: 0;
+}
+
+.c0.half {
+  width: calc(50% - 34px);
+}
+
+.c0.c0.c0 {
+  margin: 0;
+}
+
+.c2 {
+  font-size: 14px;
+  font-weight: 500;
+  margin: 0;
+  margin-bottom: 5px;
+  font-size: 22px;
+  margin-right: 10px;
+  display: inline-block;
+  margin-bottom: 0;
+}
+
+.c3 {
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 24px;
+  font-size: 14px;
+  display: inline-block;
+  margin-bottom: 0;
+}
+
+.c1 {
+  margin-bottom: 20px;
+}
+
+@media only screen and (max-width:767px) {
+  .c0 {
+    padding: 20px;
+    margin: 0 10px 30px;
+  }
+}
+
+@media (max-width:767px) {
+  .c0.half {
+    width: 100%;
+  }
+}
+
+<div
+  className="c0"
+  style={undefined}
+>
+  <div
+    className="c1"
+  >
+    <h3
+      className="c2"
+    >
+       
+      Some title
+       
+    </h3>
+    <p
+      className="c3"
+    >
+       
+      Some subtitle
+       
+    </p>
+  </div>
+</div>
+`;

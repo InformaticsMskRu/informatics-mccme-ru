@@ -1,3 +1,7 @@
+body {
+    margin: 0;
+}
+
 .main-content {
     margin: auto;
     width: 1200px;

@@ -1,0 +1,3285 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders correctly with empty localStorage 1`] = `
+.c1 {
+  width: 100%;
+  height: 100%;
+  padding: 20px;
+  background-color: #ffffff;
+  border: 1px solid;
+  margin: 0 17px 30px;
+  border-radius: 4px;
+}
+
+.c1:last-child {
+  margin-bottom: 0;
+}
+
+.c1.half {
+  width: calc(50% - 34px);
+}
+
+.c1.c1.c1 {
+  margin: 0;
+}
+
+.c7 {
+  font-size: 14px;
+  font-weight: 500;
+  margin: 0;
+  margin-bottom: 5px;
+  font-size: 22px;
+  margin-right: 10px;
+  display: inline-block;
+  margin-bottom: 0;
+}
+
+.c8 {
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 24px;
+  font-size: 14px;
+  display: inline-block;
+  margin-bottom: 0;
+}
+
+.c6 {
+  margin-bottom: 20px;
+}
+
+.c5.ant-btn {
+  display: inline-block;
+  margin-bottom: 0;
+  font-weight: 500;
+  text-align: center;
+  -ms-touch-action: manipulation;
+  touch-action: manipulation;
+  cursor: pointer;
+  background-image: none;
+  border: 1px solid transparent;
+  white-space: nowrap;
+  line-height: 1.5;
+  padding: 0 25px;
+  font-size: 14px;
+  border-radius: 4px;
+  height: 36px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  position: relative;
+  -webkit-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  -moz-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  -ms-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  -o-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  -webkit-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+}
+
+.c5.ant-btn:hover {
+  border-color: #1976d2;
+  color: #1976d2;
+}
+
+.c5.ant-btn > .anticon + span,
+.c5.ant-btn > span + .anticon {
+  margin: 0 0 0 0.5em;
+}
+
+.c5.ant-btn .anticon-right {
+  -webkit-transform: rotate(0);
+  -ms-transform: rotate(0);
+  transform: rotate(0);
+}
+
+.c5.ant-btn .anticon-left {
+  -webkit-transform: rotate(0);
+  -ms-transform: rotate(0);
+  transform: rotate(0);
+}
+
+.c5.ant-btn.ant-btn-primary {
+  background-color: #1976d2;
+  border-color: #1976d2;
+}
+
+.c5.ant-btn.ant-btn-primary:hover {
+  color: #fff;
+}
+
+.c5.ant-btn.ant-btn-sm {
+  padding: 0 15px;
+  height: 28px;
+  font-size: 12px;
+}
+
+.c5.ant-btn.ant-btn-sm.ant-btn-loading:not(.ant-btn-circle):not(.ant-btn-circle-outline) {
+  padding: 0 15px 0 24px;
+}
+
+.c5.ant-btn.ant-btn-sm.ant-btn-loading:not(.ant-btn-circle):not(.ant-btn-circle-outline) .anticon {
+  margin: 0 0 0 -17px;
+}
+
+.c5.ant-btn.ant-btn-lg {
+  padding: 0 35px;
+  font-size: 14px;
+  height: 42px;
+}
+
+.c5.ant-btn.ant-btn-primary {
+  color: #ffffff;
+}
+
+.c5.ant-btn.ant-btn-dashed {
+  border-style: dashed;
+}
+
+.c5.ant-btn.ant-btn-dashed:hover {
+  color: #1976d2;
+  border-color: #1976d2;
+}
+
+.c5.ant-btn.ant-btn-danger {
+  color: #ffffff;
+}
+
+.c5.ant-btn.ant-btn-danger.ant-btn-background-ghost {
+  background-color: transparent;
+}
+
+.c5.ant-btn.ant-btn-circle,
+.c5.ant-btn.ant-btn-circle-outline {
+  width: 35px;
+  padding: 0;
+  font-size: 14px;
+  border-radius: 50%;
+  height: 35px;
+}
+
+.c5.ant-btn.ant-btn-circle.ant-btn-sm,
+.c5.ant-btn.ant-btn-circle-outline.ant-btn-sm {
+  padding: 0;
+  height: 28px;
+  width: 28px;
+  font-size: 12px;
+}
+
+.c5.ant-btn.ant-btn-circle.ant-btn-lg,
+.c5.ant-btn.ant-btn-circle-outline.ant-btn-lg {
+  padding: 0;
+  font-size: 14px;
+  height: 42px;
+  width: 42px;
+}
+
+.c5.ant-btn.ant-btn.disabled,
+.c5.ant-btn.ant-btn[disabled],
+.c5.ant-btn.ant-btn.disabled:hover,
+.c5.ant-btn.ant-btn[disabled]:hover,
+.c5.ant-btn.ant-btn.disabled:focus,
+.c5.ant-btn.ant-btn[disabled]:focus,
+.c5.ant-btn.ant-btn.disabled:active,
+.c5.ant-btn.ant-btn[disabled]:active,
+.c5.ant-btn.ant-btn.disabled.active,
+.c5.ant-btn.ant-btn[disabled].active {
+  color: #9e9e9e;
+  background-color: #f7f7f7;
+  cursor: not-allowed;
+}
+
+.c5.ant-btn.ant-btn-loading:not(.ant-btn-circle):not(.ant-btn-circle-outline) .anticon {
+  margin: 0 0 0 -14px;
+}
+
+.c5.ant-btn.isoButton {
+  display: inline-block;
+  margin-bottom: 0;
+  font-weight: 500;
+  text-align: center;
+  -ms-touch-action: manipulation;
+  touch-action: manipulation;
+  cursor: pointer;
+  background-image: none;
+  border: 0;
+  white-space: nowrap;
+  line-height: 1.5;
+  padding: 0 25px;
+  font-size: 13px;
+  border-radius: 4px;
+  height: 35px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  position: relative;
+  color: #ffffff;
+  background-color: #1976d2;
+  -webkit-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  -moz-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  -ms-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  -o-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  -webkit-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+}
+
+.c5.ant-btn.isoButton:hover {
+  background-color: #71bcf7;
+}
+
+.c5.ant-btn.isoButton.isoBtnSm {
+  padding: 0 15px;
+  height: 28px;
+  font-size: 12px;
+}
+
+.c5.ant-btn.isoButton.isoBtnLg {
+  padding: 0 35px;
+  font-size: 14px;
+  height: 42px;
+}
+
+.c5 + .ant-btn-group {
+  margin-left: -1px !important;
+  margin-right: 0 !important;
+}
+
+.c3 .ant-collapse {
+  background-color: transparent;
+  border-radius: 0;
+  border: 0;
+}
+
+.c3 .ant-collapse > .ant-collapse-item {
+  background-color: #fff;
+  border-radius: 4px;
+  border: 1px solid;
+  margin-bottom: 5px;
+}
+
+.c3 .ant-collapse > .ant-collapse-item:last-child {
+  margin-bottom: 0;
+}
+
+.c3 .ant-collapse > .ant-collapse-item > .ant-collapse-header {
+  height: 42px;
+  line-height: 22px;
+  padding-left: 16px;
+  padding-right: 32px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  position: relative;
+  -webkit-transition: all 0.4s cubic-bezier(0.215,0.61,0.355,1);
+  -moz-transition: all 0.4s cubic-bezier(0.215,0.61,0.355,1);
+  -ms-transition: all 0.4s cubic-bezier(0.215,0.61,0.355,1);
+  -o-transition: all 0.4s cubic-bezier(0.215,0.61,0.355,1);
+  -webkit-transition: all 0.4s cubic-bezier(0.215,0.61,0.355,1);
+  transition: all 0.4s cubic-bezier(0.215,0.61,0.355,1);
+  -webkit-border-radius: 4px 4px 0 0;
+  -moz-border-radius: 4px 4px 0 0;
+  -ms-transition: 4px 4px 0 0;
+  -o-border-radius: 4px 4px 0 0;
+  border-radius: 4px 4px 0 0;
+}
+
+.c3 .ant-collapse > .ant-collapse-item > .ant-collapse-header .arrow {
+  font-size: 16px;
+  -webkit-transform: scale(0.75) rotate(0);
+  -ms-transform: scale(0.75) rotate(0);
+  transform: scale(0.75) rotate(0);
+  right: 16px;
+  left: auto;
+}
+
+.c3 .ant-collapse > .ant-collapse-item > .ant-collapse-header[aria-expanded='true'] .arrow {
+  font-size: 16px;
+}
+
+.c3 .ant-collapse > .ant-collapse-item .ant-collapse-content {
+  border-top: 1px solid;
+  -webkit-border-radius: 0 0 4px 4px;
+  -moz-border-radius: 0 0 4px 4px;
+  -ms-transition: 0 0 4px 4px;
+  -o-border-radius: 0 0 4px 4px;
+  border-radius: 0 0 4px 4px;
+}
+
+.c3 .ant-collapse > .ant-collapse-item .ant-collapse-content p {
+  font-size: 13px;
+}
+
+.c3 .ant-collapse > .ant-collapse-item.ant-collapse-item-active > .ant-collapse-header .arrow {
+  -webkit-transform: scale(0.75) rotate(90deg);
+  -ms-transform: scale(0.75) rotate(90deg);
+  transform: scale(0.75) rotate(90deg);
+}
+
+.c3 .ant-collapse.ant-collapse-borderless > .ant-collapse-item {
+  border-radius: 0;
+  border: 0;
+}
+
+.c3 .ant-collapse.ant-collapse-borderless > .ant-collapse-item > .ant-collapse-header {
+  background-color: #e91e63;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  -ms-transition: 0;
+  -o-border-radius: 0;
+  border-radius: 0;
+}
+
+.c3 .ant-collapse.ant-collapse-borderless > .ant-collapse-item .ant-collapse-content {
+  border-top: 0;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  -ms-transition: 0;
+  -o-border-radius: 0;
+  border-radius: 0;
+}
+
+.c2 {
+  background: #ffffff;
+}
+
+.c2.c2 > .ant-collapse > .ant-collapse-item > .ant-collapse-header {
+  background: #ffffff;
+  padding: 0;
+  height: auto;
+}
+
+.c2 .ant-collapse-content {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.c2 .ant-collapse-content .ant-collapse-content-box {
+  padding-bottom: 0;
+}
+
+.c0 {
+  padding-top: 44px;
+  max-width: 940px;
+  width: 100%;
+  height: 100%;
+  margin: 0 auto;
+}
+
+.c4 h3 {
+  font-size: 22px;
+  padding: 0 20px;
+  margin: 0;
+}
+
+.c4 .collapseButton {
+  position: absolute;
+  top: -3px;
+  right: 20px;
+}
+
+.c10.ant-input {
+  padding: 4px 10px;
+  width: 100%;
+  height: 35px;
+  cursor: text;
+  text-align: left;
+  font-size: 13px;
+  line-height: 1.5;
+  background-color: #fff;
+  background-image: none;
+  border: 1px solid;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  -ms-transition: 4px;
+  -o-border-radius: 4px;
+  border-radius: 4px;
+  -webkit-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  -moz-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  -ms-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  -o-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  -webkit-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+}
+
+.c10.ant-input:focus {
+  border-color: #1976d2;
+}
+
+.c10.ant-input.ant-input-lg {
+  height: 42px;
+  padding: 6px 10px;
+}
+
+.c10.ant-input.ant-input-sm {
+  padding: 1px 10px;
+  height: 30px;
+}
+
+.c10.ant-input::-webkit-input-placeholder {
+  text-align: left;
+  color: #212121;
+}
+
+.c10.ant-input:-moz-placeholder {
+  text-align: left;
+  color: #212121;
+}
+
+.c10.ant-input::-moz-placeholder {
+  text-align: left;
+  color: #212121;
+}
+
+.c10.ant-input:-ms-input-placeholder {
+  text-align: left;
+  color: #212121;
+}
+
+.c9 .inputContainer {
+  overflow: hidden;
+}
+
+.c9 .buttonContainer {
+  float: right;
+  margin-left: 12px;
+}
+
+@media only screen and (max-width:767px) {
+  .c1 {
+    padding: 20px;
+    margin: 0 10px 30px;
+  }
+}
+
+@media (max-width:767px) {
+  .c1.half {
+    width: 100%;
+  }
+}
+
+@media (max-width:576px) {
+  .c4 .collapseButton {
+    display: none;
+  }
+}
+
+@media (min-width:576px) {
+  .c9 .buttonContainer {
+    margin-left: 20px;
+  }
+}
+
+<div
+  className="c0"
+>
+  <div
+    className="ant-row"
+    style={undefined}
+  >
+    <div
+      className="ant-col-xs-24"
+      style={
+        Object {
+          "marginBottom": "16px",
+        }
+      }
+    >
+      <div
+        className="c1"
+        style={
+          Object {
+            "paddingLeft": "0",
+            "paddingRight": "0",
+          }
+        }
+      >
+        <div
+          className="c2 c3"
+          data-rtl={null}
+        >
+          <div
+            className="ant-collapse ant-collapse-borderless"
+            style={undefined}
+          >
+            <div
+              className="ant-collapse-item ant-collapse-no-arrow"
+              id={undefined}
+              role="tablist"
+              style={undefined}
+            >
+              <div
+                aria-expanded={false}
+                className="ant-collapse-header"
+                onClick={[Function]}
+                role="tab"
+              >
+                <div
+                  className="c4"
+                >
+                  <div
+                    className="ant-row"
+                    style={
+                      Object {
+                        "display": "flex",
+                        "flexFlow": "row wrap",
+                        "marginLeft": -8,
+                        "marginRight": -8,
+                      }
+                    }
+                  >
+                    <div
+                      className="ant-col-xs-24 ant-col-md-12"
+                      style={
+                        Object {
+                          "paddingLeft": 8,
+                          "paddingRight": 8,
+                        }
+                      }
+                    >
+                      <h3>
+                        Мои активности
+                      </h3>
+                    </div>
+                    <div
+                      className="ant-col-xs-0 ant-col-md-12"
+                      style={
+                        Object {
+                          "paddingLeft": 8,
+                          "paddingRight": 8,
+                        }
+                      }
+                    >
+                      <h3>
+                        Мои группы
+                      </h3>
+                    </div>
+                  </div>
+                  <button
+                    className="ant-btn collapseButton c5 ant-btn-primary ant-btn-sm"
+                    data-rtl={null}
+                    onClick={[Function]}
+                    type="button"
+                  >
+                    <span>
+                      Развернуть
+                    </span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    className="ant-row"
+    style={
+      Object {
+        "display": "flex",
+        "flexFlow": "row wrap",
+        "marginLeft": -8,
+        "marginRight": -8,
+      }
+    }
+  >
+    <div
+      className="ant-col-xs-24 ant-col-md-12"
+      style={
+        Object {
+          "marginBottom": "16px",
+          "paddingLeft": 8,
+          "paddingRight": 8,
+        }
+      }
+    >
+      <div
+        className="c1"
+        style={undefined}
+      >
+        <div
+          className="c6"
+        >
+          <h3
+            className="c7"
+          >
+             
+            Найти
+             
+          </h3>
+          <p
+            className="c8"
+          >
+             
+            Задачи, курсы, сборы
+             
+          </p>
+        </div>
+        <div
+          className="c9"
+        >
+          <div
+            className="buttonContainer"
+          >
+            <button
+              className="ant-btn c5 ant-btn-primary"
+              data-rtl={null}
+              onClick={[Function]}
+              style={
+                Object {
+                  "float": "right",
+                }
+              }
+              type="button"
+            >
+              <span>
+                Найти
+              </span>
+            </button>
+          </div>
+          <div
+            className="inputContainer"
+          >
+            <input
+              className="ant-input c10"
+              data-rtl={null}
+              disabled={false}
+              onKeyDown={[Function]}
+              type="text"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      className="ant-col-xs-24 ant-col-md-12"
+      style={
+        Object {
+          "marginBottom": "16px",
+          "paddingLeft": 8,
+          "paddingRight": 8,
+        }
+      }
+    >
+      <div
+        className="c1"
+        style={undefined}
+      >
+        <div
+          className="c6"
+        >
+          <h3
+            className="c7"
+          >
+             
+            Каталог
+             
+          </h3>
+          <p
+            className="c8"
+          >
+             
+            Все сборы, курсы и уроки
+             
+          </p>
+        </div>
+        <button
+          className="ant-btn c5 ant-btn-primary"
+          data-rtl={null}
+          onClick={[Function]}
+          style={
+            Object {
+              "marginBottom": "14px",
+              "marginRight": "12px",
+            }
+          }
+          type="button"
+        >
+          <span>
+            Дерево курсов и сборов
+          </span>
+        </button>
+        <button
+          className="ant-btn c5 ant-btn-primary"
+          data-rtl={null}
+          onClick={[Function]}
+          type="button"
+        >
+          <span>
+            Рубрикатор по темам
+          </span>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div
+    className="ant-row"
+    style={undefined}
+  >
+    <div
+      className="ant-col-xs-24"
+      style={
+        Object {
+          "marginBottom": "16px",
+        }
+      }
+    >
+      <div
+        className="c1"
+        style={undefined}
+      >
+        <div
+          className="c6"
+        >
+          <h3
+            className="c7"
+          >
+             
+            Изучение языка программирования
+             
+          </h3>
+          
+        </div>
+        <div
+          className="ant-row"
+          style={undefined}
+        >
+          <div
+            className="ant-col-xs-24"
+            style={
+              Object {
+                "marginBottom": "16px",
+              }
+            }
+          >
+            <div>
+              Ввод-вывод, оператор присваивания, арифметические операции
+            </div>
+          </div>
+        </div>
+        <div
+          className="ant-row"
+          style={undefined}
+        >
+          <div
+            className="ant-col-xs-24"
+            style={
+              Object {
+                "marginBottom": "16px",
+              }
+            }
+          >
+            <div>
+              Условный оператор
+            </div>
+          </div>
+        </div>
+        <div
+          className="ant-row"
+          style={undefined}
+        >
+          <div
+            className="ant-col-xs-24"
+            style={
+              Object {
+                "marginBottom": "16px",
+              }
+            }
+          >
+            <div>
+              Операторы цикла
+            </div>
+          </div>
+        </div>
+        <div
+          className="ant-row"
+          style={undefined}
+        >
+          <div
+            className="ant-col-xs-24"
+            style={
+              Object {
+                "marginBottom": "16px",
+              }
+            }
+          >
+            <button
+              className="ant-btn c5 ant-btn-primary ant-btn-sm"
+              data-rtl={null}
+              onClick={[Function]}
+              type="button"
+            >
+              <span>
+                Показать еще
+              </span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    className="ant-row"
+    style={undefined}
+  >
+    <div
+      className="ant-col-xs-24"
+      style={
+        Object {
+          "marginBottom": "16px",
+        }
+      }
+    >
+      <div
+        className="c1"
+        style={undefined}
+      >
+        <div
+          className="c6"
+        >
+          <h3
+            className="c7"
+          >
+             
+            Изучение языка программирования
+             
+          </h3>
+          
+        </div>
+        <div
+          className="ant-row"
+          style={undefined}
+        >
+          <div
+            className="ant-col-xs-24"
+            style={
+              Object {
+                "marginBottom": "16px",
+              }
+            }
+          >
+            <div>
+              Ввод-вывод, оператор присваивания, арифметические операции
+            </div>
+          </div>
+        </div>
+        <div
+          className="ant-row"
+          style={undefined}
+        >
+          <div
+            className="ant-col-xs-24"
+            style={
+              Object {
+                "marginBottom": "16px",
+              }
+            }
+          >
+            <div>
+              Условный оператор
+            </div>
+          </div>
+        </div>
+        <div
+          className="ant-row"
+          style={undefined}
+        >
+          <div
+            className="ant-col-xs-24"
+            style={
+              Object {
+                "marginBottom": "16px",
+              }
+            }
+          >
+            <div>
+              Операторы цикла
+            </div>
+          </div>
+        </div>
+        <div
+          className="ant-row"
+          style={undefined}
+        >
+          <div
+            className="ant-col-xs-24"
+            style={
+              Object {
+                "marginBottom": "16px",
+              }
+            }
+          >
+            <button
+              className="ant-btn c5 ant-btn-primary ant-btn-sm"
+              data-rtl={null}
+              onClick={[Function]}
+              type="button"
+            >
+              <span>
+                Показать еще
+              </span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    className="ant-row"
+    style={undefined}
+  >
+    <div
+      className="ant-col-xs-24"
+      style={
+        Object {
+          "marginBottom": "16px",
+        }
+      }
+    >
+      <div
+        className="c1"
+        style={undefined}
+      >
+        <div
+          className="c6"
+        >
+          <h3
+            className="c7"
+          >
+             
+            Изучение языка программирования
+             
+          </h3>
+          
+        </div>
+        <div
+          className="ant-row"
+          style={undefined}
+        >
+          <div
+            className="ant-col-xs-24"
+            style={
+              Object {
+                "marginBottom": "16px",
+              }
+            }
+          >
+            <div>
+              Ввод-вывод, оператор присваивания, арифметические операции
+            </div>
+          </div>
+        </div>
+        <div
+          className="ant-row"
+          style={undefined}
+        >
+          <div
+            className="ant-col-xs-24"
+            style={
+              Object {
+                "marginBottom": "16px",
+              }
+            }
+          >
+            <div>
+              Условный оператор
+            </div>
+          </div>
+        </div>
+        <div
+          className="ant-row"
+          style={undefined}
+        >
+          <div
+            className="ant-col-xs-24"
+            style={
+              Object {
+                "marginBottom": "16px",
+              }
+            }
+          >
+            <div>
+              Операторы цикла
+            </div>
+          </div>
+        </div>
+        <div
+          className="ant-row"
+          style={undefined}
+        >
+          <div
+            className="ant-col-xs-24"
+            style={
+              Object {
+                "marginBottom": "16px",
+              }
+            }
+          >
+            <button
+              className="ant-btn c5 ant-btn-primary ant-btn-sm"
+              data-rtl={null}
+              onClick={[Function]}
+              type="button"
+            >
+              <span>
+                Показать еще
+              </span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`renders correctly with panel closed 1`] = `
+.c1 {
+  width: 100%;
+  height: 100%;
+  padding: 20px;
+  background-color: #ffffff;
+  border: 1px solid;
+  margin: 0 17px 30px;
+  border-radius: 4px;
+}
+
+.c1:last-child {
+  margin-bottom: 0;
+}
+
+.c1.half {
+  width: calc(50% - 34px);
+}
+
+.c1.c1.c1 {
+  margin: 0;
+}
+
+.c7 {
+  font-size: 14px;
+  font-weight: 500;
+  margin: 0;
+  margin-bottom: 5px;
+  font-size: 22px;
+  margin-right: 10px;
+  display: inline-block;
+  margin-bottom: 0;
+}
+
+.c8 {
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 24px;
+  font-size: 14px;
+  display: inline-block;
+  margin-bottom: 0;
+}
+
+.c6 {
+  margin-bottom: 20px;
+}
+
+.c5.ant-btn {
+  display: inline-block;
+  margin-bottom: 0;
+  font-weight: 500;
+  text-align: center;
+  -ms-touch-action: manipulation;
+  touch-action: manipulation;
+  cursor: pointer;
+  background-image: none;
+  border: 1px solid transparent;
+  white-space: nowrap;
+  line-height: 1.5;
+  padding: 0 25px;
+  font-size: 14px;
+  border-radius: 4px;
+  height: 36px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  position: relative;
+  -webkit-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  -moz-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  -ms-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  -o-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  -webkit-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+}
+
+.c5.ant-btn:hover {
+  border-color: #1976d2;
+  color: #1976d2;
+}
+
+.c5.ant-btn > .anticon + span,
+.c5.ant-btn > span + .anticon {
+  margin: 0 0 0 0.5em;
+}
+
+.c5.ant-btn .anticon-right {
+  -webkit-transform: rotate(0);
+  -ms-transform: rotate(0);
+  transform: rotate(0);
+}
+
+.c5.ant-btn .anticon-left {
+  -webkit-transform: rotate(0);
+  -ms-transform: rotate(0);
+  transform: rotate(0);
+}
+
+.c5.ant-btn.ant-btn-primary {
+  background-color: #1976d2;
+  border-color: #1976d2;
+}
+
+.c5.ant-btn.ant-btn-primary:hover {
+  color: #fff;
+}
+
+.c5.ant-btn.ant-btn-sm {
+  padding: 0 15px;
+  height: 28px;
+  font-size: 12px;
+}
+
+.c5.ant-btn.ant-btn-sm.ant-btn-loading:not(.ant-btn-circle):not(.ant-btn-circle-outline) {
+  padding: 0 15px 0 24px;
+}
+
+.c5.ant-btn.ant-btn-sm.ant-btn-loading:not(.ant-btn-circle):not(.ant-btn-circle-outline) .anticon {
+  margin: 0 0 0 -17px;
+}
+
+.c5.ant-btn.ant-btn-lg {
+  padding: 0 35px;
+  font-size: 14px;
+  height: 42px;
+}
+
+.c5.ant-btn.ant-btn-primary {
+  color: #ffffff;
+}
+
+.c5.ant-btn.ant-btn-dashed {
+  border-style: dashed;
+}
+
+.c5.ant-btn.ant-btn-dashed:hover {
+  color: #1976d2;
+  border-color: #1976d2;
+}
+
+.c5.ant-btn.ant-btn-danger {
+  color: #ffffff;
+}
+
+.c5.ant-btn.ant-btn-danger.ant-btn-background-ghost {
+  background-color: transparent;
+}
+
+.c5.ant-btn.ant-btn-circle,
+.c5.ant-btn.ant-btn-circle-outline {
+  width: 35px;
+  padding: 0;
+  font-size: 14px;
+  border-radius: 50%;
+  height: 35px;
+}
+
+.c5.ant-btn.ant-btn-circle.ant-btn-sm,
+.c5.ant-btn.ant-btn-circle-outline.ant-btn-sm {
+  padding: 0;
+  height: 28px;
+  width: 28px;
+  font-size: 12px;
+}
+
+.c5.ant-btn.ant-btn-circle.ant-btn-lg,
+.c5.ant-btn.ant-btn-circle-outline.ant-btn-lg {
+  padding: 0;
+  font-size: 14px;
+  height: 42px;
+  width: 42px;
+}
+
+.c5.ant-btn.ant-btn.disabled,
+.c5.ant-btn.ant-btn[disabled],
+.c5.ant-btn.ant-btn.disabled:hover,
+.c5.ant-btn.ant-btn[disabled]:hover,
+.c5.ant-btn.ant-btn.disabled:focus,
+.c5.ant-btn.ant-btn[disabled]:focus,
+.c5.ant-btn.ant-btn.disabled:active,
+.c5.ant-btn.ant-btn[disabled]:active,
+.c5.ant-btn.ant-btn.disabled.active,
+.c5.ant-btn.ant-btn[disabled].active {
+  color: #9e9e9e;
+  background-color: #f7f7f7;
+  cursor: not-allowed;
+}
+
+.c5.ant-btn.ant-btn-loading:not(.ant-btn-circle):not(.ant-btn-circle-outline) .anticon {
+  margin: 0 0 0 -14px;
+}
+
+.c5.ant-btn.isoButton {
+  display: inline-block;
+  margin-bottom: 0;
+  font-weight: 500;
+  text-align: center;
+  -ms-touch-action: manipulation;
+  touch-action: manipulation;
+  cursor: pointer;
+  background-image: none;
+  border: 0;
+  white-space: nowrap;
+  line-height: 1.5;
+  padding: 0 25px;
+  font-size: 13px;
+  border-radius: 4px;
+  height: 35px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  position: relative;
+  color: #ffffff;
+  background-color: #1976d2;
+  -webkit-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  -moz-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  -ms-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  -o-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  -webkit-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+}
+
+.c5.ant-btn.isoButton:hover {
+  background-color: #71bcf7;
+}
+
+.c5.ant-btn.isoButton.isoBtnSm {
+  padding: 0 15px;
+  height: 28px;
+  font-size: 12px;
+}
+
+.c5.ant-btn.isoButton.isoBtnLg {
+  padding: 0 35px;
+  font-size: 14px;
+  height: 42px;
+}
+
+.c5 + .ant-btn-group {
+  margin-left: -1px !important;
+  margin-right: 0 !important;
+}
+
+.c3 .ant-collapse {
+  background-color: transparent;
+  border-radius: 0;
+  border: 0;
+}
+
+.c3 .ant-collapse > .ant-collapse-item {
+  background-color: #fff;
+  border-radius: 4px;
+  border: 1px solid;
+  margin-bottom: 5px;
+}
+
+.c3 .ant-collapse > .ant-collapse-item:last-child {
+  margin-bottom: 0;
+}
+
+.c3 .ant-collapse > .ant-collapse-item > .ant-collapse-header {
+  height: 42px;
+  line-height: 22px;
+  padding-left: 16px;
+  padding-right: 32px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  position: relative;
+  -webkit-transition: all 0.4s cubic-bezier(0.215,0.61,0.355,1);
+  -moz-transition: all 0.4s cubic-bezier(0.215,0.61,0.355,1);
+  -ms-transition: all 0.4s cubic-bezier(0.215,0.61,0.355,1);
+  -o-transition: all 0.4s cubic-bezier(0.215,0.61,0.355,1);
+  -webkit-transition: all 0.4s cubic-bezier(0.215,0.61,0.355,1);
+  transition: all 0.4s cubic-bezier(0.215,0.61,0.355,1);
+  -webkit-border-radius: 4px 4px 0 0;
+  -moz-border-radius: 4px 4px 0 0;
+  -ms-transition: 4px 4px 0 0;
+  -o-border-radius: 4px 4px 0 0;
+  border-radius: 4px 4px 0 0;
+}
+
+.c3 .ant-collapse > .ant-collapse-item > .ant-collapse-header .arrow {
+  font-size: 16px;
+  -webkit-transform: scale(0.75) rotate(0);
+  -ms-transform: scale(0.75) rotate(0);
+  transform: scale(0.75) rotate(0);
+  right: 16px;
+  left: auto;
+}
+
+.c3 .ant-collapse > .ant-collapse-item > .ant-collapse-header[aria-expanded='true'] .arrow {
+  font-size: 16px;
+}
+
+.c3 .ant-collapse > .ant-collapse-item .ant-collapse-content {
+  border-top: 1px solid;
+  -webkit-border-radius: 0 0 4px 4px;
+  -moz-border-radius: 0 0 4px 4px;
+  -ms-transition: 0 0 4px 4px;
+  -o-border-radius: 0 0 4px 4px;
+  border-radius: 0 0 4px 4px;
+}
+
+.c3 .ant-collapse > .ant-collapse-item .ant-collapse-content p {
+  font-size: 13px;
+}
+
+.c3 .ant-collapse > .ant-collapse-item.ant-collapse-item-active > .ant-collapse-header .arrow {
+  -webkit-transform: scale(0.75) rotate(90deg);
+  -ms-transform: scale(0.75) rotate(90deg);
+  transform: scale(0.75) rotate(90deg);
+}
+
+.c3 .ant-collapse.ant-collapse-borderless > .ant-collapse-item {
+  border-radius: 0;
+  border: 0;
+}
+
+.c3 .ant-collapse.ant-collapse-borderless > .ant-collapse-item > .ant-collapse-header {
+  background-color: #e91e63;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  -ms-transition: 0;
+  -o-border-radius: 0;
+  border-radius: 0;
+}
+
+.c3 .ant-collapse.ant-collapse-borderless > .ant-collapse-item .ant-collapse-content {
+  border-top: 0;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  -ms-transition: 0;
+  -o-border-radius: 0;
+  border-radius: 0;
+}
+
+.c2 {
+  background: #ffffff;
+}
+
+.c2.c2 > .ant-collapse > .ant-collapse-item > .ant-collapse-header {
+  background: #ffffff;
+  padding: 0;
+  height: auto;
+}
+
+.c2 .ant-collapse-content {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.c2 .ant-collapse-content .ant-collapse-content-box {
+  padding-bottom: 0;
+}
+
+.c0 {
+  padding-top: 44px;
+  max-width: 940px;
+  width: 100%;
+  height: 100%;
+  margin: 0 auto;
+}
+
+.c4 h3 {
+  font-size: 22px;
+  padding: 0 20px;
+  margin: 0;
+}
+
+.c4 .collapseButton {
+  position: absolute;
+  top: -3px;
+  right: 20px;
+}
+
+.c10.ant-input {
+  padding: 4px 10px;
+  width: 100%;
+  height: 35px;
+  cursor: text;
+  text-align: left;
+  font-size: 13px;
+  line-height: 1.5;
+  background-color: #fff;
+  background-image: none;
+  border: 1px solid;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  -ms-transition: 4px;
+  -o-border-radius: 4px;
+  border-radius: 4px;
+  -webkit-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  -moz-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  -ms-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  -o-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  -webkit-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+}
+
+.c10.ant-input:focus {
+  border-color: #1976d2;
+}
+
+.c10.ant-input.ant-input-lg {
+  height: 42px;
+  padding: 6px 10px;
+}
+
+.c10.ant-input.ant-input-sm {
+  padding: 1px 10px;
+  height: 30px;
+}
+
+.c10.ant-input::-webkit-input-placeholder {
+  text-align: left;
+  color: #212121;
+}
+
+.c10.ant-input:-moz-placeholder {
+  text-align: left;
+  color: #212121;
+}
+
+.c10.ant-input::-moz-placeholder {
+  text-align: left;
+  color: #212121;
+}
+
+.c10.ant-input:-ms-input-placeholder {
+  text-align: left;
+  color: #212121;
+}
+
+.c9 .inputContainer {
+  overflow: hidden;
+}
+
+.c9 .buttonContainer {
+  float: right;
+  margin-left: 12px;
+}
+
+@media only screen and (max-width:767px) {
+  .c1 {
+    padding: 20px;
+    margin: 0 10px 30px;
+  }
+}
+
+@media (max-width:767px) {
+  .c1.half {
+    width: 100%;
+  }
+}
+
+@media (max-width:576px) {
+  .c4 .collapseButton {
+    display: none;
+  }
+}
+
+@media (min-width:576px) {
+  .c9 .buttonContainer {
+    margin-left: 20px;
+  }
+}
+
+<div
+  className="c0"
+>
+  <div
+    className="ant-row"
+    style={undefined}
+  >
+    <div
+      className="ant-col-xs-24"
+      style={
+        Object {
+          "marginBottom": "16px",
+        }
+      }
+    >
+      <div
+        className="c1"
+        style={
+          Object {
+            "paddingLeft": "0",
+            "paddingRight": "0",
+          }
+        }
+      >
+        <div
+          className="c2 c3"
+          data-rtl={null}
+        >
+          <div
+            className="ant-collapse ant-collapse-borderless"
+            style={undefined}
+          >
+            <div
+              className="ant-collapse-item ant-collapse-no-arrow"
+              id={undefined}
+              role="tablist"
+              style={undefined}
+            >
+              <div
+                aria-expanded={false}
+                className="ant-collapse-header"
+                onClick={[Function]}
+                role="tab"
+              >
+                <div
+                  className="c4"
+                >
+                  <div
+                    className="ant-row"
+                    style={
+                      Object {
+                        "display": "flex",
+                        "flexFlow": "row wrap",
+                        "marginLeft": -8,
+                        "marginRight": -8,
+                      }
+                    }
+                  >
+                    <div
+                      className="ant-col-xs-24 ant-col-md-12"
+                      style={
+                        Object {
+                          "paddingLeft": 8,
+                          "paddingRight": 8,
+                        }
+                      }
+                    >
+                      <h3>
+                        Мои активности
+                      </h3>
+                    </div>
+                    <div
+                      className="ant-col-xs-0 ant-col-md-12"
+                      style={
+                        Object {
+                          "paddingLeft": 8,
+                          "paddingRight": 8,
+                        }
+                      }
+                    >
+                      <h3>
+                        Мои группы
+                      </h3>
+                    </div>
+                  </div>
+                  <button
+                    className="ant-btn collapseButton c5 ant-btn-primary ant-btn-sm"
+                    data-rtl={null}
+                    onClick={[Function]}
+                    type="button"
+                  >
+                    <span>
+                      Развернуть
+                    </span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    className="ant-row"
+    style={
+      Object {
+        "display": "flex",
+        "flexFlow": "row wrap",
+        "marginLeft": -8,
+        "marginRight": -8,
+      }
+    }
+  >
+    <div
+      className="ant-col-xs-24 ant-col-md-12"
+      style={
+        Object {
+          "marginBottom": "16px",
+          "paddingLeft": 8,
+          "paddingRight": 8,
+        }
+      }
+    >
+      <div
+        className="c1"
+        style={undefined}
+      >
+        <div
+          className="c6"
+        >
+          <h3
+            className="c7"
+          >
+             
+            Найти
+             
+          </h3>
+          <p
+            className="c8"
+          >
+             
+            Задачи, курсы, сборы
+             
+          </p>
+        </div>
+        <div
+          className="c9"
+        >
+          <div
+            className="buttonContainer"
+          >
+            <button
+              className="ant-btn c5 ant-btn-primary"
+              data-rtl={null}
+              onClick={[Function]}
+              style={
+                Object {
+                  "float": "right",
+                }
+              }
+              type="button"
+            >
+              <span>
+                Найти
+              </span>
+            </button>
+          </div>
+          <div
+            className="inputContainer"
+          >
+            <input
+              className="ant-input c10"
+              data-rtl={null}
+              disabled={false}
+              onKeyDown={[Function]}
+              type="text"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      className="ant-col-xs-24 ant-col-md-12"
+      style={
+        Object {
+          "marginBottom": "16px",
+          "paddingLeft": 8,
+          "paddingRight": 8,
+        }
+      }
+    >
+      <div
+        className="c1"
+        style={undefined}
+      >
+        <div
+          className="c6"
+        >
+          <h3
+            className="c7"
+          >
+             
+            Каталог
+             
+          </h3>
+          <p
+            className="c8"
+          >
+             
+            Все сборы, курсы и уроки
+             
+          </p>
+        </div>
+        <button
+          className="ant-btn c5 ant-btn-primary"
+          data-rtl={null}
+          onClick={[Function]}
+          style={
+            Object {
+              "marginBottom": "14px",
+              "marginRight": "12px",
+            }
+          }
+          type="button"
+        >
+          <span>
+            Дерево курсов и сборов
+          </span>
+        </button>
+        <button
+          className="ant-btn c5 ant-btn-primary"
+          data-rtl={null}
+          onClick={[Function]}
+          type="button"
+        >
+          <span>
+            Рубрикатор по темам
+          </span>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div
+    className="ant-row"
+    style={undefined}
+  >
+    <div
+      className="ant-col-xs-24"
+      style={
+        Object {
+          "marginBottom": "16px",
+        }
+      }
+    >
+      <div
+        className="c1"
+        style={undefined}
+      >
+        <div
+          className="c6"
+        >
+          <h3
+            className="c7"
+          >
+             
+            Изучение языка программирования
+             
+          </h3>
+          
+        </div>
+        <div
+          className="ant-row"
+          style={undefined}
+        >
+          <div
+            className="ant-col-xs-24"
+            style={
+              Object {
+                "marginBottom": "16px",
+              }
+            }
+          >
+            <div>
+              Ввод-вывод, оператор присваивания, арифметические операции
+            </div>
+          </div>
+        </div>
+        <div
+          className="ant-row"
+          style={undefined}
+        >
+          <div
+            className="ant-col-xs-24"
+            style={
+              Object {
+                "marginBottom": "16px",
+              }
+            }
+          >
+            <div>
+              Условный оператор
+            </div>
+          </div>
+        </div>
+        <div
+          className="ant-row"
+          style={undefined}
+        >
+          <div
+            className="ant-col-xs-24"
+            style={
+              Object {
+                "marginBottom": "16px",
+              }
+            }
+          >
+            <div>
+              Операторы цикла
+            </div>
+          </div>
+        </div>
+        <div
+          className="ant-row"
+          style={undefined}
+        >
+          <div
+            className="ant-col-xs-24"
+            style={
+              Object {
+                "marginBottom": "16px",
+              }
+            }
+          >
+            <button
+              className="ant-btn c5 ant-btn-primary ant-btn-sm"
+              data-rtl={null}
+              onClick={[Function]}
+              type="button"
+            >
+              <span>
+                Показать еще
+              </span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    className="ant-row"
+    style={undefined}
+  >
+    <div
+      className="ant-col-xs-24"
+      style={
+        Object {
+          "marginBottom": "16px",
+        }
+      }
+    >
+      <div
+        className="c1"
+        style={undefined}
+      >
+        <div
+          className="c6"
+        >
+          <h3
+            className="c7"
+          >
+             
+            Изучение языка программирования
+             
+          </h3>
+          
+        </div>
+        <div
+          className="ant-row"
+          style={undefined}
+        >
+          <div
+            className="ant-col-xs-24"
+            style={
+              Object {
+                "marginBottom": "16px",
+              }
+            }
+          >
+            <div>
+              Ввод-вывод, оператор присваивания, арифметические операции
+            </div>
+          </div>
+        </div>
+        <div
+          className="ant-row"
+          style={undefined}
+        >
+          <div
+            className="ant-col-xs-24"
+            style={
+              Object {
+                "marginBottom": "16px",
+              }
+            }
+          >
+            <div>
+              Условный оператор
+            </div>
+          </div>
+        </div>
+        <div
+          className="ant-row"
+          style={undefined}
+        >
+          <div
+            className="ant-col-xs-24"
+            style={
+              Object {
+                "marginBottom": "16px",
+              }
+            }
+          >
+            <div>
+              Операторы цикла
+            </div>
+          </div>
+        </div>
+        <div
+          className="ant-row"
+          style={undefined}
+        >
+          <div
+            className="ant-col-xs-24"
+            style={
+              Object {
+                "marginBottom": "16px",
+              }
+            }
+          >
+            <button
+              className="ant-btn c5 ant-btn-primary ant-btn-sm"
+              data-rtl={null}
+              onClick={[Function]}
+              type="button"
+            >
+              <span>
+                Показать еще
+              </span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    className="ant-row"
+    style={undefined}
+  >
+    <div
+      className="ant-col-xs-24"
+      style={
+        Object {
+          "marginBottom": "16px",
+        }
+      }
+    >
+      <div
+        className="c1"
+        style={undefined}
+      >
+        <div
+          className="c6"
+        >
+          <h3
+            className="c7"
+          >
+             
+            Изучение языка программирования
+             
+          </h3>
+          
+        </div>
+        <div
+          className="ant-row"
+          style={undefined}
+        >
+          <div
+            className="ant-col-xs-24"
+            style={
+              Object {
+                "marginBottom": "16px",
+              }
+            }
+          >
+            <div>
+              Ввод-вывод, оператор присваивания, арифметические операции
+            </div>
+          </div>
+        </div>
+        <div
+          className="ant-row"
+          style={undefined}
+        >
+          <div
+            className="ant-col-xs-24"
+            style={
+              Object {
+                "marginBottom": "16px",
+              }
+            }
+          >
+            <div>
+              Условный оператор
+            </div>
+          </div>
+        </div>
+        <div
+          className="ant-row"
+          style={undefined}
+        >
+          <div
+            className="ant-col-xs-24"
+            style={
+              Object {
+                "marginBottom": "16px",
+              }
+            }
+          >
+            <div>
+              Операторы цикла
+            </div>
+          </div>
+        </div>
+        <div
+          className="ant-row"
+          style={undefined}
+        >
+          <div
+            className="ant-col-xs-24"
+            style={
+              Object {
+                "marginBottom": "16px",
+              }
+            }
+          >
+            <button
+              className="ant-btn c5 ant-btn-primary ant-btn-sm"
+              data-rtl={null}
+              onClick={[Function]}
+              type="button"
+            >
+              <span>
+                Показать еще
+              </span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`renders correctly with panel open 1`] = `
+.c1 {
+  width: 100%;
+  height: 100%;
+  padding: 20px;
+  background-color: #ffffff;
+  border: 1px solid;
+  margin: 0 17px 30px;
+  border-radius: 4px;
+}
+
+.c1:last-child {
+  margin-bottom: 0;
+}
+
+.c1.half {
+  width: calc(50% - 34px);
+}
+
+.c1.c1.c1 {
+  margin: 0;
+}
+
+.c7 {
+  font-size: 14px;
+  font-weight: 500;
+  margin: 0;
+  margin-bottom: 5px;
+  font-size: 22px;
+  margin-right: 10px;
+  display: inline-block;
+  margin-bottom: 0;
+}
+
+.c8 {
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 24px;
+  font-size: 14px;
+  display: inline-block;
+  margin-bottom: 0;
+}
+
+.c6 {
+  margin-bottom: 20px;
+}
+
+.c5.ant-btn {
+  display: inline-block;
+  margin-bottom: 0;
+  font-weight: 500;
+  text-align: center;
+  -ms-touch-action: manipulation;
+  touch-action: manipulation;
+  cursor: pointer;
+  background-image: none;
+  border: 1px solid transparent;
+  white-space: nowrap;
+  line-height: 1.5;
+  padding: 0 25px;
+  font-size: 14px;
+  border-radius: 4px;
+  height: 36px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  position: relative;
+  -webkit-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  -moz-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  -ms-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  -o-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  -webkit-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+}
+
+.c5.ant-btn:hover {
+  border-color: #1976d2;
+  color: #1976d2;
+}
+
+.c5.ant-btn > .anticon + span,
+.c5.ant-btn > span + .anticon {
+  margin: 0 0 0 0.5em;
+}
+
+.c5.ant-btn .anticon-right {
+  -webkit-transform: rotate(0);
+  -ms-transform: rotate(0);
+  transform: rotate(0);
+}
+
+.c5.ant-btn .anticon-left {
+  -webkit-transform: rotate(0);
+  -ms-transform: rotate(0);
+  transform: rotate(0);
+}
+
+.c5.ant-btn.ant-btn-primary {
+  background-color: #1976d2;
+  border-color: #1976d2;
+}
+
+.c5.ant-btn.ant-btn-primary:hover {
+  color: #fff;
+}
+
+.c5.ant-btn.ant-btn-sm {
+  padding: 0 15px;
+  height: 28px;
+  font-size: 12px;
+}
+
+.c5.ant-btn.ant-btn-sm.ant-btn-loading:not(.ant-btn-circle):not(.ant-btn-circle-outline) {
+  padding: 0 15px 0 24px;
+}
+
+.c5.ant-btn.ant-btn-sm.ant-btn-loading:not(.ant-btn-circle):not(.ant-btn-circle-outline) .anticon {
+  margin: 0 0 0 -17px;
+}
+
+.c5.ant-btn.ant-btn-lg {
+  padding: 0 35px;
+  font-size: 14px;
+  height: 42px;
+}
+
+.c5.ant-btn.ant-btn-primary {
+  color: #ffffff;
+}
+
+.c5.ant-btn.ant-btn-dashed {
+  border-style: dashed;
+}
+
+.c5.ant-btn.ant-btn-dashed:hover {
+  color: #1976d2;
+  border-color: #1976d2;
+}
+
+.c5.ant-btn.ant-btn-danger {
+  color: #ffffff;
+}
+
+.c5.ant-btn.ant-btn-danger.ant-btn-background-ghost {
+  background-color: transparent;
+}
+
+.c5.ant-btn.ant-btn-circle,
+.c5.ant-btn.ant-btn-circle-outline {
+  width: 35px;
+  padding: 0;
+  font-size: 14px;
+  border-radius: 50%;
+  height: 35px;
+}
+
+.c5.ant-btn.ant-btn-circle.ant-btn-sm,
+.c5.ant-btn.ant-btn-circle-outline.ant-btn-sm {
+  padding: 0;
+  height: 28px;
+  width: 28px;
+  font-size: 12px;
+}
+
+.c5.ant-btn.ant-btn-circle.ant-btn-lg,
+.c5.ant-btn.ant-btn-circle-outline.ant-btn-lg {
+  padding: 0;
+  font-size: 14px;
+  height: 42px;
+  width: 42px;
+}
+
+.c5.ant-btn.ant-btn.disabled,
+.c5.ant-btn.ant-btn[disabled],
+.c5.ant-btn.ant-btn.disabled:hover,
+.c5.ant-btn.ant-btn[disabled]:hover,
+.c5.ant-btn.ant-btn.disabled:focus,
+.c5.ant-btn.ant-btn[disabled]:focus,
+.c5.ant-btn.ant-btn.disabled:active,
+.c5.ant-btn.ant-btn[disabled]:active,
+.c5.ant-btn.ant-btn.disabled.active,
+.c5.ant-btn.ant-btn[disabled].active {
+  color: #9e9e9e;
+  background-color: #f7f7f7;
+  cursor: not-allowed;
+}
+
+.c5.ant-btn.ant-btn-loading:not(.ant-btn-circle):not(.ant-btn-circle-outline) .anticon {
+  margin: 0 0 0 -14px;
+}
+
+.c5.ant-btn.isoButton {
+  display: inline-block;
+  margin-bottom: 0;
+  font-weight: 500;
+  text-align: center;
+  -ms-touch-action: manipulation;
+  touch-action: manipulation;
+  cursor: pointer;
+  background-image: none;
+  border: 0;
+  white-space: nowrap;
+  line-height: 1.5;
+  padding: 0 25px;
+  font-size: 13px;
+  border-radius: 4px;
+  height: 35px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  position: relative;
+  color: #ffffff;
+  background-color: #1976d2;
+  -webkit-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  -moz-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  -ms-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  -o-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  -webkit-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+}
+
+.c5.ant-btn.isoButton:hover {
+  background-color: #71bcf7;
+}
+
+.c5.ant-btn.isoButton.isoBtnSm {
+  padding: 0 15px;
+  height: 28px;
+  font-size: 12px;
+}
+
+.c5.ant-btn.isoButton.isoBtnLg {
+  padding: 0 35px;
+  font-size: 14px;
+  height: 42px;
+}
+
+.c5 + .ant-btn-group {
+  margin-left: -1px !important;
+  margin-right: 0 !important;
+}
+
+.c3 .ant-collapse {
+  background-color: transparent;
+  border-radius: 0;
+  border: 0;
+}
+
+.c3 .ant-collapse > .ant-collapse-item {
+  background-color: #fff;
+  border-radius: 4px;
+  border: 1px solid;
+  margin-bottom: 5px;
+}
+
+.c3 .ant-collapse > .ant-collapse-item:last-child {
+  margin-bottom: 0;
+}
+
+.c3 .ant-collapse > .ant-collapse-item > .ant-collapse-header {
+  height: 42px;
+  line-height: 22px;
+  padding-left: 16px;
+  padding-right: 32px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  position: relative;
+  -webkit-transition: all 0.4s cubic-bezier(0.215,0.61,0.355,1);
+  -moz-transition: all 0.4s cubic-bezier(0.215,0.61,0.355,1);
+  -ms-transition: all 0.4s cubic-bezier(0.215,0.61,0.355,1);
+  -o-transition: all 0.4s cubic-bezier(0.215,0.61,0.355,1);
+  -webkit-transition: all 0.4s cubic-bezier(0.215,0.61,0.355,1);
+  transition: all 0.4s cubic-bezier(0.215,0.61,0.355,1);
+  -webkit-border-radius: 4px 4px 0 0;
+  -moz-border-radius: 4px 4px 0 0;
+  -ms-transition: 4px 4px 0 0;
+  -o-border-radius: 4px 4px 0 0;
+  border-radius: 4px 4px 0 0;
+}
+
+.c3 .ant-collapse > .ant-collapse-item > .ant-collapse-header .arrow {
+  font-size: 16px;
+  -webkit-transform: scale(0.75) rotate(0);
+  -ms-transform: scale(0.75) rotate(0);
+  transform: scale(0.75) rotate(0);
+  right: 16px;
+  left: auto;
+}
+
+.c3 .ant-collapse > .ant-collapse-item > .ant-collapse-header[aria-expanded='true'] .arrow {
+  font-size: 16px;
+}
+
+.c3 .ant-collapse > .ant-collapse-item .ant-collapse-content {
+  border-top: 1px solid;
+  -webkit-border-radius: 0 0 4px 4px;
+  -moz-border-radius: 0 0 4px 4px;
+  -ms-transition: 0 0 4px 4px;
+  -o-border-radius: 0 0 4px 4px;
+  border-radius: 0 0 4px 4px;
+}
+
+.c3 .ant-collapse > .ant-collapse-item .ant-collapse-content p {
+  font-size: 13px;
+}
+
+.c3 .ant-collapse > .ant-collapse-item.ant-collapse-item-active > .ant-collapse-header .arrow {
+  -webkit-transform: scale(0.75) rotate(90deg);
+  -ms-transform: scale(0.75) rotate(90deg);
+  transform: scale(0.75) rotate(90deg);
+}
+
+.c3 .ant-collapse.ant-collapse-borderless > .ant-collapse-item {
+  border-radius: 0;
+  border: 0;
+}
+
+.c3 .ant-collapse.ant-collapse-borderless > .ant-collapse-item > .ant-collapse-header {
+  background-color: #e91e63;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  -ms-transition: 0;
+  -o-border-radius: 0;
+  border-radius: 0;
+}
+
+.c3 .ant-collapse.ant-collapse-borderless > .ant-collapse-item .ant-collapse-content {
+  border-top: 0;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  -ms-transition: 0;
+  -o-border-radius: 0;
+  border-radius: 0;
+}
+
+.c2 {
+  background: #ffffff;
+}
+
+.c2.c2 > .ant-collapse > .ant-collapse-item > .ant-collapse-header {
+  background: #ffffff;
+  padding: 0;
+  height: auto;
+}
+
+.c2 .ant-collapse-content {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.c2 .ant-collapse-content .ant-collapse-content-box {
+  padding-bottom: 0;
+}
+
+.c0 {
+  padding-top: 44px;
+  max-width: 940px;
+  width: 100%;
+  height: 100%;
+  margin: 0 auto;
+}
+
+.c4 h3 {
+  font-size: 22px;
+  padding: 0 20px;
+  margin: 0;
+}
+
+.c4 .collapseButton {
+  position: absolute;
+  top: -3px;
+  right: 20px;
+}
+
+.c10.ant-input {
+  padding: 4px 10px;
+  width: 100%;
+  height: 35px;
+  cursor: text;
+  text-align: left;
+  font-size: 13px;
+  line-height: 1.5;
+  background-color: #fff;
+  background-image: none;
+  border: 1px solid;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  -ms-transition: 4px;
+  -o-border-radius: 4px;
+  border-radius: 4px;
+  -webkit-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  -moz-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  -ms-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  -o-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  -webkit-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+}
+
+.c10.ant-input:focus {
+  border-color: #1976d2;
+}
+
+.c10.ant-input.ant-input-lg {
+  height: 42px;
+  padding: 6px 10px;
+}
+
+.c10.ant-input.ant-input-sm {
+  padding: 1px 10px;
+  height: 30px;
+}
+
+.c10.ant-input::-webkit-input-placeholder {
+  text-align: left;
+  color: #212121;
+}
+
+.c10.ant-input:-moz-placeholder {
+  text-align: left;
+  color: #212121;
+}
+
+.c10.ant-input::-moz-placeholder {
+  text-align: left;
+  color: #212121;
+}
+
+.c10.ant-input:-ms-input-placeholder {
+  text-align: left;
+  color: #212121;
+}
+
+.c9 .inputContainer {
+  overflow: hidden;
+}
+
+.c9 .buttonContainer {
+  float: right;
+  margin-left: 12px;
+}
+
+@media only screen and (max-width:767px) {
+  .c1 {
+    padding: 20px;
+    margin: 0 10px 30px;
+  }
+}
+
+@media (max-width:767px) {
+  .c1.half {
+    width: 100%;
+  }
+}
+
+@media (max-width:576px) {
+  .c4 .collapseButton {
+    display: none;
+  }
+}
+
+@media (min-width:576px) {
+  .c9 .buttonContainer {
+    margin-left: 20px;
+  }
+}
+
+<div
+  className="c0"
+>
+  <div
+    className="ant-row"
+    style={undefined}
+  >
+    <div
+      className="ant-col-xs-24"
+      style={
+        Object {
+          "marginBottom": "16px",
+        }
+      }
+    >
+      <div
+        className="c1"
+        style={
+          Object {
+            "paddingLeft": "0",
+            "paddingRight": "0",
+          }
+        }
+      >
+        <div
+          className="c2 c3"
+          data-rtl={null}
+        >
+          <div
+            className="ant-collapse ant-collapse-borderless"
+            style={undefined}
+          >
+            <div
+              className="ant-collapse-item ant-collapse-item-active ant-collapse-no-arrow"
+              id={undefined}
+              role="tablist"
+              style={undefined}
+            >
+              <div
+                aria-expanded={true}
+                className="ant-collapse-header"
+                onClick={[Function]}
+                role="tab"
+              >
+                <div
+                  className="c4"
+                >
+                  <div
+                    className="ant-row"
+                    style={
+                      Object {
+                        "display": "flex",
+                        "flexFlow": "row wrap",
+                        "marginLeft": -8,
+                        "marginRight": -8,
+                      }
+                    }
+                  >
+                    <div
+                      className="ant-col-xs-24 ant-col-md-12"
+                      style={
+                        Object {
+                          "paddingLeft": 8,
+                          "paddingRight": 8,
+                        }
+                      }
+                    >
+                      <h3>
+                        Мои активности
+                      </h3>
+                    </div>
+                    <div
+                      className="ant-col-xs-0 ant-col-md-12"
+                      style={
+                        Object {
+                          "paddingLeft": 8,
+                          "paddingRight": 8,
+                        }
+                      }
+                    >
+                      <h3>
+                        Мои группы
+                      </h3>
+                    </div>
+                  </div>
+                  <button
+                    className="ant-btn collapseButton c5 ant-btn-primary ant-btn-sm"
+                    data-rtl={null}
+                    onClick={[Function]}
+                    type="button"
+                  >
+                    <span>
+                      Свернуть
+                    </span>
+                  </button>
+                </div>
+              </div>
+              <div
+                className="ant-collapse-content ant-collapse-content-active"
+                role="tabpanel"
+              >
+                <div
+                  className="ant-collapse-content-box"
+                >
+                  <div
+                    className="ant-row"
+                    style={
+                      Object {
+                        "display": "flex",
+                        "flexFlow": "row wrap",
+                        "marginLeft": -8,
+                        "marginRight": -8,
+                        "paddingTop": "20px",
+                      }
+                    }
+                  >
+                    <div
+                      className="ant-col-md-12"
+                      style={
+                        Object {
+                          "colStyle": Object {
+                            "marginBottom": "16px",
+                          },
+                          "paddingLeft": 8,
+                          "paddingRight": 8,
+                        }
+                      }
+                      xss={24}
+                    >
+                      <div
+                        className="ant-row"
+                        style={
+                          Object {
+                            "display": "flex",
+                            "flexFlow": "row wrap",
+                            "paddingLeft": "20px",
+                            "paddingRight": "20px",
+                          }
+                        }
+                      >
+                        <div
+                          className="ant-col-xs-24"
+                          style={
+                            Object {
+                              "marginBottom": "16px",
+                            }
+                          }
+                        >
+                          Подготовка к окружному этапу
+                        </div>
+                        <div
+                          className="ant-col-xs-24"
+                          style={
+                            Object {
+                              "marginBottom": "16px",
+                            }
+                          }
+                        >
+                          Февральская школа. Байтик
+                        </div>
+                        <div
+                          className="ant-col-xs-24"
+                          style={
+                            Object {
+                              "marginBottom": "16px",
+                            }
+                          }
+                        >
+                          Информатика, Лицей №2, г.о. Нальчик
+                        </div>
+                        <div
+                          className="ant-col-xs-24"
+                          style={
+                            Object {
+                              "marginBottom": "16px",
+                            }
+                          }
+                        >
+                          БОП - боевое олимпиадное программирование
+                        </div>
+                        <div
+                          className="ant-col-xs-24"
+                        >
+                          <button
+                            className="ant-btn c5 ant-btn-primary ant-btn-sm"
+                            data-rtl={null}
+                            onClick={[Function]}
+                            type="button"
+                          >
+                            <span>
+                              Посмотреть все
+                            </span>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      className="ant-col-xs-0 ant-col-md-12"
+                      style={
+                        Object {
+                          "colStyle": Object {
+                            "marginBottom": "16px",
+                          },
+                          "paddingLeft": 8,
+                          "paddingRight": 8,
+                        }
+                      }
+                    >
+                      <div
+                        className="ant-row"
+                        style={
+                          Object {
+                            "display": "flex",
+                            "flexFlow": "row wrap",
+                            "paddingLeft": "20px",
+                            "paddingRight": "20px",
+                          }
+                        }
+                      >
+                        <div
+                          className="ant-col-xs-24"
+                          style={
+                            Object {
+                              "marginBottom": "16px",
+                            }
+                          }
+                        >
+                          Название группы 1
+                        </div>
+                        <div
+                          className="ant-col-xs-24"
+                          style={
+                            Object {
+                              "marginBottom": "16px",
+                            }
+                          }
+                        >
+                          Название группы 2
+                        </div>
+                        <div
+                          className="ant-col-xs-24"
+                          style={
+                            Object {
+                              "marginBottom": "16px",
+                            }
+                          }
+                        >
+                          Название группы 3
+                        </div>
+                        <div
+                          className="ant-col-xs-24"
+                          style={
+                            Object {
+                              "marginBottom": "16px",
+                            }
+                          }
+                        >
+                          Название группы 4
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    className="ant-row"
+    style={
+      Object {
+        "display": "flex",
+        "flexFlow": "row wrap",
+        "marginLeft": -8,
+        "marginRight": -8,
+      }
+    }
+  >
+    <div
+      className="ant-col-xs-24 ant-col-md-12"
+      style={
+        Object {
+          "marginBottom": "16px",
+          "paddingLeft": 8,
+          "paddingRight": 8,
+        }
+      }
+    >
+      <div
+        className="c1"
+        style={undefined}
+      >
+        <div
+          className="c6"
+        >
+          <h3
+            className="c7"
+          >
+             
+            Найти
+             
+          </h3>
+          <p
+            className="c8"
+          >
+             
+            Задачи, курсы, сборы
+             
+          </p>
+        </div>
+        <div
+          className="c9"
+        >
+          <div
+            className="buttonContainer"
+          >
+            <button
+              className="ant-btn c5 ant-btn-primary"
+              data-rtl={null}
+              onClick={[Function]}
+              style={
+                Object {
+                  "float": "right",
+                }
+              }
+              type="button"
+            >
+              <span>
+                Найти
+              </span>
+            </button>
+          </div>
+          <div
+            className="inputContainer"
+          >
+            <input
+              className="ant-input c10"
+              data-rtl={null}
+              disabled={false}
+              onKeyDown={[Function]}
+              type="text"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      className="ant-col-xs-24 ant-col-md-12"
+      style={
+        Object {
+          "marginBottom": "16px",
+          "paddingLeft": 8,
+          "paddingRight": 8,
+        }
+      }
+    >
+      <div
+        className="c1"
+        style={undefined}
+      >
+        <div
+          className="c6"
+        >
+          <h3
+            className="c7"
+          >
+             
+            Каталог
+             
+          </h3>
+          <p
+            className="c8"
+          >
+             
+            Все сборы, курсы и уроки
+             
+          </p>
+        </div>
+        <button
+          className="ant-btn c5 ant-btn-primary"
+          data-rtl={null}
+          onClick={[Function]}
+          style={
+            Object {
+              "marginBottom": "14px",
+              "marginRight": "12px",
+            }
+          }
+          type="button"
+        >
+          <span>
+            Дерево курсов и сборов
+          </span>
+        </button>
+        <button
+          className="ant-btn c5 ant-btn-primary"
+          data-rtl={null}
+          onClick={[Function]}
+          type="button"
+        >
+          <span>
+            Рубрикатор по темам
+          </span>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div
+    className="ant-row"
+    style={undefined}
+  >
+    <div
+      className="ant-col-xs-24"
+      style={
+        Object {
+          "marginBottom": "16px",
+        }
+      }
+    >
+      <div
+        className="c1"
+        style={undefined}
+      >
+        <div
+          className="c6"
+        >
+          <h3
+            className="c7"
+          >
+             
+            Изучение языка программирования
+             
+          </h3>
+          
+        </div>
+        <div
+          className="ant-row"
+          style={undefined}
+        >
+          <div
+            className="ant-col-xs-24"
+            style={
+              Object {
+                "marginBottom": "16px",
+              }
+            }
+          >
+            <div>
+              Ввод-вывод, оператор присваивания, арифметические операции
+            </div>
+          </div>
+        </div>
+        <div
+          className="ant-row"
+          style={undefined}
+        >
+          <div
+            className="ant-col-xs-24"
+            style={
+              Object {
+                "marginBottom": "16px",
+              }
+            }
+          >
+            <div>
+              Условный оператор
+            </div>
+          </div>
+        </div>
+        <div
+          className="ant-row"
+          style={undefined}
+        >
+          <div
+            className="ant-col-xs-24"
+            style={
+              Object {
+                "marginBottom": "16px",
+              }
+            }
+          >
+            <div>
+              Операторы цикла
+            </div>
+          </div>
+        </div>
+        <div
+          className="ant-row"
+          style={undefined}
+        >
+          <div
+            className="ant-col-xs-24"
+            style={
+              Object {
+                "marginBottom": "16px",
+              }
+            }
+          >
+            <button
+              className="ant-btn c5 ant-btn-primary ant-btn-sm"
+              data-rtl={null}
+              onClick={[Function]}
+              type="button"
+            >
+              <span>
+                Показать еще
+              </span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    className="ant-row"
+    style={undefined}
+  >
+    <div
+      className="ant-col-xs-24"
+      style={
+        Object {
+          "marginBottom": "16px",
+        }
+      }
+    >
+      <div
+        className="c1"
+        style={undefined}
+      >
+        <div
+          className="c6"
+        >
+          <h3
+            className="c7"
+          >
+             
+            Изучение языка программирования
+             
+          </h3>
+          
+        </div>
+        <div
+          className="ant-row"
+          style={undefined}
+        >
+          <div
+            className="ant-col-xs-24"
+            style={
+              Object {
+                "marginBottom": "16px",
+              }
+            }
+          >
+            <div>
+              Ввод-вывод, оператор присваивания, арифметические операции
+            </div>
+          </div>
+        </div>
+        <div
+          className="ant-row"
+          style={undefined}
+        >
+          <div
+            className="ant-col-xs-24"
+            style={
+              Object {
+                "marginBottom": "16px",
+              }
+            }
+          >
+            <div>
+              Условный оператор
+            </div>
+          </div>
+        </div>
+        <div
+          className="ant-row"
+          style={undefined}
+        >
+          <div
+            className="ant-col-xs-24"
+            style={
+              Object {
+                "marginBottom": "16px",
+              }
+            }
+          >
+            <div>
+              Операторы цикла
+            </div>
+          </div>
+        </div>
+        <div
+          className="ant-row"
+          style={undefined}
+        >
+          <div
+            className="ant-col-xs-24"
+            style={
+              Object {
+                "marginBottom": "16px",
+              }
+            }
+          >
+            <button
+              className="ant-btn c5 ant-btn-primary ant-btn-sm"
+              data-rtl={null}
+              onClick={[Function]}
+              type="button"
+            >
+              <span>
+                Показать еще
+              </span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    className="ant-row"
+    style={undefined}
+  >
+    <div
+      className="ant-col-xs-24"
+      style={
+        Object {
+          "marginBottom": "16px",
+        }
+      }
+    >
+      <div
+        className="c1"
+        style={undefined}
+      >
+        <div
+          className="c6"
+        >
+          <h3
+            className="c7"
+          >
+             
+            Изучение языка программирования
+             
+          </h3>
+          
+        </div>
+        <div
+          className="ant-row"
+          style={undefined}
+        >
+          <div
+            className="ant-col-xs-24"
+            style={
+              Object {
+                "marginBottom": "16px",
+              }
+            }
+          >
+            <div>
+              Ввод-вывод, оператор присваивания, арифметические операции
+            </div>
+          </div>
+        </div>
+        <div
+          className="ant-row"
+          style={undefined}
+        >
+          <div
+            className="ant-col-xs-24"
+            style={
+              Object {
+                "marginBottom": "16px",
+              }
+            }
+          >
+            <div>
+              Условный оператор
+            </div>
+          </div>
+        </div>
+        <div
+          className="ant-row"
+          style={undefined}
+        >
+          <div
+            className="ant-col-xs-24"
+            style={
+              Object {
+                "marginBottom": "16px",
+              }
+            }
+          >
+            <div>
+              Операторы цикла
+            </div>
+          </div>
+        </div>
+        <div
+          className="ant-row"
+          style={undefined}
+        >
+          <div
+            className="ant-col-xs-24"
+            style={
+              Object {
+                "marginBottom": "16px",
+              }
+            }
+          >
+            <button
+              className="ant-btn c5 ant-btn-primary ant-btn-sm"
+              data-rtl={null}
+              onClick={[Function]}
+              type="button"
+            >
+              <span>
+                Показать еще
+              </span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
