@@ -4,6 +4,7 @@ import { reducer as form } from 'redux-form';
 import context from './contextReducer';
 import problems from './problemsReducer';
 import statements from './statementsReducer';
+import ui from './uiReducer';
 import user from './userReducer';
 
 
@@ -12,5 +13,6 @@ export default combineReducers({
   form,
   problems,
   statements,
+  ui,
   user,
 })

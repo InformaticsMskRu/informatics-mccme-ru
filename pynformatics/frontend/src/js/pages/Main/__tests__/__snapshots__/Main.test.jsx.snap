@@ -23,7 +23,7 @@ exports[`renders correctly with empty localStorage 1`] = `
   margin: 0;
 }
 
-.c7 {
+.c8 {
   font-size: 14px;
   font-weight: 500;
   margin: 0;
@@ -34,7 +34,7 @@ exports[`renders correctly with empty localStorage 1`] = `
   margin-bottom: 0;
 }
 
-.c8 {
+.c9 {
   font-size: 13px;
   font-weight: 400;
   line-height: 24px;
@@ -43,11 +43,11 @@ exports[`renders correctly with empty localStorage 1`] = `
   margin-bottom: 0;
 }
 
-.c6 {
+.c7 {
   margin-bottom: 20px;
 }
 
-.c5.ant-btn {
+.c6.ant-btn {
   display: inline-block;
   margin-bottom: 0;
   font-weight: 500;
@@ -79,80 +79,80 @@ exports[`renders correctly with empty localStorage 1`] = `
   transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
 }
 
-.c5.ant-btn:hover {
+.c6.ant-btn:hover {
   border-color: #1976d2;
   color: #1976d2;
 }
 
-.c5.ant-btn > .anticon + span,
-.c5.ant-btn > span + .anticon {
+.c6.ant-btn > .anticon + span,
+.c6.ant-btn > span + .anticon {
   margin: 0 0 0 0.5em;
 }
 
-.c5.ant-btn .anticon-right {
+.c6.ant-btn .anticon-right {
   -webkit-transform: rotate(0);
   -ms-transform: rotate(0);
   transform: rotate(0);
 }
 
-.c5.ant-btn .anticon-left {
+.c6.ant-btn .anticon-left {
   -webkit-transform: rotate(0);
   -ms-transform: rotate(0);
   transform: rotate(0);
 }
 
-.c5.ant-btn.ant-btn-primary {
+.c6.ant-btn.ant-btn-primary {
   background-color: #1976d2;
   border-color: #1976d2;
 }
 
-.c5.ant-btn.ant-btn-primary:hover {
+.c6.ant-btn.ant-btn-primary:hover {
   color: #fff;
 }
 
-.c5.ant-btn.ant-btn-sm {
+.c6.ant-btn.ant-btn-sm {
   padding: 0 15px;
   height: 28px;
   font-size: 12px;
 }
 
-.c5.ant-btn.ant-btn-sm.ant-btn-loading:not(.ant-btn-circle):not(.ant-btn-circle-outline) {
+.c6.ant-btn.ant-btn-sm.ant-btn-loading:not(.ant-btn-circle):not(.ant-btn-circle-outline) {
   padding: 0 15px 0 24px;
 }
 
-.c5.ant-btn.ant-btn-sm.ant-btn-loading:not(.ant-btn-circle):not(.ant-btn-circle-outline) .anticon {
+.c6.ant-btn.ant-btn-sm.ant-btn-loading:not(.ant-btn-circle):not(.ant-btn-circle-outline) .anticon {
   margin: 0 0 0 -17px;
 }
 
-.c5.ant-btn.ant-btn-lg {
+.c6.ant-btn.ant-btn-lg {
   padding: 0 35px;
   font-size: 14px;
   height: 42px;
 }
 
-.c5.ant-btn.ant-btn-primary {
+.c6.ant-btn.ant-btn-primary {
   color: #ffffff;
 }
 
-.c5.ant-btn.ant-btn-dashed {
+.c6.ant-btn.ant-btn-dashed {
   border-style: dashed;
 }
 
-.c5.ant-btn.ant-btn-dashed:hover {
+.c6.ant-btn.ant-btn-dashed:hover {
   color: #1976d2;
   border-color: #1976d2;
 }
 
-.c5.ant-btn.ant-btn-danger {
+.c6.ant-btn.ant-btn-danger {
   color: #ffffff;
 }
 
-.c5.ant-btn.ant-btn-danger.ant-btn-background-ghost {
+.c6.ant-btn.ant-btn-danger.ant-btn-background-ghost {
   background-color: transparent;
 }
 
-.c5.ant-btn.ant-btn-circle,
-.c5.ant-btn.ant-btn-circle-outline {
+.c6.ant-btn.ant-btn-circle,
+.c6.ant-btn.ant-btn-circle-outline {
   width: 35px;
   padding: 0;
   font-size: 14px;
@@ -160,42 +160,42 @@ exports[`renders correctly with empty localStorage 1`] = `
   height: 35px;
 }
 
-.c5.ant-btn.ant-btn-circle.ant-btn-sm,
-.c5.ant-btn.ant-btn-circle-outline.ant-btn-sm {
+.c6.ant-btn.ant-btn-circle.ant-btn-sm,
+.c6.ant-btn.ant-btn-circle-outline.ant-btn-sm {
   padding: 0;
   height: 28px;
   width: 28px;
   font-size: 12px;
 }
 
-.c5.ant-btn.ant-btn-circle.ant-btn-lg,
-.c5.ant-btn.ant-btn-circle-outline.ant-btn-lg {
+.c6.ant-btn.ant-btn-circle.ant-btn-lg,
+.c6.ant-btn.ant-btn-circle-outline.ant-btn-lg {
   padding: 0;
   font-size: 14px;
   height: 42px;
   width: 42px;
 }
 
-.c5.ant-btn.ant-btn.disabled,
-.c5.ant-btn.ant-btn[disabled],
-.c5.ant-btn.ant-btn.disabled:hover,
-.c5.ant-btn.ant-btn[disabled]:hover,
-.c5.ant-btn.ant-btn.disabled:focus,
-.c5.ant-btn.ant-btn[disabled]:focus,
-.c5.ant-btn.ant-btn.disabled:active,
-.c5.ant-btn.ant-btn[disabled]:active,
-.c5.ant-btn.ant-btn.disabled.active,
-.c5.ant-btn.ant-btn[disabled].active {
+.c6.ant-btn.ant-btn.disabled,
+.c6.ant-btn.ant-btn[disabled],
+.c6.ant-btn.ant-btn.disabled:hover,
+.c6.ant-btn.ant-btn[disabled]:hover,
+.c6.ant-btn.ant-btn.disabled:focus,
+.c6.ant-btn.ant-btn[disabled]:focus,
+.c6.ant-btn.ant-btn.disabled:active,
+.c6.ant-btn.ant-btn[disabled]:active,
+.c6.ant-btn.ant-btn.disabled.active,
+.c6.ant-btn.ant-btn[disabled].active {
   color: #9e9e9e;
   background-color: #f7f7f7;
   cursor: not-allowed;
 }
 
-.c5.ant-btn.ant-btn-loading:not(.ant-btn-circle):not(.ant-btn-circle-outline) .anticon {
+.c6.ant-btn.ant-btn-loading:not(.ant-btn-circle):not(.ant-btn-circle-outline) .anticon {
   margin: 0 0 0 -14px;
 }
 
-.c5.ant-btn.isoButton {
+.c6.ant-btn.isoButton {
   display: inline-block;
   margin-bottom: 0;
   font-weight: 500;
@@ -229,25 +229,33 @@ exports[`renders correctly with empty localStorage 1`] = `
   transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
 }
 
-.c5.ant-btn.isoButton:hover {
+.c6.ant-btn.isoButton:hover {
   background-color: #71bcf7;
 }
 
-.c5.ant-btn.isoButton.isoBtnSm {
+.c6.ant-btn.isoButton.isoBtnSm {
   padding: 0 15px;
   height: 28px;
   font-size: 12px;
 }
 
-.c5.ant-btn.isoButton.isoBtnLg {
+.c6.ant-btn.isoButton.isoBtnLg {
   padding: 0 35px;
   font-size: 14px;
   height: 42px;
 }
 
-.c5 + .ant-btn-group {
+.c6 + .ant-btn-group {
   margin-left: -1px !important;
   margin-right: 0 !important;
+}
+
+.c5.ant-btn {
+  border-radius: 4px;
+}
+
+.c5.ant-btn.ant-btn-primary {
+  background-color: rgb(64,126,255);
 }
 
 .c3 .ant-collapse {
@@ -364,7 +372,7 @@ exports[`renders correctly with empty localStorage 1`] = `
 }
 
 .c0 {
-  padding-top: 44px;
+  padding-top: 103px;
   max-width: 940px;
   width: 100%;
   height: 100%;
@@ -383,7 +391,7 @@ exports[`renders correctly with empty localStorage 1`] = `
   right: 20px;
 }
 
-.c10.ant-input {
+.c11.ant-input {
   padding: 4px 10px;
   width: 100%;
   height: 35px;
@@ -407,45 +415,45 @@ exports[`renders correctly with empty localStorage 1`] = `
   transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
 }
 
-.c10.ant-input:focus {
+.c11.ant-input:focus {
   border-color: #1976d2;
 }
 
-.c10.ant-input.ant-input-lg {
+.c11.ant-input.ant-input-lg {
   height: 42px;
   padding: 6px 10px;
 }
 
-.c10.ant-input.ant-input-sm {
+.c11.ant-input.ant-input-sm {
   padding: 1px 10px;
   height: 30px;
 }
 
-.c10.ant-input::-webkit-input-placeholder {
+.c11.ant-input::-webkit-input-placeholder {
   text-align: left;
   color: #212121;
 }
 
-.c10.ant-input:-moz-placeholder {
+.c11.ant-input:-moz-placeholder {
   text-align: left;
   color: #212121;
 }
 
-.c10.ant-input::-moz-placeholder {
+.c11.ant-input::-moz-placeholder {
   text-align: left;
   color: #212121;
 }
 
-.c10.ant-input:-ms-input-placeholder {
+.c11.ant-input:-ms-input-placeholder {
   text-align: left;
   color: #212121;
 }
 
-.c9 .inputContainer {
+.c10 .inputContainer {
   overflow: hidden;
 }
 
-.c9 .buttonContainer {
+.c10 .buttonContainer {
   float: right;
   margin-left: 12px;
 }
@@ -470,7 +478,7 @@ exports[`renders correctly with empty localStorage 1`] = `
 }
 
 @media (min-width:576px) {
-  .c9 .buttonContainer {
+  .c10 .buttonContainer {
     margin-left: 20px;
   }
 }
@@ -561,7 +569,7 @@ exports[`renders correctly with empty localStorage 1`] = `
                     </div>
                   </div>
                   <button
-                    className="ant-btn collapseButton c5 ant-btn-primary ant-btn-sm"
+                    className="ant-btn collapseButton c5 c6 ant-btn-primary ant-btn-sm"
                     data-rtl={null}
                     onClick={[Function]}
                     type="button"
@@ -604,17 +612,17 @@ exports[`renders correctly with empty localStorage 1`] = `
         style={undefined}
       >
         <div
-          className="c6"
+          className="c7"
         >
           <h3
-            className="c7"
+            className="c8"
           >
              
             Найти
              
           </h3>
           <p
-            className="c8"
+            className="c9"
           >
              
             Задачи, курсы, сборы
@@ -622,13 +630,13 @@ exports[`renders correctly with empty localStorage 1`] = `
           </p>
         </div>
         <div
-          className="c9"
+          className="c10"
         >
           <div
             className="buttonContainer"
           >
             <button
-              className="ant-btn c5 ant-btn-primary"
+              className="ant-btn c5 c6 ant-btn-primary"
               data-rtl={null}
               onClick={[Function]}
               style={
@@ -647,7 +655,7 @@ exports[`renders correctly with empty localStorage 1`] = `
             className="inputContainer"
           >
             <input
-              className="ant-input c10"
+              className="ant-input c11"
               data-rtl={null}
               disabled={false}
               onKeyDown={[Function]}
@@ -672,17 +680,17 @@ exports[`renders correctly with empty localStorage 1`] = `
         style={undefined}
       >
         <div
-          className="c6"
+          className="c7"
         >
           <h3
-            className="c7"
+            className="c8"
           >
              
             Каталог
              
           </h3>
           <p
-            className="c8"
+            className="c9"
           >
              
             Все сборы, курсы и уроки
@@ -690,7 +698,7 @@ exports[`renders correctly with empty localStorage 1`] = `
           </p>
         </div>
         <button
-          className="ant-btn c5 ant-btn-primary"
+          className="ant-btn c5 c6 ant-btn-primary"
           data-rtl={null}
           onClick={[Function]}
           style={
@@ -706,7 +714,7 @@ exports[`renders correctly with empty localStorage 1`] = `
           </span>
         </button>
         <button
-          className="ant-btn c5 ant-btn-primary"
+          className="ant-btn c5 c6 ant-btn-primary"
           data-rtl={null}
           onClick={[Function]}
           type="button"
@@ -735,10 +743,10 @@ exports[`renders correctly with empty localStorage 1`] = `
         style={undefined}
       >
         <div
-          className="c6"
+          className="c7"
         >
           <h3
-            className="c7"
+            className="c8"
           >
              
             Изучение языка программирования
@@ -810,7 +818,7 @@ exports[`renders correctly with empty localStorage 1`] = `
             }
           >
             <button
-              className="ant-btn c5 ant-btn-primary ant-btn-sm"
+              className="ant-btn c5 c6 ant-btn-primary ant-btn-sm"
               data-rtl={null}
               onClick={[Function]}
               type="button"
@@ -841,10 +849,10 @@ exports[`renders correctly with empty localStorage 1`] = `
         style={undefined}
       >
         <div
-          className="c6"
+          className="c7"
         >
           <h3
-            className="c7"
+            className="c8"
           >
              
             Изучение языка программирования
@@ -916,7 +924,7 @@ exports[`renders correctly with empty localStorage 1`] = `
             }
           >
             <button
-              className="ant-btn c5 ant-btn-primary ant-btn-sm"
+              className="ant-btn c5 c6 ant-btn-primary ant-btn-sm"
               data-rtl={null}
               onClick={[Function]}
               type="button"
@@ -947,10 +955,10 @@ exports[`renders correctly with empty localStorage 1`] = `
         style={undefined}
       >
         <div
-          className="c6"
+          className="c7"
         >
           <h3
-            className="c7"
+            className="c8"
           >
              
             Изучение языка программирования
@@ -1022,7 +1030,7 @@ exports[`renders correctly with empty localStorage 1`] = `
             }
           >
             <button
-              className="ant-btn c5 ant-btn-primary ant-btn-sm"
+              className="ant-btn c5 c6 ant-btn-primary ant-btn-sm"
               data-rtl={null}
               onClick={[Function]}
               type="button"
@@ -1062,7 +1070,7 @@ exports[`renders correctly with panel closed 1`] = `
   margin: 0;
 }
 
-.c7 {
+.c8 {
   font-size: 14px;
   font-weight: 500;
   margin: 0;
@@ -1073,7 +1081,7 @@ exports[`renders correctly with panel closed 1`] = `
   margin-bottom: 0;
 }
 
-.c8 {
+.c9 {
   font-size: 13px;
   font-weight: 400;
   line-height: 24px;
@@ -1082,11 +1090,11 @@ exports[`renders correctly with panel closed 1`] = `
   margin-bottom: 0;
 }
 
-.c6 {
+.c7 {
   margin-bottom: 20px;
 }
 
-.c5.ant-btn {
+.c6.ant-btn {
   display: inline-block;
   margin-bottom: 0;
   font-weight: 500;
@@ -1118,80 +1126,80 @@ exports[`renders correctly with panel closed 1`] = `
   transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
 }
 
-.c5.ant-btn:hover {
+.c6.ant-btn:hover {
   border-color: #1976d2;
   color: #1976d2;
 }
 
-.c5.ant-btn > .anticon + span,
-.c5.ant-btn > span + .anticon {
+.c6.ant-btn > .anticon + span,
+.c6.ant-btn > span + .anticon {
   margin: 0 0 0 0.5em;
 }
 
-.c5.ant-btn .anticon-right {
+.c6.ant-btn .anticon-right {
   -webkit-transform: rotate(0);
   -ms-transform: rotate(0);
   transform: rotate(0);
 }
 
-.c5.ant-btn .anticon-left {
+.c6.ant-btn .anticon-left {
   -webkit-transform: rotate(0);
   -ms-transform: rotate(0);
   transform: rotate(0);
 }
 
-.c5.ant-btn.ant-btn-primary {
+.c6.ant-btn.ant-btn-primary {
   background-color: #1976d2;
   border-color: #1976d2;
 }
 
-.c5.ant-btn.ant-btn-primary:hover {
+.c6.ant-btn.ant-btn-primary:hover {
   color: #fff;
 }
 
-.c5.ant-btn.ant-btn-sm {
+.c6.ant-btn.ant-btn-sm {
   padding: 0 15px;
   height: 28px;
   font-size: 12px;
 }
 
-.c5.ant-btn.ant-btn-sm.ant-btn-loading:not(.ant-btn-circle):not(.ant-btn-circle-outline) {
+.c6.ant-btn.ant-btn-sm.ant-btn-loading:not(.ant-btn-circle):not(.ant-btn-circle-outline) {
   padding: 0 15px 0 24px;
 }
 
-.c5.ant-btn.ant-btn-sm.ant-btn-loading:not(.ant-btn-circle):not(.ant-btn-circle-outline) .anticon {
+.c6.ant-btn.ant-btn-sm.ant-btn-loading:not(.ant-btn-circle):not(.ant-btn-circle-outline) .anticon {
   margin: 0 0 0 -17px;
 }
 
-.c5.ant-btn.ant-btn-lg {
+.c6.ant-btn.ant-btn-lg {
   padding: 0 35px;
   font-size: 14px;
   height: 42px;
 }
 
-.c5.ant-btn.ant-btn-primary {
+.c6.ant-btn.ant-btn-primary {
   color: #ffffff;
 }
 
-.c5.ant-btn.ant-btn-dashed {
+.c6.ant-btn.ant-btn-dashed {
   border-style: dashed;
 }
 
-.c5.ant-btn.ant-btn-dashed:hover {
+.c6.ant-btn.ant-btn-dashed:hover {
   color: #1976d2;
   border-color: #1976d2;
 }
 
-.c5.ant-btn.ant-btn-danger {
+.c6.ant-btn.ant-btn-danger {
   color: #ffffff;
 }
 
-.c5.ant-btn.ant-btn-danger.ant-btn-background-ghost {
+.c6.ant-btn.ant-btn-danger.ant-btn-background-ghost {
   background-color: transparent;
 }
 
-.c5.ant-btn.ant-btn-circle,
-.c5.ant-btn.ant-btn-circle-outline {
+.c6.ant-btn.ant-btn-circle,
+.c6.ant-btn.ant-btn-circle-outline {
   width: 35px;
   padding: 0;
   font-size: 14px;
@@ -1199,42 +1207,42 @@ exports[`renders correctly with panel closed 1`] = `
   height: 35px;
 }
 
-.c5.ant-btn.ant-btn-circle.ant-btn-sm,
-.c5.ant-btn.ant-btn-circle-outline.ant-btn-sm {
+.c6.ant-btn.ant-btn-circle.ant-btn-sm,
+.c6.ant-btn.ant-btn-circle-outline.ant-btn-sm {
   padding: 0;
   height: 28px;
   width: 28px;
   font-size: 12px;
 }
 
-.c5.ant-btn.ant-btn-circle.ant-btn-lg,
-.c5.ant-btn.ant-btn-circle-outline.ant-btn-lg {
+.c6.ant-btn.ant-btn-circle.ant-btn-lg,
+.c6.ant-btn.ant-btn-circle-outline.ant-btn-lg {
   padding: 0;
   font-size: 14px;
   height: 42px;
   width: 42px;
 }
 
-.c5.ant-btn.ant-btn.disabled,
-.c5.ant-btn.ant-btn[disabled],
-.c5.ant-btn.ant-btn.disabled:hover,
-.c5.ant-btn.ant-btn[disabled]:hover,
-.c5.ant-btn.ant-btn.disabled:focus,
-.c5.ant-btn.ant-btn[disabled]:focus,
-.c5.ant-btn.ant-btn.disabled:active,
-.c5.ant-btn.ant-btn[disabled]:active,
-.c5.ant-btn.ant-btn.disabled.active,
-.c5.ant-btn.ant-btn[disabled].active {
+.c6.ant-btn.ant-btn.disabled,
+.c6.ant-btn.ant-btn[disabled],
+.c6.ant-btn.ant-btn.disabled:hover,
+.c6.ant-btn.ant-btn[disabled]:hover,
+.c6.ant-btn.ant-btn.disabled:focus,
+.c6.ant-btn.ant-btn[disabled]:focus,
+.c6.ant-btn.ant-btn.disabled:active,
+.c6.ant-btn.ant-btn[disabled]:active,
+.c6.ant-btn.ant-btn.disabled.active,
+.c6.ant-btn.ant-btn[disabled].active {
   color: #9e9e9e;
   background-color: #f7f7f7;
   cursor: not-allowed;
 }
 
-.c5.ant-btn.ant-btn-loading:not(.ant-btn-circle):not(.ant-btn-circle-outline) .anticon {
+.c6.ant-btn.ant-btn-loading:not(.ant-btn-circle):not(.ant-btn-circle-outline) .anticon {
   margin: 0 0 0 -14px;
 }
 
-.c5.ant-btn.isoButton {
+.c6.ant-btn.isoButton {
   display: inline-block;
   margin-bottom: 0;
   font-weight: 500;
@@ -1268,25 +1276,33 @@ exports[`renders correctly with panel closed 1`] = `
   transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
 }
 
-.c5.ant-btn.isoButton:hover {
+.c6.ant-btn.isoButton:hover {
   background-color: #71bcf7;
 }
 
-.c5.ant-btn.isoButton.isoBtnSm {
+.c6.ant-btn.isoButton.isoBtnSm {
   padding: 0 15px;
   height: 28px;
   font-size: 12px;
 }
 
-.c5.ant-btn.isoButton.isoBtnLg {
+.c6.ant-btn.isoButton.isoBtnLg {
   padding: 0 35px;
   font-size: 14px;
   height: 42px;
 }
 
-.c5 + .ant-btn-group {
+.c6 + .ant-btn-group {
   margin-left: -1px !important;
   margin-right: 0 !important;
+}
+
+.c5.ant-btn {
+  border-radius: 4px;
+}
+
+.c5.ant-btn.ant-btn-primary {
+  background-color: rgb(64,126,255);
 }
 
 .c3 .ant-collapse {
@@ -1403,7 +1419,7 @@ exports[`renders correctly with panel closed 1`] = `
 }
 
 .c0 {
-  padding-top: 44px;
+  padding-top: 103px;
   max-width: 940px;
   width: 100%;
   height: 100%;
@@ -1422,7 +1438,7 @@ exports[`renders correctly with panel closed 1`] = `
   right: 20px;
 }
 
-.c10.ant-input {
+.c11.ant-input {
   padding: 4px 10px;
   width: 100%;
   height: 35px;
@@ -1446,45 +1462,45 @@ exports[`renders correctly with panel closed 1`] = `
   transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
 }
 
-.c10.ant-input:focus {
+.c11.ant-input:focus {
   border-color: #1976d2;
 }
 
-.c10.ant-input.ant-input-lg {
+.c11.ant-input.ant-input-lg {
   height: 42px;
   padding: 6px 10px;
 }
 
-.c10.ant-input.ant-input-sm {
+.c11.ant-input.ant-input-sm {
   padding: 1px 10px;
   height: 30px;
 }
 
-.c10.ant-input::-webkit-input-placeholder {
+.c11.ant-input::-webkit-input-placeholder {
   text-align: left;
   color: #212121;
 }
 
-.c10.ant-input:-moz-placeholder {
+.c11.ant-input:-moz-placeholder {
   text-align: left;
   color: #212121;
 }
 
-.c10.ant-input::-moz-placeholder {
+.c11.ant-input::-moz-placeholder {
   text-align: left;
   color: #212121;
 }
 
-.c10.ant-input:-ms-input-placeholder {
+.c11.ant-input:-ms-input-placeholder {
   text-align: left;
   color: #212121;
 }
 
-.c9 .inputContainer {
+.c10 .inputContainer {
   overflow: hidden;
 }
 
-.c9 .buttonContainer {
+.c10 .buttonContainer {
   float: right;
   margin-left: 12px;
 }
@@ -1509,7 +1525,7 @@ exports[`renders correctly with panel closed 1`] = `
 }
 
 @media (min-width:576px) {
-  .c9 .buttonContainer {
+  .c10 .buttonContainer {
     margin-left: 20px;
   }
 }
@@ -1600,7 +1616,7 @@ exports[`renders correctly with panel closed 1`] = `
                     </div>
                   </div>
                   <button
-                    className="ant-btn collapseButton c5 ant-btn-primary ant-btn-sm"
+                    className="ant-btn collapseButton c5 c6 ant-btn-primary ant-btn-sm"
                     data-rtl={null}
                     onClick={[Function]}
                     type="button"
@@ -1643,17 +1659,17 @@ exports[`renders correctly with panel closed 1`] = `
         style={undefined}
       >
         <div
-          className="c6"
+          className="c7"
         >
           <h3
-            className="c7"
+            className="c8"
           >
              
             Найти
              
           </h3>
           <p
-            className="c8"
+            className="c9"
           >
              
             Задачи, курсы, сборы
@@ -1661,13 +1677,13 @@ exports[`renders correctly with panel closed 1`] = `
           </p>
         </div>
         <div
-          className="c9"
+          className="c10"
         >
           <div
             className="buttonContainer"
           >
             <button
-              className="ant-btn c5 ant-btn-primary"
+              className="ant-btn c5 c6 ant-btn-primary"
               data-rtl={null}
               onClick={[Function]}
               style={
@@ -1686,7 +1702,7 @@ exports[`renders correctly with panel closed 1`] = `
             className="inputContainer"
           >
             <input
-              className="ant-input c10"
+              className="ant-input c11"
               data-rtl={null}
               disabled={false}
               onKeyDown={[Function]}
@@ -1711,17 +1727,17 @@ exports[`renders correctly with panel closed 1`] = `
         style={undefined}
       >
         <div
-          className="c6"
+          className="c7"
         >
           <h3
-            className="c7"
+            className="c8"
           >
              
             Каталог
              
           </h3>
           <p
-            className="c8"
+            className="c9"
           >
              
             Все сборы, курсы и уроки
@@ -1729,7 +1745,7 @@ exports[`renders correctly with panel closed 1`] = `
           </p>
         </div>
         <button
-          className="ant-btn c5 ant-btn-primary"
+          className="ant-btn c5 c6 ant-btn-primary"
           data-rtl={null}
           onClick={[Function]}
           style={
@@ -1745,7 +1761,7 @@ exports[`renders correctly with panel closed 1`] = `
           </span>
         </button>
         <button
-          className="ant-btn c5 ant-btn-primary"
+          className="ant-btn c5 c6 ant-btn-primary"
           data-rtl={null}
           onClick={[Function]}
           type="button"
@@ -1774,10 +1790,10 @@ exports[`renders correctly with panel closed 1`] = `
         style={undefined}
       >
         <div
-          className="c6"
+          className="c7"
         >
           <h3
-            className="c7"
+            className="c8"
           >
              
             Изучение языка программирования
@@ -1849,7 +1865,7 @@ exports[`renders correctly with panel closed 1`] = `
             }
           >
             <button
-              className="ant-btn c5 ant-btn-primary ant-btn-sm"
+              className="ant-btn c5 c6 ant-btn-primary ant-btn-sm"
               data-rtl={null}
               onClick={[Function]}
               type="button"
@@ -1880,10 +1896,10 @@ exports[`renders correctly with panel closed 1`] = `
         style={undefined}
       >
         <div
-          className="c6"
+          className="c7"
         >
           <h3
-            className="c7"
+            className="c8"
           >
              
             Изучение языка программирования
@@ -1955,7 +1971,7 @@ exports[`renders correctly with panel closed 1`] = `
             }
           >
             <button
-              className="ant-btn c5 ant-btn-primary ant-btn-sm"
+              className="ant-btn c5 c6 ant-btn-primary ant-btn-sm"
               data-rtl={null}
               onClick={[Function]}
               type="button"
@@ -1986,10 +2002,10 @@ exports[`renders correctly with panel closed 1`] = `
         style={undefined}
       >
         <div
-          className="c6"
+          className="c7"
         >
           <h3
-            className="c7"
+            className="c8"
           >
              
             Изучение языка программирования
@@ -2061,7 +2077,7 @@ exports[`renders correctly with panel closed 1`] = `
             }
           >
             <button
-              className="ant-btn c5 ant-btn-primary ant-btn-sm"
+              className="ant-btn c5 c6 ant-btn-primary ant-btn-sm"
               data-rtl={null}
               onClick={[Function]}
               type="button"
@@ -2101,7 +2117,7 @@ exports[`renders correctly with panel open 1`] = `
   margin: 0;
 }
 
-.c7 {
+.c8 {
   font-size: 14px;
   font-weight: 500;
   margin: 0;
@@ -2112,7 +2128,7 @@ exports[`renders correctly with panel open 1`] = `
   margin-bottom: 0;
 }
 
-.c8 {
+.c9 {
   font-size: 13px;
   font-weight: 400;
   line-height: 24px;
@@ -2121,11 +2137,11 @@ exports[`renders correctly with panel open 1`] = `
   margin-bottom: 0;
 }
 
-.c6 {
+.c7 {
   margin-bottom: 20px;
 }
 
-.c5.ant-btn {
+.c6.ant-btn {
   display: inline-block;
   margin-bottom: 0;
   font-weight: 500;
@@ -2157,80 +2173,80 @@ exports[`renders correctly with panel open 1`] = `
   transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
 }
 
-.c5.ant-btn:hover {
+.c6.ant-btn:hover {
   border-color: #1976d2;
   color: #1976d2;
 }
 
-.c5.ant-btn > .anticon + span,
-.c5.ant-btn > span + .anticon {
+.c6.ant-btn > .anticon + span,
+.c6.ant-btn > span + .anticon {
   margin: 0 0 0 0.5em;
 }
 
-.c5.ant-btn .anticon-right {
+.c6.ant-btn .anticon-right {
   -webkit-transform: rotate(0);
   -ms-transform: rotate(0);
   transform: rotate(0);
 }
 
-.c5.ant-btn .anticon-left {
+.c6.ant-btn .anticon-left {
   -webkit-transform: rotate(0);
   -ms-transform: rotate(0);
   transform: rotate(0);
 }
 
-.c5.ant-btn.ant-btn-primary {
+.c6.ant-btn.ant-btn-primary {
   background-color: #1976d2;
   border-color: #1976d2;
 }
 
-.c5.ant-btn.ant-btn-primary:hover {
+.c6.ant-btn.ant-btn-primary:hover {
   color: #fff;
 }
 
-.c5.ant-btn.ant-btn-sm {
+.c6.ant-btn.ant-btn-sm {
   padding: 0 15px;
   height: 28px;
   font-size: 12px;
 }
 
-.c5.ant-btn.ant-btn-sm.ant-btn-loading:not(.ant-btn-circle):not(.ant-btn-circle-outline) {
+.c6.ant-btn.ant-btn-sm.ant-btn-loading:not(.ant-btn-circle):not(.ant-btn-circle-outline) {
   padding: 0 15px 0 24px;
 }
 
-.c5.ant-btn.ant-btn-sm.ant-btn-loading:not(.ant-btn-circle):not(.ant-btn-circle-outline) .anticon {
+.c6.ant-btn.ant-btn-sm.ant-btn-loading:not(.ant-btn-circle):not(.ant-btn-circle-outline) .anticon {
   margin: 0 0 0 -17px;
 }
 
-.c5.ant-btn.ant-btn-lg {
+.c6.ant-btn.ant-btn-lg {
   padding: 0 35px;
   font-size: 14px;
   height: 42px;
 }
 
-.c5.ant-btn.ant-btn-primary {
+.c6.ant-btn.ant-btn-primary {
   color: #ffffff;
 }
 
-.c5.ant-btn.ant-btn-dashed {
+.c6.ant-btn.ant-btn-dashed {
   border-style: dashed;
 }
 
-.c5.ant-btn.ant-btn-dashed:hover {
+.c6.ant-btn.ant-btn-dashed:hover {
   color: #1976d2;
   border-color: #1976d2;
 }
 
-.c5.ant-btn.ant-btn-danger {
+.c6.ant-btn.ant-btn-danger {
   color: #ffffff;
 }
 
-.c5.ant-btn.ant-btn-danger.ant-btn-background-ghost {
+.c6.ant-btn.ant-btn-danger.ant-btn-background-ghost {
   background-color: transparent;
 }
 
-.c5.ant-btn.ant-btn-circle,
-.c5.ant-btn.ant-btn-circle-outline {
+.c6.ant-btn.ant-btn-circle,
+.c6.ant-btn.ant-btn-circle-outline {
   width: 35px;
   padding: 0;
   font-size: 14px;
@@ -2238,42 +2254,42 @@ exports[`renders correctly with panel open 1`] = `
   height: 35px;
 }
 
-.c5.ant-btn.ant-btn-circle.ant-btn-sm,
-.c5.ant-btn.ant-btn-circle-outline.ant-btn-sm {
+.c6.ant-btn.ant-btn-circle.ant-btn-sm,
+.c6.ant-btn.ant-btn-circle-outline.ant-btn-sm {
   padding: 0;
   height: 28px;
   width: 28px;
   font-size: 12px;
 }
 
-.c5.ant-btn.ant-btn-circle.ant-btn-lg,
-.c5.ant-btn.ant-btn-circle-outline.ant-btn-lg {
+.c6.ant-btn.ant-btn-circle.ant-btn-lg,
+.c6.ant-btn.ant-btn-circle-outline.ant-btn-lg {
   padding: 0;
   font-size: 14px;
   height: 42px;
   width: 42px;
 }
 
-.c5.ant-btn.ant-btn.disabled,
-.c5.ant-btn.ant-btn[disabled],
-.c5.ant-btn.ant-btn.disabled:hover,
-.c5.ant-btn.ant-btn[disabled]:hover,
-.c5.ant-btn.ant-btn.disabled:focus,
-.c5.ant-btn.ant-btn[disabled]:focus,
-.c5.ant-btn.ant-btn.disabled:active,
-.c5.ant-btn.ant-btn[disabled]:active,
-.c5.ant-btn.ant-btn.disabled.active,
-.c5.ant-btn.ant-btn[disabled].active {
+.c6.ant-btn.ant-btn.disabled,
+.c6.ant-btn.ant-btn[disabled],
+.c6.ant-btn.ant-btn.disabled:hover,
+.c6.ant-btn.ant-btn[disabled]:hover,
+.c6.ant-btn.ant-btn.disabled:focus,
+.c6.ant-btn.ant-btn[disabled]:focus,
+.c6.ant-btn.ant-btn.disabled:active,
+.c6.ant-btn.ant-btn[disabled]:active,
+.c6.ant-btn.ant-btn.disabled.active,
+.c6.ant-btn.ant-btn[disabled].active {
   color: #9e9e9e;
   background-color: #f7f7f7;
   cursor: not-allowed;
 }
 
-.c5.ant-btn.ant-btn-loading:not(.ant-btn-circle):not(.ant-btn-circle-outline) .anticon {
+.c6.ant-btn.ant-btn-loading:not(.ant-btn-circle):not(.ant-btn-circle-outline) .anticon {
   margin: 0 0 0 -14px;
 }
 
-.c5.ant-btn.isoButton {
+.c6.ant-btn.isoButton {
   display: inline-block;
   margin-bottom: 0;
   font-weight: 500;
@@ -2307,25 +2323,33 @@ exports[`renders correctly with panel open 1`] = `
   transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
 }
 
-.c5.ant-btn.isoButton:hover {
+.c6.ant-btn.isoButton:hover {
   background-color: #71bcf7;
 }
 
-.c5.ant-btn.isoButton.isoBtnSm {
+.c6.ant-btn.isoButton.isoBtnSm {
   padding: 0 15px;
   height: 28px;
   font-size: 12px;
 }
 
-.c5.ant-btn.isoButton.isoBtnLg {
+.c6.ant-btn.isoButton.isoBtnLg {
   padding: 0 35px;
   font-size: 14px;
   height: 42px;
 }
 
-.c5 + .ant-btn-group {
+.c6 + .ant-btn-group {
   margin-left: -1px !important;
   margin-right: 0 !important;
+}
+
+.c5.ant-btn {
+  border-radius: 4px;
+}
+
+.c5.ant-btn.ant-btn-primary {
+  background-color: rgb(64,126,255);
 }
 
 .c3 .ant-collapse {
@@ -2442,7 +2466,7 @@ exports[`renders correctly with panel open 1`] = `
 }
 
 .c0 {
-  padding-top: 44px;
+  padding-top: 103px;
   max-width: 940px;
   width: 100%;
   height: 100%;
@@ -2461,7 +2485,7 @@ exports[`renders correctly with panel open 1`] = `
   right: 20px;
 }
 
-.c10.ant-input {
+.c11.ant-input {
   padding: 4px 10px;
   width: 100%;
   height: 35px;
@@ -2485,45 +2509,45 @@ exports[`renders correctly with panel open 1`] = `
   transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
 }
 
-.c10.ant-input:focus {
+.c11.ant-input:focus {
   border-color: #1976d2;
 }
 
-.c10.ant-input.ant-input-lg {
+.c11.ant-input.ant-input-lg {
   height: 42px;
   padding: 6px 10px;
 }
 
-.c10.ant-input.ant-input-sm {
+.c11.ant-input.ant-input-sm {
   padding: 1px 10px;
   height: 30px;
 }
 
-.c10.ant-input::-webkit-input-placeholder {
+.c11.ant-input::-webkit-input-placeholder {
   text-align: left;
   color: #212121;
 }
 
-.c10.ant-input:-moz-placeholder {
+.c11.ant-input:-moz-placeholder {
   text-align: left;
   color: #212121;
 }
 
-.c10.ant-input::-moz-placeholder {
+.c11.ant-input::-moz-placeholder {
   text-align: left;
   color: #212121;
 }
 
-.c10.ant-input:-ms-input-placeholder {
+.c11.ant-input:-ms-input-placeholder {
   text-align: left;
   color: #212121;
 }
 
-.c9 .inputContainer {
+.c10 .inputContainer {
   overflow: hidden;
 }
 
-.c9 .buttonContainer {
+.c10 .buttonContainer {
   float: right;
   margin-left: 12px;
 }
@@ -2548,7 +2572,7 @@ exports[`renders correctly with panel open 1`] = `
 }
 
 @media (min-width:576px) {
-  .c9 .buttonContainer {
+  .c10 .buttonContainer {
     margin-left: 20px;
   }
 }
@@ -2639,7 +2663,7 @@ exports[`renders correctly with panel open 1`] = `
                     </div>
                   </div>
                   <button
-                    className="ant-btn collapseButton c5 ant-btn-primary ant-btn-sm"
+                    className="ant-btn collapseButton c5 c6 ant-btn-primary ant-btn-sm"
                     data-rtl={null}
                     onClick={[Function]}
                     type="button"
@@ -2737,7 +2761,7 @@ exports[`renders correctly with panel open 1`] = `
                           className="ant-col-xs-24"
                         >
                           <button
-                            className="ant-btn c5 ant-btn-primary ant-btn-sm"
+                            className="ant-btn c5 c6 ant-btn-primary ant-btn-sm"
                             data-rtl={null}
                             onClick={[Function]}
                             type="button"
@@ -2849,17 +2873,17 @@ exports[`renders correctly with panel open 1`] = `
         style={undefined}
       >
         <div
-          className="c6"
+          className="c7"
         >
           <h3
-            className="c7"
+            className="c8"
           >
              
             Найти
              
           </h3>
           <p
-            className="c8"
+            className="c9"
           >
              
             Задачи, курсы, сборы
@@ -2867,13 +2891,13 @@ exports[`renders correctly with panel open 1`] = `
           </p>
         </div>
         <div
-          className="c9"
+          className="c10"
         >
           <div
             className="buttonContainer"
           >
             <button
-              className="ant-btn c5 ant-btn-primary"
+              className="ant-btn c5 c6 ant-btn-primary"
               data-rtl={null}
               onClick={[Function]}
               style={
@@ -2892,7 +2916,7 @@ exports[`renders correctly with panel open 1`] = `
             className="inputContainer"
           >
             <input
-              className="ant-input c10"
+              className="ant-input c11"
               data-rtl={null}
               disabled={false}
               onKeyDown={[Function]}
@@ -2917,17 +2941,17 @@ exports[`renders correctly with panel open 1`] = `
         style={undefined}
       >
         <div
-          className="c6"
+          className="c7"
         >
           <h3
-            className="c7"
+            className="c8"
           >
              
             Каталог
              
           </h3>
           <p
-            className="c8"
+            className="c9"
           >
              
             Все сборы, курсы и уроки
@@ -2935,7 +2959,7 @@ exports[`renders correctly with panel open 1`] = `
           </p>
         </div>
         <button
-          className="ant-btn c5 ant-btn-primary"
+          className="ant-btn c5 c6 ant-btn-primary"
           data-rtl={null}
           onClick={[Function]}
           style={
@@ -2951,7 +2975,7 @@ exports[`renders correctly with panel open 1`] = `
           </span>
         </button>
         <button
-          className="ant-btn c5 ant-btn-primary"
+          className="ant-btn c5 c6 ant-btn-primary"
           data-rtl={null}
           onClick={[Function]}
           type="button"
@@ -2980,10 +3004,10 @@ exports[`renders correctly with panel open 1`] = `
         style={undefined}
       >
         <div
-          className="c6"
+          className="c7"
         >
           <h3
-            className="c7"
+            className="c8"
           >
              
             Изучение языка программирования
@@ -3055,7 +3079,7 @@ exports[`renders correctly with panel open 1`] = `
             }
           >
             <button
-              className="ant-btn c5 ant-btn-primary ant-btn-sm"
+              className="ant-btn c5 c6 ant-btn-primary ant-btn-sm"
               data-rtl={null}
               onClick={[Function]}
               type="button"
@@ -3086,10 +3110,10 @@ exports[`renders correctly with panel open 1`] = `
         style={undefined}
       >
         <div
-          className="c6"
+          className="c7"
         >
           <h3
-            className="c7"
+            className="c8"
           >
              
             Изучение языка программирования
@@ -3161,7 +3185,7 @@ exports[`renders correctly with panel open 1`] = `
             }
           >
             <button
-              className="ant-btn c5 ant-btn-primary ant-btn-sm"
+              className="ant-btn c5 c6 ant-btn-primary ant-btn-sm"
               data-rtl={null}
               onClick={[Function]}
               type="button"
@@ -3192,10 +3216,10 @@ exports[`renders correctly with panel open 1`] = `
         style={undefined}
       >
         <div
-          className="c6"
+          className="c7"
         >
           <h3
-            className="c7"
+            className="c8"
           >
              
             Изучение языка программирования
@@ -3267,7 +3291,7 @@ exports[`renders correctly with panel open 1`] = `
             }
           >
             <button
-              className="ant-btn c5 ant-btn-primary ant-btn-sm"
+              className="ant-btn c5 c6 ant-btn-primary ant-btn-sm"
               data-rtl={null}
               onClick={[Function]}
               type="button"
