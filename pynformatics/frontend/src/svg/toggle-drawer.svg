@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="20px" viewBox="0 0 24 20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 48.2 (47327) - http://www.bohemiancoding.com/sketch -->
+    <title>toggle-drawer</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" opacity="0.800000012">
+        <path d="M22.9091072,0 L1.09089282,0 C0.488454892,0 0,0.407045744 0,0.90907735 L0,19.0909226 C0,19.5929543 0.488454892,20 1.09089282,20 L22.9091072,20 C23.5115451,20 24,19.5929543 24,19.0909226 L24,0.90907735 C24,0.407045744 23.5115451,0 22.9091072,0 Z M7,18 L2,18 L2,2 L7,2 L7,18 Z M22,18 L9,18 L9,2 L22,2 L22,18 Z" id="toggle-drawer" fill="#788195" fill-rule="nonzero"></path>
+    </g>
+</svg>

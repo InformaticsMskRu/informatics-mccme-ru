@@ -5,7 +5,7 @@ const path = require('path');
 
 module.exports = {
   context: path.join(__dirname, 'src'),
-  devtool: debug ? 'inline-sourcemap' : null,
+  devtool: debug ? 'inline-sourcemap' : false,
   entry: './js/index.jsx',
   module: {
     loaders: [
@@ -31,7 +31,7 @@ module.exports = {
         use: ['style-loader', 'css-loader'],
       },
       {
-        test: /\.(jpe?g|png|gif|svg)$/,
+        test: /\.(jpe?g|png|gif)$/,
         loaders: [
           'file-loader?hash=sha512&digest=hex&name=[hash].[ext]',
           {
@@ -53,6 +53,10 @@ module.exports = {
             },
           }
         ],
+      },
+      {
+        test: /\.svg$/,
+        loader: 'svg-inline-loader'
       }
     ]
   },
@@ -63,9 +67,28 @@ module.exports = {
   plugins: debug ? [
     new webpack.optimize.OccurrenceOrderPlugin(),
   ] : [
-    new webpack.optimize.DedupePlugin(),
+    new webpack.DefinePlugin({
+      'process.env.NODE_ENV': JSON.stringify('production')
+    }),
     new webpack.optimize.OccurrenceOrderPlugin(),
-    new webpack.optimize.UglifyJsPlugin({ mangle: false, sourcemap: false }),
+    new webpack.optimize.UglifyJsPlugin({
+      compress: {
+        warnings: false,
+        screw_ie8: true,
+        conditionals: true,
+        unused: true,
+        comparisons: true,
+        sequences: true,
+        dead_code: true,
+        evaluate: true,
+        if_return: true,
+        join_vars: true
+      },
+      output: {
+        comments: false
+      },
+      mangle: true,
+    }),
   ],
   resolve: {
     extensions: ['.js', '.jsx'],
