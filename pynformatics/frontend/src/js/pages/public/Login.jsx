@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import {Icon} from "antd";
+import {Icon, Menu} from "antd";
 
 
 import {InputGroup} from "../../isomorphic/components/uielements/input";
@@ -33,6 +33,25 @@ const Wrapper2 = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  
+  .ant-menu-vertical {
+    border-right: 0;
+  }
+  
+  .ant-menu {
+    background-color: #f3f5f7;
+    color: #788195;
+  }
+  
+  .ant-menu-vertical .ant-menu-item {
+    padding: 0;
+    margin-top: 0;
+  }
+  
+  .ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected {
+    background-color: #f3f5f7;
+    color: #4482ff;
+  }
 `;
 
 const Wrapper3 = styled.div`
@@ -114,16 +133,23 @@ export default class LoginPage extends React.Component {
         <Row type="flex" justify="center">
           <Col xs={{span: 22}} md={16} style={{marginBottom: "16px"}}>
             <Wrapper>
-              <Row style={{height: "100%"}}>
+              <Row type="flex" style={{height: "100%"}}>
                 <Col xs={{span: 22, offset: 1, order: 2}} md={{span: 9, offset: 1, order: 1}}>
                   <Wrapper2>
-                    <div>
-                      <Wrapper3>Вход</Wrapper3>
-                      <Wrapper3>Регистрация как ученик</Wrapper3>
-                      <Wrapper3>Регистрация как учитель</Wrapper3>
-                      <Wrapper3>Регистрация комнады</Wrapper3>
-                      <Wrapper3>Восстановить пароль</Wrapper3>
-                    </div>
+                    <Menu defaultSelectedKeys={["1"]}>
+                      <Menu.Item key="1">Вход</Menu.Item>
+                      <Menu.Item key="2">Регистрация как ученик</Menu.Item>
+                      <Menu.Item key="3">Регистрация как учитель</Menu.Item>
+                      <Menu.Item key="4">Регистрация комнады</Menu.Item>
+                      <Menu.Item key="5">Восстановить пароль</Menu.Item>
+                    </Menu>
+                    {/*<div style={{marginBottom: "16px"}}>*/}
+                      {/*<Wrapper3>Вход</Wrapper3>*/}
+                      {/*<Wrapper3>Регистрация как ученик</Wrapper3>*/}
+                      {/*<Wrapper3>Регистрация как учитель</Wrapper3>*/}
+                      {/*<Wrapper3>Регистрация комнады</Wrapper3>*/}
+                      {/*<Wrapper3>Восстановить пароль</Wrapper3>*/}
+                    {/*</div>*/}
                     <Telegram/>
                   </Wrapper2>
                 </Col>
@@ -134,10 +160,12 @@ export default class LoginPage extends React.Component {
                        <span><Icon type="exclamation-circle-o" /></span> Сообщение об ошибке, если есть
                     </ErrorMessage>
                     <Input
+                      size="large"
                       placeholder="Логин"
                       style={{marginBottom: '16px'}}
                     />
                     <Input
+                      size="large"
                       placeholder="Пароль"
                       type="password"
                       style={{marginBottom: '16px'}}
@@ -149,7 +177,7 @@ export default class LoginPage extends React.Component {
                       flexWrap: 'wrap',
                       alignItems: 'center'
                     }}>
-                      <Button	type="primary" style={{marginRight: '8px'}}>Войти</Button>
+                      <Button	type="primary" style={{marginRight: '16px'}}>Войти</Button>
                       <IsoCheckbox>Запомнить меня</IsoCheckbox>
                     </InputGroup>
                   </FormWrapper>
