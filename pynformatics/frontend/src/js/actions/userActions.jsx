@@ -60,3 +60,19 @@ export function oauthConnect(provider, code) {
     });
   };
 }
+
+
+export function resetPassword(userId) {
+  return (dispatch) => {
+    const url = '/user/reset_password';
+    return dispatch({
+      type: 'POST_RESET_PASSWORD',
+      meta: {userId},
+      payload: axios.post(url, {
+        params: {
+          id: userId,
+        }
+      }),
+    });
+  };
+}

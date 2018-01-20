@@ -13,6 +13,7 @@ import Topbar from './Topbar/Topbar';
 import Sidebar from './Sidebar/Sidebar';
 
 import MainPage from '../pages/Main/Main';
+import PasswordReset from './PasswordReset';
 
 import StatementAdmin from '../pages/StatementAdmin';
 import StatementSettingsForm from './StatementSettingsForm';
@@ -64,7 +65,10 @@ export default class App extends React.Component {
               className="isomorphicContent"
               style={{ height: '100vh' }}
             >
-              <Switch><Route exact path="/" component={MainPage} /></Switch>
+              <Switch>
+                <Route exact path="/" component={MainPage} />
+                <Route exact path="/admin/password_reset" component={PasswordReset} />
+              </Switch>
             </Content>
           </Layout>
         </Layout>

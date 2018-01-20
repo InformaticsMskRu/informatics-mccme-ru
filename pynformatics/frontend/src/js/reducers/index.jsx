@@ -6,7 +6,7 @@ import problems from './problemsReducer';
 import statements from './statementsReducer';
 import ui from './uiReducer';
 import user from './userReducer';
-
+import search from './searchReducer';
 
 export default combineReducers({
   context,
@@ -15,4 +15,5 @@ export default combineReducers({
   statements,
   ui,
   user,
+  search,
 })
