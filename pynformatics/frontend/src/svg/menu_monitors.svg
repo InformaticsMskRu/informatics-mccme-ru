@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="16px" viewBox="0 0 24 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 48.2 (47327) - http://www.bohemiancoding.com/sketch -->
+    <title>menu_monitors</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="icons" stroke="none" stroke-width="1">
+        <path d="M21.99,12 L22,2 C22,0.89 21.1,0 20,0 L4,0 C2.89,0 2,0.89 2,2 L2,12 C2,13.1 2.89,14 4,14 L0,14 L0,16 L24,16 L24,14 L20,14 C21.1,14 21.99,13.1 21.99,12 Z" id="menu_monitors"></path>
+    </g>
+</svg>

@@ -1,11 +1,16 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { Switch, Route, withRouter } from 'react-router-dom';
+import WindowResizeListener from 'react-window-size-listener';
 import { connect } from 'react-redux';
+import { Switch, Route, withRouter } from 'react-router-dom';
+import { Debounce } from 'react-throttle';
+
 
 import Problem from './Problem';
 import Statement from './Statement';
 import Login from './LoginForm';
+import Topbar from './Topbar/Topbar';
+import Sidebar from './Sidebar/Sidebar';
 
 import MainPage from '../pages/Main/Main';
 import PasswordReset from './PasswordReset';
@@ -15,6 +20,7 @@ import StatementSettingsForm from './StatementSettingsForm';
 
 import * as bootstrapActions from '../actions/bootstrapActions';
 import * as userActions from '../actions/userActions';
+import * as uiActions from '../actions/uiActions';
 
 import { ThemeProvider } from 'styled-components';
 import themes from '../isomorphic/config/themes';
@@ -43,16 +49,28 @@ export default class App extends React.Component {
 
     return (
       <ThemeProvider theme={themes.themedefault}>
-        <Layout style={{ height: '100%', background: '#f3f5f7' }}>
-          <div style={{ height: '59px', backgroundColor: '#333b50' }} />
-          <Content
-            className="isomorphicContent"
-          >
-            <Switch>
-              <Route exact path="/" component={MainPage} />
-              <Route exact path="/admin/password_reset" component={PasswordReset} />
-            </Switch>
-          </Content>
+        <Layout style={{ height: '100vh', background: '#f3f5f7' }}>
+          <Debounce time="1000" handler="onResize">
+            <WindowResizeListener
+              onResize={windowSize => this.props.dispatch(uiActions.windowResize(
+                windowSize.windowWidth,
+                windowSize.windowHeight
+              ))}
+            />
+          </Debounce>
+          <Topbar />
+          <Layout style={{ flexDirection: 'row', overflowX: 'hidden' }}>
+            <Sidebar />
+            <Content
+              className="isomorphicContent"
+              style={{ height: '100vh' }}
+            >
+              <Switch>
+                <Route exact path="/" component={MainPage} />
+                <Route exact path="/admin/password_reset" component={PasswordReset} />
+              </Switch>
+            </Content>
+          </Layout>
         </Layout>
       </ThemeProvider>
     );
