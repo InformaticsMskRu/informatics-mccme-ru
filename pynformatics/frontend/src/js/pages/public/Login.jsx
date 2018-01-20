@@ -41,30 +41,23 @@ const Wrapper2 = styled.div`
   .ant-menu {
     background-color: #f3f5f7;
     color: #788195;
+    margin-bottom: 16px;
   }
   
   .ant-menu-vertical .ant-menu-item {
     padding: 0;
-    margin-top: 0;
+    margin: 0 !important;
   }
   
   .ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected {
     background-color: #f3f5f7;
     color: #4482ff;
   }
-`;
-
-const Wrapper3 = styled.div`
-  margin: 5px 0;
-  font-family: Roboto;
-  font-size: 14px;
-  font-weight: normal;
-  font-style: normal;
-  font-stretch: normal;
-  line-height: 2.14;
-  letter-spacing: normal;
-  text-align: left;
-  color: #788195;
+  
+  .ant-menu:not(.ant-menu-horizontal) .ant-menu-item-active {
+    background-color: #f3f5f7;
+    color: #4482ff;
+  }
 `;
 
 const FormWrapper = styled.div`
@@ -143,13 +136,6 @@ export default class LoginPage extends React.Component {
                       <Menu.Item key="4">Регистрация комнады</Menu.Item>
                       <Menu.Item key="5">Восстановить пароль</Menu.Item>
                     </Menu>
-                    {/*<div style={{marginBottom: "16px"}}>*/}
-                      {/*<Wrapper3>Вход</Wrapper3>*/}
-                      {/*<Wrapper3>Регистрация как ученик</Wrapper3>*/}
-                      {/*<Wrapper3>Регистрация как учитель</Wrapper3>*/}
-                      {/*<Wrapper3>Регистрация комнады</Wrapper3>*/}
-                      {/*<Wrapper3>Восстановить пароль</Wrapper3>*/}
-                    {/*</div>*/}
                     <Telegram/>
                   </Wrapper2>
                 </Col>
