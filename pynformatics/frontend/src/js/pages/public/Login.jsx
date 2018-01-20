@@ -1,32 +1,30 @@
 import React from "react";
-import styled from 'styled-components';
+import styled from "styled-components";
+import {Icon} from "antd";
 
-import Box from '../../components/utility/Box';
+
+import {InputGroup} from "../../isomorphic/components/uielements/input";
+import IsoCheckbox from "../../isomorphic/components/uielements/checkbox";
+
 import Button from '../../components/utility/Button';
+import Input from "../../components/utility/Input";
+import Telegram from "../../components/Sidebar/Telegram";
+
 import MainContentWrapper from '../../components/utility/MainContentWrapper';
-import ContentHolder from '../../isomorphic/components/utility/contentHolder';
+
 import {
-  gutter,
-  colStyle,
-  rowStyle,
   Col,
   Row,
 } from '../../components/utility/Grid';
-import Input from "../../components/utility/Input";
-import {Icon} from "antd";
-import {InputGroup} from "../../isomorphic/components/uielements/input";
-import IsoCheckbox from "../../isomorphic/components/uielements/checkbox";
-import IsoButton from '../../isomorphic/components/uielements/button';
-import Telegram from "../../components/Sidebar/Telegram";
 
-let Wrapper = styled.div`
-  
+
+const Wrapper = styled.div`
   border-radius: 6px;
   background-color: #ffffff;
   box-shadow: 0 0 24px 0 rgba(182, 189, 197, 0.42);
 `;
 
-let Wrapper2 = styled.div`
+const Wrapper2 = styled.div`
   margin-top: 16px;
   margin-bottom: 16px;
   padding: 20px;
@@ -37,7 +35,7 @@ let Wrapper2 = styled.div`
   justify-content: space-between;
 `;
 
-let Wrapper3 = styled.div`
+const Wrapper3 = styled.div`
   margin: 5px 0;
   font-family: Roboto;
   font-size: 14px;
@@ -50,25 +48,12 @@ let Wrapper3 = styled.div`
   color: #788195;
 `;
 
-let Text = styled.div`
-  font-family: Roboto;
-  font-size: 12px;
-  font-weight: normal;
-  font-style: normal;
-  font-stretch: normal;
-  line-height: 1.5;
-  letter-spacing: normal;
-  text-align: left;
-  color: #676b7a;
-  margin-bottom: 8px;
-`;
-
-let FormWrapper = styled.div`
+const FormWrapper = styled.div`
   margin-top: 32px;
   margin-bottom: 16px;
 `;
 
-let ErrorMessage = styled.div`
+const ErrorMessage = styled.div`
   border-radius: 4px;
   background-color: #fffbee;
   border: solid 1px #fff5d5;
@@ -139,10 +124,6 @@ export default class LoginPage extends React.Component {
                       <Wrapper3>Регистрация комнады</Wrapper3>
                       <Wrapper3>Восстановить пароль</Wrapper3>
                     </div>
-                    {/*<div>*/}
-                      {/*<Text>По всем текущим вопросам, а также в случае, если у вас что-то не работает, пишите на форум или в группу telegram</Text>*/}
-                      {/*<PrimaryButton>Telegram</PrimaryButton>*/}
-                    {/*</div>*/}
                     <Telegram/>
                   </Wrapper2>
                 </Col>
@@ -166,7 +147,6 @@ export default class LoginPage extends React.Component {
                       display: 'inline-flex',
                       justifyContent: 'flex-start',
                       flexWrap: 'wrap',
-                      gutter: '8px',
                       alignItems: 'center'
                     }}>
                       <Button	type="primary" style={{marginRight: '8px'}}>Войти</Button>
