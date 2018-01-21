@@ -52,7 +52,7 @@ export default class LoginPage extends React.Component {
                     type="password"
                   />
                   <InputGroup className={style.inputGroup}>
-                    <Button	type="primary">Войти</Button>
+                    <Button type="primary">Войти</Button>
                     <Checkbox>Запомнить меня</Checkbox>
                   </InputGroup>
                 </div>

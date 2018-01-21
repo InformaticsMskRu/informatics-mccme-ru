@@ -101,7 +101,7 @@ module.exports = {
     historyApiFallback: true,
     proxy: {
       '/api': {
-        target: 'http://informatics.msk.ru:6546',
+        target: 'http://informatics.msk.ru:6556',
         pathRewrite: {'^/api': ''},
       }
     },
