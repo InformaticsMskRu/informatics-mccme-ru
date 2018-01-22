@@ -66,9 +66,9 @@ export default class App extends React.Component {
               style={{ height: '100vh' }}
             >
               <Switch>
-              <Route exact path="/" component={MainPage} />
-              <Route exact path="/login" component={LoginPage} />
-            </Switch>
+                <Route exact path="/" component={MainPage} />
+                <Route path="/login" component={LoginPage} />
+              </Switch>
             </Content>
           </Layout>
         </Layout>
