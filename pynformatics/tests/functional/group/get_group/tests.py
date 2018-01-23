@@ -1,7 +1,7 @@
 from hamcrest import (
     assert_that,
     has_entries,
-)
+    has_items)
 
 from pynformatics.model import Group
 from pynformatics.model.group import UserGroup
@@ -14,16 +14,16 @@ class TestAPI__group_get_group(TestCase):
     def setUp(self):
         super(TestAPI__group_get_group, self).setUp()
 
-        self.user = User()
-        self.user.firstname = 'Dmitry'
-        self.user.lastname = 'Galuza'
-        self.session.add(self.user)
+        self.owner = User()
+        self.owner.firstname = 'Dmitry'
+        self.owner.lastname = 'Galuza'
+        self.session.add(self.owner)
         self.session.flush()
 
         self.group = Group()
         self.group.name = 'Ice Floe Travelers'
         self.group.description = 'Group for those who like to travel on ice floe'
-        self.group.owner_id = self.user.id
+        self.group.owner_id = self.owner.id
         self.session.add(self.group)
         self.session.flush()
 
@@ -55,7 +55,17 @@ class TestAPI__group_get_group(TestCase):
                 'id': self.group.id,
                 'name': self.group.name,
                 'description': self.group.description,
-                'visible': self.group.visible
+                'visible': self.group.visible,
+                'owner': has_entries({
+                    'id': self.owner.id,
+                    'firstname': self.owner.firstname,
+                    'lastname': self.owner.lastname
+                }),
+                'users': has_items(*[has_entries({
+                    'id': u.id,
+                    'firstname': u.firstname,
+                    'lastname': u.lastname
+                }) for u in self.users])
             })
         )
 
