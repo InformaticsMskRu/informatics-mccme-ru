@@ -1,6 +1,6 @@
 import React from "react";
 
-import {Icon, Menu} from "antd";
+import {AutoComplete, Icon, Menu} from "antd";
 
 import style from '../../../css/pages/public/login.css';
 
@@ -11,10 +11,7 @@ import Telegram from "../../components/Sidebar/Telegram";
 
 import MainContentWrapper from '../../components/utility/MainContentWrapper';
 
-import {
-  Col,
-  Row,
-} from '../../components/utility/Grid';
+import {Col, Row} from '../../components/utility/Grid';
 import {NavLink, Route} from "react-router-dom";
 
 const FormWrapper = ({title, subtitle, errorMessage, children}) => (
@@ -38,7 +35,7 @@ const Login = () => (
         type="password"
       />
       <InputGroup className={style.inputGroup}>
-        <Button type="primary" className={style.loginButton}>Войти</Button>
+        <Button type="primary" className={style.mainButton}>Войти</Button>
         <Checkbox>Запомнить меня</Checkbox>
       </InputGroup>
       <Row>
@@ -58,14 +55,14 @@ const RegisterAsStudent = () => (
   >
     <Input size="large" placeholder="Логин"/>
     <InputGroup className={style.inputGroup}>
-      <Col span={16}>
+      <Col xs={14} md={16}>
         <Input
           size="large"
           placeholder="Пароль"
           type="password"
         />
       </Col>
-      <Col span={8}>
+      <Col xs={10} md={8}>
         <Button className={style.generateButton}>Сгенерировать</Button>
       </Col>
     </InputGroup>
@@ -83,74 +80,62 @@ const RegisterAsStudent = () => (
 );
 
 const RegisterAsTeacher = () => (
-  <FormWrapper title="Вход3" errorMessage="Сообщение об ошибке если есть">
-    <Input
-        size="small"
-        placeholder="Логин"
-      />
-      <Input
-        size="large"
-        placeholder="Пароль"
-        type="password"
-      />
-      <InputGroup className={style.inputGroup}>
-        <Button type="primary">Войти</Button>
-        <Checkbox>Запомнить меня</Checkbox>
-      </InputGroup>
-      <Row>
-        <Col span={"24"} className={style.socialButtonGroup}>
-          <Button className={style.VKButton}>Войти через ВКонтакте</Button>
-          <Button className={style.GmailButton}>Войти через Gmail</Button>
-        </Col>
-      </Row>
+  <FormWrapper
+    title="Привет, учитель!"
+    subtitle="Учитель может создавать сборы, олимпиады, курсы, группы и решать задачи. Чтобы получить доступ к ответам и скачиваниям задач, нужно подтверидть, что Вы действительно учитель."
+    errorMessage="Сообщение об ошибке если есть"
+  >
+    <Input size="large" placeholder="Логин"/>
+    <InputGroup className={style.inputGroup}>
+      <Col xs={14} md={16}>
+        <Input
+          size="large"
+          placeholder="Пароль"
+          type="password"
+        />
+      </Col>
+      <Col xs={10} md={8}>
+        <Button className={style.generateButton}>Сгенерировать</Button>
+      </Col>
+    </InputGroup>
+    <br/>
+    <Input size="large" placeholder="Фамилия"/>
+    <Input size="large" placeholder="Имя"/>
+    <InputGroup>
+      <Col span={12}><Input size="large" placeholder="Город"/></Col>
+      <Col span={12}><Input size="large" placeholder="Страна"/></Col>
+    </InputGroup>
+    <Input size="large" placeholder="E-mail"/>
+    <Input size="large" placeholder="Учебное заведение"/>
+    <Button type="primary">Зарегестрироваться</Button>
   </FormWrapper>
 );
 
-const RegisterAsTeam = () => (
-  <FormWrapper title="Вход4" errorMessage="Сообщение об ошибке если есть">
+const RegisterAsTeam = ({usersArrays}) => {
+  console.log(usersArrays);
+  const autoCompletes = usersArrays.map((users, i) => (
+    <AutoComplete
+      size="large"
+      key={i + 1}
+      dataSource={users.map(user => user.username + ' ' + user.firstname + ' ' + user.lastname)}
+      placeholder={"Участник " + (i + 1)}
+      className={style.autoComplete}
+    >
+    </AutoComplete>
+  ));
+  return (<FormWrapper title="Новая команда" errorMessage="Сообщение об ошибке если есть">
     <Input
-        size="small"
-        placeholder="Логин"
-      />
-      <Input
-        size="large"
-        placeholder="Пароль"
-        type="password"
-      />
-      <InputGroup className={style.inputGroup}>
-        <Button type="primary">Войти</Button>
-        <Checkbox>Запомнить меня</Checkbox>
-      </InputGroup>
-      <Row>
-        <Col span={"24"} className={style.socialButtonGroup}>
-          <Button className={style.VKButton}>Войти через ВКонтакте</Button>
-          <Button className={style.GmailButton}>Войти через Gmail</Button>
-        </Col>
-      </Row>
-  </FormWrapper>
-);
+      size="large"
+      placeholder="Название команды"
+    />
+    <div>Состав команды</div>
+    {autoCompletes}
+    <Button type="primary">Зарегестрировать команду</Button>
+  </FormWrapper>);
+};
 
 const ResetPassword = () => (
-  <FormWrapper title="Вход5" errorMessage="Сообщение об ошибке если есть">
-    <Input
-        size="small"
-        placeholder="Логин"
-      />
-      <Input
-        size="large"
-        placeholder="Пароль"
-        type="password"
-      />
-      <InputGroup className={style.inputGroup}>
-        <Button type="primary">Войти</Button>
-        <Checkbox>Запомнить меня</Checkbox>
-      </InputGroup>
-      <Row>
-        <Col span={"24"} className={style.socialButtonGroup}>
-          <Button className={style.VKButton}>Войти через ВКонтакте</Button>
-          <Button className={style.GmailButton}>Войти через Gmail</Button>
-        </Col>
-      </Row>
+  <FormWrapper title="Восстановление пароля" errorMessage="Сообщение об ошибке если есть">
   </FormWrapper>
 );
 
@@ -159,11 +144,18 @@ export default class LoginPage extends React.Component {
   render() {
     const { match } = this.props;
 
+    const usersArrays = [
+      [{key: 'johnn', username: 'johnn', firstname: 'John', lastname: 'Doe'},
+        {key: 'doee', username: 'doee', firstname: 'Doe', lastname: 'John'},
+        {key: 'dojo', username: 'dojo', firstname: 'Jo', lastname: 'Do'}],
+      [], []
+    ];
+
     const options = [
       {url: `${match.url}`, linkText: "Вход", component: Login},
       {url: `${match.url}/register_as_student`, linkText: "Регистрация как ученик", component: RegisterAsStudent},
       {url: `${match.url}/register_as_teacher`, linkText: "Регистрация как учитель", component: RegisterAsTeacher},
-      {url: `${match.url}/register_as_team`, linkText: "Регистрация команды", component: RegisterAsTeam},
+      {url: `${match.url}/register_as_team`, linkText: "Регистрация команды", component: () => <RegisterAsTeam usersArrays={usersArrays}/>},
       {url: `${match.url}/reset_password`, linkText: "Восстановление пароля", component: ResetPassword},
     ];
 
