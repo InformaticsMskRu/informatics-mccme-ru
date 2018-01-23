@@ -1,0 +1,305 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders correctly with sidebar collapsed 1`] = `
+<div
+  className="sc-jTzLTM gPwBuz sc-bdVaJa EJzqM"
+  data-rtl={null}
+>
+  <div
+    className="isomorphicTopbar collapsed ant-layout-header"
+    style={
+      Object {
+        "background": "#333b50",
+        "color": "#ffffff",
+        "height": 60,
+        "position": "fixed",
+        "width": "100%",
+      }
+    }
+  >
+    <div
+      className="isoLeft"
+    >
+      <i
+        className="material-icons md-24"
+        onClick={[Function]}
+        style={
+          Object {
+            "cursor": "pointer",
+          }
+        }
+      >
+        menu
+      </i>
+      <i
+        className="material-icons md-24 backBtn"
+      >
+        keyboard_arrow_left
+      </i>
+      <div
+        className="leftTitle"
+      >
+        Информатикс
+      </div>
+    </div>
+    <div
+      className="centerTitle"
+    >
+      Информатикс
+    </div>
+    <div
+      className="isoRight"
+    >
+      <div
+        className="searchInput"
+      >
+        <div
+          className="sc-VigVT krbTSa"
+        >
+          <span
+            className="sc-dnqmqq bXrAHQ ant-input-affix-wrapper"
+            style={undefined}
+          >
+            <span
+              className="ant-input-prefix"
+            >
+              <i
+                className="material-icons md-18"
+              >
+                search
+              </i>
+            </span>
+            <input
+              className="ant-input"
+              data-rtl={null}
+              disabled={false}
+              onChange={[Function]}
+              onKeyDown={[Function]}
+              placeholder="Найти задачу, курс или сборы"
+              style={null}
+              type="text"
+            />
+          </span>
+        </div>
+      </div>
+      <div
+        className="bufferBtn"
+      >
+        <div>
+          <div
+            className="sc-ifAKCX evHZck"
+            onBlur={undefined}
+            onClick={[Function]}
+            onContextMenu={undefined}
+            onFocus={undefined}
+            onMouseDown={[Function]}
+            onMouseEnter={undefined}
+            onMouseLeave={undefined}
+            onTouchStart={[Function]}
+          >
+            <i
+              className="material-icons"
+            >
+              work
+            </i>
+          </div>
+        </div>
+      </div>
+      <div
+        className="notificationBtn"
+      >
+        <div>
+          <div
+            className="sc-htoDjs bXpoql"
+            onBlur={undefined}
+            onClick={[Function]}
+            onContextMenu={undefined}
+            onFocus={undefined}
+            onMouseDown={[Function]}
+            onMouseEnter={undefined}
+            onMouseLeave={undefined}
+            onTouchStart={[Function]}
+          >
+            <i
+              className="material-icons"
+            >
+              notifications_active
+            </i>
+          </div>
+        </div>
+      </div>
+      <div
+        className="userAvatar"
+      >
+        <div
+          className="sc-bxivhb iDuMfz"
+          onBlur={undefined}
+          onClick={[Function]}
+          onContextMenu={undefined}
+          onFocus={undefined}
+          onMouseDown={[Function]}
+          onMouseEnter={undefined}
+          onMouseLeave={undefined}
+          onTouchStart={[Function]}
+        >
+          <img
+            src="https://avatars0.githubusercontent.com/u/7108312?s=400&u=2539cc56457c0e10d6ff79d13c1e6d6cc654e284&v=4"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`renders correctly with sidebar not collapsed 1`] = `
+<div
+  className="sc-jTzLTM gPwBuz sc-bdVaJa EJzqM"
+  data-rtl={null}
+>
+  <div
+    className="isomorphicTopbar ant-layout-header"
+    style={
+      Object {
+        "background": "#333b50",
+        "color": "#ffffff",
+        "height": 60,
+        "position": "fixed",
+        "width": "100%",
+      }
+    }
+  >
+    <div
+      className="isoLeft"
+    >
+      <i
+        className="material-icons md-24"
+        onClick={[Function]}
+        style={
+          Object {
+            "cursor": "pointer",
+          }
+        }
+      >
+        menu
+      </i>
+      <i
+        className="material-icons md-24 backBtn"
+      >
+        keyboard_arrow_left
+      </i>
+      <div
+        className="leftTitle"
+      >
+        Информатикс
+      </div>
+    </div>
+    <div
+      className="centerTitle"
+    >
+      Информатикс
+    </div>
+    <div
+      className="isoRight"
+    >
+      <div
+        className="searchInput"
+      >
+        <div
+          className="sc-VigVT krbTSa"
+        >
+          <span
+            className="sc-dnqmqq bXrAHQ ant-input-affix-wrapper"
+            style={undefined}
+          >
+            <span
+              className="ant-input-prefix"
+            >
+              <i
+                className="material-icons md-18"
+              >
+                search
+              </i>
+            </span>
+            <input
+              className="ant-input"
+              data-rtl={null}
+              disabled={false}
+              onChange={[Function]}
+              onKeyDown={[Function]}
+              placeholder="Найти задачу, курс или сборы"
+              style={null}
+              type="text"
+            />
+          </span>
+        </div>
+      </div>
+      <div
+        className="bufferBtn"
+      >
+        <div>
+          <div
+            className="sc-ifAKCX evHZck"
+            onBlur={undefined}
+            onClick={[Function]}
+            onContextMenu={undefined}
+            onFocus={undefined}
+            onMouseDown={[Function]}
+            onMouseEnter={undefined}
+            onMouseLeave={undefined}
+            onTouchStart={[Function]}
+          >
+            <i
+              className="material-icons"
+            >
+              work
+            </i>
+          </div>
+        </div>
+      </div>
+      <div
+        className="notificationBtn"
+      >
+        <div>
+          <div
+            className="sc-htoDjs bXpoql"
+            onBlur={undefined}
+            onClick={[Function]}
+            onContextMenu={undefined}
+            onFocus={undefined}
+            onMouseDown={[Function]}
+            onMouseEnter={undefined}
+            onMouseLeave={undefined}
+            onTouchStart={[Function]}
+          >
+            <i
+              className="material-icons"
+            >
+              notifications_active
+            </i>
+          </div>
+        </div>
+      </div>
+      <div
+        className="userAvatar"
+      >
+        <div
+          className="sc-bxivhb iDuMfz"
+          onBlur={undefined}
+          onClick={[Function]}
+          onContextMenu={undefined}
+          onFocus={undefined}
+          onMouseDown={[Function]}
+          onMouseEnter={undefined}
+          onMouseLeave={undefined}
+          onTouchStart={[Function]}
+        >
+          <img
+            src="https://avatars0.githubusercontent.com/u/7108312?s=400&u=2539cc56457c0e10d6ff79d13c1e6d6cc654e284&v=4"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

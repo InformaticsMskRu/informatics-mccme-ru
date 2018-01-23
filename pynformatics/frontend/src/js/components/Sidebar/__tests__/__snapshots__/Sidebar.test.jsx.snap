@@ -1,0 +1,1820 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders correctly collapsed 1`] = `
+.c1 .isomorphicSidebar {
+  z-index: 1000;
+  background: #c2185b;
+  width: 280px;
+  -webkit-flex: 0 0 280px;
+  -ms-flex: 0 0 280px;
+  flex: 0 0 280px;
+}
+
+.c1 .isomorphicSidebar .isoLogoWrapper {
+  height: 70px;
+  background: rgba(0,0,0,0.3);
+  margin: 0;
+  padding: 0 10px;
+  text-align: center;
+  overflow: hidden;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  -ms-transition: 0;
+  -o-border-radius: 0;
+  border-radius: 0;
+}
+
+.c1 .isomorphicSidebar .isoLogoWrapper h3 a {
+  font-size: 21px;
+  font-weight: 300;
+  line-height: 70px;
+  -webkit-letter-spacing: 3px;
+  -moz-letter-spacing: 3px;
+  -ms-letter-spacing: 3px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  display: block;
+  text-decoration: none;
+}
+
+.c1 .isomorphicSidebar.ant-layout-sider-collapsed .isoLogoWrapper {
+  padding: 0;
+}
+
+.c1 .isomorphicSidebar.ant-layout-sider-collapsed .isoLogoWrapper h3 a {
+  font-size: 27px;
+  font-weight: 500;
+  -webkit-letter-spacing: 0;
+  -moz-letter-spacing: 0;
+  -ms-letter-spacing: 0;
+  letter-spacing: 0;
+}
+
+.c1 .isomorphicSidebar .isoDashboardMenu {
+  padding-top: 35px;
+  padding-bottom: 35px;
+  background: transparent;
+}
+
+.c1 .isomorphicSidebar .isoDashboardMenu a {
+  text-decoration: none;
+  font-weight: 400;
+}
+
+.c1 .isomorphicSidebar .isoDashboardMenu .ant-menu-item {
+  width: 100%;
+  display: -ms-flexbox;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-align: center;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  padding: 0 24px;
+}
+
+.c1 .isomorphicSidebar .isoDashboardMenu .isoMenuHolder {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+}
+
+.c1 .isomorphicSidebar .isoDashboardMenu .anticon {
+  font-size: 18px;
+  margin-right: 30px;
+  color: inherit;
+  -webkit-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  -moz-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  -ms-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  -o-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  -webkit-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+}
+
+.c1 .isomorphicSidebar .isoDashboardMenu i {
+  font-size: 19px;
+  color: inherit;
+  margin: 0 30px 0 0;
+  width: 18px;
+  -webkit-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  -moz-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  -ms-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  -o-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  -webkit-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+}
+
+.c1 .isomorphicSidebar .isoDashboardMenu .nav-text {
+  font-size: 14px;
+  color: inherit;
+  font-weight: 400;
+  -webkit-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  -moz-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  -ms-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  -o-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  -webkit-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+}
+
+.c1 .isomorphicSidebar .isoDashboardMenu .ant-menu-item-selected {
+  background-color: rgba(0,0,0,0.4) !important;
+}
+
+.c1 .isomorphicSidebar .isoDashboardMenu .ant-menu-item-selected .anticon {
+  color: #fff;
+}
+
+.c1 .isomorphicSidebar .isoDashboardMenu .ant-menu-item-selected i {
+  color: #fff;
+}
+
+.c1 .isomorphicSidebar .isoDashboardMenu .ant-menu-item-selected .nav-text {
+  color: #fff;
+}
+
+.c1 .isomorphicSidebar .isoDashboardMenu > li:hover i,
+.c1 .isomorphicSidebar .isoDashboardMenu > li:hover .nav-text {
+  color: #ffffff;
+}
+
+.c1 .isomorphicSidebar .ant-menu-submenu-inline > .ant-menu-submenu-title,
+.c1 .isomorphicSidebar .ant-menu-submenu-vertical > .ant-menu-submenu-title {
+  width: 100%;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  padding: 0 24px;
+}
+
+.c1 .isomorphicSidebar .ant-menu-submenu-inline > .ant-menu-submenu-title > span,
+.c1 .isomorphicSidebar .ant-menu-submenu-vertical > .ant-menu-submenu-title > span {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+}
+
+.c1 .isomorphicSidebar .ant-menu-submenu-inline > .ant-menu-submenu-title:after,
+.c1 .isomorphicSidebar .ant-menu-submenu-vertical > .ant-menu-submenu-title:after {
+  content: '\\f123';
+  font-family: 'Ionicons' !important;
+  font-size: 16px;
+  color: inherit;
+  left: auto;
+  right: 16px;
+  -webkit-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  -moz-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  -ms-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  -o-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  -webkit-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+}
+
+.c1 .isomorphicSidebar .ant-menu-submenu-inline > .ant-menu-submenu-title:hover:after,
+.c1 .isomorphicSidebar .ant-menu-submenu-vertical > .ant-menu-submenu-title:hover:after {
+  color: #ffffff;
+}
+
+.c1 .isomorphicSidebar .ant-menu-submenu-inline .ant-menu-inline > li:not(.ant-menu-item-group),
+.c1 .isomorphicSidebar .ant-menu-submenu-vertical .ant-menu-inline > li:not(.ant-menu-item-group),
+.c1 .isomorphicSidebar .ant-menu-submenu-inline .ant-menu-submenu-vertical > li:not(.ant-menu-item-group),
+.c1 .isomorphicSidebar .ant-menu-submenu-vertical .ant-menu-submenu-vertical > li:not(.ant-menu-item-group) {
+  padding-left: 74px !important;
+  padding-right: 0px !important;
+  font-size: 13px;
+  font-weight: 400;
+  color: inherit;
+  -webkit-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  -moz-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  -ms-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  -o-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  -webkit-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+}
+
+.c1 .isomorphicSidebar .ant-menu-submenu-inline .ant-menu-inline > li:not(.ant-menu-item-group):hover,
+.c1 .isomorphicSidebar .ant-menu-submenu-vertical .ant-menu-inline > li:not(.ant-menu-item-group):hover,
+.c1 .isomorphicSidebar .ant-menu-submenu-inline .ant-menu-submenu-vertical > li:not(.ant-menu-item-group):hover,
+.c1 .isomorphicSidebar .ant-menu-submenu-vertical .ant-menu-submenu-vertical > li:not(.ant-menu-item-group):hover {
+  color: #ffffff;
+}
+
+.c1 .isomorphicSidebar .ant-menu-submenu-inline .ant-menu-inline .ant-menu-item-group,
+.c1 .isomorphicSidebar .ant-menu-submenu-vertical .ant-menu-inline .ant-menu-item-group,
+.c1 .isomorphicSidebar .ant-menu-submenu-inline .ant-menu-submenu-vertical .ant-menu-item-group,
+.c1 .isomorphicSidebar .ant-menu-submenu-vertical .ant-menu-submenu-vertical .ant-menu-item-group {
+  padding-left: 0;
+}
+
+.c1 .isomorphicSidebar .ant-menu-submenu-inline .ant-menu-inline .ant-menu-item-group .ant-menu-item-group-title,
+.c1 .isomorphicSidebar .ant-menu-submenu-vertical .ant-menu-inline .ant-menu-item-group .ant-menu-item-group-title,
+.c1 .isomorphicSidebar .ant-menu-submenu-inline .ant-menu-submenu-vertical .ant-menu-item-group .ant-menu-item-group-title,
+.c1 .isomorphicSidebar .ant-menu-submenu-vertical .ant-menu-submenu-vertical .ant-menu-item-group .ant-menu-item-group-title {
+  padding-left: 100px !important;
+}
+
+.c1 .isomorphicSidebar .ant-menu-submenu-inline .ant-menu-inline .ant-menu-item-group .ant-menu-item-group-list .ant-menu-item,
+.c1 .isomorphicSidebar .ant-menu-submenu-vertical .ant-menu-inline .ant-menu-item-group .ant-menu-item-group-list .ant-menu-item,
+.c1 .isomorphicSidebar .ant-menu-submenu-inline .ant-menu-submenu-vertical .ant-menu-item-group .ant-menu-item-group-list .ant-menu-item,
+.c1 .isomorphicSidebar .ant-menu-submenu-vertical .ant-menu-submenu-vertical .ant-menu-item-group .ant-menu-item-group-list .ant-menu-item {
+  padding-left: 125px !important;
+}
+
+.c1 .isomorphicSidebar .ant-menu-submenu-inline .ant-menu-sub,
+.c1 .isomorphicSidebar .ant-menu-submenu-vertical .ant-menu-sub {
+  background-color: transparent !important;
+}
+
+.c1 .isomorphicSidebar.ant-layout-sider-collapsed .nav-text {
+  display: none;
+}
+
+.c1 .isomorphicSidebar.ant-layout-sider-collapsed .ant-menu-submenu-inline > .ant-menu-submenu-title:after {
+  display: none;
+}
+
+.c1 .isomorphicSidebar.ant-layout-sider-collapsed .ant-menu-submenu-vertical > .ant-menu-submenu-title:after {
+  display: none;
+}
+
+.c1 .isomorphicSidebar.ant-layout-sider-collapsed .ant-menu-submenu-vertical .ant-menu-sub {
+  background-color: transparent !important;
+}
+
+.c1 .isomorphicSidebar.ant-layout-sider-collapsed .ant-menu-submenu-vertical .ant-menu-sub .ant-menu-item {
+  height: 35px;
+}
+
+.c0 {
+  background: rgb(75,83,104);
+}
+
+.c0 .isomorphicSidebar {
+  background: rgb(75,83,104);
+  width: 100%;
+}
+
+.c0 .isomorphicSidebar .closeBtn {
+  position: absolute;
+  right: 24px;
+  top: 18px;
+  color: white;
+  cursor: pointer;
+}
+
+.c0 .isomorphicSidebar .isoLogoWrapper {
+  height: 60px;
+  text-align: left;
+  padding: 0 24px;
+  background: rgb(51,59,80);
+}
+
+.c0 .isomorphicSidebar .isoLogoWrapper h3 a {
+  font-size: 16px;
+  font-weight: normal;
+  text-transform: none;
+  line-height: 60px;
+  color: rgb(255,255,255);
+}
+
+.c0 .isomorphicSidebar .isoDashboardMenu {
+  padding-top: 18px;
+}
+
+.c0 .isomorphicSidebar .isoDashboardMenu .ant-menu-item {
+  height: 46px;
+}
+
+.c0 .isomorphicSidebar .isoDashboardMenu .ant-menu-item a {
+  color: rgb(168,177,196);
+}
+
+.c0 .isomorphicSidebar .isoDashboardMenu .ant-menu-item.ant-menu-item-active svg {
+  fill: #ffffff;
+}
+
+.c0 .isomorphicSidebar .isoDashboardMenu .ant-menu-item.ant-menu-item-selected {
+  background-color: rgb(29,34,48) !important;
+}
+
+.c0 .isomorphicSidebar .isoDashboardMenu .ant-menu-item.ant-menu-item-selected svg {
+  fill: #ffffff;
+}
+
+.c0 .isomorphicSidebar .isoDashboardMenu .ant-menu-item .nav-text {
+  font-size: 15px;
+  line-height: normal;
+}
+
+.c0 .isomorphicSidebar .isoDashboardMenu i {
+  font-size: 0;
+  width: 24px;
+  height: 24px;
+  margin-right: 20px;
+}
+
+.c0 .isomorphicSidebar .isoDashboardMenu i svg {
+  -webkit-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  -moz-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  -ms-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  -o-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  -webkit-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  fill: rgb(130,139,158);
+}
+
+@media only screen and (max-width:767px) {
+  .c1 .isomorphicSidebar {
+    width: 240px !important;
+    -webkit-flex: 0 0 240px !important;
+    -ms-flex: 0 0 240px !important;
+    flex: 0 0 240px !important;
+  }
+}
+
+@media only screen and (max-width:767px) {
+  .c1 .isomorphicSidebar.ant-layout-sider-collapsed {
+    width: 0;
+    min-width: 0 !important;
+    max-width: 0 !important;
+    -webkit-flex: 0 0 0 !important;
+    -ms-flex: 0 0 0 !important;
+    flex: 0 0 0 !important;
+  }
+}
+
+@media (max-width:1279px) {
+  .c0 {
+    position: absolute;
+  }
+}
+
+@media (min-width:1280px) {
+  .c0 .isomorphicSidebar .closeBtn {
+    display: none;
+  }
+}
+
+@media (max-width:1279px) {
+  .c0 .isomorphicSidebar .isoLogoWrapper {
+    background: rgb(75,83,104);
+  }
+}
+
+<div
+  className="c0 c1"
+  data-rtl={null}
+>
+  <div
+    className="isomorphicSidebar ant-layout-sider ant-layout-sider-collapsed ant-layout-sider-zero-width"
+    style={
+      Object {
+        "flex": "0 0 0px",
+        "maxWidth": "0px",
+        "minWidth": "0px",
+        "width": "0px",
+      }
+    }
+  >
+    <div
+      className="ant-layout-sider-children"
+    >
+      <i
+        className="closeBtn material-icons"
+        onClick={[Function]}
+      >
+        close
+      </i>
+      <div
+        className="isoLogoWrapper"
+      />
+      <div
+        style={
+          Object {
+            "height": 640,
+            "overflow": "hidden",
+            "position": "relative",
+            "width": "100%",
+          }
+        }
+      >
+        <div
+          className="box"
+          style={
+            Object {
+              "WebkitOverflowScrolling": "touch",
+              "bottom": 0,
+              "left": 0,
+              "marginBottom": 0,
+              "marginLeft": 0,
+              "marginRight": -17,
+              "overflow": "scroll",
+              "paddingLeft": 0,
+              "paddingRight": 9,
+              "position": "absolute",
+              "right": 0,
+              "top": 0,
+            }
+          }
+        />
+        <div
+          style={
+            Object {
+              "borderRadius": 3,
+              "bottom": 2,
+              "display": "none",
+              "height": 6,
+              "left": 2,
+              "position": "absolute",
+              "right": 2,
+            }
+          }
+        >
+          <div
+            style={
+              Object {
+                "backgroundColor": "rgba(0,0,0,.2)",
+                "borderRadius": "inherit",
+                "cursor": "pointer",
+                "display": "block",
+                "height": "100%",
+                "position": "relative",
+              }
+            }
+          />
+        </div>
+        <div
+          style={
+            Object {
+              "borderRadius": 3,
+              "bottom": 2,
+              "display": "none",
+              "position": "absolute",
+              "right": 2,
+              "top": 2,
+              "width": 6,
+            }
+          }
+        >
+          <div
+            style={
+              Object {
+                "backgroundColor": "rgba(0,0,0,.2)",
+                "borderRadius": "inherit",
+                "cursor": "pointer",
+                "display": "block",
+                "position": "relative",
+                "width": "100%",
+              }
+            }
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`renders correctly not collapsed 1`] = `
+.c1 .isomorphicSidebar {
+  z-index: 1000;
+  background: #c2185b;
+  width: 280px;
+  -webkit-flex: 0 0 280px;
+  -ms-flex: 0 0 280px;
+  flex: 0 0 280px;
+}
+
+.c1 .isomorphicSidebar .isoLogoWrapper {
+  height: 70px;
+  background: rgba(0,0,0,0.3);
+  margin: 0;
+  padding: 0 10px;
+  text-align: center;
+  overflow: hidden;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  -ms-transition: 0;
+  -o-border-radius: 0;
+  border-radius: 0;
+}
+
+.c1 .isomorphicSidebar .isoLogoWrapper h3 a {
+  font-size: 21px;
+  font-weight: 300;
+  line-height: 70px;
+  -webkit-letter-spacing: 3px;
+  -moz-letter-spacing: 3px;
+  -ms-letter-spacing: 3px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  display: block;
+  text-decoration: none;
+}
+
+.c1 .isomorphicSidebar.ant-layout-sider-collapsed .isoLogoWrapper {
+  padding: 0;
+}
+
+.c1 .isomorphicSidebar.ant-layout-sider-collapsed .isoLogoWrapper h3 a {
+  font-size: 27px;
+  font-weight: 500;
+  -webkit-letter-spacing: 0;
+  -moz-letter-spacing: 0;
+  -ms-letter-spacing: 0;
+  letter-spacing: 0;
+}
+
+.c1 .isomorphicSidebar .isoDashboardMenu {
+  padding-top: 35px;
+  padding-bottom: 35px;
+  background: transparent;
+}
+
+.c1 .isomorphicSidebar .isoDashboardMenu a {
+  text-decoration: none;
+  font-weight: 400;
+}
+
+.c1 .isomorphicSidebar .isoDashboardMenu .ant-menu-item {
+  width: 100%;
+  display: -ms-flexbox;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-align: center;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  padding: 0 24px;
+}
+
+.c1 .isomorphicSidebar .isoDashboardMenu .isoMenuHolder {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+}
+
+.c1 .isomorphicSidebar .isoDashboardMenu .anticon {
+  font-size: 18px;
+  margin-right: 30px;
+  color: inherit;
+  -webkit-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  -moz-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  -ms-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  -o-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  -webkit-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+}
+
+.c1 .isomorphicSidebar .isoDashboardMenu i {
+  font-size: 19px;
+  color: inherit;
+  margin: 0 30px 0 0;
+  width: 18px;
+  -webkit-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  -moz-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  -ms-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  -o-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  -webkit-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+}
+
+.c1 .isomorphicSidebar .isoDashboardMenu .nav-text {
+  font-size: 14px;
+  color: inherit;
+  font-weight: 400;
+  -webkit-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  -moz-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  -ms-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  -o-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  -webkit-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+}
+
+.c1 .isomorphicSidebar .isoDashboardMenu .ant-menu-item-selected {
+  background-color: rgba(0,0,0,0.4) !important;
+}
+
+.c1 .isomorphicSidebar .isoDashboardMenu .ant-menu-item-selected .anticon {
+  color: #fff;
+}
+
+.c1 .isomorphicSidebar .isoDashboardMenu .ant-menu-item-selected i {
+  color: #fff;
+}
+
+.c1 .isomorphicSidebar .isoDashboardMenu .ant-menu-item-selected .nav-text {
+  color: #fff;
+}
+
+.c1 .isomorphicSidebar .isoDashboardMenu > li:hover i,
+.c1 .isomorphicSidebar .isoDashboardMenu > li:hover .nav-text {
+  color: #ffffff;
+}
+
+.c1 .isomorphicSidebar .ant-menu-submenu-inline > .ant-menu-submenu-title,
+.c1 .isomorphicSidebar .ant-menu-submenu-vertical > .ant-menu-submenu-title {
+  width: 100%;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  padding: 0 24px;
+}
+
+.c1 .isomorphicSidebar .ant-menu-submenu-inline > .ant-menu-submenu-title > span,
+.c1 .isomorphicSidebar .ant-menu-submenu-vertical > .ant-menu-submenu-title > span {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+}
+
+.c1 .isomorphicSidebar .ant-menu-submenu-inline > .ant-menu-submenu-title:after,
+.c1 .isomorphicSidebar .ant-menu-submenu-vertical > .ant-menu-submenu-title:after {
+  content: '\\f123';
+  font-family: 'Ionicons' !important;
+  font-size: 16px;
+  color: inherit;
+  left: auto;
+  right: 16px;
+  -webkit-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  -moz-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  -ms-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  -o-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  -webkit-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+}
+
+.c1 .isomorphicSidebar .ant-menu-submenu-inline > .ant-menu-submenu-title:hover:after,
+.c1 .isomorphicSidebar .ant-menu-submenu-vertical > .ant-menu-submenu-title:hover:after {
+  color: #ffffff;
+}
+
+.c1 .isomorphicSidebar .ant-menu-submenu-inline .ant-menu-inline > li:not(.ant-menu-item-group),
+.c1 .isomorphicSidebar .ant-menu-submenu-vertical .ant-menu-inline > li:not(.ant-menu-item-group),
+.c1 .isomorphicSidebar .ant-menu-submenu-inline .ant-menu-submenu-vertical > li:not(.ant-menu-item-group),
+.c1 .isomorphicSidebar .ant-menu-submenu-vertical .ant-menu-submenu-vertical > li:not(.ant-menu-item-group) {
+  padding-left: 74px !important;
+  padding-right: 0px !important;
+  font-size: 13px;
+  font-weight: 400;
+  color: inherit;
+  -webkit-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  -moz-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  -ms-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  -o-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  -webkit-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+}
+
+.c1 .isomorphicSidebar .ant-menu-submenu-inline .ant-menu-inline > li:not(.ant-menu-item-group):hover,
+.c1 .isomorphicSidebar .ant-menu-submenu-vertical .ant-menu-inline > li:not(.ant-menu-item-group):hover,
+.c1 .isomorphicSidebar .ant-menu-submenu-inline .ant-menu-submenu-vertical > li:not(.ant-menu-item-group):hover,
+.c1 .isomorphicSidebar .ant-menu-submenu-vertical .ant-menu-submenu-vertical > li:not(.ant-menu-item-group):hover {
+  color: #ffffff;
+}
+
+.c1 .isomorphicSidebar .ant-menu-submenu-inline .ant-menu-inline .ant-menu-item-group,
+.c1 .isomorphicSidebar .ant-menu-submenu-vertical .ant-menu-inline .ant-menu-item-group,
+.c1 .isomorphicSidebar .ant-menu-submenu-inline .ant-menu-submenu-vertical .ant-menu-item-group,
+.c1 .isomorphicSidebar .ant-menu-submenu-vertical .ant-menu-submenu-vertical .ant-menu-item-group {
+  padding-left: 0;
+}
+
+.c1 .isomorphicSidebar .ant-menu-submenu-inline .ant-menu-inline .ant-menu-item-group .ant-menu-item-group-title,
+.c1 .isomorphicSidebar .ant-menu-submenu-vertical .ant-menu-inline .ant-menu-item-group .ant-menu-item-group-title,
+.c1 .isomorphicSidebar .ant-menu-submenu-inline .ant-menu-submenu-vertical .ant-menu-item-group .ant-menu-item-group-title,
+.c1 .isomorphicSidebar .ant-menu-submenu-vertical .ant-menu-submenu-vertical .ant-menu-item-group .ant-menu-item-group-title {
+  padding-left: 100px !important;
+}
+
+.c1 .isomorphicSidebar .ant-menu-submenu-inline .ant-menu-inline .ant-menu-item-group .ant-menu-item-group-list .ant-menu-item,
+.c1 .isomorphicSidebar .ant-menu-submenu-vertical .ant-menu-inline .ant-menu-item-group .ant-menu-item-group-list .ant-menu-item,
+.c1 .isomorphicSidebar .ant-menu-submenu-inline .ant-menu-submenu-vertical .ant-menu-item-group .ant-menu-item-group-list .ant-menu-item,
+.c1 .isomorphicSidebar .ant-menu-submenu-vertical .ant-menu-submenu-vertical .ant-menu-item-group .ant-menu-item-group-list .ant-menu-item {
+  padding-left: 125px !important;
+}
+
+.c1 .isomorphicSidebar .ant-menu-submenu-inline .ant-menu-sub,
+.c1 .isomorphicSidebar .ant-menu-submenu-vertical .ant-menu-sub {
+  background-color: transparent !important;
+}
+
+.c1 .isomorphicSidebar.ant-layout-sider-collapsed .nav-text {
+  display: none;
+}
+
+.c1 .isomorphicSidebar.ant-layout-sider-collapsed .ant-menu-submenu-inline > .ant-menu-submenu-title:after {
+  display: none;
+}
+
+.c1 .isomorphicSidebar.ant-layout-sider-collapsed .ant-menu-submenu-vertical > .ant-menu-submenu-title:after {
+  display: none;
+}
+
+.c1 .isomorphicSidebar.ant-layout-sider-collapsed .ant-menu-submenu-vertical .ant-menu-sub {
+  background-color: transparent !important;
+}
+
+.c1 .isomorphicSidebar.ant-layout-sider-collapsed .ant-menu-submenu-vertical .ant-menu-sub .ant-menu-item {
+  height: 35px;
+}
+
+.c5.ant-btn {
+  display: inline-block;
+  margin-bottom: 0;
+  font-weight: 500;
+  text-align: center;
+  -ms-touch-action: manipulation;
+  touch-action: manipulation;
+  cursor: pointer;
+  background-image: none;
+  border: 1px solid transparent;
+  white-space: nowrap;
+  line-height: 1.5;
+  padding: 0 25px;
+  font-size: 14px;
+  border-radius: 4px;
+  height: 36px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  position: relative;
+  -webkit-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  -moz-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  -ms-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  -o-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  -webkit-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+}
+
+.c5.ant-btn:hover {
+  border-color: #1976d2;
+  color: #1976d2;
+}
+
+.c5.ant-btn > .anticon + span,
+.c5.ant-btn > span + .anticon {
+  margin: 0 0 0 0.5em;
+}
+
+.c5.ant-btn .anticon-right {
+  -webkit-transform: rotate(0);
+  -ms-transform: rotate(0);
+  transform: rotate(0);
+}
+
+.c5.ant-btn .anticon-left {
+  -webkit-transform: rotate(0);
+  -ms-transform: rotate(0);
+  transform: rotate(0);
+}
+
+.c5.ant-btn.ant-btn-primary {
+  background-color: #1976d2;
+  border-color: #1976d2;
+}
+
+.c5.ant-btn.ant-btn-primary:hover {
+  color: #fff;
+}
+
+.c5.ant-btn.ant-btn-sm {
+  padding: 0 15px;
+  height: 28px;
+  font-size: 12px;
+}
+
+.c5.ant-btn.ant-btn-sm.ant-btn-loading:not(.ant-btn-circle):not(.ant-btn-circle-outline) {
+  padding: 0 15px 0 24px;
+}
+
+.c5.ant-btn.ant-btn-sm.ant-btn-loading:not(.ant-btn-circle):not(.ant-btn-circle-outline) .anticon {
+  margin: 0 0 0 -17px;
+}
+
+.c5.ant-btn.ant-btn-lg {
+  padding: 0 35px;
+  font-size: 14px;
+  height: 42px;
+}
+
+.c5.ant-btn.ant-btn-primary {
+  color: #ffffff;
+}
+
+.c5.ant-btn.ant-btn-dashed {
+  border-style: dashed;
+}
+
+.c5.ant-btn.ant-btn-dashed:hover {
+  color: #1976d2;
+  border-color: #1976d2;
+}
+
+.c5.ant-btn.ant-btn-danger {
+  color: #ffffff;
+}
+
+.c5.ant-btn.ant-btn-danger.ant-btn-background-ghost {
+  background-color: transparent;
+}
+
+.c5.ant-btn.ant-btn-circle,
+.c5.ant-btn.ant-btn-circle-outline {
+  width: 35px;
+  padding: 0;
+  font-size: 14px;
+  border-radius: 50%;
+  height: 35px;
+}
+
+.c5.ant-btn.ant-btn-circle.ant-btn-sm,
+.c5.ant-btn.ant-btn-circle-outline.ant-btn-sm {
+  padding: 0;
+  height: 28px;
+  width: 28px;
+  font-size: 12px;
+}
+
+.c5.ant-btn.ant-btn-circle.ant-btn-lg,
+.c5.ant-btn.ant-btn-circle-outline.ant-btn-lg {
+  padding: 0;
+  font-size: 14px;
+  height: 42px;
+  width: 42px;
+}
+
+.c5.ant-btn.ant-btn.disabled,
+.c5.ant-btn.ant-btn[disabled],
+.c5.ant-btn.ant-btn.disabled:hover,
+.c5.ant-btn.ant-btn[disabled]:hover,
+.c5.ant-btn.ant-btn.disabled:focus,
+.c5.ant-btn.ant-btn[disabled]:focus,
+.c5.ant-btn.ant-btn.disabled:active,
+.c5.ant-btn.ant-btn[disabled]:active,
+.c5.ant-btn.ant-btn.disabled.active,
+.c5.ant-btn.ant-btn[disabled].active {
+  color: #9e9e9e;
+  background-color: #f7f7f7;
+  cursor: not-allowed;
+}
+
+.c5.ant-btn.ant-btn-loading:not(.ant-btn-circle):not(.ant-btn-circle-outline) .anticon {
+  margin: 0 0 0 -14px;
+}
+
+.c5.ant-btn.isoButton {
+  display: inline-block;
+  margin-bottom: 0;
+  font-weight: 500;
+  text-align: center;
+  -ms-touch-action: manipulation;
+  touch-action: manipulation;
+  cursor: pointer;
+  background-image: none;
+  border: 0;
+  white-space: nowrap;
+  line-height: 1.5;
+  padding: 0 25px;
+  font-size: 13px;
+  border-radius: 4px;
+  height: 35px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  position: relative;
+  color: #ffffff;
+  background-color: #1976d2;
+  -webkit-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  -moz-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  -ms-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  -o-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  -webkit-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+}
+
+.c5.ant-btn.isoButton:hover {
+  background-color: #71bcf7;
+}
+
+.c5.ant-btn.isoButton.isoBtnSm {
+  padding: 0 15px;
+  height: 28px;
+  font-size: 12px;
+}
+
+.c5.ant-btn.isoButton.isoBtnLg {
+  padding: 0 35px;
+  font-size: 14px;
+  height: 42px;
+}
+
+.c5 + .ant-btn-group {
+  margin-left: -1px !important;
+  margin-right: 0 !important;
+}
+
+.c4.ant-btn {
+  border-radius: 4px;
+}
+
+.c4.ant-btn.ant-btn-primary {
+  background-color: rgb(64,126,255);
+}
+
+.c3 {
+  white-space: normal;
+  line-height: 1.5;
+  font-size: 12px;
+  color: rgb(131,140,159);
+}
+
+.c3 .telegramText {
+  margin-bottom: 15px;
+}
+
+.c2 {
+  text-align: center;
+  display: block;
+  font-size: 0;
+  width: 24px;
+  height: 24px;
+}
+
+.c2 svg {
+  max-width: 24px;
+  max-height: 24px;
+}
+
+.c2 .icon-sz-18 {
+  width: 18px;
+  height: 18px;
+}
+
+.c2 .icon-sz-18 svg {
+  max-width: 18px;
+  max-height: 18px;
+}
+
+.c0 {
+  background: rgb(75,83,104);
+}
+
+.c0 .isomorphicSidebar {
+  background: rgb(75,83,104);
+  width: 100%;
+}
+
+.c0 .isomorphicSidebar .closeBtn {
+  position: absolute;
+  right: 24px;
+  top: 18px;
+  color: white;
+  cursor: pointer;
+}
+
+.c0 .isomorphicSidebar .isoLogoWrapper {
+  height: 60px;
+  text-align: left;
+  padding: 0 24px;
+  background: rgb(51,59,80);
+}
+
+.c0 .isomorphicSidebar .isoLogoWrapper h3 a {
+  font-size: 16px;
+  font-weight: normal;
+  text-transform: none;
+  line-height: 60px;
+  color: rgb(255,255,255);
+}
+
+.c0 .isomorphicSidebar .isoDashboardMenu {
+  padding-top: 18px;
+}
+
+.c0 .isomorphicSidebar .isoDashboardMenu .ant-menu-item {
+  height: 46px;
+}
+
+.c0 .isomorphicSidebar .isoDashboardMenu .ant-menu-item a {
+  color: rgb(168,177,196);
+}
+
+.c0 .isomorphicSidebar .isoDashboardMenu .ant-menu-item.ant-menu-item-active svg {
+  fill: #ffffff;
+}
+
+.c0 .isomorphicSidebar .isoDashboardMenu .ant-menu-item.ant-menu-item-selected {
+  background-color: rgb(29,34,48) !important;
+}
+
+.c0 .isomorphicSidebar .isoDashboardMenu .ant-menu-item.ant-menu-item-selected svg {
+  fill: #ffffff;
+}
+
+.c0 .isomorphicSidebar .isoDashboardMenu .ant-menu-item .nav-text {
+  font-size: 15px;
+  line-height: normal;
+}
+
+.c0 .isomorphicSidebar .isoDashboardMenu i {
+  font-size: 0;
+  width: 24px;
+  height: 24px;
+  margin-right: 20px;
+}
+
+.c0 .isomorphicSidebar .isoDashboardMenu i svg {
+  -webkit-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  -moz-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  -ms-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  -o-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  -webkit-transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  transition: all 0.3s cubic-bezier(0.215,0.61,0.355,1);
+  fill: rgb(130,139,158);
+}
+
+@media only screen and (max-width:767px) {
+  .c1 .isomorphicSidebar {
+    width: 240px !important;
+    -webkit-flex: 0 0 240px !important;
+    -ms-flex: 0 0 240px !important;
+    flex: 0 0 240px !important;
+  }
+}
+
+@media only screen and (max-width:767px) {
+  .c1 .isomorphicSidebar.ant-layout-sider-collapsed {
+    width: 0;
+    min-width: 0 !important;
+    max-width: 0 !important;
+    -webkit-flex: 0 0 0 !important;
+    -ms-flex: 0 0 0 !important;
+    flex: 0 0 0 !important;
+  }
+}
+
+@media (max-width:1279px) {
+  .c0 {
+    position: absolute;
+  }
+}
+
+@media (min-width:1280px) {
+  .c0 .isomorphicSidebar .closeBtn {
+    display: none;
+  }
+}
+
+@media (max-width:1279px) {
+  .c0 .isomorphicSidebar .isoLogoWrapper {
+    background: rgb(75,83,104);
+  }
+}
+
+<div
+  className="c0 c1"
+  data-rtl={null}
+>
+  <div
+    className="isomorphicSidebar ant-layout-sider"
+    style={
+      Object {
+        "flex": "0 0 320px",
+        "maxWidth": "320px",
+        "minWidth": "320px",
+        "width": "320px",
+      }
+    }
+  >
+    <div
+      className="ant-layout-sider-children"
+    >
+      <i
+        className="closeBtn material-icons"
+        onClick={[Function]}
+      >
+        close
+      </i>
+      <div
+        className="isoLogoWrapper"
+      >
+        <h3>
+          <a
+            href="/"
+            onClick={[Function]}
+          >
+            Меню
+          </a>
+        </h3>
+      </div>
+      <div
+        style={
+          Object {
+            "height": 640,
+            "overflow": "hidden",
+            "position": "relative",
+            "width": "100%",
+          }
+        }
+      >
+        <div
+          className="box"
+          style={
+            Object {
+              "WebkitOverflowScrolling": "touch",
+              "bottom": 0,
+              "left": 0,
+              "marginBottom": 0,
+              "marginLeft": 0,
+              "marginRight": -17,
+              "overflow": "scroll",
+              "paddingLeft": 0,
+              "paddingRight": 9,
+              "position": "absolute",
+              "right": 0,
+              "top": 0,
+            }
+          }
+        >
+          <ul
+            aria-activedescendant=""
+            className="ant-menu isoDashboardMenu ant-menu-dark ant-menu-root ant-menu-inline"
+            onKeyDown={[Function]}
+            role="menu"
+            style={Object {}}
+            tabIndex="0"
+          >
+            <li
+              aria-disabled={undefined}
+              aria-selected={false}
+              className="ant-menu-item"
+              onClick={[Function]}
+              onMouseEnter={[Function]}
+              onMouseLeave={[Function]}
+              role="menuitem"
+              style={
+                Object {
+                  "paddingLeft": 24,
+                }
+              }
+              title={undefined}
+            >
+              <a
+                href="/"
+                onClick={[Function]}
+              >
+                <span
+                  className="isoMenuHolder"
+                >
+                  <i
+                    className="icon icon-sz-24 c2"
+                    dangerouslySetInnerHTML={
+                      Object {
+                        "__html": "test-file-stub",
+                      }
+                    }
+                  />
+                  <span
+                    className="nav-text"
+                  >
+                    Административный раздел
+                  </span>
+                </span>
+              </a>
+            </li>
+            <li
+              aria-disabled={undefined}
+              aria-selected={false}
+              className="ant-menu-item"
+              onClick={[Function]}
+              onMouseEnter={[Function]}
+              onMouseLeave={[Function]}
+              role="menuitem"
+              style={
+                Object {
+                  "paddingLeft": 24,
+                }
+              }
+              title={undefined}
+            >
+              <a
+                href="/"
+                onClick={[Function]}
+              >
+                <span
+                  className="isoMenuHolder"
+                >
+                  <i
+                    className="icon icon-sz-24 c2"
+                    dangerouslySetInnerHTML={
+                      Object {
+                        "__html": "test-file-stub",
+                      }
+                    }
+                  />
+                  <span
+                    className="nav-text"
+                  >
+                    Мои курсы
+                  </span>
+                </span>
+              </a>
+            </li>
+            <li
+              aria-disabled={undefined}
+              aria-selected={false}
+              className="ant-menu-item"
+              onClick={[Function]}
+              onMouseEnter={[Function]}
+              onMouseLeave={[Function]}
+              role="menuitem"
+              style={
+                Object {
+                  "paddingLeft": 24,
+                }
+              }
+              title={undefined}
+            >
+              <a
+                href="/"
+                onClick={[Function]}
+              >
+                <span
+                  className="isoMenuHolder"
+                >
+                  <i
+                    className="icon icon-sz-24 c2"
+                    dangerouslySetInnerHTML={
+                      Object {
+                        "__html": "test-file-stub",
+                      }
+                    }
+                  />
+                  <span
+                    className="nav-text"
+                  >
+                    Управление группами
+                  </span>
+                </span>
+              </a>
+            </li>
+            <li
+              aria-disabled={undefined}
+              aria-selected={false}
+              className="ant-menu-item"
+              onClick={[Function]}
+              onMouseEnter={[Function]}
+              onMouseLeave={[Function]}
+              role="menuitem"
+              style={
+                Object {
+                  "paddingLeft": 24,
+                }
+              }
+              title={undefined}
+            >
+              <a
+                href="/"
+                onClick={[Function]}
+              >
+                <span
+                  className="isoMenuHolder"
+                >
+                  <i
+                    className="icon icon-sz-24 c2"
+                    dangerouslySetInnerHTML={
+                      Object {
+                        "__html": "test-file-stub",
+                      }
+                    }
+                  />
+                  <span
+                    className="nav-text"
+                  >
+                    Управление мониторами
+                  </span>
+                </span>
+              </a>
+            </li>
+            <li
+              aria-disabled={undefined}
+              aria-selected={false}
+              className="ant-menu-item"
+              onClick={[Function]}
+              onMouseEnter={[Function]}
+              onMouseLeave={[Function]}
+              role="menuitem"
+              style={
+                Object {
+                  "paddingLeft": 24,
+                }
+              }
+              title={undefined}
+            >
+              <a
+                href="/"
+                onClick={[Function]}
+              >
+                <span
+                  className="isoMenuHolder"
+                >
+                  <i
+                    className="icon icon-sz-24 c2"
+                    dangerouslySetInnerHTML={
+                      Object {
+                        "__html": "test-file-stub",
+                      }
+                    }
+                  />
+                  <span
+                    className="nav-text"
+                  >
+                    Инструкция для учителей
+                  </span>
+                </span>
+              </a>
+            </li>
+            <li
+              aria-disabled={undefined}
+              aria-selected={false}
+              className="ant-menu-item"
+              onClick={[Function]}
+              onMouseEnter={[Function]}
+              onMouseLeave={[Function]}
+              role="menuitem"
+              style={
+                Object {
+                  "marginTop": 24,
+                  "paddingLeft": 24,
+                }
+              }
+              title={undefined}
+            >
+              <a
+                href="/"
+                onClick={[Function]}
+              >
+                <span
+                  className="isoMenuHolder"
+                >
+                  <i
+                    className="icon icon-sz-24 c2"
+                    dangerouslySetInnerHTML={
+                      Object {
+                        "__html": "test-file-stub",
+                      }
+                    }
+                  />
+                  <span
+                    className="nav-text"
+                  >
+                    Мои сборы
+                  </span>
+                </span>
+              </a>
+            </li>
+            <li
+              aria-disabled={undefined}
+              aria-selected={false}
+              className="ant-menu-item"
+              onClick={[Function]}
+              onMouseEnter={[Function]}
+              onMouseLeave={[Function]}
+              role="menuitem"
+              style={
+                Object {
+                  "paddingLeft": 24,
+                }
+              }
+              title={undefined}
+            >
+              <a
+                href="/"
+                onClick={[Function]}
+              >
+                <span
+                  className="isoMenuHolder"
+                >
+                  <i
+                    className="icon icon-sz-24 c2"
+                    dangerouslySetInnerHTML={
+                      Object {
+                        "__html": "test-file-stub",
+                      }
+                    }
+                  />
+                  <span
+                    className="nav-text"
+                  >
+                    Мои посылки
+                  </span>
+                </span>
+              </a>
+            </li>
+            <li
+              aria-disabled={undefined}
+              aria-selected={false}
+              className="ant-menu-item"
+              onClick={[Function]}
+              onMouseEnter={[Function]}
+              onMouseLeave={[Function]}
+              role="menuitem"
+              style={
+                Object {
+                  "paddingLeft": 24,
+                }
+              }
+              title={undefined}
+            >
+              <a
+                href="/"
+                onClick={[Function]}
+              >
+                <span
+                  className="isoMenuHolder"
+                >
+                  <i
+                    className="icon icon-sz-24 c2"
+                    dangerouslySetInnerHTML={
+                      Object {
+                        "__html": "test-file-stub",
+                      }
+                    }
+                  />
+                  <span
+                    className="nav-text"
+                  >
+                    Мои настройки
+                  </span>
+                </span>
+              </a>
+            </li>
+            <li
+              aria-disabled={undefined}
+              aria-selected={false}
+              className="ant-menu-item"
+              onClick={[Function]}
+              onMouseEnter={[Function]}
+              onMouseLeave={[Function]}
+              role="menuitem"
+              style={
+                Object {
+                  "paddingLeft": 24,
+                }
+              }
+              title={undefined}
+            >
+              <a
+                href="/"
+                onClick={[Function]}
+              >
+                <span
+                  className="isoMenuHolder"
+                >
+                  <i
+                    className="icon icon-sz-24 c2"
+                    dangerouslySetInnerHTML={
+                      Object {
+                        "__html": "test-file-stub",
+                      }
+                    }
+                  />
+                  <span
+                    className="nav-text"
+                  >
+                    Мои группы
+                  </span>
+                </span>
+              </a>
+            </li>
+            <li
+              aria-disabled={undefined}
+              aria-selected={false}
+              className="ant-menu-item"
+              onClick={[Function]}
+              onMouseEnter={[Function]}
+              onMouseLeave={[Function]}
+              role="menuitem"
+              style={
+                Object {
+                  "marginTop": 24,
+                  "paddingLeft": 24,
+                }
+              }
+              title={undefined}
+            >
+              <a
+                href="/"
+                onClick={[Function]}
+              >
+                <span
+                  className="isoMenuHolder"
+                >
+                  <i
+                    className="icon icon-sz-24 c2"
+                    dangerouslySetInnerHTML={
+                      Object {
+                        "__html": "test-file-stub",
+                      }
+                    }
+                  />
+                  <span
+                    className="nav-text"
+                  >
+                    Топ решений
+                  </span>
+                </span>
+              </a>
+            </li>
+            <li
+              aria-disabled={undefined}
+              aria-selected={false}
+              className="ant-menu-item"
+              onClick={[Function]}
+              onMouseEnter={[Function]}
+              onMouseLeave={[Function]}
+              role="menuitem"
+              style={
+                Object {
+                  "paddingLeft": 24,
+                }
+              }
+              title={undefined}
+            >
+              <a
+                href="/"
+                onClick={[Function]}
+              >
+                <span
+                  className="isoMenuHolder"
+                >
+                  <i
+                    className="icon icon-sz-24 c2"
+                    dangerouslySetInnerHTML={
+                      Object {
+                        "__html": "test-file-stub",
+                      }
+                    }
+                  />
+                  <span
+                    className="nav-text"
+                  >
+                    Рейтинг пользователей
+                  </span>
+                </span>
+              </a>
+            </li>
+            <li
+              aria-disabled={undefined}
+              aria-selected={false}
+              className="ant-menu-item"
+              onClick={[Function]}
+              onMouseEnter={[Function]}
+              onMouseLeave={[Function]}
+              role="menuitem"
+              style={
+                Object {
+                  "paddingLeft": 24,
+                }
+              }
+              title={undefined}
+            >
+              <a
+                href="/"
+                onClick={[Function]}
+              >
+                <span
+                  className="isoMenuHolder"
+                >
+                  <i
+                    className="icon icon-sz-24 c2"
+                    dangerouslySetInnerHTML={
+                      Object {
+                        "__html": "test-file-stub",
+                      }
+                    }
+                  />
+                  <span
+                    className="nav-text"
+                  >
+                    Новые материалы
+                  </span>
+                </span>
+              </a>
+            </li>
+            <li
+              aria-disabled={undefined}
+              aria-selected={false}
+              className="ant-menu-item"
+              onClick={[Function]}
+              onMouseEnter={[Function]}
+              onMouseLeave={[Function]}
+              role="menuitem"
+              style={
+                Object {
+                  "paddingLeft": 24,
+                }
+              }
+              title={undefined}
+            >
+              <a
+                href="/"
+                onClick={[Function]}
+              >
+                <span
+                  className="isoMenuHolder"
+                >
+                  <i
+                    className="icon icon-sz-24 c2"
+                    dangerouslySetInnerHTML={
+                      Object {
+                        "__html": "test-file-stub",
+                      }
+                    }
+                  />
+                  <span
+                    className="nav-text"
+                  >
+                    FAQ
+                  </span>
+                </span>
+              </a>
+            </li>
+            <li
+              aria-disabled={undefined}
+              aria-selected={false}
+              className="ant-menu-item"
+              onClick={[Function]}
+              onMouseEnter={[Function]}
+              onMouseLeave={[Function]}
+              role="menuitem"
+              style={
+                Object {
+                  "paddingLeft": 24,
+                }
+              }
+              title={undefined}
+            >
+              <a
+                href="/"
+                onClick={[Function]}
+              >
+                <span
+                  className="isoMenuHolder"
+                >
+                  <i
+                    className="icon icon-sz-24 c2"
+                    dangerouslySetInnerHTML={
+                      Object {
+                        "__html": "test-file-stub",
+                      }
+                    }
+                  />
+                  <span
+                    className="nav-text"
+                  >
+                    О сайте, команде и
+                    <br />
+                    организациях-разработчиках
+                  </span>
+                </span>
+              </a>
+            </li>
+            <li
+              aria-disabled={true}
+              aria-selected={false}
+              className="ant-menu-item ant-menu-item-disabled"
+              role="menuitem"
+              style={
+                Object {
+                  "cursor": "default",
+                  "height": "auto",
+                  "marginTop": 18,
+                  "paddingLeft": 24,
+                }
+              }
+              title={undefined}
+            >
+              <div
+                className="c3"
+              >
+                <div
+                  className="telegramText"
+                >
+                  По всем текущим вопросам, а также в случае, если у вас что-то не работает, пишите на форум или в группу telegram
+                </div>
+                <button
+                  className="ant-btn c4 c5 ant-btn-primary"
+                  data-rtl={null}
+                  onClick={[Function]}
+                  type="button"
+                >
+                  <span>
+                    Телеграм
+                  </span>
+                </button>
+              </div>
+            </li>
+          </ul>
+        </div>
+        <div
+          style={
+            Object {
+              "borderRadius": 3,
+              "bottom": 2,
+              "display": "none",
+              "height": 6,
+              "left": 2,
+              "position": "absolute",
+              "right": 2,
+            }
+          }
+        >
+          <div
+            style={
+              Object {
+                "backgroundColor": "rgba(0,0,0,.2)",
+                "borderRadius": "inherit",
+                "cursor": "pointer",
+                "display": "block",
+                "height": "100%",
+                "position": "relative",
+              }
+            }
+          />
+        </div>
+        <div
+          style={
+            Object {
+              "borderRadius": 3,
+              "bottom": 2,
+              "display": "none",
+              "position": "absolute",
+              "right": 2,
+              "top": 2,
+              "width": 6,
+            }
+          }
+        >
+          <div
+            style={
+              Object {
+                "backgroundColor": "rgba(0,0,0,.2)",
+                "borderRadius": "inherit",
+                "cursor": "pointer",
+                "display": "block",
+                "position": "relative",
+                "width": "100%",
+              }
+            }
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

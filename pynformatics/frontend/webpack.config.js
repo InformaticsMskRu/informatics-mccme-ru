@@ -5,7 +5,7 @@ const path = require('path');
 
 module.exports = {
   context: path.join(__dirname, 'src'),
-  devtool: debug ? 'inline-sourcemap' : null,
+  devtool: debug ? 'inline-sourcemap' : false,
   entry: './js/index.jsx',
   module: {
     loaders: [
@@ -25,6 +25,38 @@ module.exports = {
             'transform-decorators-legacy',
           ],
         }
+      },
+      {
+        test: /\.css$/,
+        use: ['style-loader', 'css-loader'],
+      },
+      {
+        test: /\.(jpe?g|png|gif)$/,
+        loaders: [
+          'file-loader?hash=sha512&digest=hex&name=[hash].[ext]',
+          {
+            loader: 'image-webpack-loader?bypassOnDebug&optimizationLevel=7&interlaced=false',
+            query: {
+              mozjpeg: {
+                progressive: true,
+              },
+              gifsicle: {
+                interlaced: false,
+              },
+              optipng: {
+                optimizationLevel: 4,
+              },
+              pngquant: {
+                quality: '75-90',
+                speed: 3,
+              },
+            },
+          }
+        ],
+      },
+      {
+        test: /\.svg$/,
+        loader: 'svg-inline-loader'
       }
     ]
   },
@@ -32,10 +64,31 @@ module.exports = {
     path: path.join(__dirname, 'dist'),
     filename: 'app.min.js',
   },
-  plugins: debug ? [] : [
-    new webpack.optimize.DedupePlugin(),
+  plugins: debug ? [
     new webpack.optimize.OccurrenceOrderPlugin(),
-    new webpack.optimize.UglifyJsPlugin({ mangle: false, sourcemap: false }),
+  ] : [
+    new webpack.DefinePlugin({
+      'process.env.NODE_ENV': JSON.stringify('production')
+    }),
+    new webpack.optimize.OccurrenceOrderPlugin(),
+    new webpack.optimize.UglifyJsPlugin({
+      compress: {
+        warnings: false,
+        screw_ie8: true,
+        conditionals: true,
+        unused: true,
+        comparisons: true,
+        sequences: true,
+        dead_code: true,
+        evaluate: true,
+        if_return: true,
+        join_vars: true
+      },
+      output: {
+        comments: false
+      },
+      mangle: true,
+    }),
   ],
   resolve: {
     extensions: ['.js', '.jsx'],

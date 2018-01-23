@@ -2,6 +2,7 @@
   "name": "frontend",
   "version": "0.0.1",
   "dependencies": {
+    "antd": "^3.1.0",
     "axios": "^0.16.2",
     "axios-mock-adapter": "^1.9.0",
     "babel-core": "^6.26.0",
@@ -12,23 +13,35 @@
     "babel-preset-es2015": "^6.24.1",
     "babel-preset-react": "^6.24.1",
     "babel-preset-stage-0": "^6.24.1",
+    "clone": "^2.1.1",
     "copy-webpack-plugin": "^4.3.1",
+    "css-loader": "^0.28.7",
+    "file-loader": "^1.1.6",
+    "image-webpack-loader": "^3.4.2",
     "lodash": "^4.17.4",
     "prop-types": "^15.6.0",
     "react": "^16.0.0",
+    "react-custom-scrollbars": "^4.2.1",
     "react-dom": "^16.0.0",
+    "react-intl": "^2.4.0",
     "react-redux": "^5.0.6",
     "react-router-dom": "^4.2.2",
+    "react-test-renderer": "^16.2.0",
+    "react-throttle": "^0.3.0",
+    "react-window-size-listener": "^1.0.10",
     "redux": "^3.7.2",
     "redux-devtools-extension": "^2.13.2",
     "redux-form": "^7.0.4",
     "redux-logger": "^3.0.6",
     "redux-promise-middleware": "^4.4.1",
     "redux-thunk": "^2.2.0",
+    "style-loader": "^0.19.1",
+    "styled-components": "^2.4.0",
+    "styled-theme": "^0.3.3",
     "webpack": "^3.6.0"
   },
   "scripts": {
-    "dev": "rm -r dist/* && cp src/index.html dist/index.html && cp -r src/css dist/css && ./node_modules/.bin/webpack-dev-server --hot --inline",
+    "dev": "rm -r dist/* && cp src/index.html dist/index.html && cp -r src/css dist/css && cp -r src/fonts dist/fonts && ./node_modules/.bin/webpack-dev-server --hot --inline",
     "test": "jest",
     "test:watch": "npm test -- --watch"
   },
@@ -36,14 +49,22 @@
     "axios-mock-adapter": "^1.10.0",
     "babel-jest": "^22.0.4",
     "jest": "^22.0.4",
+    "jest-styled-components": "^4.9.0",
     "moxios": "^0.4.0",
     "redux-mock-store": "^1.3.0",
+    "svg-inline-loader": "^0.8.0",
     "uglifyjs-webpack-plugin": "^1.1.4",
     "webpack-dev-server": "^2.9.7"
   },
   "jest": {
     "setupFiles": [
       "./src/js/setupTests.jsx"
-    ]
+    ],
+    "modulePathIgnorePatterns": [
+      "<rootDir>/src/js/isomorphic/"
+    ],
+    "moduleNameMapper": {
+      "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/src/js/utils/fileMock.jsx"
+    }
   }
 }
