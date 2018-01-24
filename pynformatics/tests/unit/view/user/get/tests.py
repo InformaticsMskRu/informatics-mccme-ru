@@ -25,9 +25,7 @@ class TestView__user_get(TestCase):
         self.session.flush()
 
     def test_simple(self):
-        self.request.json_body = {
-            'id': self.user.id,
-        }
+        self.request.matchdict['user_id'] = self.user.id
 
         response = user_get(self.request, None)
 
@@ -41,9 +39,7 @@ class TestView__user_get(TestCase):
         )
 
     def test_no_user(self):
-        self.request.json_body = {
-            'id': self.user.id + 1,
-        }
+        self.request.matchdict['user_id'] = self.user.id + 1
 
         assert_that(
             calling(user_get).with_args(self.request),
