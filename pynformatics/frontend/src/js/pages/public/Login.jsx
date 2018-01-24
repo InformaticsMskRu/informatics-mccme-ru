@@ -16,10 +16,12 @@ import {NavLink, Route} from "react-router-dom";
 
 const FormWrapper = ({title, subtitle, errorMessage, children}) => (
   <div className={style.form}>
-    <div className={style.formTitle}>{ title }</div>
-    <div className={style.formSubtitle}>{ subtitle }</div>
-    <div className={style.errorMessage}><span><Icon type="exclamation-circle-o"/></span>{ errorMessage }</div>
-    { children }
+    <div className={style.formTitle}>{title}</div>
+    <div className={style.formSubtitle}>{subtitle}</div>
+    {errorMessage
+      ? <div className={style.errorMessage}><span><Icon type="exclamation-circle-o"/></span>{errorMessage}</div>
+      : null}
+    {children}
   </div>
 );
 
@@ -75,7 +77,7 @@ const RegisterAsStudent = () => (
     </InputGroup>
     <Input size="large" placeholder="E-mail"/>
     <Input size="large" placeholder="Учебное заведение"/>
-    <Button type="primary">Зарегестрироваться</Button>
+    <Button type="primary">Зарегистрироваться</Button>
   </FormWrapper>
 );
 
@@ -83,7 +85,6 @@ const RegisterAsTeacher = () => (
   <FormWrapper
     title="Привет, учитель!"
     subtitle="Учитель может создавать сборы, олимпиады, курсы, группы и решать задачи. Чтобы получить доступ к ответам и скачиваниям задач, нужно подтверидть, что Вы действительно учитель."
-    errorMessage="Сообщение об ошибке если есть"
   >
     <Input size="large" placeholder="Логин"/>
     <InputGroup className={style.inputGroup}>
@@ -107,7 +108,7 @@ const RegisterAsTeacher = () => (
     </InputGroup>
     <Input size="large" placeholder="E-mail"/>
     <Input size="large" placeholder="Учебное заведение"/>
-    <Button type="primary">Зарегестрироваться</Button>
+    <Button type="primary">Зарегистрироваться</Button>
   </FormWrapper>
 );
 
@@ -130,12 +131,17 @@ const RegisterAsTeam = ({usersArrays}) => {
     />
     <div>Состав команды</div>
     {autoCompletes}
-    <Button type="primary">Зарегестрировать команду</Button>
+    <Button type="primary">Зарегистрировать команду</Button>
   </FormWrapper>);
 };
 
 const ResetPassword = () => (
-  <FormWrapper title="Восстановление пароля" errorMessage="Сообщение об ошибке если есть">
+  <FormWrapper title="Восстановление пароля" subtitle="Введите логин, под которым Вы регистрировались в системе. На Вашу почту будет отправлено письмо с дальнейшими инструкциями." >
+    <Input
+      size="large"
+      placeholder="Логин"
+    />
+    <Button type="primary">Отправить письмо</Button>
   </FormWrapper>
 );
 
