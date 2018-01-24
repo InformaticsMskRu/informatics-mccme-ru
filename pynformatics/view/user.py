@@ -98,7 +98,8 @@ def user_reset_password(request, context):
 @view_config(route_name='user_data.get', renderer='json')
 @with_context
 def user_get(request, context):
-    user_id = request.matchdict.get('user_id')
+    #user_id = request.matchdict.get('user_id')
+    user_id = request.json_body.get('id')
     user = DBSession.query(User).filter(User.id == user_id).first()
 
     if not user:
