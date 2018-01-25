@@ -6,8 +6,6 @@ import FormWrapper from "./FormWrapper";
 import Button from '../../components/utility/Button';
 import Input from "../../components/utility/Input";
 
-import style from './style.css';
-
 
 const RegisterAsTeam = ({usersArrays}) => {
   console.log(usersArrays);
@@ -17,7 +15,7 @@ const RegisterAsTeam = ({usersArrays}) => {
       key={i + 1}
       dataSource={users.map(user => user.username + ' ' + user.firstname + ' ' + user.lastname)}
       placeholder={"Участник " + (i + 1)}
-      className={style.autoComplete}
+      className="autoComplete"
     >
     </AutoComplete>
   ));

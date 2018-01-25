@@ -6,7 +6,6 @@ import Button from '../../components/utility/Button';
 import Input, {InputGroup} from "../../components/utility/Input";
 import {Col} from '../../components/utility/Grid';
 
-import style from './style.css';
 
 const RegisterAsStudent = () => (
   <FormWrapper
@@ -16,7 +15,7 @@ const RegisterAsStudent = () => (
     errorMessage="Сообщение об ошибке если есть"
   >
     <Input size="large" placeholder="Логин"/>
-    <InputGroup className={style.inputGroup}>
+    <InputGroup className="inputGroup">
       <Col xs={14} md={16}>
         <Input
           size="large"
@@ -25,7 +24,7 @@ const RegisterAsStudent = () => (
         />
       </Col>
       <Col xs={10} md={8}>
-        <Button className={style.generateButton}>Сгенерировать</Button>
+        <Button className="generateButton">Сгенерировать</Button>
       </Col>
     </InputGroup>
     <br/>

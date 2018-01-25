@@ -13,7 +13,7 @@ import MainContentWrapper from '../../components/utility/MainContentWrapper';
 import {Col, Row} from '../../components/utility/Grid';
 import Telegram from "../../components/Sidebar/Telegram";
 
-import style from './style.css';
+import StyleWrapper from './style';
 
 export default class LoginPage extends React.Component {
   render() {
@@ -58,8 +58,8 @@ export default class LoginPage extends React.Component {
       <Menu.Item key={option.url}>
         <NavLink
           exact to={option.url}
-          className={style.link}
-          activeClassName={style.linkActive}
+          className="link"
+          activeClassName="linkActive"
         >
           {option.linkText}
         </NavLink>
@@ -74,19 +74,21 @@ export default class LoginPage extends React.Component {
       <MainContentWrapper>
         <Row type="flex" justify="center">
           <Col xs={22} md={20} style={{marginBottom: "16px"}}>
-            <Row type="flex" className={style.wrapper}>
-              <Col xs={{span: 22, offset: 1, order: 2}} md={{span: 8, offset: 1, order: 1}}>
-                <div className={style.leftColumn}>
-                  <Menu className={style.menu}>
-                    {menuItems}
-                  </Menu>
-                  <Telegram/>
-                </div>
-              </Col>
-              <Col xs={{span: 22, offset: 1, order: 1}} md={{span: 13, offset: 1, order: 2}}>
-                {routes}
-              </Col>
-            </Row>
+            <StyleWrapper>
+              <Row type="flex" className="wrapper">
+                <Col xs={{span: 22, offset: 1, order: 2}} md={{span: 8, offset: 1, order: 1}}>
+                  <div className="leftColumn">
+                    <Menu className="menu">
+                      {menuItems}
+                    </Menu>
+                    <Telegram/>
+                  </div>
+                </Col>
+                <Col xs={{span: 22, offset: 1, order: 1}} md={{span: 13, offset: 1, order: 2}}>
+                  {routes}
+                </Col>
+              </Row>
+            </StyleWrapper>
           </Col>
         </Row>
       </MainContentWrapper>

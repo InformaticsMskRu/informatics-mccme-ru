@@ -3,6 +3,7 @@ import {connect} from "react-redux";
 import {Link, Redirect} from "react-router-dom";
 
 import {Form} from "antd";
+import * as _ from "lodash";
 
 import FormWrapper from "./FormWrapper";
 
@@ -11,10 +12,7 @@ import Input, {InputGroup} from "../../components/utility/Input";
 import Checkbox from "../../components/utility/Checkbox";
 import {Col, Row} from '../../components/utility/Grid';
 
-import style from './style.css';
-
 import * as userActions from "../../actions/userActions";
-import * as _ from "lodash";
 
 
 @connect(state => ({user: state.user}))
@@ -116,12 +114,12 @@ class Login extends React.Component {
             type="password"
             onChange={this.handlePasswordChange}
           />)}
-          <InputGroup className={style.inputGroup}>
+          <InputGroup className="inputGroup">
             <Button
               type="primary"
               htmlType="submit"
               onClick={this.handleSubmit}
-              className={style.mainButton}
+              className="mainButton"
             >Войти</Button>
             {getFieldDecorator('remember', {
               valuePropName: 'checked',
@@ -129,9 +127,9 @@ class Login extends React.Component {
             })(<Checkbox>Запомнить меня</Checkbox>)}
           </InputGroup>
           <Row>
-            <Col span={"24"} className={style.socialButtonGroup}>
-              <Button className={style.VKButton}>Войти через ВКонтакте</Button>
-              <Button className={style.GmailButton}>Войти через Gmail</Button>
+            <Col span={"24"} className="inputGroup socialButtonGroup">
+              <Button className="smallButton VKButton">Войти через ВКонтакте</Button>
+              <Button className="smallButton GmailButton">Войти через Gmail</Button>
             </Col>
           </Row>
         </FormWrapper>);
