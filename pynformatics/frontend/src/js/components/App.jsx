@@ -13,7 +13,7 @@ import Topbar from './Topbar/Topbar';
 import Sidebar from './Sidebar/Sidebar';
 
 import MainPage from '../pages/Main/Main';
-import LoginPage from '../pages/public/Login';
+import Auth from '../pages/Auth/Auth';
 
 import StatementAdmin from '../pages/StatementAdmin';
 import StatementSettingsForm from './StatementSettingsForm';
@@ -67,7 +67,7 @@ export default class App extends React.Component {
             >
               <Switch>
                 <Route exact path="/" component={MainPage} />
-                <Route path="/login" component={LoginPage} />
+                <Route path="/auth" component={Auth} />
               </Switch>
             </Content>
           </Layout>

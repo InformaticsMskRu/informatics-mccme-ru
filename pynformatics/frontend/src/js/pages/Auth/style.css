@@ -95,9 +95,8 @@
 }
 
 :local .socialButtonGroup {
-  display: inline-flex;
-  justify-content: flex-start;
-  flex-wrap: wrap;
+  composes: inputGroup;
+  margin-top: 16px;
 }
 
 :local .mainButton {
@@ -115,16 +114,19 @@
   composes: smallButton;
   margin-right: 8px !important;
   background-color: #527daf !important;
+  border-color: #527daf !important;
 }
 
 :local .GmailButton {
   composes: smallButton;
   background-color: #4890f8 !important;
+  border-color: #4890f8 !important;
 }
 
 :local .generateButton {
   padding: 0 !important;
   background-color: #90b7ff !important;
+  border-color: #90b7ff !important;
   width: 100% !important;
   height: 42px !important;
   color: #ffffff !important;
