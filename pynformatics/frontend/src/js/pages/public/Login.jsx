@@ -1,6 +1,9 @@
 import React from "react";
+import {connect} from "react-redux";
 
-import {AutoComplete, Icon, Menu} from "antd";
+import * as userActions from "../../actions/userActions";
+
+import {AutoComplete, Icon, Menu, Form} from "antd";
 
 import style from '../../../css/pages/public/login.css';
 
@@ -12,47 +15,143 @@ import Telegram from "../../components/Sidebar/Telegram";
 import MainContentWrapper from '../../components/utility/MainContentWrapper';
 
 import {Col, Row} from '../../components/utility/Grid';
-import {NavLink, Route} from "react-router-dom";
+import {NavLink, Route, Redirect} from "react-router-dom";
+
 
 const FormWrapper = ({title, subtitle, errorMessage, children}) => (
   <div className={style.form}>
     <div className={style.formTitle}>{title}</div>
-    <div className={style.formSubtitle}>{subtitle}</div>
+    {subtitle
+      ? <div className={style.formSubtitle}>{subtitle}</div>
+      : null}
     {errorMessage
-      ? <div className={style.errorMessage}><span><Icon type="exclamation-circle-o"/></span>{errorMessage}</div>
+      ? <div className={style.errorMessage}>
+          <span><Icon type="exclamation-circle-o"/></span>{errorMessage}
+        </div>
       : null}
     {children}
   </div>
 );
 
-const Login = () => (
-  <FormWrapper title="Вход" errorMessage="Сообщение об ошибке если есть">
-    <Input
-        size="large"
-        placeholder="Логин"
-      />
-      <Input
-        size="large"
-        placeholder="Пароль"
-        type="password"
-      />
-      <InputGroup className={style.inputGroup}>
-        <Button type="primary" className={style.mainButton}>Войти</Button>
-        <Checkbox>Запомнить меня</Checkbox>
-      </InputGroup>
-      <Row>
-        <Col span={"24"} className={style.inputGroup}>
-          <Button className={style.VKButton}>Войти через ВКонтакте</Button>
-          <Button className={style.GmailButton}>Войти через Gmail</Button>
-        </Col>
-      </Row>
-  </FormWrapper>
-);
+@connect(state => ({}))
+class Login extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      errorMessage: '',
+      usernameTouched: false,
+      passwordTouched: false,
+      successfulLogin: false,
+    }
+  }
+
+  login(username, password) {
+    this.props.dispatch(userActions.login(username, password)).then(() => {
+      this.setState({
+        successfulLogin: true,
+        errorMessage: ''
+      });
+    }).catch((error) => {
+      if (error.response && error.response.status == 403 && error.response.data) {
+        if (error.response.data.message === "Wrong username or password") { // TODO убрать костыль
+          this.setState({errorMessage: "Неправильное имя пользователя или пароль"});
+        } else {
+          this.setState({errorMessage: error.response.data.message});
+        }
+      } else {
+        this.setState({errorMessage: "Похоже что-то пошло не так"});
+      }
+    });
+  }
+
+  validate = () => {
+    this.props.form.validateFields((errors, value) => {
+      if (!errors) {
+        this.setState({errorMessage: ''});
+        return;
+      }
+      if (this.state.usernameTouched && errors.username) {
+        this.setState({errorMessage: this.props.form.getFieldError("username")})
+        return;
+      }
+      if (this.state.passwordTouched && errors.password && errors.password.errors.length > 0) {
+        this.setState({errorMessage: errors.password.errors[0].message})
+      }
+    })
+  };
+
+  handleUsernameChange = (e) => {
+    this.props.form.setFieldsValue({username: e.target.value});
+    this.setState({usernameTouched: true});
+    this.validate();
+  };
+
+  handlePasswordChange = (e) => {
+    this.props.form.setFieldsValue({password: e.target.value});
+    this.setState({passwordTouched: true});
+    this.validate();
+  };
+
+  handleSubmit = (e) => {
+    this.props.form.validateFields((err, values) => {
+      if (!err) {
+        this.login(values.username, values.password);
+      } else {
+        this.setState({errorMessage: 'Не все обязательные поля заполнены'});
+      }
+    });
+  };
+
+  render() {
+    const { getFieldDecorator } = this.props.form;
+    return (
+      <FormWrapper title="Вход" errorMessage={this.state.errorMessage}> 
+        {this.state.successfulLogin ? <Redirect to="/"/> : null}
+        {getFieldDecorator('username', {
+          rules: [{ required: true, message: 'Введите логин' }],
+        })(<Input
+          size="large"
+          placeholder="Логин"
+          onChange={this.handleUsernameChange}
+        />)}
+        {getFieldDecorator('password', {
+          rules: [{ required: true, message: 'Введите пароль' }],
+        })(<Input
+          size="large"
+          placeholder="Пароль"
+          type="password"
+          onChange={this.handlePasswordChange}
+        />)}
+        <InputGroup className={style.inputGroup}>
+          <Button 
+            type="primary" 
+            htmlType="submit" 
+            onClick={this.handleSubmit} 
+            className={style.mainButton}
+          >Войти</Button>
+          {getFieldDecorator('remember', {
+            valuePropName: 'checked',
+            initialValue: true,
+          })(<Checkbox>Запомнить меня</Checkbox>)}
+        </InputGroup>
+        <Row>
+          <Col span={"24"} className={style.inputGroup}>
+            <Button className={style.VKButton}>Войти через ВКонтакте</Button>
+            <Button className={style.GmailButton}>Войти через Gmail</Button>
+          </Col>
+        </Row>
+      </FormWrapper>
+    );
+  }
+}
+
+Login = Form.create()(Login);
 
 const RegisterAsStudent = () => (
   <FormWrapper
     title="Привет, ученик!"
-    subtitle="Ученик может решать задачи, принимать участие в курсах, олимпиадах и сборах, видеть задачи недоступные для гостей"
+    subtitle={"Ученик может решать задачи, принимать участие в курсах," 
+              + " олимпиадах и сборах, видеть задачи недоступные для гостей"}
     errorMessage="Сообщение об ошибке если есть"
   >
     <Input size="large" placeholder="Логин"/>
@@ -84,7 +183,9 @@ const RegisterAsStudent = () => (
 const RegisterAsTeacher = () => (
   <FormWrapper
     title="Привет, учитель!"
-    subtitle="Учитель может создавать сборы, олимпиады, курсы, группы и решать задачи. Чтобы получить доступ к ответам и скачиваниям задач, нужно подтверидть, что Вы действительно учитель."
+    subtitle={"Учитель может создавать сборы, олимпиады, курсы, группы и решать задачи."
+              + " Чтобы получить доступ к ответам и скачиваниям задач, нужно подтверидть,"
+              + " что Вы действительно учитель."}
   >
     <Input size="large" placeholder="Логин"/>
     <InputGroup className={style.inputGroup}>
@@ -136,7 +237,11 @@ const RegisterAsTeam = ({usersArrays}) => {
 };
 
 const ResetPassword = () => (
-  <FormWrapper title="Восстановление пароля" subtitle="Введите логин, под которым Вы регистрировались в системе. На Вашу почту будет отправлено письмо с дальнейшими инструкциями." >
+  <FormWrapper 
+    title="Восстановление пароля" 
+    subtitle={"Введите логин, под которым Вы регистрировались в системе."
+              + " На Вашу почту будет отправлено письмо с дальнейшими инструкциями."} 
+  >
     <Input
       size="large"
       placeholder="Логин"
@@ -158,11 +263,31 @@ export default class LoginPage extends React.Component {
     ];
 
     const options = [
-      {url: `${match.url}`, linkText: "Вход", component: Login},
-      {url: `${match.url}/register_as_student`, linkText: "Регистрация как ученик", component: RegisterAsStudent},
-      {url: `${match.url}/register_as_teacher`, linkText: "Регистрация как учитель", component: RegisterAsTeacher},
-      {url: `${match.url}/register_as_team`, linkText: "Регистрация команды", component: () => <RegisterAsTeam usersArrays={usersArrays}/>},
-      {url: `${match.url}/reset_password`, linkText: "Восстановление пароля", component: ResetPassword},
+      {
+        url: `${match.url}`,
+        linkText: "Вход",
+        component: Login
+      },
+      {
+        url: `${match.url}/register_as_student`, 
+        linkText: "Регистрация как ученик", 
+        component: RegisterAsStudent
+      },
+      {
+        url: `${match.url}/register_as_teacher`, 
+        linkText: "Регистрация как учитель", 
+        component: RegisterAsTeacher
+      },
+      {
+        url: `${match.url}/register_as_team`, 
+        linkText: "Регистрация команды", 
+        component: () => <RegisterAsTeam usersArrays={usersArrays}/>
+      },
+      {
+        url: `${match.url}/reset_password`, 
+        linkText: "Восстановление пароля", 
+        component: ResetPassword
+      },
     ];
 
     const menuItems = options.map(option => (
