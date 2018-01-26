@@ -265,22 +265,7 @@ def problem_get_corr(request):
 @view_config(route_name='problem.get', renderer='json')
 @with_context
 def problem_get(request, context):
-    attrs = [
-        'id',
-        'name',
-        'content',
-        'timelimit',
-        'memorylimit',
-        'show_limits',
-        'sample_tests_html',
-        'output_only',
-    ]
-    problem_dict = {
-        attr: getattr(context.problem, attr, 'undefined')
-        for attr in attrs
-    }
-    problem_dict['languages'] = context.get_allowed_languages()
-    return problem_dict
+    return context.problem.serialize(context)
 
 
 @view_config(route_name='problem.runs', renderer='json')
@@ -303,6 +288,5 @@ def problem_runs(request, context):
             for attr in attrs
         }
         run_dict['create_time'] = str(run_dict['create_time'])
-        run_dict['status'] = get_status_by_id(run_dict['status'])
         runs_dict[str(run.run_id)] = run_dict
     return runs_dict

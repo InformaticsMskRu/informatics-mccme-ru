@@ -9,13 +9,14 @@ import { withRouter } from 'react-router-dom';
 
 
 import Box from '../../components/utility/Box';
+import Header from '../../components/utility/Header';
 import Menu from './Menu';
+import Runs from './Runs';
+import Sample from './Sample';
+import SubmitForm from './SubmitForm';
 import Tabs, { TabPane } from '../../components/utility/Tabs';
 import { ToggleDrawerIcon } from '../../components/Icon';
-import SubmitForm from './SubmitForm';
-import Runs from './Runs';
 import * as problemActions from '../../actions/problemActions';
-
 
 const { Sider } = Layout;
 
@@ -103,7 +104,7 @@ const ProblemPageWrapper = styled.div`
     }
     
     .problemSamples {
-      text-align: left;
+      > *:not(:last-child) { margin-bottom: 34px; }
     }
   }
   
@@ -173,7 +174,7 @@ export class ProblemPage extends React.Component {
     const {
       name: problemTitle,
       content: problemStatement,
-      sample_tests_html: problemSamples,
+      sample_tests_json: problemSamples,
     } = problemData;
     const problemRuns = _.get(this.props.problems[problemId], 'runs', {});
 
@@ -210,7 +211,10 @@ export class ProblemPage extends React.Component {
             <Tabs defaultActiveKey="statement" style={{ textAlign: 'center' }}>
               <TabPane className="tabStatement" tab="Условие" key="statement">
                 <div className="problemStatement" dangerouslySetInnerHTML={{ __html: problemStatement }} />
-                {/*<div className="problemSamples" dangerouslySetInnerHTML={{ __html: problemSamples }} />*/}
+                <Header style={{ marginBottom: 30 }}>Примеры</Header>
+                <div className="problemSamples">
+                  { _.map(problemSamples, ({input, correct}, id) => <Sample key={id} input={input} correct={correct}/>) }
+                </div>
                 <SubmitForm problemId={parseInt(problemId)}/>
                 <Runs problemId={parseInt(problemId)} runs={problemRuns} />
               </TabPane>

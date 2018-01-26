@@ -1,16 +1,16 @@
-"""Problem model"""
 import os
 import codecs
 import glob
 from zipfile import ZipFile
 
 from sqlalchemy import ForeignKey, Column
-from sqlalchemy.types import Integer, String, Text, Float, Unicode, Boolean
-from sqlalchemy.orm import relationship, backref, relation
+from sqlalchemy.types import Integer, String, Float, Unicode, Boolean
+from sqlalchemy.orm import reconstructor
 from pynformatics.contest.ejudge.serve_internal import EjudgeContestCfg
 
 from pynformatics.model.meta import Base
 from pynformatics.utils.run import read_file_unknown_encoding
+from pynformatics.utils.json_type import JsonType
 
 
 class Problem(Base):
@@ -27,6 +27,7 @@ class Problem(Base):
     analysis = Column(Unicode)
     sample_tests = Column(Unicode)
     sample_tests_html = Column(Unicode)
+    sample_tests_json = Column(JsonType)
     show_limits = Column(Boolean)
     output_only = Column(Boolean)
     pr_id = Column(Integer, ForeignKey('moodle.mdl_ejudge_problem.id'))
@@ -76,7 +77,7 @@ class EjudgeProblem(Problem):
     __mapper_args__ = {'polymorphic_identity': 'ejudgeproblem'}
 
 #    id = Column(Integer, ForeignKey('moodle.mdl_problems.pr_id'), primary_key=True)
-    ejudge_prid = Column('id', Integer, primary_key=True) #global id in ejudge
+    ejudge_prid = Column('id', Integer, primary_key=True, autoincrement=True) #global id in ejudge
     contest_id = Column(Integer, primary_key=True, nullable=False, autoincrement=False)
     ejudge_contest_id = Column(Integer, primary_key=True, nullable=False, autoincrement=False)
     secondary_ejudge_contest_id = Column(Integer, nullable=True)
@@ -100,6 +101,27 @@ class EjudgeProblem(Problem):
         self.short_id = short_id
         self.ejudgeName = name
         Problem.__init__(self, name, timelimit, memorylimit, output_only, content, review, description, analysis, sample_tests, sample_tests_html)
+
+    def serialize(self, context):
+        if self.sample_tests:
+            self.generateSamplesJson(force_update=True)
+
+        attrs = [
+            'id',
+            'name',
+            'content',
+            'timelimit',
+            'memorylimit',
+            'show_limits',
+            'sample_tests_json',
+            'output_only',
+        ]
+        problem_dict = {
+            attr: getattr(self, attr, 'undefined')
+            for attr in attrs
+        }
+        problem_dict['languages'] = context.get_allowed_languages()
+        return problem_dict
 
     def get_test(self, test_num, size=255):
         conf = EjudgeContestCfg(number=self.ejudge_contest_id)
@@ -227,3 +249,19 @@ class EjudgeProblem(Problem):
 
         self.sample_tests_html = res    
         return self.sample_tests
+
+    def generateSamplesJson(self, force_update=False):
+        if self.sample_tests != '':
+            if not self.sample_tests_json:
+                self.sample_tests_json = {}
+            for test in self.sample_tests.split(','):
+                if not force_update and test in self.sample_tests_json:
+                    continue
+
+                test_input = self.get_test(test, 4096)
+                test_correct = self.get_corr(test, 4096)
+
+                self.sample_tests_json[test] = {
+                    'input': test_input,
+                    'correct': test_correct,
+                }
