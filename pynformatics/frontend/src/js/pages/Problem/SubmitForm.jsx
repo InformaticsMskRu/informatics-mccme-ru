@@ -106,7 +106,7 @@ export class SubmitForm extends React.Component {
     }
 
     this.state = {
-      languageId: _.maxBy(_.keys(this.languageInfo), id => this.languageInfo[id]),
+      languageId: _.maxBy(_.keys(this.languageInfo), id => this.languageInfo[id]) || 1,
       showCodeMirror: false,
       submitProcessed: true,
     };
@@ -165,7 +165,7 @@ export class SubmitForm extends React.Component {
   }
 
   render() {
-    const loggedIn = true;
+    const loggedIn = !_.isEmpty(this.props.user);
 
     if (!loggedIn) {
       return (
@@ -294,5 +294,6 @@ export class SubmitForm extends React.Component {
 }
 
 export default connect(state => ({
+  user: state.user,
   windowWidth: state.ui.width,
 }))(SubmitForm);
