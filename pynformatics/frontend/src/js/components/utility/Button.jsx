@@ -1,14 +1,16 @@
 import styled from 'styled-components';
+import { palette } from 'styled-theme';
 
 import IsoButton from '../../isomorphic/components/uielements/button';
 
 
 const Button = styled(IsoButton)`
   &.ant-btn {
-    border-radius: 4px;
-    
-    &.ant-btn-primary {
-      background-color: rgb(64, 126, 255);
+
+    &.ant-btn-secondary {
+      color: #ffffff;
+      background: ${palette('other', 2)};
+      border-color:  ${palette('other', 2)};
     }
   }
 `;

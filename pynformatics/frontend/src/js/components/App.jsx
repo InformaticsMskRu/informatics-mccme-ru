@@ -14,6 +14,7 @@ import Sidebar from './Sidebar/Sidebar';
 
 import MainPage from '../pages/Main/Main';
 import Auth from '../pages/Auth/Auth';
+import ProblemPage from '../pages/Problem/Problem';
 
 import StatementAdmin from '../pages/StatementAdmin';
 import StatementSettingsForm from './StatementSettingsForm';
@@ -23,8 +24,8 @@ import * as userActions from '../actions/userActions';
 import * as uiActions from '../actions/uiActions';
 
 import { ThemeProvider } from 'styled-components';
-import themes from '../isomorphic/config/themes';
 import { Layout } from 'antd';
+import theme from '../theme';
 
 import 'antd/dist/antd.css';
 import '../isomorphic/containers/App/global.css';
@@ -48,7 +49,7 @@ export default class App extends React.Component {
     const { Content } = Layout;
 
     return (
-      <ThemeProvider theme={themes.themedefault}>
+      <ThemeProvider theme={theme}>
         <Layout style={{ height: '100vh', background: '#f3f5f7' }}>
           <Debounce time="1000" handler="onResize">
             <WindowResizeListener
@@ -68,6 +69,7 @@ export default class App extends React.Component {
               <Switch>
                 <Route exact path="/" component={MainPage} />
                 <Route path="/auth" component={Auth} />
+                <Route exact path="/problem/:problemId" component={ProblemPage} />
               </Switch>
             </Content>
           </Layout>

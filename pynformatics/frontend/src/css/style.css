@@ -6,35 +6,6 @@ body {
     margin: 0;
 }
 
-.main-content {
-    margin: auto;
-    width: 1200px;
-}
-
-.problem .section-title {
-    font-weight: bold;
-    font-size: 18px;
-}
-
-.sample-tests .title {
-    font-weight: bold;
-}
-
-.problem-submit-form {
-    margin-top: 10px;
-}
-.problem-submit-form div {
-    margin-bottom: 5px;
-    font-family: monospace;
-}
-
-table, th, td {
-    border: 1px solid black;
-}
-td {
-    padding: 4px;
-}
-
 /* Rules for sizing the icon. */
 .material-icons.md-18 { font-size: 18px; }
 .material-icons.md-24 { font-size: 24px; }
