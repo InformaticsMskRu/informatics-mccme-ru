@@ -7,6 +7,7 @@ import * as _ from 'lodash';
 
 import { getRedirectUrl } from '../utils/oauth';
 import * as userActions from '../actions/userActions';
+import MainContentWrapper from '../components/utility/MainContentWrapper';
 
 
 const formName = 'loginForm';
@@ -44,8 +45,6 @@ export default class LoginForm extends React.Component {
       const { code, state } = params;
       const { provider, loggedIn } = JSON.parse(decodeURI(state));
 
-      console.log(loggedIn);
-
       if (!loggedIn) {
         props.dispatch(userActions.oauthLogin(provider, code));
       } else {
@@ -59,7 +58,8 @@ export default class LoginForm extends React.Component {
   login() {
     const { username, password } = this.props.formValues;
     this.props.dispatch(userActions.login(username, password)).then(() => {
-      alert('Successful login');
+      // alert('Successful login');
+      this.props.history.push('/goto');
     }).catch((error) => {
       const errorMessage = error.response.data.message;
       alert(errorMessage);
@@ -71,38 +71,38 @@ export default class LoginForm extends React.Component {
 
     if (!_.isEmpty(user)) {
       return (
-        <div>
-          Connect account
-          <ul>
-            <li><a href={getRedirectUrl('vk', { loggedIn: true })}>VK</a></li>
-            <li><a href={getRedirectUrl('google', { loggedIn: true })}>google</a></li>
-          </ul>
-        </div>
+        <MainContentWrapper>
+          {/*Connect account*/}
+          {/*<ul>*/}
+            {/*<li><a href={getRedirectUrl('vk', { loggedIn: true })}>VK</a></li>*/}
+            {/*<li><a href={getRedirectUrl('google', { loggedIn: true })}>google</a></li>*/}
+          {/*</ul>*/}
+        </MainContentWrapper>
       );
     }
 
     return (
-      <div>
+      <MainContentWrapper>
         <form onSubmit={handleSubmit(this.login)}>
           <div>
-            <Field component="input" type="text" name="username" placeholder="username" />
+            <Field component="input" type="text" name="username" placeholder="логин" />
           </div>
           <div>
-            <Field component="input" type="password" name="password" placeholder="password" />
+            <Field component="input" type="password" name="password" placeholder="пароль" />
           </div>
           <div>
-            <input type="submit" value="submit" />
+            <input type="submit" value="Войти" />
           </div>
         </form>
         <hr />
-        <div>
-          Login through
-          <ul>
-            <li><a href={getRedirectUrl('vk')}>VK</a></li>
-            <li><a href={getRedirectUrl('google')}>google</a></li>
-          </ul>
-        </div>
-      </div>
+        {/*<div>*/}
+          {/*Login through*/}
+          {/*<ul>*/}
+            {/*<li><a href={getRedirectUrl('vk')}>VK</a></li>*/}
+            {/*<li><a href={getRedirectUrl('google')}>google</a></li>*/}
+          {/*</ul>*/}
+        {/*</div>*/}
+      </MainContentWrapper>
     );
   }
 }

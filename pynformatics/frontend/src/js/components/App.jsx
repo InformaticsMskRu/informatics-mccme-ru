@@ -15,6 +15,7 @@ import Sidebar from './Sidebar/Sidebar';
 import MainPage from '../pages/Main/Main';
 import Auth from '../pages/Auth/Auth';
 import ProblemPage from '../pages/Problem/Problem';
+import TempGotoProblemPage from '../pages/TempGotoProblem';
 
 import StatementAdmin from '../pages/StatementAdmin';
 import StatementSettingsForm from './StatementSettingsForm';
@@ -70,6 +71,7 @@ export default class App extends React.Component {
                 <Route exact path="/" component={MainPage} />
                 <Route path="/auth" component={Auth} />
                 <Route exact path="/problem/:problemId" component={ProblemPage} />
+                <Route exact path="/goto" component={TempGotoProblemPage} />
               </Switch>
             </Content>
           </Layout>
