@@ -42,6 +42,17 @@ export default function reducer(state = initialState, action) {
     case 'POST_OAUTH_LOGIN_REJECTED':
       return state;
 
+    case 'GET_USER_FULFILLED':
+      const userId = action.meta ? action.meta.userId : undefined;
+      console.log("reducer", action.type, userId, action.payload)
+      return {
+        ...state,
+        [userId]: {
+          ...action.payload.data,
+          fetched: true,
+        },
+      };
+
     default:
       return state;
   }

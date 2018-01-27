@@ -46,7 +46,8 @@ def main(global_config, **settings):
     config.add_route('user_settings.get', '/user/settings/main/get/{user_id}')
     config.add_route('user.set_oauth_id', '/user/set_oauth_id')
     config.add_route('user.reset_password', '/user/reset_password')
-    
+    config.add_route('user_data.get', '/user/{user_id}')
+
     config.add_route('comment.add', '/comment/add')
     config.add_route('comment.get', '/comment/get/{contest_id}/{run_id}')
     config.add_route('comment.get_count', '/comment/count')
@@ -57,18 +58,18 @@ def main(global_config, **settings):
     config.add_route('comment.get_unread_limit', '/comment/unread/{start}/{stop}')
     config.add_route('comment.get_unread_limit_html', '/comment/unread/{start}/{stop}/html')
     config.add_route('comment.get_count_unread', '/comment/unread/count')
-    
+
     config.add_route('protocol.get', '/protocol/get/{contest_id}/{run_id}')
     config.add_route('protocol.get_full', '/protocol/get-full/{contest_id}/{run_id}')
     config.add_route('protocol.get_test', '/protocol/get_test/{contest_id}/{run_id}/{test_num}')
     config.add_route('protocol.get_corr', '/protocol/get_corr/{contest_id}/{run_id}/{test_num}')
     config.add_route('protocol.get_outp', '/protocol/get_output/{contest_id}/{run_id}/{test_num}')
     config.add_route('protocol.get_submit_archive', '/protocol/get_submit_archive/{contest_id}/{run_id}')
-    
+
     config.add_route('run.rejudge', '/run/rejudge/{contest_id}/{run_id}/{status_id}')
-    
+
     config.add_route('team_monitor.get', '/team_monitor/get/{statement_id}')
-    
+
     config.add_route('contest.ejudge.reload.problem', '/contest/ejudge/reload/{contest_id}/{problem_id}')
 
     config.add_route('problem.generate_samples', '/problem/{problem_id}/generate_samples')
@@ -84,23 +85,23 @@ def main(global_config, **settings):
     config.add_route('problem.tests.get_test', '/problem/{problem_id}/tests/test/{test_num}')
     config.add_route('problem.tests.set_preliminary', '/problem/{problem_id}/tests/set_preliminary')
     config.add_route('problem.ant.submit', '/problem-ant/{problem_id}/submit')
-    
+
     config.add_route('contest.ejudge.reload', '/contest/ejudge/reload/{contest_id}')
     config.add_route('contest.ejudge.get_table', '/contest/ejudge/get_table')
     config.add_route('contest.ejudge.statistic', '/contest/ejudge/statistic')
     config.add_route('contest.ejudge.clone', '/contest/ejudge/clone/{contest_id}')
-    
+
     config.add_route('region.submit', '/region/res')
     config.add_route('region.submit_test', '/region/res_test')
-    
+
     config.add_route('rating.get', '/rating/get')
-    
+
     config.add_route('user.query', '/myuser')
 
     config.add_route('search.user', '/search/user')
 
     config.add_route('home', '/')
-    
+
     config.add_route('hint.get', '/hint/get')
     config.add_route('hint.get_html', '/hint/get_html')
     config.add_route('hint.get_by_problem', '/hint/get_by_problem')

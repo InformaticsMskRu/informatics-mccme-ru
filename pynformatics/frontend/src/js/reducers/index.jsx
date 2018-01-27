@@ -7,7 +7,6 @@ import statements from './statementsReducer';
 import ui from './uiReducer';
 import user from './userReducer';
 
-
 export default combineReducers({
   context,
   form,
