@@ -6,7 +6,6 @@ import problems from './problemsReducer';
 import statements from './statementsReducer';
 import ui from './uiReducer';
 import user from './userReducer';
-import userdata from './userdataReducer';
 
 export default combineReducers({
   context,
@@ -15,5 +14,4 @@ export default combineReducers({
   statements,
   ui,
   user,
-  userdata,
 })

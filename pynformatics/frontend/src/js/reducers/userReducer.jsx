@@ -4,6 +4,8 @@ const initialState = {};
 
 
 export default function reducer(state = initialState, action) {
+  const userId = action.meta ? action.meta.userId : undefined;
+  console.log("reducer", action.type, userId, action.payload)
   switch (action.type) {
     case 'GET_BOOTSTRAP_PENDING':
       return state;
@@ -41,6 +43,16 @@ export default function reducer(state = initialState, action) {
       };
     case 'POST_OAUTH_LOGIN_REJECTED':
       return state;
+
+    case 'GET_USER_FULFILLED':
+      const userId = action.meta ? action.meta.userId : undefined;
+      return {
+        ...state,
+        [userId]: {
+          ...action.payload.data,
+          fetched: true,
+        },
+      };
 
     default:
       return state;

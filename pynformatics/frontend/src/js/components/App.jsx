@@ -13,8 +13,8 @@ import Topbar from './Topbar/Topbar';
 import Sidebar from './Sidebar/Sidebar';
 
 import MainPage from '../pages/Main/Main';
-import User from './User';
 
+import User from './User';
 import StatementAdmin from '../pages/StatementAdmin';
 import StatementSettingsForm from './StatementSettingsForm';
 

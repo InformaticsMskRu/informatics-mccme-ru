@@ -60,3 +60,25 @@ export function oauthConnect(provider, code) {
     });
   };
 }
+
+export function fetchUser(userId) {
+  const url = `/user/${userId}`;
+
+  console.log("action", url);
+
+  axios.get(url)
+    .then(function (response) {
+      console.log("axios", response);
+    })
+    .catch(function (error) {
+      console.log("axios", error);
+    });
+
+  return {
+    type: 'GET_USER',
+    payload: axios.get(url),
+    meta: {
+      userId,
+    },
+  };
+}
