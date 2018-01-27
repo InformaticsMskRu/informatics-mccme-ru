@@ -121,25 +121,12 @@ def user_get(request, context):
     groups = DBSession.query(UserGroup).filter(UserGroup.user_id == user_id).all()
 
     groups_dict = {
-        'group_id': [
-            getattr(groups[i], 'group_id', 'undefined')
-            for i in range(len(groups))
-        ],
-        'name': [
-            getattr(groups[i].group, 'name', 'undefined')
-            for i in range(len(groups))
-        ]
-    }
-    """
-    groups_dict = {[(
-        getattr(groups[i], 'group_id'),
-        getattr(groups[i], 'name', 'undefined'))
+        getattr(groups[i], 'group_id'):
+        getattr(groups[i].group, 'name', 'undefined')
         for i in range(len(groups))
-    ]}
-    """
+    }
 
     user_dict['groups'] = groups_dict
-
 
     return user_dict
 
