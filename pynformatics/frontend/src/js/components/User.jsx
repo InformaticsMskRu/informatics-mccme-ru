@@ -1,26 +1,26 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import * as userdataActions from '../actions/userdataActions';
+import * as userActions from '../actions/userActions';
 
 
 @connect(state => ({
-        userdata: state.userdata,
+        user: state.user,
 }))
-export default class Userdata extends React.Component {
+export default class User extends React.Component {
     constructor(props) {
         super(props);
         this.userId = parseInt(this.props.match.params.userId, 10);
         console.log("constr", this.userId);
-        this.fetchUserdata(this.userId);
+        this.fetchUser(this.userId);
     }
 
-    fetchUserdata(userId) {
-        this.props.dispatch(userdataActions.fetchUserdata(userId));
+    fetchUser(userId) {
+        this.props.dispatch(userActions.fetchUser(userId));
     }
 
     render() {
-        const data = this.props.userdata[this.userId];
+        const data = this.props.user[this.userId];
 
         console.log("!! componenta ", data);
 
@@ -29,6 +29,19 @@ export default class Userdata extends React.Component {
         }
 
         return (
+            <div>
+                <h1>Name: {data.firstname} {data.lastname}</h1>
+                <h3>Email:</h3> {data.email}
+                <h3>Groups:</h3>
+                <ul>
+                    {Object.keys(data.groups).map(id =>
+                    <li key={id}>
+                        id: {id}, name: {data.groups[id]}
+                    </li>
+                    )}
+                </ul>
+            </div>
+            /*
             <div>
                 <h1> Name: {data.firstname} {data.lastname} </h1>
                 <h3> Email: {data.email} </h3>
@@ -40,15 +53,7 @@ export default class Userdata extends React.Component {
                 </ul>
 
             </div>
-            /*<h1>Name: {data.firstname} {data.lastname}</h1>
-                <h3>Email:</h3> {data.email}
-                <h3>Groups:</h3>
-                /*<ul>
-                    {data.map((groups) =>
-                    <li key={groups}>
-                        id: {groups.group_id}, name: {groups.name}
-                    </li>)}
-                </ul>*/
+            */
         );
     }
 }
