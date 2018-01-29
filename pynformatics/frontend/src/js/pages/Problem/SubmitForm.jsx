@@ -68,6 +68,7 @@ const SubmitFormWrapper = styled.div`
     background: #f3f5f7;
     border: 1px solid #f3f5f7;
     ${borderRadius('4px')};
+    text-align: left;
     
     & > div { background: #ffffff; }
     
@@ -252,7 +253,7 @@ export class SubmitForm extends React.Component {
                   tabSize: 4,
                   mode: languageConfig.mime,
                 }}
-                onChange={source => this.setState(...this.state, source)}
+                onChange={source => this.setState({...this.state, source})}
               />
             </div>
           )

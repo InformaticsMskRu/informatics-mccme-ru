@@ -4,7 +4,7 @@ import store from '../store';
 
 
 const axiosInstance = axios.create({
-    baseURL: '/api',
+    baseURL: '/api_v2',
     withCredentials: true,
 });
 

@@ -101,27 +101,99 @@ export const STATUSES = {
     long: 'Compilation Error',
     color: 'orange',
   },
-  2: 'RE',
-  3: 'TL',
-  4: 'PE',
-  5: 'WA',
-  6: 'CF',
+  2: {
+    short: 'RE',
+    long: 'Runtime Error',
+    color: 'orange',
+  },
+  3: {
+    short: 'TL',
+    long: 'Time-limit Exceeded',
+    color: 'orange',
+  },
+  4: {
+    short: 'PE',
+    long: 'Presentation Error',
+    color: 'orange',
+  },
+  5: {
+    short: 'WA',
+    long: 'Wrong Answer',
+    color: 'orange',
+  },
+  6: {
+    short: 'CF',
+    long: 'Check Failed',
+    color: 'blue',
+  },
   7: {
     short: 'PT',
     long: 'Partial',
     color: 'orange',
   },
-  8: 'AC',
-  9: 'Ignored',
-  10:'Disqualified',
-  11:'Pending',
-  12:'ML',
-  13:'Security error',
-  14:'Style Violation',
-  15:'Wall Time Limit Exceeded',
-  16:'Pending Review',
-  17:'Rejected',
-  18:'Skipped',
-  96:'Running...',
-  98:'Compiling...'
+  8: {
+    short: 'AC',
+    long: 'Accepted',
+    color: 'green',
+  },
+  9: {
+    short: 'IG',
+    long: 'Ignored',
+    color: 'orange',
+  },
+  10: {
+    short: 'DQ',
+    long: 'Disqualified',
+    color: 'orange',
+  },
+  11: {
+    short: 'PD',
+    long: 'Pending',
+    color: 'green',
+  },
+  12: {
+    short: 'ML',
+    long: 'Memory-limit Exceeded',
+    color: 'orange',
+  },
+  13: {
+    short: 'SE',
+    long: 'Security error',
+    color: 'orange',
+  },
+  14: {
+    short: 'SV',
+    long: 'Style Violation',
+    color: 'orange',
+  },
+  15: {
+    short: 'WL',
+    long: 'Wall Time Limit Exceeded',
+    color: 'orange',
+  },
+  16: {
+    short: 'PR',
+    long: 'Pending Review',
+    color: 'green',
+  },
+  17: {
+    short: 'RJ',
+    long: 'Rejected',
+    color: 'orange',
+  },
+  18: {
+    short: 'SK',
+    long: 'Skipped',
+    color: 'orange',
+  },
+  96: {
+    short: 'RU',
+    long: 'Running...',
+    color: 'orange'
+  },
+  98: {
+    short: 'CO',
+    long: 'Compiling...',
+    color: 'orange',
+  }
 };

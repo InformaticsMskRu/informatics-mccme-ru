@@ -73,8 +73,9 @@ def problem_submits_v2(request, context):
     input_file = request.POST['file'].file
     filename = request.POST['file'].filename
     ejudge_url = request.registry.settings['ejudge.new_client_url']
-    if lang_id not in context.get_allowed_languages():
-        raise Forbidden('Language id "%s" is not allowed' % lang_id)
+    # TODO: fix allowed languages, removed for now
+    # if lang_id not in context.get_allowed_languages():
+    #     raise Forbidden('Language id "%s" is not allowed' % lang_id)
     return {
         'res': submit(
             run_file=input_file,

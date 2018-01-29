@@ -24,22 +24,23 @@ status_repr = {
 import codecs
 
 def report_error(code, login_data, submit_data, file, filename, user_id, addon = ''):
-    msg = MIMEMultipart()
-    msg['From'] = 'ejudge.submitter'
-    msg['To'] = 'andrey.shestimerov@gmail.com'
-    msg['Date'] = formatdate(localtime=True)
-    subject = 'ejudge_submit from ' + user_id
-    if (code):
-        subject = subject + ' code ' + code.group(1)
-    msg['Subject'] = subject
-    t = str({'info' : addon, 'login_data' : login_data, 'submit_data' : submit_data, 'filename' : filename})
-    msg.attach(MIMEText(t))
-    log=codecs.open('/tmp/python.log', 'a', 'utf-8')
-    log.write(t)
-    log.close()
-    smtp = smtplib.SMTP('localhost')
-#    smtp.sendmail('ejudge.submitter', 'vrandik@gmail.com', msg.as_string())
-    smtp.close()
+    pass
+#     msg = MIMEMultipart()
+#     msg['From'] = 'ejudge.submitter'
+#     msg['To'] = 'andrey.shestimerov@gmail.com'
+#     msg['Date'] = formatdate(localtime=True)
+#     subject = 'ejudge_submit from ' + user_id
+#     if (code):
+#         subject = subject + ' code ' + code.group(1)
+#     msg['Subject'] = subject
+#     t = str({'info' : addon, 'login_data' : login_data, 'submit_data' : submit_data, 'filename' : filename})
+#     msg.attach(MIMEText(t))
+#     log=codecs.open('/tmp/python.log', 'a', 'utf-8')
+#     log.write(t)
+#     log.close()
+#     smtp = smtplib.SMTP('localhost')
+# #    smtp.sendmail('ejudge.submitter', 'vrandik@gmail.com', msg.as_string())
+#     smtp.close()
 
 def submit(run_file, contest_id, prob_id, lang_id, login, password, filename, url, user_id):
     login_data = {

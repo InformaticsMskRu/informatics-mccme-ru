@@ -18,8 +18,8 @@ const StatusWrapper = styled.div`
     background: black;
     background: ${props => ({
       'orange': palette('other', 3),
-      'blue': palette('other', 4),
-      'green': palette('other', 5),
+      'green': palette('other', 4),
+      'blue': palette('other', 5),
     })[props.color]};
   }
   
