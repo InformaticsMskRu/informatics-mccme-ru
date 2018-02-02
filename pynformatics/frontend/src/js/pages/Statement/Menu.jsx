@@ -1,4 +1,3 @@
-import { Layout } from 'antd';
 import { Link } from 'react-router-dom';
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -6,17 +5,16 @@ import styled from 'styled-components';
 import { palette } from 'styled-theme';
 import PropTypes from 'prop-types';
 import { Menu as AntdMenu } from 'antd';
+import * as _ from 'lodash';
 
 
 import { borderRadius, transition } from '../../isomorphic/config/style-util';
 
 import Button from '../../components/utility/Button';
-import Progress from '../../components/utility/Progress';
-import { STATUSES } from '../../constants';
+import MenuTime from './MenuTime';
 import { ToggleDrawerIcon } from '../../components/Icon';
-import Tooltip from '../../components/utility/Tooltip';
-
-const { Sider } = Layout;
+import { getProblemShortNameByNumber } from '../../utils/functions';
+import Status from '../../components/Runs/Status';
 
 
 const MenuWrapper = styled.div`
@@ -35,9 +33,10 @@ const MenuWrapper = styled.div`
       padding-right: 40px;
     }
     
-    .contestTitle {
+    .statementTitle {
       font-size: 16px;
       margin-bottom: 15px;
+      padding-right: 40px;
     }
     
     .toggleDrawer {
@@ -94,9 +93,7 @@ const MenuWrapper = styled.div`
           
           .problemSelected { display: block !important; }
         }
-        
-        .ant-menu-inline-collapsed-tooltip { display: none !important; }
-        
+                
         &.ant-menu-item-active {
           background: none;
         }
@@ -116,6 +113,7 @@ const MenuWrapper = styled.div`
           }
           
           .problemLetter {
+            width: 19px;
             margin: auto 18px auto 0;
           }
           
@@ -126,59 +124,7 @@ const MenuWrapper = styled.div`
           }
           
           .problemStatus {
-            flex: 0 0 30px;
             margin: auto 0 auto auto;
-            height: 20px;
-            display: flex;
-            align-content: center;
-            justify-content: center;
-            
-            .problemStatusContainer {
-              width: 8px;
-              height: 8px;
-              ${borderRadius('4px')}
-              margin: auto;
-              ${transition()}
-              text-align: right;
-              
-              &.problem-orange { background: ${palette('other', 3)}; }
-              &.problem-green { background: ${palette('other', 4)}; }
-              &.problem-blue { background: ${palette('other', 5)}; }
-            
-              > div {
-                opacity: 0;
-                color: #ffffff;
-                font-size: 12px;
-                font-weight: normal;
-                line-height: 20px;
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-  
-    
-  &:hover:not(.collapsed) {
-    .problems {
-      .ant-menu {
-        .ant-menu-item {
-          .problemMenuItem {
-            .problemStatus {
-            
-              .problemStatusContainer {
-                width: 30px;
-                height: 20px;
-                text-align: center;
-                ${borderRadius('10px')}
-                
-                > div {
-                  opacity: 1;
-                }
-              }
-            
-            }
           }
         }
       }
@@ -231,7 +177,7 @@ const MenuWrapper = styled.div`
             
             .problemStatus {
               flex: 8px 0 0;
-              margin: auto auto 1px -1px;
+              margin: auto auto 3px 0px;
             }
           }
         }
@@ -241,30 +187,24 @@ const MenuWrapper = styled.div`
 `;
 
 
-const MenuProblem = ({letter, title, status}) => (
-  <Link to="/problem">
-    <div className="problemMenuItem">
-      <div className="problemSelected" />
-      <div className="problemLetter">{letter}</div>
-      <div className="problemTitle">{title}</div>
-      <div className="problemStatus">
-        <Tooltip placement="right" title={STATUSES[status].long}>
-          <div
-            className={`problemStatusContainer problem-${STATUSES[status].color}`}
-          >
-            <div>{STATUSES[status].short}</div>
-          </div>
-        </Tooltip>
-      </div>
+const MenuProblem = ({letter, rank, status, title, collapsed}) => (
+  <div className="problemMenuItem">
+    <div className="problemSelected" />
+    <div className="problemLetter">{letter}</div>
+    <div className="problemTitle">{title}</div>
+    <div className="problemStatus">
+      <Status status={status} collapsed={collapsed}/>
     </div>
-  </Link>
+  </div>
 );
 
 
 export class Menu extends React.Component {
   static propTypes = {
     collapsed: PropTypes.bool.isRequired,
-    onCollapse: PropTypes.func.isRequired,
+    statement: PropTypes.object.isRequired,
+    onCollapse: PropTypes.func,
+    onSelect: PropTypes.func,
   };
 
   static childContextTypes = {
@@ -276,6 +216,7 @@ export class Menu extends React.Component {
 
     this.state = {
       headerHeight: null,
+      hovered: false,
     }
   }
 
@@ -296,11 +237,44 @@ export class Menu extends React.Component {
   }
 
   render() {
-    const { collapsed, onCollapse } = this.props;
-    const { headerHeight } = this.state;
+    const {
+      collapsed,
+      selectedKeys,
+      statement,
+      onCollapse,
+      onSelect,
+    } = this.props;
+    const { headerHeight, hovered } = this.state;
+
+    const {
+      problems,
+      name: statementTitle,
+      participant,
+      olympiad,
+      virtual_olympiad: virtualOlympiad,
+    } = statement;
+
+    const problemItems = _.map(problems, (value, key) => {
+      const { name: title } = value;
+      return (
+        <AntdMenu.Item key={key}>
+          <MenuProblem
+            letter={getProblemShortNameByNumber(parseInt(key))}
+            rank={key}
+            title={title}
+            status={0}
+            collapsed={collapsed || !hovered}
+          />
+        </AntdMenu.Item>
+      );
+    });
 
     return (
-      <MenuWrapper className={collapsed ? 'collapsed' : null}>
+      <MenuWrapper
+        className={collapsed ? 'collapsed' : null}
+        onMouseEnter={() => this.setState({...this.state, hovered: true})}
+        onMouseLeave={() => this.setState({...this.state, hovered: false})}
+      >
         <div
           className="header"
           style={headerHeight ? { height: headerHeight } : {}}
@@ -308,37 +282,26 @@ export class Menu extends React.Component {
           <div className="title">
             <div className="toggleDrawer" onClick={onCollapse}><ToggleDrawerIcon /></div>
             <div className="bootcampTitle">Название сборов</div>
-            <div className="contestTitle">Название контеста</div>
+            <div className="statementTitle">{statementTitle}</div>
             <Link to='/'><Button type="secondary" size="small">Результаты контеста</Button></Link>
           </div>
 
-          <div className="time">
-            <div>12 декабря 16:00 &mdash; 21:00</div>
-            <div>Сейчас {(new Date()).toTimeString().slice(0, 5)}</div>
-            <Progress
-              percent={60}
-              showInfo={false}
-              style={(collapsed && headerHeight)
-                ? { width: headerHeight - 71 }
-                : {}}
-            />
-          </div>
+          { (olympiad || virtualOlympiad) && typeof participant !== 'undefined'
+            ? <MenuTime
+                start={participant.start * 1000}
+                duration={participant.duration * 1000}
+                collapsed={collapsed}
+                headerHeight={headerHeight}
+              />
+            : null }
 
           <div className="info">
             Количество элементов во всех структурах данных не превышает 10000, если это не указано особо.
           </div>
         </div>
         <div className="problems">
-          <AntdMenu>
-            <AntdMenu.Item>
-              <MenuProblem letter="A" title="Двойной переворот" status={0} />
-            </AntdMenu.Item>
-            <AntdMenu.Item>
-              <MenuProblem letter="B" title="Вывести четные элементы" status={1}/>
-            </AntdMenu.Item>
-            <AntdMenu.Item>
-              <MenuProblem letter="C" title="Количество положительных элементов" status={7}/>
-            </AntdMenu.Item>
+          <AntdMenu onSelect={onSelect} selectedKeys={selectedKeys}>
+            {problemItems}
           </AntdMenu>
         </div>
       </MenuWrapper>

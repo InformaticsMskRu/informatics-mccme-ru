@@ -14,6 +14,7 @@ theme.palette.other = [
   '#407EFF', // 6, menu item selected
   '#343A40', // 7, problem statement text color
   '#EE4E49', // 8, tag danger
+  '#E6E5E5', // 9, border color
 ];
 
 export default theme;

@@ -1,11 +1,10 @@
 import React from 'react';
-import styled from 'styled-components';
+import styled  from 'styled-components';
 import { palette } from 'styled-theme';
 
 import { STATUSES } from '../../constants';
 import Tooltip from '../../components/utility/Tooltip';
-import { borderRadius } from '../../isomorphic/config/style-util';
-
+import { borderRadius, transition } from '../../isomorphic/config/style-util';
 
 
 const StatusWrapper = styled.div`
@@ -23,22 +22,34 @@ const StatusWrapper = styled.div`
     })[props.color]};
   }
   
-  .short:not(.animated) {
+  .statusShort {
     margin: auto;
     width: 30px;
     height: 20px;
-    ${borderRadius('10px')}
+    line-height: 20px;
     text-align: center;
-  }
+    font-size: 14px;
+    font-weight: normal;
+    ${borderRadius('10px')}
+    ${transition()}
+    div { opacity: 1; }
+    
+    &.collapsed {
+      width: 8px;
+      height: 8px;
+      ${borderRadius('10px')}
+      div { opacity: 0; } 
+    }
+  } 
 `;
 
-export default ({status, animated = false}) => (
+export default ({status, collapsed}) => (
   <StatusWrapper color={STATUSES[status].color}>
     <Tooltip placement="right" title={STATUSES[status].long}>
       <div
-        className={`short ${animated ? 'animated' : ''}`}
+        className={`statusShort ${collapsed ? 'collapsed' : ''}`}
       >
-        {STATUSES[status].short}
+        <div>{STATUSES[status].short}</div>
       </div>
     </Tooltip>
   </StatusWrapper>

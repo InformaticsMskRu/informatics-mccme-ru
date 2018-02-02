@@ -1,5 +1,3 @@
-import * as _ from 'lodash';
-
 import axios from '../utils/axios';
 
 
@@ -8,7 +6,9 @@ export function fetchStatement(statementId) {
     const url = `/statement/${statementId}`;
     return dispatch({
       type: 'GET_STATEMENT',
-      payload: axios.get(url),
+      payload: axios.get(url, {
+        params: {additional_fields: ['runs']},
+      }),
       meta: {
         statementId,
       },
@@ -46,7 +46,7 @@ export function start(statementId, virtual = false) {
       type: `POST_STATEMENT_START${virtual ? '_VIRTUAL' : ''}`,
       payload: axios.post(url),
       meta: { statementId },
-    }).then(() => dispatch(fetchStatement(statementId)));
+    });
   };
 }
 

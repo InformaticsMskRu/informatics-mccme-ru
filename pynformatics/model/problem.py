@@ -4,10 +4,10 @@ import glob
 from zipfile import ZipFile
 
 from sqlalchemy import ForeignKey, Column
+from sqlalchemy.orm import relationship
 from sqlalchemy.types import Integer, String, Float, Unicode, Boolean
-from sqlalchemy.orm import reconstructor
-from pynformatics.contest.ejudge.serve_internal import EjudgeContestCfg
 
+from pynformatics.contest.ejudge.serve_internal import EjudgeContestCfg
 from pynformatics.model.meta import Base
 from pynformatics.utils.run import read_file_unknown_encoding
 from pynformatics.utils.json_type import JsonType
@@ -47,6 +47,7 @@ class Problem(Base):
         self.sample_tests = sample_tests
         self.sample_tests_html = sample_tests_html
         self.pr_id = pr_id
+
 #    def __repr__(self):
 #        return "<spam(%d, '%s')" % (self.id, self.name)
 

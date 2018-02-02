@@ -21,6 +21,7 @@
     "image-webpack-loader": "^3.4.2",
     "lodash": "^4.17.4",
     "prop-types": "^15.6.0",
+    "query-string": "^5.0.1",
     "react": "^16.0.0",
     "react-codemirror": "^1.0.0",
     "react-custom-scrollbars": "^4.2.1",
@@ -44,7 +45,8 @@
     "webpack": "^3.6.0"
   },
   "scripts": {
-    "dev": "rm -r dist/* && cp src/index.html dist/index.html && cp -r src/css dist/css && cp -r src/fonts dist/fonts && ./node_modules/.bin/webpack-dev-server --hot --inline",
+    "prepare_dist": "rm -r dist/* && cp src/index.html dist/index.html && cp -r src/css dist/css && cp -r src/fonts dist/fonts && cp -r src/images dist/images",
+    "dev": "npm run prepare_dist && ./node_modules/.bin/webpack-dev-server --hot --inline",
     "test": "jest",
     "test:watch": "npm test -- --watch"
   },

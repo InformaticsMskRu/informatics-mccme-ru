@@ -6,12 +6,11 @@ import { Switch, Route, withRouter } from 'react-router-dom';
 import { Debounce } from 'react-throttle';
 
 
-import Problem from './Problem';
-import Statement from './Statement';
 import Login from './LoginForm';
 import Topbar from './Topbar/Topbar';
 import Sidebar from './Sidebar/Sidebar';
 
+import StatementPage from '../pages/Statement/Statement';
 import MainPage from '../pages/Main/Main';
 import Auth from '../pages/Auth/Auth';
 import ProblemPage from '../pages/Problem/Problem';
@@ -70,8 +69,11 @@ export default class App extends React.Component {
               <Switch>
                 <Route exact path="/" component={MainPage} />
                 <Route path="/auth" component={Auth} />
-                <Route exact path="/problem/:problemId" component={ProblemPage} />
+                <Route exact path="/contest/:statementId" component={StatementPage} />
+                <Route exact path="/contest/:statementId/problem/:problemRank" component={StatementPage} />
                 <Route exact path="/goto" component={TempGotoProblemPage} />
+                <Route exact path="/login" component={Login} />
+                <Route exact path="/problem/:problemId" component={ProblemPage} />
               </Switch>
             </Content>
           </Layout>

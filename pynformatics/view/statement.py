@@ -11,6 +11,8 @@ def statement_get(request, context):
     """
     Returns statement
     """
+    print('*' * 20, 'STATEMENT_GET', '*' * 20)
+    print(request.params)
     if not context.statement:
         raise StatementNotFound
     return context.statement.serialize(context)

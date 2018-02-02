@@ -8,6 +8,7 @@ import { connect } from 'react-redux';
 
 import { LANGUAGES, STATUSES } from '../../constants';
 import Button from '../../components/utility/Button';
+import ProtocolButton from './ProtocolButton';
 import Status from './Status';
 import * as problemActions from '../../actions/problemActions';
 
@@ -68,8 +69,8 @@ export class Runs extends React.Component {
     if (!this.fetchProblemRunsPromise) {
       this.fetchProblemRunsPromise = this.props.dispatch(
         problemActions.fetchProblemRuns(problemId)).then(() => {
-          this.fetchProblemRunsPromise = null;
-        });
+        this.fetchProblemRunsPromise = null;
+      });
     }
   }
 
@@ -82,7 +83,7 @@ export class Runs extends React.Component {
 
   render() {
     const { showMore } = this.state;
-    const { windowWidth } = this.props;
+    const { windowWidth, problemId } = this.props;
 
     const columns = [
       {
@@ -122,8 +123,12 @@ export class Runs extends React.Component {
             sync
           </i>
         ),
-        render: () => (
-          <Button type="secondary" size="small" style={{ padding: 0, display: 'flex' }}>
+        render: run => (
+          <Button
+            type="secondary"
+            size="small"
+            style={{ padding: 0, display: 'flex' }}
+          >
             <i className="material-icons">keyboard_arrow_right</i>
           </Button>
         ),
@@ -132,7 +137,9 @@ export class Runs extends React.Component {
 
     const data = _.sortBy(_.map(this.props.runs, (value, key) => ({
       key,
-      id: key,
+      problemId,
+      contestId: parseInt(value.contest_id),
+      id: parseInt(key),
       status: value.status,
       time: value.create_time || '',
       language: LANGUAGES[value.lang_id].name || '',
@@ -150,7 +157,7 @@ export class Runs extends React.Component {
         />
         <div className="buttons">
           <Button onClick={this.toggleShowMore} type="secondary">Показать еще</Button>
-          <Button type="secondary">Архив посылок</Button>
+          <Button type="secondary" disabled>Архив посылок</Button>
         </div>
       </RunsWrapper>
     );

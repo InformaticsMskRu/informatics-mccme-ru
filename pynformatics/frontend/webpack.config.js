@@ -100,9 +100,9 @@ module.exports = {
     disableHostCheck: true,
     historyApiFallback: true,
     proxy: {
-      '/api': {
-        target: 'http://informatics.msk.ru:6546',
-        pathRewrite: {'^/api': ''},
+      '/api_v2': {
+        target: 'http://informatics.msk.ru:6349',
+        pathRewrite: {'^/api_v2': ''},
       }
     },
   }

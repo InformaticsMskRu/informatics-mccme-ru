@@ -167,12 +167,6 @@ class Statement(Base):
         self.time_modified = int(time.time())
 
     def start_participant(self, user, duration):
-        now = time.time()
-        if now < self.time_start:
-            raise StatementNotStarted
-        if now >= self.time_stop:
-            raise StatementFinished
-
         if self.participants.filter(Participant.user_id == user.id).count():
             raise StatementCanOnlyStartOnce
 
@@ -200,6 +194,12 @@ class Statement(Base):
     def start(self, user):
         if not self.olympiad:
             raise StatementNotOlympiad
+
+        now = time.time()
+        if now < self.time_start:
+            raise StatementNotStarted
+        if now >= self.time_stop:
+            raise StatementFinished
 
         return self.start_participant(
             user=user,
@@ -254,7 +254,10 @@ class Statement(Base):
             serialized['participant'] = participant.serialize(context)
 
         serialized['problems'] = {
-            rank: statement_problem.problem.id
+            rank: {
+                'id': statement_problem.problem.id,
+                'name': statement_problem.problem.name,
+            }
             for rank, statement_problem in self.StatementProblems.items()
             if not statement_problem.hidden
         }
