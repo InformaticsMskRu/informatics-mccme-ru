@@ -30,6 +30,26 @@ class NotFound(BaseApiException):
     code = 404
 
 
+class InternalServerError(BaseApiException):
+    message = 'Internal server error'
+    code = 500
+
+
+# Auth
+class AuthWrongUsernameOrPassword(Forbidden):
+    message = 'Wrong username or password'
+
+class AuthOAuthUserNotFound(NotFound):
+    message = 'No user with this OAuth ID'
+
+class AuthOAuthBadProvider(BadRequest):
+    message = 'Unknown OAuth provider'
+
+class UserOAuthIdAlreadyUsed(Forbidden):
+    message = 'OAuth ID already in use'
+
+
+# Statement
 class StatementNotFound(NotFound):
     message = 'No statement with this id'
 
@@ -58,28 +78,26 @@ class StatementSettingsValidationError(BadRequest):
     message = 'Invalid settings format'
 
 
-class AuthWrongUsernameOrPassword(Forbidden):
-    message = 'Wrong username or password'
 
-class AuthOAuthUserNotFound(NotFound):
-    message = 'No user with this OAuth ID'
 
-class AuthOAuthBadProvider(BadRequest):
-    message = 'Unknown OAuth provider'
-
-class UserOAuthIdAlreadyUsed(Forbidden):
-    message = 'OAuth ID already in use'
-
+# User
 class UserNotFound(NotFound):
     message = 'No such user'
 
 
+# Search
 class SearchQueryIsEmpty(BadRequest):
     message = 'Search query is empty'
 
 
+# Pagination
 class PaginationPageOutOfRange(BadRequest):
     message = 'Page number is out of range'
 
 class PaginationPageSizeNegativeOrZero(BadRequest):
     message = 'Page size is negative or zero'
+
+
+# Run
+class RunNotFound(NotFound):
+    message = 'Run not found'

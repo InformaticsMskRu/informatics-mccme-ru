@@ -54,3 +54,24 @@ class TestModel__statement_start(TestCase):
             calling(statement.start).with_args(self.user),
             raises(StatementNotOlympiad)
         )
+
+    def test_not_started(self):
+        with mock.patch('pynformatics.model.statement.time.time', mock.Mock(return_value=self.time_start - 1)):
+            assert_that(
+                calling(self.statement.start).with_args(user=self.user),
+                raises(StatementNotStarted)
+            )
+
+    def test_finished(self):
+        with mock.patch('pynformatics.model.statement.time.time', mock.Mock(return_value=self.time_stop)):
+            assert_that(
+                calling(self.statement.start).with_args(user=self.user),
+                raises(StatementFinished)
+            )
+
+        with mock.patch('pynformatics.model.statement.time.time', mock.Mock(return_value=self.time_stop + 10)):
+            assert_that(
+                calling(self.statement.start).with_args(user=self.user),
+                raises(StatementFinished)
+            )
+

@@ -1,24 +1,32 @@
-import sys, traceback
+import logging
 import time
-import json
-import transaction
+import traceback
 import zipfile
-from io import BytesIO
-from xml.etree.ElementTree import ElementTree
 from collections import OrderedDict
-
+from io import BytesIO
 from pyramid.view import view_config
 from pyramid.response import Response
+from sqlalchemy import and_
 
-from pynformatics.model import User, EjudgeContest, Run, Comment, EjudgeProblem, Problem, Statement
-from pynformatics.contest.ejudge.serve_internal import EjudgeContestCfg
-from pynformatics.view.utils import *
-from phpserialize import *
-from pynformatics.view.utils import *
+from pynformatics.model.run import (
+    Run,
+    get_lang_ext_by_id,
+)
+from pynformatics.model.statement import Statement
 from pynformatics.models import DBSession
-from pynformatics.models import DBSession
-from pynformatics.model.run import to32, get_lang_ext_by_id
 from pynformatics.utils.check_role import check_global_role
+from pynformatics.utils.context import with_context
+from pynformatics.utils.validators import (
+    validate_matchdict,
+    IntParam,
+)
+from pynformatics.utils.exceptions import (
+    InternalServerError,
+    RunNotFound,
+)
+
+
+log = logging.getLogger(__name__)
 
 
 # signal_description = {
@@ -79,6 +87,41 @@ def get_protocol(request):
             return {"result" : "error", "message" : run.compilation_protocol, "error" : e.__str__(), "stack" : traceback.format_exc(), "protocol": run.protocol}
     except Exception as e:
         return {"result" : "error", "message" : e.__str__(), "stack" : traceback.format_exc(), "protocol": run.protocol}
+
+
+@view_config(route_name='protocol.get_v2', renderer='json')
+@validate_matchdict(IntParam('run_id', required=True),
+                    IntParam('contest_id', required=True))
+def protocol_get_v2(request):
+    # TODO: переделать формат протокола (статус выдавать по id), избавиться от fetch_tested_protocol_data
+
+    run_id = int(request.matchdict['run_id'])
+    contest_id = int(request.matchdict['contest_id'])
+
+    run = DBSession.query(Run).filter(and_(Run.run_id == run_id, Run.contest_id == contest_id)).first()
+    if not run:
+        raise RunNotFound
+
+    try:
+        run.fetch_tested_protocol_data()
+    except Exception:
+        raise InternalServerError
+
+    tests_dict = OrderedDict()
+    if run.tests:
+        sample_tests = run.problem.sample_tests.split(',')
+        for num in range(1, len(run.tests.keys()) + 1):
+            str_num = str(num)
+            if str_num in sample_tests:
+                tests_dict[str_num] = run.get_test_full_protocol(str_num)
+            else:
+                tests_dict[str_num] = run.tests[str_num]
+
+    return {
+        'tests': tests_dict,
+        'host': run.host,
+        'compiler_output': run.compiler_output,
+    }
 
 
 @view_config(route_name="protocol.get_full", renderer="json")

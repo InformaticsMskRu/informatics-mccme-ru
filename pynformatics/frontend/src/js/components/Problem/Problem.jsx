@@ -145,13 +145,13 @@ export class Problem extends React.Component {
             {...additionalTabsProps}
           >
             <TabPane className="tabStatement" tab="Условие" key="statement">
-              <Runs problemId={parseInt(problemId)} runs={problemRuns} />
               <div className="problemStatement" dangerouslySetInnerHTML={{ __html: problemStatement }} />
               <Header style={{ marginBottom: 30 }}>Примеры</Header>
               <div className="problemSamples">
                 { _.map(problemSamples, ({input, correct}, id) => <Sample key={id} input={input} correct={correct}/>) }
               </div>
               <SubmitForm problemId={parseInt(problemId)}/>
+              <Runs problemId={parseInt(problemId)} runs={problemRuns} />
             </TabPane>
             <TabPane tab="Результаты" key="standings" />
             <TabPane tab="Посылки" key="runs" />

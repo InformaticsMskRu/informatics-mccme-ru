@@ -20,10 +20,16 @@ class Run(Base):
     """
     __tablename__ = 'runs'
     __table_args__ = (
-        ForeignKeyConstraint(['contest_id', 'prob_id'], ['moodle.mdl_ejudge_problem.ejudge_contest_id', 'moodle.mdl_ejudge_problem.problem_id']),
-        ForeignKeyConstraint(['user_id'], ['moodle.mdl_user.ej_id']),
+        ForeignKeyConstraint(
+            ['contest_id', 'prob_id'],
+            ['moodle.mdl_ejudge_problem.ejudge_contest_id', 'moodle.mdl_ejudge_problem.problem_id']
+        ),
+        ForeignKeyConstraint(
+            ['user_id'],
+            ['moodle.mdl_user.ej_id']
+        ),
         {'schema':'ejudge'}
-        )
+    )
 
    
     run_id = Column(Integer, primary_key=True)
@@ -33,7 +39,10 @@ class Run(Base):
     user = relationship('SimpleUser', backref=backref('simpleuser'), uselist=False)
     comments = relation('Comment', backref=backref('comments'))
     contest_id = Column(Integer, primary_key=True)
+
+    # TODO: rename to problem_id
     prob_id = Column(Integer)
+
     problem = relationship('EjudgeProblem', backref=backref('runs', lazy='dynamic'), uselist=False)
     lang_id = Column(Integer)
     status = Column(Integer)
@@ -55,18 +64,18 @@ class Run(Base):
         15: "Termination signal"
     }
     
-    def __init__(self, run_id, contest_id, size, create_time, user_id, prob_id, lang_id, status, score, test_num):
-        self.run_id = run_id
-        self.contest_id = contest_id
-        self.size = size
-        self.create_time = create_time
-        self.user_id = user_id
-        self.prob_id = prob_id
-        self.lang_id = lang_id
-        self.status = status
-        self.score = score
-        self.test_num = test_num
-        self.init_on_load()
+    # def __init__(self, run_id, contest_id, size, create_time, user_id, prob_id, lang_id, status, score, test_num):
+    #     self.run_id = run_id
+    #     self.contest_id = contest_id
+    #     self.size = size
+    #     self.create_time = create_time
+    #     self.user_id = user_id
+    #     self.prob_id = prob_id
+    #     self.lang_id = lang_id
+    #     self.status = status
+    #     self.score = score
+    #     self.test_num = test_num
+    #     self.init_on_load()
 
     @reconstructor
     def init_on_load(self):

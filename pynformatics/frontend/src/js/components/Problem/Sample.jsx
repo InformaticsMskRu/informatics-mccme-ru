@@ -37,7 +37,7 @@ const SampleWrapper = styled.div`
     .copyBtn { margin-left: auto;  }
   }
   
-  .input, .correct {
+  pre {
     text-align: left;
     counter-reset: line;
   
@@ -74,7 +74,7 @@ export class Sample extends React.Component {
       lines.pop();
     }
     return {
-      maxLength: _.maxBy(lines, line => line.length).length,
+      maxLength: _.isEmpty(lines) ? 0 : _.maxBy(lines, line => line.length).length,
       lines: _.map(lines, (line, index) => (
         <span key={index}>{line}</span>
       )),
@@ -130,3 +130,4 @@ export class Sample extends React.Component {
 }
 
 export default Sample;
+export { SampleWrapper }

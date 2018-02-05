@@ -73,7 +73,7 @@ export function submitProblem(problemId, { languageId, file, source }) {
 
 export function fetchProblemRunProtocol(problemId, contestId, runId) {
   return (dispatch) => {
-    const url = `/protocol/get/${contestId}/${runId}`;
+    const url = `/protocol/get_v2/${contestId}/${runId}`;
 
     return dispatch({
       type: 'GET_PROBLEM_RUN_PROTOCOL',

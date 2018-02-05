@@ -17,9 +17,9 @@ from pynformatics.utils.exceptions import (
 )
 
 
-class TestModel__Statement_start_virtual(TestCase):
+class TestModel__Statement_finish_virtual(TestCase):
     def setUp(self):
-        super(TestModel__Statement_start_virtual, self).setUp()
+        super(TestModel__Statement_finish_virtual, self).setUp()
 
         self.now = int(time.time())
         self.virtual_duration = 100

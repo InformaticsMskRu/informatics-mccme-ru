@@ -102,32 +102,3 @@ class TestModel__statement_start_participant(TestCase):
             ),
             raises(StatementOnlyOneOngoing)
         )
-
-    def test_not_started(self):
-        with mock.patch('pynformatics.model.statement.time.time', mock.Mock(return_value=self.time_start - 1)):
-            assert_that(
-                calling(self.statement.start_participant).with_args(
-                    user=self.user,
-                    duration=1,
-                ),
-                raises(StatementNotStarted)
-            )
-
-    def test_finished(self):
-        with mock.patch('pynformatics.model.statement.time.time', mock.Mock(return_value=self.time_stop)):
-            assert_that(
-                calling(self.statement.start_participant).with_args(
-                    user=self.user,
-                    duration=1,
-                ),
-                raises(StatementFinished)
-            )
-
-        with mock.patch('pynformatics.model.statement.time.time', mock.Mock(return_value=self.time_stop + 10)):
-            assert_that(
-                calling(self.statement.start_participant).with_args(
-                    user=self.user,
-                    duration=1,
-                ),
-                raises(StatementFinished)
-            )

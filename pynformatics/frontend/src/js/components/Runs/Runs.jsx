@@ -124,13 +124,11 @@ export class Runs extends React.Component {
           </i>
         ),
         render: run => (
-          <Button
-            type="secondary"
-            size="small"
-            style={{ padding: 0, display: 'flex' }}
-          >
-            <i className="material-icons">keyboard_arrow_right</i>
-          </Button>
+          <ProtocolButton
+            problemId={run.problemId}
+            runId={run.id}
+            contestId={run.contestId}
+          />
         ),
       },
     ];
