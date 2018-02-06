@@ -13,6 +13,7 @@ import Topbar from './Topbar/Topbar';
 import Sidebar from './Sidebar/Sidebar';
 
 import MainPage from '../pages/Main/Main';
+import TeamTask from '../pages/Team/TeamTask';
 
 import User from './User';
 import StatementAdmin from '../pages/StatementAdmin';
@@ -65,7 +66,10 @@ export default class App extends React.Component {
               className="isomorphicContent"
               style={{ height: '100vh' }}
             >
-              <Switch><Route exact path="/" component={MainPage} /></Switch>
+              <Switch>
+                  <Route exact path="/" component={MainPage} />
+                  <Route exact path="/team-task" component={TeamTask} />
+              </Switch>
             </Content>
           </Layout>
         </Layout>
