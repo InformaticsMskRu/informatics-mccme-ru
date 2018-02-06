@@ -23,6 +23,7 @@ import NotFound from '../pages/Errors/NotFound';
 import ProblemPage from '../pages/Problem/Problem';
 import StatementPage from '../pages/Statement/Statement';
 import TempGotoProblemPage from '../pages/TempGotoProblem';
+import TeamProfile from '../pages/TeamProfile/TeamProfile';
 
 import * as bootstrapActions from '../actions/bootstrapActions';
 import * as uiActions from '../actions/uiActions';
@@ -105,6 +106,7 @@ export default class App extends React.Component {
                     <Route exact path="/login" component={Login} />
                     <Route exact path="/problem/:problemId" component={ProblemPage} />
                     <Route exact path="/about" component={AboutPage} />
+                    <Route exact path="/team-profile" component={TeamProfile}/>
                     <ProtectedRoute exact path="/join/:groupInviteUrl" component={GroupInvitePage} />
                     <Route path="*" component={NotFound}/>
                   </Switch>
