@@ -4,18 +4,19 @@ from hamcrest import (
     assert_that,
     calling,
     equal_to,
+    is_not,
     raises,
 )
 
+from pynformatics.model.course import Course
 from pynformatics.model.participant import Participant
 from pynformatics.model.statement import Statement
 from pynformatics.model.user import User
 from pynformatics.testutils import TestCase
 from pynformatics.utils.exceptions import (
     StatementCanOnlyStartOnce,
-    StatementFinished,
-    StatementNotStarted,
     StatementOnlyOneOngoing,
+    StatementPasswordIsWrong,
 )
 
 
@@ -102,3 +103,36 @@ class TestModel__statement_start_participant(TestCase):
             ),
             raises(StatementOnlyOneOngoing)
         )
+
+    def test_with_password(self):
+        password = 'secret'
+        course = Course(password=password)
+        self.session.add(course)
+        self.statement.course = course
+
+        with mock.patch('pynformatics.model.statement.time.time', mock.Mock(return_value=self.now)):
+            assert_that(
+                calling(self.statement.start_participant).with_args(
+                    user=self.user,
+                    duration=self.duration,
+                ),
+                raises(StatementPasswordIsWrong)
+            )
+            assert_that(
+                calling(self.statement.start_participant).with_args(
+                    user=self.user,
+                    duration=self.duration,
+                    password='wrong',
+                ),
+                raises(StatementPasswordIsWrong)
+            )
+            assert_that(
+                calling(self.statement.start_participant).with_args(
+                    user=self.user,
+                    duration=self.duration,
+                    password=password,
+                ),
+                is_not(raises(StatementPasswordIsWrong))
+            )
+
+

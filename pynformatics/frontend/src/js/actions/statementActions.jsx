@@ -39,12 +39,12 @@ export function setSettings(statementId, settings) {
 }
 
 
-export function start(statementId, virtual = false) {
+export function start(statementId, virtual = false, password = null) {
   return (dispatch) => {
     const url = `/statement/${statementId}/start${virtual ? '_virtual' : ''}`;
     return dispatch({
       type: `POST_STATEMENT_START${virtual ? '_VIRTUAL' : ''}`,
-      payload: axios.post(url),
+      payload: axios.post(url, password ? { password } : {}),
       meta: { statementId },
     });
   };

@@ -1,6 +1,10 @@
 from pyramid.view import view_config
 
-from pynformatics.utils.check_role import check_global_role
+from pynformatics.utils.validators import (
+    IntParam,
+    validate_matchdict,
+    validate_params,
+)
 from pynformatics.utils.context import with_context
 from pynformatics.utils.exceptions import StatementNotFound
 
@@ -11,8 +15,6 @@ def statement_get(request, context):
     """
     Returns statement
     """
-    print('*' * 20, 'STATEMENT_GET', '*' * 20)
-    print(request.params)
     if not context.statement:
         raise StatementNotFound
     return context.statement.serialize(context)
@@ -26,10 +28,15 @@ def statement_set_settings(request, context):
 
 
 @view_config(route_name='statement.start_virtual', renderer='json', request_method='POST')
+@validate_matchdict(IntParam('statement_id', required=True))
 @with_context(require_auth=True)
 def statement_start_virtual(request, context):
-    new_participant = context.statement.start_virtual(context.user)
-    return new_participant.serialize(context)
+    password = request.json_body.get('password', '')
+    participant = context.statement.start_virtual(
+        user=context.user,
+        password=password,
+    )
+    return participant.serialize(context)
 
 
 @view_config(route_name='statement.finish_virtual', renderer='json', request_method='POST')
@@ -40,9 +47,14 @@ def statement_finish_virtual(request, context):
 
 
 @view_config(route_name='statement.start', renderer='json', request_method='POST')
+@validate_matchdict(IntParam('statement_id', required=True))
 @with_context(require_auth=True)
 def statement_start(request, context):
-    participant = context.statement.start(context.user)
+    password = request.json_body.get('password', '')
+    participant = context.statement.start(
+        user=context.user,
+        password=password,
+    )
     return participant.serialize(context)
 
 

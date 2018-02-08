@@ -45,6 +45,7 @@ class TestModel__Statement_start_virtual(TestCase):
         mock_start.assert_called_once_with(
             user=self.user,
             duration=self.virtual_duration,
+            password=None,
         )
 
     def test_not_virtual(self):

@@ -107,7 +107,7 @@
             </div> -->
             %if course:
                 <div style="margin-left: 30px;">
-                    <a href="/moodle/course/view.php?id=${course.id}">Назад к курсу <b>${course.fullname}</b></a>
+                    <a href="/moodle/course/view.php?id=${course.id}">Назад к курсу <b>${course.full_name}</b></a>
                 </div>
             %endif
 

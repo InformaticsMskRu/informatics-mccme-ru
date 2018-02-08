@@ -46,7 +46,7 @@ class EjudgeProblemDummy(Base):
     __tablename__ = "mdl_ejudge_problem"
     __table_args__ = {'schema':'moodle', 'extend_existing': True}
 
-    ejudge_prid = Column('id', Integer, primary_key=True) #global id in ejudge
+    ejudge_prid = Column('id', Integer, primary_key=True, autoincrement=False) #global id in ejudge
     contest_id = Column(Integer, primary_key=True, nullable=False, autoincrement=False)
     ejudge_contest_id = Column(Integer, primary_key=True, nullable=False, autoincrement=False)
     secondary_ejudge_contest_id = Column(Integer, nullable=True)
@@ -69,7 +69,7 @@ class EjudgeProblem(Problem):
     __mapper_args__ = {'polymorphic_identity': 'ejudgeproblem'}
 
 #    id = Column(Integer, ForeignKey('moodle.mdl_problems.pr_id'), primary_key=True)
-    ejudge_prid = Column('id', Integer, primary_key=True, autoincrement=True) #global id in ejudge
+    ejudge_prid = Column('id', Integer, primary_key=True) #global id in ejudge
     contest_id = Column(Integer, primary_key=True, nullable=False, autoincrement=False)
     ejudge_contest_id = Column(Integer, primary_key=True, nullable=False, autoincrement=False)
     secondary_ejudge_contest_id = Column(Integer, nullable=True)

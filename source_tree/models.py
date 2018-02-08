@@ -13,5 +13,5 @@ from source_tree.model.problem import Problem
 from pynformatics.model.statement import Statement, StatementProblem
 from pynformatics.model.user import SimpleUser, User
 from source_tree.model.source import Source
-from source_tree.model.course import Course, CourseRaw, CourseTreeCap
+from source_tree.model.course import CourseTree, CourseTreeCap
 from source_tree.model.role import Role, Context, RoleAssignment

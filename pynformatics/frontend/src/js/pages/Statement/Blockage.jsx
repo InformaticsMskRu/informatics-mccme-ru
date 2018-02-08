@@ -6,6 +6,7 @@ import React from 'react';
 import BackButton from '../../components/BackButton';
 import Box from '../../components/utility/Box';
 import Button from '../../components/utility/Button';
+import Input from '../../components/utility/Input';
 import MainContentWrapper from '../../components/utility/MainContentWrapper';
 import * as statementActions from '../../actions/statementActions';
 
@@ -57,11 +58,18 @@ const BlockageWrapper = MainContentWrapper.extend`
     color: ${palette('other', 7)};
     font-size: 14px;
   }
+  
   .textHeader {
     color: ${palette('secondary', 0)};
     font-size: 22px;
     margin-bottom: 18px;
   }
+  
+  .enrollmentKeyForm {
+    margin-top: 12px;
+    div { margin-bottom: 12px; }
+  }
+  
   .textButtons {
     margin-top: 21px;
     
@@ -99,26 +107,37 @@ export class Blockage extends React.Component {
     fetchStatement: PropTypes.func.isRequired,
   };
 
+  static contextTypes = {
+    router: PropTypes.object,
+  };
+
   constructor() {
     super();
+
+    this.state = {
+      password: '',
+    };
 
     this.start = this.start.bind(this);
   }
 
   start() {
+    const { password } = this.state;
     const {
       id,
       olympiad,
       virtual_olympiad: virtualOlympiad,
     } = this.props.statement;
 
-    this.props.dispatch(statementActions.start(id, virtualOlympiad)).then(() =>
+    this.props.dispatch(statementActions.start(id, virtualOlympiad, password)).then(() =>
       this.props.fetchStatement());
   }
 
   render() {
+    const { password } = this.state;
     const {
       name: statementTitle,
+      require_password: statementRequirePassword,
     } = this.props.statement;
 
     return (
@@ -138,17 +157,34 @@ export class Blockage extends React.Component {
               <div>
                 В случае участия в ней, на время проведения олимпиады у вас не будет доступа
                 к другим задачам на сайте. Прервать участие до оканчания олимпиады нельзя.
-                <br /><br />
-                Вы хотите принять участие в олимпиаде?
+                { statementRequirePassword
+                  ? (
+                    <div className="enrollmentKeyForm">
+                      <div>Для участия в этом контесте необходимо ввести кодовое слово:</div>
+                      <Input
+                        placeholder="кодовое слово"
+                        onChange={event =>
+                          this.setState({...this.state, password: event.target.value})}
+                        onPressEnter={this.start}
+                      />
+                    </div>
+                  ) : null
+                }
               </div>
               <div className="textButtons">
                 <Button
                   type="primary"
                   onClick={this.start}
+                  disabled={!statementRequirePassword || password === ''}
                 >
                   Принять участие
                 </Button>
-                <Button type="secondary">Вернуться</Button>
+                <Button
+                  type="secondary"
+                  onClick={() => this.context.router.history.goBack()}
+                >
+                  Вернуться
+                </Button>
               </div>
             </div>
           </div>

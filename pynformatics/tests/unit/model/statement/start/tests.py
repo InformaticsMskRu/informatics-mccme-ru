@@ -45,6 +45,7 @@ class TestModel__statement_start(TestCase):
         mock_start.assert_called_once_with(
             user=self.user,
             duration=self.time_stop - self.now,
+            password=None,
         )
 
     def test_not_olympiad(self):

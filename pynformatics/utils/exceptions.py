@@ -77,7 +77,8 @@ class StatementNotStarted(Forbidden):
 class StatementSettingsValidationError(BadRequest):
     message = 'Invalid settings format'
 
-
+class StatementPasswordIsWrong(Forbidden):
+    message = 'Password is wrong or missing'
 
 
 # User

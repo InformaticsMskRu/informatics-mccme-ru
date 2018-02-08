@@ -8,13 +8,12 @@ from json import loads
 import json
 
 from source_tree.models import (
-    db_session, 
-    Course, 
-    CourseRaw,
+    db_session,
+    CourseTree,
     CourseTreeCap,
 )
 
-from pynformatics.view.utils import RequestGetUserId
+from pynformatics.model.course import Course
 from source_tree.utils.capability import (
     check_capability_course, 
     check_capability_ex_course,
@@ -163,12 +162,12 @@ def course_verify_cancel(request):
 @view_config(route_name='course.get.all.to_verify', renderer='json')
 def course_get_all_to_verify(request):
     categories = int(request.params.get('categories', 0))
-    nodes_filter = db_session.query(Course).filter(Course.verified == False)
+    nodes_filter = db_session.query(CourseTree).filter(CourseTree.verified == False)
     if categories:
-        nodes_filter = nodes_filter.filter(Course.course_id == 0)
+        nodes_filter = nodes_filter.filter(CourseTree.course_id == 0)
     else:
-        nodes_filter = nodes_filter.filter(Course.course_id > 0)
-    nodes = nodes_filter.order_by(Course.time).all()    
+        nodes_filter = nodes_filter.filter(CourseTree.course_id > 0)
+    nodes = nodes_filter.order_by(CourseTree.time).all()
     result = []
     for node in nodes:
         res_item = {
@@ -179,7 +178,7 @@ def course_get_all_to_verify(request):
             res_item.update({
                 'course': {
                     'id': node.course.id,
-                    'name': node.course.fullname
+                    'name': node.course.full_name
                 },
             })
         if node.user:
@@ -204,8 +203,8 @@ def course_add(request):
         parent_id = int(request.params['parent_id'])
         user_id = int(RequestGetUserId(request))
         if order == 'end':
-            parent = db_session.query(Course).filter(
-                Course.id == request.params['parent_id']
+            parent = db_session.query(CourseTree).filter(
+                CourseTree.id == request.params['parent_id']
             ).one()
             max_order = max(course.order for course in parent.children) \
                 if list(parent.children) else 0
@@ -218,9 +217,9 @@ def course_add(request):
             title, course_id = name, 0
             if len(vals) == 2:
                 title, course_id = vals
-            similar = db_session.query(Course).filter(
-                Course.parent_id == request.params['parent_id'],
-                Course.course_id == course_id,
+            similar = db_session.query(CourseTree).filter(
+                CourseTree.parent_id == request.params['parent_id'],
+                CourseTree.course_id == course_id,
             ).all()
             verified = check_capability_ex_course(request, 'admin') \
                     or bool(course_tree_check_owner(parent_id, user_id))
@@ -255,7 +254,7 @@ def course_add(request):
 def course_adm(request):
     try:   
         course_id = request.params['course_id'] if 'course_id' in request.params else None
-        course = db_session.query(CourseRaw).filter(CourseRaw.id == course_id).one() \
+        course = db_session.query(Course).filter(Course.id == course_id).one() \
             if course_id else None
         return {
             'course': course,
@@ -282,12 +281,12 @@ def course_dump(request):
 
         dump = request.params['dump'] if 'dump' in request.params else 0
         show_hidden = request.params['show_hidden'] if 'show_hidden' in request.params else 0
-        course_root = db_session.query(Course).filter(Course.id == request.matchdict['course_id']).one()
-        displayed_courses = db_session.query(Course).filter(Course.displayed == 1).all()
+        course_root = db_session.query(CourseTree).filter(CourseTree.id == request.matchdict['course_id']).one()
+        displayed_courses = db_session.query(CourseTree).filter(CourseTree.displayed == 1).all()
         course_count = {}
-        courses = db_session.query(Course).order_by(
-            Course.parent_id,
-            Course.order,
+        courses = db_session.query(CourseTree).order_by(
+            CourseTree.parent_id,
+            CourseTree.order,
         ).all()
         childrenMap = {}
         for course in courses:
@@ -344,11 +343,11 @@ def course_add_window(request):
 
         frame = int(request.params['frame']) if 'frame' in request.params else 0
 
-        course_raw = db_session.query(CourseRaw).filter(
-            CourseRaw.id == request.matchdict['course_id']
+        course_raw = db_session.query(Course).filter(
+            Course.id == request.matchdict['course_id']
         ).one()
                 
-        course = db_session.query(Course).filter(Course.id == 1).one()
+        course = db_session.query(CourseTree).filter(CourseTree.id == 1).one()
         course_count = {}
         course_update_count(course, course_count)
 
@@ -375,7 +374,7 @@ def make_course_list(course, res, shft=0):
 @view_config(route_name='course.get_for_select', renderer='course/get_for_select.mak')
 def course_get_for_select(request):
     try:
-        course_root = db_session.query(Course).filter(Course.id == 1).one() 
+        course_root = db_session.query(CourseTree).filter(CourseTree.id == 1).one()
         course_list = []
         make_course_list(course_root, course_list, 0)
         return {
@@ -389,14 +388,14 @@ def course_get_for_select(request):
 def course_my_categories(request):
     try:
         frame = int(request.params.get('frame', 1))
-        course_root = db_session.query(Course).filter(Course.id == 1).one() 
+        course_root = db_session.query(CourseTree).filter(CourseTree.id == 1).one()
         course_list = []
         make_course_list(course_root, course_list, 0)
-        my_nodes = db_session.query(Course).filter(
-            Course.id != 1,
-            Course.course_id == 0,
-            Course.author == RequestGetUserId(request),
-        ).order_by(Course.verified).all()
+        my_nodes = db_session.query(CourseTree).filter(
+            CourseTree.id != 1,
+            CourseTree.course_id == 0,
+            CourseTree.author == RequestGetUserId(request),
+        ).order_by(CourseTree.verified).all()
         my_verified_nodes = [node for node in my_nodes if node.verified]
         my_unverified_nodes = [node for node in my_nodes if not node.verified]
         root_nodes = course_tree_get_root_nodes(RequestGetUserId(request))
@@ -420,12 +419,12 @@ def course_my_categories(request):
 @view_config(route_name='course.get_not_in_list', renderer='course/get_not_in_list.mak')
 def course_get_not_in_list(request):
     try:
-        course_nodes = db_session.query(Course).all() 
+        course_nodes = db_session.query(CourseTree).all()
         used_courses = [course_node.course_id for course_node in course_nodes \
             if course_node.course_id]
-        courses = db_session.query(CourseRaw).filter(
-            CourseRaw.category.in_([24, 34]),
-            not_(CourseRaw.id.in_(used_courses)),
+        courses = db_session.query(Course).filter(
+            Course.category.in_([24, 34]),
+            not_(Course.id.in_(used_courses)),
         ).all()
         return {
             'courses': courses,
@@ -437,8 +436,8 @@ def course_get_not_in_list(request):
 @view_config(route_name='course.get.nodes', renderer='json')
 def course_get_nodes(request):
     try:
-        nodes = db_session.query(Course).\
-            filter(Course.course_id == request.matchdict['course_id']).all()
+        nodes = db_session.query(CourseTree).\
+            filter(CourseTree.course_id == request.matchdict['course_id']).all()
         return {
             'result': 'ok',
             'nodes': nodes,
@@ -453,12 +452,12 @@ def course_get_by_author(request):
         courses = course_get_by_user(request.matchdict['author_id'])
         result = []
         for course in courses:
-            nodes = db_session.query(Course).filter(Course.course_id == course.id).all()
+            nodes = db_session.query(CourseTree).filter(CourseTree.course_id == course.id).all()
             paths = [node.parent.full_name() + ("" if node.verified \
                 else " (не разобрано)") for node in nodes]
             result.append({
                 'id': course.id,
-                'name': course.fullname,
+                'name': course.full_name,
                 'paths': paths,
                 'visible': course.visible,
                 'has_password': course.password != '',
@@ -479,10 +478,10 @@ def course_all(request):
     try:
         check_capability_course(request, 'admin')
         courses_res = []
-        courses = db_session.query(CourseRaw).\
-            filter(CourseRaw.category.in_([24, 34])).all()
+        courses = db_session.query(Course).\
+            filter(Course.category.in_([24, 34])).all()
         for course in courses:
-            nodes = db_session.query(Course).filter(Course.course_id == course.id).all()
+            nodes = db_session.query(CourseTree).filter(CourseTree.course_id == course.id).all()
             paths = [node.parent.full_name() + ("" if node.verified else " (не разобрано)") \
                 for node in nodes]
             courses_res.append({

@@ -1,24 +1,12 @@
 from sqlalchemy import ForeignKey, Column
-from sqlalchemy.types import Integer, String, Unicode, Boolean, DateTime
-from sqlalchemy.orm import relationship, backref, relation
+from sqlalchemy.types import Integer, Unicode, Boolean, DateTime
+from sqlalchemy.orm import relationship, backref
 from datetime import datetime
 
-from source_tree.models import Base, SimpleUser
+from source_tree.models import Base
 
 
-class CourseRaw(Base):
-    __tablename__ = 'mdl_course'
-    __table_args__ = {'schema': 'moodle'}
-
-    id = Column(Integer, primary_key=True)
-    fullname = Column(Unicode)
-    shortname = Column(Unicode)
-    password = Column(Unicode)
-    visible = Column(Boolean)
-    category = Column(Integer)
-
-
-class Course(Base):
+class CourseTree(Base):
     __tablename__ = 'mdl_course_tree'
     __table_args__ = {'schema': 'moodle'}
 
@@ -35,12 +23,12 @@ class Course(Base):
     displayed = Column(Boolean)
 
     children = relationship(
-        'Course', 
-        backref=backref('parent', remote_side=[id]), 
+        'CourseTree',
+        backref=backref('parent', remote_side='CourseTree.id'),
         order_by=order,
         lazy='dynamic'
     )
-    course = relationship('CourseRaw', lazy='joined')
+    course = relationship('Course', lazy='joined')
     user = relationship('SimpleUser', lazy='joined')
 
     def __init__(self, name='', parent_id=0, order=0, course_id=0, author=0, 
@@ -65,7 +53,7 @@ class Course(Base):
             'author': self.author,
             'order': self.order,
             'course_id': self.course_id,
-            'course_name': self.course.fullname if self.course else None,
+            'course_name': self.course.full_name if self.course else None,
             'verified': self.verified,
             'visible': self.visible,
             'collapsed': self.collapsed,
