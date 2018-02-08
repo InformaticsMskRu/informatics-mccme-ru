@@ -1,7 +1,4 @@
-from functools import (
-    partial,
-    wraps,
-)
+from functools import wraps
 
 from pynformatics.utils.exceptions import BadRequest
 

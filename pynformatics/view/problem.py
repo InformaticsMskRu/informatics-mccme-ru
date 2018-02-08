@@ -1,30 +1,41 @@
 import io
-import json
+import logging
 import os
-import sys
 import traceback
 import transaction
 import xmlrpc.client
-#import jsonpickle, demjson
-
-from phpserialize import *
-#from webhelpers.html import *
-from xml.etree.ElementTree import ElementTree
 from pyramid.view import view_config
 
 from pynformatics.contest.ejudge.ejudge_proxy import submit
 from pynformatics.contest.ejudge.serve_internal import EjudgeContestCfg
-from pynformatics.model import SimpleUser, User, EjudgeContest, Run, Comment, EjudgeProblem, Problem
+from pynformatics.model.user import SimpleUser
+from pynformatics.model.problem import (
+    EjudgeProblem,
+    Problem,
+)
+from pynformatics.model.pynformatics_run import PynformaticsRun
 from pynformatics.models import DBSession
 from pynformatics.view.utils import *
 from pynformatics.utils.context import with_context
-from pynformatics.utils.exceptions import Forbidden
-from pynformatics.utils.run import get_status_by_id
+from pynformatics.utils.exceptions import (
+    EjudgeError,
+    Forbidden,
+)
+from pynformatics.utils.validators import (
+    validate_matchdict,
+    validate_params,
+    IntParam,
+    Param,
+)
+
+
+LOG = logging.getLogger(__name__)
 
 
 def checkCapability(request):
     if (not RequestCheckUserCapability(request, 'moodle/ejudge_contests:reload')):
         raise Exception("Auth Error")
+
 
 def setShowLimits(problem_id, show_limits):
     problem = DBSession.query(Problem).filter(Problem.id == problem_id).first()
@@ -66,29 +77,46 @@ def problem_submits(request, context):
     }
 
 
-@view_config(route_name='problem.submit_v2', renderer='json')
+@view_config(route_name='problem.submit_v2', renderer='json', request_method='POST')
+@validate_params(
+    IntParam('lang_id', required=True),
+    Param('file', required=True),
+    IntParam('statement_id'),
+)
 @with_context(require_auth=True)
 def problem_submits_v2(request, context):
-    lang_id = request.params['lang_id']
-    input_file = request.POST['file'].file
-    filename = request.POST['file'].filename
+    lang_id = int(request.params['lang_id'])
+    file = request.params['file']
+    filename = request.params['file'].filename
     ejudge_url = request.registry.settings['ejudge.new_client_url']
-    # TODO: fix allowed languages, removed for now
-    # if lang_id not in context.get_allowed_languages():
-    #     raise Forbidden('Language id "%s" is not allowed' % lang_id)
-    return {
-        'res': submit(
-            run_file=input_file,
-            contest_id=context.problem.ejudge_contest_id,
-            prob_id=context.problem.problem_id,
-            lang_id=lang_id,
-            login=context.user.login,
-            password=context.user.password,
-            filename=filename,
-            url=ejudge_url,
-            user_id=context.user_id,
-        )
-    }
+
+    if lang_id not in context.get_allowed_languages():
+        raise Forbidden('Language id "%s" is not allowed' % lang_id)
+
+    ejudge_response = submit(
+        run_file=file.file,
+        contest_id=context.problem.ejudge_contest_id,
+        prob_id=context.problem.problem_id,
+        lang_id=lang_id,
+        login=context.user.login,
+        password=context.user.password,
+        filename=filename,
+        url=ejudge_url,
+        user_id=context.user_id,
+    )
+    if ejudge_response['code'] != 0:
+        raise EjudgeError(ejudge_response['message'])
+
+    run_id = ejudge_response['run_id']
+    run = PynformaticsRun(
+        run_id=run_id,
+        contest_id=context.problem.ejudge_contest_id,
+        statement_id=getattr(context.statement, 'id', None),
+        source=file.value,
+    )
+    DBSession.add(run)
+
+    return {}
 
 
 @view_config(route_name='problem.ant.submit', renderer='json')
@@ -270,24 +298,12 @@ def problem_get(request, context):
 
 
 @view_config(route_name='problem.runs', renderer='json')
+@validate_matchdict(IntParam('problem_id', required=True))
 @with_context(require_auth=True)
 def problem_runs(request, context):
     runs = context.problem.runs.filter_by(user_id=int(context.user.ejudge_id))
-    runs_dict = {}
-    attrs = [
-        'size',
-        'create_time',
-        'contest_id',
-        'prob_id',
-        'lang_id',
-        'status',
-        'score',
-    ]
-    for run in runs:
-        run_dict = {
-            attr: getattr(run, attr, 'undefined')
-            for attr in attrs
-        }
-        run_dict['create_time'] = str(run_dict['create_time'])
-        runs_dict[str(run.run_id)] = run_dict
+    runs_dict = {
+        run.run_id: run.serialize()
+        for run in runs
+    }
     return runs_dict

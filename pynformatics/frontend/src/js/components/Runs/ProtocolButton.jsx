@@ -12,6 +12,7 @@ import Status from './Status';
 import Tabs, { TabPane } from '../utility/Tabs';
 import * as problemActions from '../../actions/problemActions';
 import SamplesProtocolPane from './SamplesProtocolPane';
+import { LANGUAGES } from '../../constants';
 
 
 export class ProtocolButton extends React.Component {
@@ -33,7 +34,6 @@ export class ProtocolButton extends React.Component {
   }
 
   showModal() {
-
     const { problemId, runId, contestId, dispatch } = this.props;
     dispatch(problemActions.fetchProblemRunProtocol(problemId, contestId, runId));
 
@@ -45,9 +45,14 @@ export class ProtocolButton extends React.Component {
     const run = _.get(problems, `[${problemId}].runs[${runId}]`, {});
 
     const {
+      lang_id: langId,
+      protocol,
+      source,
+    } = run;
+    const {
       tests,
       compiler_output: compilerOutput,
-    } = run.protocol || {};
+    } = protocol || {};
 
     const testsColumns = [
       {
@@ -100,12 +105,12 @@ export class ProtocolButton extends React.Component {
           <Tabs>
             <TabPane key="source" tab="Код">
               <CodeMirror
-                value={'# Просмотр кода пока не реализован'}
+                value={source}
                 options={{
                   lineNumbers: true,
                   readOnly: true,
                   tabSize: 4,
-                  mode: 'text-x/python',
+                  mode: LANGUAGES[langId].mime,
                 }}
               />
             </TabPane>

@@ -43,7 +43,7 @@ class Context:
             setattr(
                 self,
                 '_' + request_key,
-                request.matchdict.get(request_key) or request.GET.get(request_key)
+                request.matchdict.get(request_key) or request.params.get(request_key)
             )
 
     @property

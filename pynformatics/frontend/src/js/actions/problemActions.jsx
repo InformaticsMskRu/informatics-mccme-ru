@@ -35,12 +35,12 @@ export function fetchProblemRuns(problemId) {
 }
 
 
-export function submitProblem(problemId, { languageId, file, source }) {
+export function submitProblem(problemId, { languageId, file, source }, statementId) {
   return (dispatch) => {
     const url = `/problem/${problemId}/submit_v2`;
 
     const formData = new FormData;
-    formData.append('lang_id', parseInt(languageId));
+    formData.append('lang_id', languageId);
     if (file) {
       formData.append('file', file);
     }
@@ -51,6 +51,10 @@ export function submitProblem(problemId, { languageId, file, source }) {
     else {
       alert('nothing to submit');
       return;
+    }
+
+    if (typeof statementId !== 'undefined') {
+      formData.append('statement_id', statementId);
     }
 
     return dispatch({

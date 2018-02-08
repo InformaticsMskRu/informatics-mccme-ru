@@ -5,14 +5,15 @@ import { Layout } from 'antd';
 import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
 
-
 import Box from '../../components/utility/Box';
+import Blockage from "./Blockage";
 import MainContentWrapper from '../../components/utility/MainContentWrapper';
 import Menu from './Menu';
 import Problem from '../../components/Problem/Problem';
 import { ToggleDrawerIcon } from '../../components/Icon';
+import * as contextActions from '../../actions/contextActions';
 import * as statementActions from '../../actions/statementActions';
-import Blockage from "./Blockage";
+
 
 const { Sider } = Layout;
 
@@ -182,7 +183,7 @@ export class StatementPage extends React.Component {
             />
             {
               problemRank
-                ? <Problem problemId={problems[problemRank].id} />
+                ? <Problem problemId={problems[problemRank].id} statementId={parseInt(statementId)} />
                 : null
             }
           </div>

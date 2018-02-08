@@ -10,11 +10,11 @@ const axiosInstance = axios.create({
 });
 
 axiosInstance.interceptors.request.use(config => {
-  const { context } = store.getState();
-  config.params = {
-    ...config.params,
-    ...context,
-  };
+  // const { context } = store.getState();
+  // config.params = {
+  //   ...config.params,
+  //   ...context,
+  // };
   config.paramsSerializer = (params) => stringify(params);
   return config;
 });

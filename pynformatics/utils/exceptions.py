@@ -49,6 +49,11 @@ class UserOAuthIdAlreadyUsed(Forbidden):
     message = 'OAuth ID already in use'
 
 
+# Ejudge
+class EjudgeError(BadRequest):
+    message = 'Ejudge error'
+
+
 # Statement
 class StatementNotFound(NotFound):
     message = 'No statement with this id'

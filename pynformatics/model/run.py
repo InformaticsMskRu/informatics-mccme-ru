@@ -9,7 +9,9 @@ from sqlalchemy.types import Integer, String, DateTime
 from sqlalchemy.orm import *
 
 from pynformatics.model.meta import Base
+from pynformatics.model.pynformatics_run import PynformaticsRun
 from pynformatics.models import DBSession
+from pynformatics.utils.functions import attrs_to_dict
 from pynformatics.utils.run import *
 from pynformatics.utils.ejudge_archive import EjudgeArchiveReader
 
@@ -28,7 +30,7 @@ class Run(Base):
             ['user_id'],
             ['moodle.mdl_user.ej_id']
         ),
-        {'schema':'ejudge'}
+        {'schema': 'ejudge'}
     )
 
    
@@ -309,3 +311,31 @@ class Run(Base):
 
     def _set_output_archive(self, val):
         self.output_archive = val
+
+    def get_pynformatics_run(self):
+        if self.pynformatics_run:
+            return self.pynformatics_run
+
+        pynformatics_run = PynformaticsRun(
+            run_id=self.run_id,
+            contest_id=self.contest_id,
+            source=self.get_sources(),
+        )
+        DBSession.add(pynformatics_run)
+        return pynformatics_run
+
+    def serialize(self):
+        serialized = attrs_to_dict(
+            self,
+            'run_id',
+            'contest_id',
+            'create_time',
+            'lang_id',
+            'prob_id',
+            'score',
+            'size',
+            'status',
+        )
+        serialized['create_time'] = str(serialized['create_time'])
+        serialized.update(self.get_pynformatics_run().serialize())
+        return serialized
