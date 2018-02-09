@@ -38,10 +38,15 @@ class PynformaticsRun(Base):
     statement_id = Column(Integer)
     source = Column(Unicode)
 
-    def serialize(self):
+    AUTHOR_ATTRS = [
+        'source',
+    ]
+
+    def serialize(self, context):
         serialized = attrs_to_dict(
             self,
             'statement_id',
-            'source'
         )
+        if context.user and self.run.user.id == context.user.id:
+            serialized.update(attrs_to_dict(self, *PynformaticsRun.AUTHOR_ATTRS))
         return serialized

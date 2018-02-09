@@ -302,9 +302,9 @@ def problem_get(request, context):
 @view_config(route_name='problem.runs', renderer='json')
 @validate_matchdict(IntParam('problem_id', required=True))
 @validate_params(IntParam('statement_id'))
-@with_context(require_auth=True)
+@with_context
 def problem_runs(request, context):
-    runs = context.problem.runs.filter_by(user_id=int(context.user.ejudge_id))
+    runs = context.problem.runs
     if 'statement_id' in request.params:
         statement_id = int(request.params['statement_id'])
         runs = runs.join(
@@ -316,9 +316,11 @@ def problem_runs(request, context):
         ).filter(
             PynformaticsRun.statement_id == statement_id
         )
+    else:
+        runs = runs.filter_by(user_id=int(context.user.ejudge_id))
 
     runs_dict = {
-        run.run_id: run.serialize()
+        run.run_id: run.serialize(context)
         for run in runs
     }
     return runs_dict

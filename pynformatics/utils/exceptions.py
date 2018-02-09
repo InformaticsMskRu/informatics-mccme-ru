@@ -107,3 +107,6 @@ class PaginationPageSizeNegativeOrZero(BadRequest):
 # Run
 class RunNotFound(NotFound):
     message = 'Run not found'
+
+class RunAuthorOnly(Forbidden):
+    message = 'Only accessible by author or admin'

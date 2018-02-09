@@ -42,13 +42,15 @@ class TestView__problem_runs(TestCase):
         self.session.add_all(self.runs[0])  # user1 runs
         self.session.add_all(self.runs[1])  # user2 runs
 
-        self.request.session = {'user_id': self.user1.id}
         self.request.matchdict = {'problem_id': self.problem.id}
+        self.mock_context = mock.Mock()
+        self.mock_context.problem = self.session.query(Problem).all()[0]
+        self.mock_context.user = self.user1
 
     def test_filters_by_user_id(self):
         with mock.patch('pynformatics.model.run.Run.serialize', autospec=True) as serialize_mock:
-            serialize_mock.side_effect = lambda self: self
-            response = problem_runs(self.request)
+            serialize_mock.side_effect = lambda self, *args: self
+            response = problem_runs(self.request, self.mock_context)
 
         assert_that(
             response.keys(),
@@ -74,10 +76,10 @@ class TestView__problem_runs(TestCase):
         self.request.params = {'statement_id': statements[0].id}
         with mock.patch('pynformatics.model.run.Run.serialize', autospec=True) as serialize_mock, \
                 mock.patch('pynformatics.model.run.Run.get_sources', mock.Mock(return_value='')):
-            serialize_mock.side_effect = lambda self: self
-            response = problem_runs(self.request)
+            serialize_mock.side_effect = lambda self, *args: self
+            response = problem_runs(self.request, self.mock_context)
 
         assert_that(
             response.keys(),
-            contains_inanyorder(0)
+            contains_inanyorder(0, 3)
         )

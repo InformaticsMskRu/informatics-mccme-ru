@@ -193,7 +193,7 @@ const MenuProblem = ({letter, rank, status, title, collapsed}) => (
     <div className="problemLetter">{letter}</div>
     <div className="problemTitle">{title}</div>
     <div className="problemStatus">
-      <Status status={status} collapsed={collapsed}/>
+      {/*<Status status={status} collapsed={collapsed}/>*/}
     </div>
   </div>
 );

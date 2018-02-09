@@ -324,7 +324,7 @@ class Run(Base):
         DBSession.add(pynformatics_run)
         return pynformatics_run
 
-    def serialize(self):
+    def serialize(self, context):
         serialized = attrs_to_dict(
             self,
             'run_id',
@@ -336,6 +336,10 @@ class Run(Base):
             'size',
             'status',
         )
+
         serialized['create_time'] = str(serialized['create_time'])
-        serialized.update(self.get_pynformatics_run().serialize())
+        serialized.update(self.get_pynformatics_run().serialize(context))
+
+        if context.user.ejudge_id != self.user.ejudge_id:
+            serialized['user'] = self.user.serialize(context)
         return serialized

@@ -23,6 +23,7 @@ from pynformatics.utils.validators import (
 from pynformatics.utils.exceptions import (
     InternalServerError,
     RunNotFound,
+    RunAuthorOnly,
 )
 
 
@@ -90,9 +91,12 @@ def get_protocol(request):
 
 
 @view_config(route_name='protocol.get_v2', renderer='json')
-@validate_matchdict(IntParam('run_id', required=True),
-                    IntParam('contest_id', required=True))
-def protocol_get_v2(request):
+@validate_matchdict(
+    IntParam('run_id', required=True),
+    IntParam('contest_id', required=True)
+)
+@with_context(require_auth=True)
+def protocol_get_v2(request, context):
     # TODO: переделать формат протокола (статус выдавать по id), избавиться от fetch_tested_protocol_data
 
     run_id = int(request.matchdict['run_id'])
@@ -101,6 +105,9 @@ def protocol_get_v2(request):
     run = DBSession.query(Run).filter(and_(Run.run_id == run_id, Run.contest_id == contest_id)).first()
     if not run:
         raise RunNotFound
+
+    if context.user.ejudge_id != run.user_id:
+        raise RunAuthorOnly
 
     try:
         run.fetch_tested_protocol_data()

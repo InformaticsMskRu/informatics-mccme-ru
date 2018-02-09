@@ -50,10 +50,16 @@ export class Runs extends React.Component {
   static propTypes = {
     problemId: PropTypes.number.isRequired,
     runs: PropTypes.object.isRequired,
+    showUserInfo: PropTypes.bool,
+    showRows: PropTypes.number,
+
     windowWidth: PropTypes.number.isRequired,
   };
 
-  static showRows = 5;
+  static defaultProps = {
+    showUserInfo: false,
+    showRows: 5,
+  };
 
   constructor() {
     super();
@@ -88,7 +94,13 @@ export class Runs extends React.Component {
 
   render() {
     const { showMore } = this.state;
-    const { windowWidth, problemId } = this.props;
+    const {
+      problemId,
+      showRows,
+      showUserInfo,
+      windowWidth,
+      user,
+    } = this.props;
 
     const columns = [
       {
@@ -138,6 +150,14 @@ export class Runs extends React.Component {
       },
     ];
 
+    if (showUserInfo) {
+      columns.splice(2, 0, {
+        dataIndex: 'user',
+        key: 'user',
+        title: 'Участник'
+      });
+    }
+
     const data = _.sortBy(_.map(this.props.runs, (value, key) => ({
       key,
       problemId,
@@ -147,6 +167,11 @@ export class Runs extends React.Component {
       time: value.create_time || '',
       language: LANGUAGES[value.lang_id].name || '',
       score: value.score,
+      user: (
+        value.user
+          ? value.user.firstname + ' ' + value.user.lastname
+          : user.firstname + ' ' + user.lastname
+      )
     })), row => -row.id);
 
 
@@ -154,12 +179,18 @@ export class Runs extends React.Component {
       <RunsWrapper>
         <Table
           columns={columns}
-          dataSource={ showMore || windowWidth < 768 ? data : data.slice(0, Runs.showRows) }
+          dataSource={ showMore || windowWidth < 768 ? data : data.slice(0, showRows) }
           pagination={false}
           scroll={{ x: 600 }}
         />
         <div className="buttons">
-          <Button onClick={this.toggleShowMore} type="secondary">Показать еще</Button>
+          <Button
+            type="secondary"
+            onClick={this.toggleShowMore}
+            disabled={data.length <= showRows}
+          >
+            Показать еще
+          </Button>
           <Button type="secondary" disabled>Архив посылок</Button>
         </div>
       </RunsWrapper>
@@ -168,5 +199,6 @@ export class Runs extends React.Component {
 }
 
 export default connect(state => ({
+  user: state.user,
   windowWidth: state.ui.width,
 }))(Runs);

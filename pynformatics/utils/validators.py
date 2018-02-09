@@ -33,7 +33,7 @@ def validate(source, *params: Param):
     def decorator(view_function):
 
         @wraps(view_function)
-        def wrapper(request):
+        def wrapper(request, *args):
             data = getattr(request, source)
             for param in params:
                 if param.name not in data:
@@ -41,7 +41,7 @@ def validate(source, *params: Param):
                         raise BadRequest(message='Parameter "{}" is required'.format(param.name))
                 else:
                     param.validate(data[param.name])
-            return view_function(request)
+            return view_function(request, *args)
         return wrapper
     return decorator
 

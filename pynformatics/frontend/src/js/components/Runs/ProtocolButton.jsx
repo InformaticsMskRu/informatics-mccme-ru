@@ -41,18 +41,21 @@ export class ProtocolButton extends React.Component {
   }
 
   render() {
-    const { problemId, runId, problems } = this.props;
+    const { problemId, runId, problems, user } = this.props;
     const run = _.get(problems, `[${problemId}].runs[${runId}]`, {});
 
     const {
       lang_id: langId,
       protocol,
       source,
+      user: runUser,
     } = run;
     const {
       tests,
       compiler_output: compilerOutput,
     } = protocol || {};
+
+    const authored = typeof runUser === 'undefined' || runUser.id === user.id;
 
     const testsColumns = [
       {
@@ -142,6 +145,7 @@ export class ProtocolButton extends React.Component {
           size="small"
           style={{ padding: 0, display: 'flex' }}
           onClick={this.showModal}
+          disabled={!authored}
         >
           <i className="material-icons">keyboard_arrow_right</i>
         </Button>
@@ -152,4 +156,5 @@ export class ProtocolButton extends React.Component {
 
 export default connect(state => ({
   problems: state.problems,
+  user: state.user,
 }))(ProtocolButton);

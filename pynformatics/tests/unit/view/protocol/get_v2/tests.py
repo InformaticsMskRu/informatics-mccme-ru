@@ -9,9 +9,11 @@ from hamcrest import (
 
 from pynformatics.model.problem import EjudgeProblem
 from pynformatics.model.run import Run
+from pynformatics.model.user import SimpleUser
 from pynformatics.testutils import TestCase
 from pynformatics.view.protocol import protocol_get_v2
 from pynformatics.utils.exceptions import (
+    RunAuthorOnly,
     RunNotFound,
     InternalServerError,
 )
@@ -20,6 +22,10 @@ from pynformatics.utils.exceptions import (
 class TestView__protocol_get_v2(TestCase):
     def setUp(self):
         super(TestView__protocol_get_v2, self).setUp()
+
+        self.user = SimpleUser(ejudge_id=22)
+        self.session.add(self.user)
+        self.session.flush()
 
         self.run_id = 123
         self.contest_id = 456
@@ -37,6 +43,7 @@ class TestView__protocol_get_v2(TestCase):
         self.run = Run(
             run_id=self.run_id,
             problem=self.problem,
+            user_id=self.user.ejudge_id,
         )
 
         self.session.add(self.run)
@@ -47,6 +54,7 @@ class TestView__protocol_get_v2(TestCase):
                   run_id=None,
                   contest_id=None,
                   ):
+        self.request.session = {'user_id': self.user.id}
         self.request.matchdict = {
             'run_id': run_id or self.run_id,
             'contest_id': contest_id or self.contest_id,
@@ -110,6 +118,7 @@ class TestView__protocol_get_v2(TestCase):
             )
 
     def test_not_found(self):
+        self.request.session = {'user_id': self.user.id}
         self.request.matchdict = {
             'run_id': 999,
             'contest_id': 999,
@@ -118,3 +127,19 @@ class TestView__protocol_get_v2(TestCase):
             calling(protocol_get_v2).with_args(self.request),
             raises(RunNotFound)
         )
+
+    def test_author_only(self):
+        run = Run(
+            run_id=321,
+            contest_id=654,
+        )
+        self.session.add(run)
+        assert_that(
+            calling(self.call_view).with_args(
+                run_id=run.run_id,
+                contest_id=run.contest_id,
+            ),
+            raises(RunAuthorOnly)
+        )
+
+

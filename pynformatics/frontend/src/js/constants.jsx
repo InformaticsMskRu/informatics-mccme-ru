@@ -91,6 +91,11 @@ export const LANGUAGES = {
 
 
 export const STATUSES = {
+  NaN: {
+    short: 'ER',
+    long: 'Server error',
+    color: 'blue',
+  },
   0: {
     short: 'OK',
     long: 'OK',

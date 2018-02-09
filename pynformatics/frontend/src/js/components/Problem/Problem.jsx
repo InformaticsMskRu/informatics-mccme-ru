@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import styled from 'styled-components';
 import * as _ from 'lodash';
+import { palette } from 'styled-theme';
 
 import Box from '../../components/utility/Box';
 import Header from '../../components/utility/Header';
@@ -11,7 +12,7 @@ import Sample from './Sample';
 import SubmitForm from './SubmitForm';
 import Tabs, { TabPane } from '../../components/utility/Tabs';
 import * as problemActions from '../../actions/problemActions';
-import {palette} from "styled-theme";
+import SubmissionsPane from './SubmissionsPane';
 
 
 const ProblemWrapper = styled.div`
@@ -158,7 +159,9 @@ export class Problem extends React.Component {
               <Runs problemId={problemId} runs={problemRuns} />
             </TabPane>
             <TabPane tab="Результаты" key="standings" />
-            <TabPane tab="Посылки" key="runs" />
+            <TabPane tab="Посылки" key="runs">
+              <SubmissionsPane problemId={problemId} runs={problemRuns} />
+            </TabPane>
             <TabPane tab="Решение" key="solution" />
             <TabPane tab="Темы и источники" key="sources" />
           </Tabs>
