@@ -53,7 +53,7 @@ export default class TeamTask extends React.Component {
               </text></div>
               <Button type="primary" size="medium">Создать команду</Button>
             </Col>
-            <Col md={10} xs={10} style={colStyle}>
+            <Col md={10} xs={12} style={colStyle}>
               <header2>Выберите команду</header2>
               <RadioGroup style={{marginTop: '28.5px'}}>
                 <Popconfirm placement="bottomRight" title={text} okText="Да" cancelText="Нет">
