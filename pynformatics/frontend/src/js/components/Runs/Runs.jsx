@@ -26,6 +26,10 @@ const RunsWrapper = styled.div`
     color: ${palette('other', 7)}; 
   }
   .ant-table table { border-radius: 0; }
+  .ant-table td { 
+    white-space: nowrap;
+    word-break: keep-all; 
+  }
   
   .buttons {
     display: flex;

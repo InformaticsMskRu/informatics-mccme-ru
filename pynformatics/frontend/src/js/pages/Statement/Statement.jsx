@@ -57,6 +57,8 @@ const StatementPageWrapper = MainContentWrapper.extend`
         display: block;
       }
     }
+    
+    .problemTitle { padding-left: 30px; }
   }
   
   @media (max-width: 767px) {

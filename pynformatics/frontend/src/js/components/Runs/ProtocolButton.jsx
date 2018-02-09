@@ -1,19 +1,32 @@
-import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import React from 'react';
+import { connect } from 'react-redux';
 import { Table } from 'antd';
 import * as _ from 'lodash';
-
+import styled from 'styled-components';
 
 import Button from '../utility/Button';
 import CodeMirror from '../../components/utility/CodeMirror';
 import Modal from '../utility/Modal';
+import SamplesProtocolPane from './SamplesProtocolPane';
 import Status from './Status';
 import Tabs, { TabPane } from '../utility/Tabs';
-import * as problemActions from '../../actions/problemActions';
-import SamplesProtocolPane from './SamplesProtocolPane';
+import Tooltip from '../../components/utility/Tooltip';
 import { LANGUAGES } from '../../constants';
+import * as problemActions from '../../actions/problemActions';
 
+
+const ProtocolButtonModalContentWrapper = styled.div`
+  .ant-table td {
+    white-space: nowrap;
+  }
+  
+  @media (max-width: 575px) {
+    .ant-tabs {
+      margin-top: 20px;
+    }
+  }
+`;
 
 export class ProtocolButton extends React.Component {
   static propTypes = {
@@ -72,12 +85,12 @@ export class ProtocolButton extends React.Component {
       {
         dataIndex: 'time',
         key: 'time',
-        title: 'Время работы',
+        title: <Tooltip title="Время работы">🕓</Tooltip>,
       },
       {
         dataIndex: 'realTime',
         key: 'realTime',
-        title: 'Астрономическое время работы',
+        title: <Tooltip title="Астрономическое время работы">👩‍🚀</Tooltip>
       },
       {
         dataIndex: 'maxMemoryUsed',
@@ -105,7 +118,8 @@ export class ProtocolButton extends React.Component {
           width={720}
           destroyOnClose={true}
         >
-          <Tabs>
+          <ProtocolButtonModalContentWrapper>
+            <Tabs>
             <TabPane key="source" tab="Код">
               <CodeMirror
                 value={source}
@@ -123,6 +137,7 @@ export class ProtocolButton extends React.Component {
                 columns={testsColumns}
                 size="small"
                 pagination={false}
+                scroll={{x: 600}}
               />
               { compilerOutput
                 ? (
@@ -139,6 +154,7 @@ export class ProtocolButton extends React.Component {
             </TabPane>
             {/*<TabPane key="fullProtocol" tab="Полный протокол">1</TabPane>*/}
           </Tabs>
+          </ProtocolButtonModalContentWrapper>
         </Modal>
         <Button
           type="secondary"
