@@ -114,11 +114,12 @@ def problem_submits_v2(request, context):
         run_id=run_id,
         contest_id=context.problem.ejudge_contest_id,
         statement_id=getattr(context.statement, 'id', None),
-        source=file.value,
+        source=file.value.decode('unicode_escape'),
     )
     DBSession.add(run)
+    DBSession.flush()
 
-    return run.run.serialize()
+    return run.run.serialize(context)
 
 
 @view_config(route_name='problem.ant.submit', renderer='json')

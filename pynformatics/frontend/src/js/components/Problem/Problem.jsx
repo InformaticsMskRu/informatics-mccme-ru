@@ -132,6 +132,7 @@ export class Problem extends React.Component {
       sample_tests_json: problemSamples,
     } = _.get(this.props.problems, `[${problemId}].data`, {});
     const problemRuns = _.get(this.props.problems[problemId], 'runs', {});
+    const userProblemRuns = _.pickBy(problemRuns, (value) => typeof value.user === 'undefined');
 
     const additionalTabsProps = (problemId !== this.problemId)
       ? { activeKey: 'statement' }
@@ -156,7 +157,7 @@ export class Problem extends React.Component {
                 { _.map(problemSamples, ({input, correct}, id) => <Sample key={id} input={input} correct={correct}/>) }
               </div>
               <SubmitForm problemId={problemId} />
-              <Runs problemId={problemId} runs={problemRuns} />
+              <Runs problemId={problemId} runs={userProblemRuns} />
             </TabPane>
             <TabPane tab="Результаты" key="standings" />
             <TabPane tab="Посылки" key="runs">

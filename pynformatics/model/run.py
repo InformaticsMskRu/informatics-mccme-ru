@@ -317,8 +317,7 @@ class Run(Base):
             return self.pynformatics_run
 
         pynformatics_run = PynformaticsRun(
-            run_id=self.run_id,
-            contest_id=self.contest_id,
+            run=self,
             source=self.get_sources(),
         )
         DBSession.add(pynformatics_run)
