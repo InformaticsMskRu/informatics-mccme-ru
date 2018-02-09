@@ -116,6 +116,7 @@ def main(global_config, **settings):
 
     config.add_route('submits.get', '/submits/get')
 
+    config.add_route('statement.get_by_course_module', '/statement')
     config.add_route('statement.get', '/statement/{statement_id}')
     config.add_route('statement.set_settings', '/statement/{statement_id}/set_settings')
     config.add_route('statement.start_virtual', '/statement/{statement_id}/start_virtual')

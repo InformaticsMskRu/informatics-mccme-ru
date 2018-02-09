@@ -1,5 +1,9 @@
 from pyramid.view import view_config
+from sqlalchemy import and_
 
+from pynformatics.model.course_module import CourseModule
+from pynformatics.model.statement import Statement
+from pynformatics.models import DBSession
 from pynformatics.utils.validators import (
     IntParam,
     validate_matchdict,
@@ -63,3 +67,19 @@ def statement_start(request, context):
 def statement_finish(request, context):
     participant = context.statement.finish(context.user)
     return participant.serialize(context)
+
+
+@view_config(route_name='statement.get_by_course_module', renderer='json', request_method='GET')
+@validate_params(IntParam('course_module_id', required=True))
+def statement_get_by_module(request):
+    course_module_id = int(request.params['course_module_id'])
+    course_module = DBSession.query(CourseModule).filter(and_(
+        CourseModule.id == course_module_id,
+        CourseModule.module == 19
+    )).first()
+
+    if not course_module:
+        raise StatementNotFound
+
+    request.matchdict = {'statement_id': course_module.instance}
+    return statement_get(request)

@@ -61,3 +61,18 @@ export function finish(statementId, virtual = false) {
     }).then(() => dispatch(fetchStatement(statementId)));
   };
 }
+
+
+export function fetchStatementByCourseModuleId(courseModuleId) {
+  return (dispatch) => {
+    const url = '/statement';
+    const params = {
+      course_module_id: courseModuleId,
+    };
+    return dispatch({
+      type: 'GET_STATEMENT_BY_COURSE_MODULE_ID',
+      payload: axios.get(url, { params }),
+    })
+  }
+}
+

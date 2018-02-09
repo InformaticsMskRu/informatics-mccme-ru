@@ -36,6 +36,15 @@ export default function reducer(state=initialState, action) {
         },
       };
 
+    case 'GET_STATEMENT_BY_COURSE_MODULE_ID_FULFILLED':
+      return {
+        ...state,
+        [action.payload.data.id]: {
+          ...action.payload.data,
+          fetched: true,
+        }
+      };
+
     default:
       return state;
   }
