@@ -45,7 +45,7 @@ export default class TeamTask extends React.Component {
           <Row gutter={gutter} style={{...rowStyle, textAlign: 'left'}}>
             <Col md={12} xs={24} style={colStyle}>
               <header1>Командный контест</header1>
-              <div style={{width: '365px', marginTop: '28.5px'}}><text>
+              <div class="block"><text>
                 На олимпиаде, в режиме командной олимпиады,
                 три ученика пишут задачи за одним компьютером.
                 Результаты команд хранятся отдельно от результатов учеников.

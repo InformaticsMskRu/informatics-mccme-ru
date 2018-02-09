@@ -25,8 +25,9 @@ const TeamTaskWrapper = MainContentWrapper.extend`
     color: #2d3446;
   }
   
-  div1 {
+  .block {
     width: 365px; 
+    height: 140px;
     margin-top: 28.5px;
   }
   
@@ -43,7 +44,7 @@ const TeamTaskWrapper = MainContentWrapper.extend`
   
   @media (max-width: 576px) {
     padding-top: 70px;
-    width: 90%;
+    width: 375px;
     height: 100%;
     margin: 0 auto;
     
@@ -59,10 +60,9 @@ const TeamTaskWrapper = MainContentWrapper.extend`
       color: #343a40;
     }
     
-    div1 {
+    .block {
       width: 344px; 
       margin-top: 28.5px;
-      align: center;
     }
     
   }
