@@ -316,8 +316,10 @@ def problem_runs(request, context):
         ).filter(
             PynformaticsRun.statement_id == statement_id
         )
-    else:
+    elif context.user:
         runs = runs.filter_by(user_id=int(context.user.ejudge_id))
+    else:
+        return {}
 
     runs_dict = {
         run.run_id: run.serialize(context)
