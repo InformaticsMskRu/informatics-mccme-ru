@@ -16,15 +16,18 @@ export function fetchProblem(problemId) {
 }
 
 
-export function fetchProblemRuns(problemId) {
+export function fetchProblemRuns(problemId, statementId) {
   return (dispatch) => {
     const url = `/problem/${problemId}/runs`;
+
+    const params = statementId ? {statement_id: statementId} : {};
 
     return dispatch({
       type: 'GET_PROBLEM_RUNS',
       payload: axios.get(
         url,
         {
+          params,
           withCredentials: true,
         },
       ),
@@ -70,7 +73,7 @@ export function submitProblem(problemId, { languageId, file, source }, statement
         },
       ),
       meta: { problemId },
-    }).then(() => dispatch(fetchProblemRuns(problemId)));
+    }).then(() => dispatch(fetchProblemRuns(problemId, statementId)));
   };
 }
 

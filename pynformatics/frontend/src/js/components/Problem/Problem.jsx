@@ -88,13 +88,16 @@ const ProblemWrapper = styled.div`
 
 
 export class Problem extends React.Component {
-  static propTypes = {
-    problemId: PropTypes.number.isRequired,
+  static contextTypes = {
     statementId: PropTypes.number,
   };
 
-  constructor(props) {
-    super(props);
+  static propTypes = {
+    problemId: PropTypes.number.isRequired,
+  };
+
+  constructor(props, context) {
+    super(props, context);
 
     this.problemId = this.props.problemId;
 
@@ -117,11 +120,11 @@ export class Problem extends React.Component {
 
   fetchProblemData(problemId) {
     this.props.dispatch(problemActions.fetchProblem(problemId));
-    this.props.dispatch(problemActions.fetchProblemRuns(problemId));
+    this.props.dispatch(problemActions.fetchProblemRuns(problemId, this.context.statementId));
   }
 
   render() {
-    const { problemId, statementId } = this.props;
+    const { problemId } = this.props;
     const {
       name: problemTitle,
       content: problemStatement,
@@ -151,7 +154,7 @@ export class Problem extends React.Component {
               <div className="problemSamples">
                 { _.map(problemSamples, ({input, correct}, id) => <Sample key={id} input={input} correct={correct}/>) }
               </div>
-              <SubmitForm problemId={problemId} statementId={statementId} />
+              <SubmitForm problemId={problemId} />
               <Runs problemId={problemId} runs={problemRuns} />
             </TabPane>
             <TabPane tab="Результаты" key="standings" />

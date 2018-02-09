@@ -92,10 +92,13 @@ const SubmitFormWrapper = styled.div`
 `;
 
 export class SubmitForm extends React.Component {
+  static contextTypes = {
+    statementId: PropTypes.number,
+  };
+
   static propTypes = {
     windowWidth: PropTypes.number.isRequired,
     problemId: PropTypes.number.isRequired,
-    statementId: PropTypes.number,
   };
 
   constructor() {
@@ -139,7 +142,6 @@ export class SubmitForm extends React.Component {
   }
 
   submitProblem() {
-    const { statementId } = this.props;
     const { languageId } = this.state;
 
     this.languageInfo[languageId] = (new Date()).getTime();
@@ -148,7 +150,7 @@ export class SubmitForm extends React.Component {
     this.props.dispatch(problemAcitons.submitProblem(
       this.props.problemId,
       _.pick(this.state, ['languageId', 'file', 'source']),
-      statementId,
+      this.context.statementId,
     )).then(() => {
       this.setState({
         ...this.state,

@@ -5,6 +5,7 @@ import traceback
 import transaction
 import xmlrpc.client
 from pyramid.view import view_config
+from sqlalchemy import and_
 
 from pynformatics.contest.ejudge.ejudge_proxy import submit
 from pynformatics.contest.ejudge.serve_internal import EjudgeContestCfg
@@ -14,6 +15,7 @@ from pynformatics.model.problem import (
     Problem,
 )
 from pynformatics.model.pynformatics_run import PynformaticsRun
+from pynformatics.model.run import Run
 from pynformatics.models import DBSession
 from pynformatics.view.utils import *
 from pynformatics.utils.context import with_context
@@ -116,7 +118,7 @@ def problem_submits_v2(request, context):
     )
     DBSession.add(run)
 
-    return {}
+    return run.run.serialize()
 
 
 @view_config(route_name='problem.ant.submit', renderer='json')
@@ -299,9 +301,22 @@ def problem_get(request, context):
 
 @view_config(route_name='problem.runs', renderer='json')
 @validate_matchdict(IntParam('problem_id', required=True))
+@validate_params(IntParam('statement_id'))
 @with_context(require_auth=True)
 def problem_runs(request, context):
     runs = context.problem.runs.filter_by(user_id=int(context.user.ejudge_id))
+    if 'statement_id' in request.params:
+        statement_id = int(request.params['statement_id'])
+        runs = runs.join(
+            PynformaticsRun,
+            and_(
+                PynformaticsRun.run_id == Run.run_id,
+                PynformaticsRun.contest_id == Run.contest_id
+            )
+        ).filter(
+            PynformaticsRun.statement_id == statement_id
+        )
+
     runs_dict = {
         run.run_id: run.serialize()
         for run in runs

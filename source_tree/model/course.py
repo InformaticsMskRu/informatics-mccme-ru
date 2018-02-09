@@ -3,6 +3,7 @@ from sqlalchemy.types import Integer, Unicode, Boolean, DateTime
 from sqlalchemy.orm import relationship, backref
 from datetime import datetime
 
+from pynformatics.model.course import Course
 from source_tree.models import Base
 
 

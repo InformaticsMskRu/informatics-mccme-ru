@@ -6,7 +6,7 @@ import * as _ from 'lodash';
 import { palette } from 'styled-theme';
 import { connect } from 'react-redux';
 
-import { LANGUAGES, STATUSES } from '../../constants';
+import { LANGUAGES } from '../../constants';
 import Button from '../../components/utility/Button';
 import ProtocolButton from './ProtocolButton';
 import Status from './Status';
@@ -43,6 +43,10 @@ const RunsWrapper = styled.div`
 `;
 
 export class Runs extends React.Component {
+  static contextTypes = {
+    statementId: PropTypes.number,
+  };
+
   static propTypes = {
     problemId: PropTypes.number.isRequired,
     runs: PropTypes.object.isRequired,
@@ -68,7 +72,8 @@ export class Runs extends React.Component {
     const { problemId } = this.props;
     if (!this.fetchProblemRunsPromise) {
       this.fetchProblemRunsPromise = this.props.dispatch(
-        problemActions.fetchProblemRuns(problemId)).then(() => {
+        problemActions.fetchProblemRuns(problemId, this.context.statementId)
+      ).then(() => {
         this.fetchProblemRunsPromise = null;
       });
     }

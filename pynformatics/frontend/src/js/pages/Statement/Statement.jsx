@@ -65,6 +65,10 @@ const StatementPageWrapper = MainContentWrapper.extend`
 `;
 
 export class StatementPage extends React.Component {
+  static childContextTypes = {
+    statementId: PropTypes.number,
+  };
+
   static propTypes = {
     match: PropTypes.object.isRequired,
     statements: PropTypes.object.isRequired,
@@ -84,6 +88,11 @@ export class StatementPage extends React.Component {
 
   componentDidMount() {
     this.fetchStatement();
+  }
+
+  getChildContext() {
+    const { statementId } = this.props.match.params;
+    return { statementId: parseInt(statementId) };
   }
 
   fetchStatement() {
