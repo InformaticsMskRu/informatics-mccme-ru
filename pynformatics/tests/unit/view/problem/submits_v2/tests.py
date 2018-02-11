@@ -35,12 +35,13 @@ class TestView__problem_submits_v2(TestCase):
 
     def test_not_allowed_language(self):
         """
-        Tries to submit problem with not allowed language id. Must raise 401 Forbidden
+        Tries to submit problem with not allowed language id. Must raise 403 Forbidden
         """
         allowed_languages = ['1', '2']
         lang_id = '3'
         self.get_languages_mock.return_value = allowed_languages
-        self.request.params = {'lang_id': lang_id}
+        self.request.params = {'lang_id': lang_id, 'file': mock.Mock()}
+
         assert_that(
             calling(problem_submits_v2).with_args(self.request),
             raises(Forbidden),

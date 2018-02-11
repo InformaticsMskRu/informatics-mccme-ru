@@ -13,6 +13,7 @@
     "babel-preset-es2015": "^6.24.1",
     "babel-preset-react": "^6.24.1",
     "babel-preset-stage-0": "^6.24.1",
+    "clipboard": "^1.7.1",
     "clone": "^2.1.1",
     "copy-webpack-plugin": "^4.3.1",
     "css-loader": "^0.28.7",
@@ -20,9 +21,12 @@
     "image-webpack-loader": "^3.4.2",
     "lodash": "^4.17.4",
     "prop-types": "^15.6.0",
+    "query-string": "^5.0.1",
     "react": "^16.0.0",
+    "react-codemirror": "^1.0.0",
     "react-custom-scrollbars": "^4.2.1",
     "react-dom": "^16.0.0",
+    "react-dropzone-component": "^3.0.0",
     "react-intl": "^2.4.0",
     "react-redux": "^5.0.6",
     "react-router-dom": "^4.2.2",
@@ -41,7 +45,8 @@
     "webpack": "^3.6.0"
   },
   "scripts": {
-    "dev": "rm -r dist/* && cp src/index.html dist/index.html && cp -r src/css dist/css && cp -r src/fonts dist/fonts && ./node_modules/.bin/webpack-dev-server --hot --inline",
+    "prepare_dist": "rm -r dist/* && cp src/index.html dist/index.html && cp -r src/css dist/css && cp -r src/fonts dist/fonts && cp -r src/images dist/images",
+    "dev": "npm run prepare_dist && ./node_modules/.bin/webpack-dev-server --hot --inline",
     "test": "jest",
     "test:watch": "npm test -- --watch"
   },

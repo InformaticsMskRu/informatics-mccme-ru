@@ -16,15 +16,18 @@ export function fetchProblem(problemId) {
 }
 
 
-export function fetchProblemRuns(problemId) {
+export function fetchProblemRuns(problemId, statementId) {
   return (dispatch) => {
     const url = `/problem/${problemId}/runs`;
 
-    dispatch({
+    const params = statementId ? {statement_id: statementId} : {};
+
+    return dispatch({
       type: 'GET_PROBLEM_RUNS',
       payload: axios.get(
         url,
         {
+          params,
           withCredentials: true,
         },
       ),
@@ -35,25 +38,29 @@ export function fetchProblemRuns(problemId) {
 }
 
 
-export function submitProblem(problemId, data) {
+export function submitProblem(problemId, { languageId, file, source }, statementId) {
   return (dispatch) => {
     const url = `/problem/${problemId}/submit_v2`;
 
     const formData = new FormData;
-    formData.append('lang_id', data.langId);
-    if (data.file) {
-      formData.append('file', data.file);
+    formData.append('lang_id', languageId);
+    if (file) {
+      formData.append('file', file);
     }
-    else if (data.source) {
-      const blob = new Blob([data.source], {type: 'text/plain'});
-      formData.append('file', blob, `source${LANGUAGES[data.langId].extension}`);
+    else if (source) {
+      const blob = new Blob([source], {type: 'text/plain'});
+      formData.append('file', blob, `source${LANGUAGES[languageId].extension}`);
     }
     else {
       alert('nothing to submit');
       return;
     }
 
-    dispatch({
+    if (typeof statementId !== 'undefined') {
+      formData.append('statement_id', statementId);
+    }
+
+    return dispatch({
       type: 'PROBLEM_SUBMIT',
       payload: axios.post(
         url,
@@ -66,15 +73,14 @@ export function submitProblem(problemId, data) {
         },
       ),
       meta: { problemId },
-    }).then(() => dispatch(fetchProblemRuns(problemId))).catch(() => {
-    });
+    }).then(() => dispatch(fetchProblemRuns(problemId, statementId)));
   };
 }
 
 
 export function fetchProblemRunProtocol(problemId, contestId, runId) {
   return (dispatch) => {
-    const url = `/protocol/get/${contestId}/${runId}`;
+    const url = `/protocol/get_v2/${contestId}/${runId}`;
 
     return dispatch({
       type: 'GET_PROBLEM_RUN_PROTOCOL',

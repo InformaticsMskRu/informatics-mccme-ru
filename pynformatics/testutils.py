@@ -34,6 +34,7 @@ class TestCase(unittest.TestCase):
             }
         )
 
+        DBSession.configure(bind=engine)
         cls.session = DBSession
 
     @classmethod

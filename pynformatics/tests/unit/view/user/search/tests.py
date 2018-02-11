@@ -47,14 +47,14 @@ class TestView__user_search(TestCase):
         self.request.params = {'query': 'john', 'page': 'a'}
         assert_that(
             calling(search_user).with_args(self.request),
-            raises(BadRequest, 'Parameter "page" should be int')
+            raises(BadRequest, 'Parameter "page" must be int')
         )
 
     def test_page_size_not_int(self):
         self.request.params = {'query': 'john', 'page': '1', 'page_size': 'a'}
         assert_that(
             calling(search_user).with_args(self.request),
-            raises(BadRequest, 'Parameter "page_size" should be int')
+            raises(BadRequest, 'Parameter "page_size" must be int')
         )
 
     def test_page_out_of_range(self):

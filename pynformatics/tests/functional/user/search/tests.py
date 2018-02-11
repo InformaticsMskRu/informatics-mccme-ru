@@ -4,9 +4,9 @@ from pynformatics.model.user import User
 from pynformatics.testutils import TestCase
 
 
-class TestView__user_search(TestCase):
+class TestAPI__user_search(TestCase):
     def setUp(self):
-        super(TestView__user_search, self).setUp()
+        super(TestAPI__user_search, self).setUp()
         users = [User() for _ in range(50)]
         for u in users:
             u.username, u.deleted = 'John', False
@@ -42,14 +42,14 @@ class TestView__user_search(TestCase):
         params = {'query': 'john', 'page': 'a'}
         response = self.app.get('/search/user', params=params, status=400)
         assert_that(response.json, has_entries({
-            'message': 'Parameter "page" should be int'
+            'message': 'Parameter "page" must be int'
         }))
 
     def test_page_size_not_int(self):
         params = {'query': 'john', 'page': '1', 'page_size': 'a'}
         response = self.app.get('/search/user', params=params, status=400)
         assert_that(response.json, has_entries({
-            'message': 'Parameter "page_size" should be int'
+            'message': 'Parameter "page_size" must be int'
         }))
 
     def test_page_out_of_range(self):

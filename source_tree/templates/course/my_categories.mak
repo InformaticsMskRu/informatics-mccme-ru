@@ -399,7 +399,7 @@ li > div.actions {
                     %if depth == 1:
                         <img src="/pix/i/course.gif" alt="">&nbsp;
                     %endif
-                        ${course.name if course.name else course.course.fullname}
+                        ${course.name if course.name else course.course.full_name}
                         ${"(не подтв.)" if not course.verified else ""}
                     </a>
                     %if course.course.password:

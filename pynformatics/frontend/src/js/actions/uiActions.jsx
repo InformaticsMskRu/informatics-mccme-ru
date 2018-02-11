@@ -8,6 +8,6 @@ export function toggleSidebar() {
 export function windowResize(width, height) {
   return {
     type: 'WINDOW_RESIZE',
-    payload: { window, height }
+    payload: { width, height }
   }
 }

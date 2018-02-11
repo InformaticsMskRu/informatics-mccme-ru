@@ -6,6 +6,7 @@ from hamcrest import (
 )
 import mock
 
+from pynformatics.model.course import Course
 from pynformatics.model.course_module import CourseModule
 from pynformatics.model.participant import Participant
 from pynformatics.model.statement import Statement
@@ -17,25 +18,27 @@ class TestModel__statement_serialize(TestCase):
     def setUp(self):
         super(TestModel__statement_serialize, self).setUp()
 
-        self.statement = Statement()
-        self.session.add(self.statement)
+        self.course = Course(id=123)
+        self.session.add(self.course)
 
+        self.statement = Statement(course=self.course)
         self.user = User()
-        self.session.add(self.user)
 
+        self.session.add_all([self.statement, self.user])
         self.session.flush()
 
-        self.course_model = CourseModule(
+        self.course_module = CourseModule(
             instance=self.statement.id,
             module=19,
+            course_id=self.course.id,
         )
-        self.session.add(self.course_model)
 
         self.participant = Participant(
             user_id=self.user.id,
             statement_id=self.statement.id,
         )
-        self.session.add(self.participant)
+
+        self.session.add_all([self.course_module, self.participant])
 
         self.mock_context = mock.Mock()
 
@@ -44,7 +47,7 @@ class TestModel__statement_serialize(TestCase):
         assert_that(
             self.statement.serialize(self.mock_context),
             has_entries({
-                'course': None,
+                'course_id': self.course.id,
                 'course_module_id': 1,
                 'id': self.statement.id,
                 'name': None,

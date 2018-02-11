@@ -4,6 +4,7 @@ from hamcrest import (
     assert_that,
     calling,
     equal_to,
+    is_not,
     raises,
 )
 
@@ -44,6 +45,7 @@ class TestModel__Statement_start_virtual(TestCase):
         mock_start.assert_called_once_with(
             user=self.user,
             duration=self.virtual_duration,
+            password=None,
         )
 
     def test_not_virtual(self):
@@ -54,9 +56,11 @@ class TestModel__Statement_start_virtual(TestCase):
             raises(StatementNotVirtual)
         )
 
-    def test_not_started(self):
+    def test_ignores_not_started(self):
+        # Виртуальные контесты должны игнорировать поля time_start, time_end для согласования с
+        # поведением на старом информатиксе
         with mock.patch('pynformatics.model.statement.time.time', mock.Mock(return_value=self.time_start - 1)):
             assert_that(
                 calling(self.statement.start_virtual).with_args(self.user),
-                raises(StatementNotStarted),
+                is_not(raises(StatementNotStarted)),
             )
