@@ -64,7 +64,8 @@
       "<rootDir>/src/js/isomorphic/"
     ],
     "moduleNameMapper": {
-      "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/src/js/utils/fileMock.jsx"
+      "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/src/js/utils/fileMock.jsx",
+      "\\.(css|less)$": "<rootDir>/src/js/utils/styleMock.jsx"
     }
   }
 }
