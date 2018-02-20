@@ -13,9 +13,13 @@ import Checkbox from "../../components/utility/Checkbox";
 import {Col, Row} from '../../components/utility/Grid';
 
 import * as userActions from "../../actions/userActions";
+import {resetRedirectUrl} from "../../actions/routingActions";
 
 
-@connect(state => ({user: state.user}))
+@connect(state => ({
+  user: state.user,
+  redirectUrl: state.routing.redirectUrl
+}))
 @Form.create()
 class Login extends React.Component {
   constructor(props) {
@@ -87,7 +91,16 @@ class Login extends React.Component {
 
   render() {
     const { getFieldDecorator } = this.props.form;
-    const { user } = this.props;
+    const { user, redirectUrl, dispatch } = this.props;
+
+    if (this.state.successfulLogin) {
+      if (redirectUrl !== undefined) {
+        dispatch(resetRedirectUrl());
+        return <Redirect to={redirectUrl}/>
+      }
+      return <Redirect to="/"/>
+    }
+
     return !_.isEmpty(user)
       ?
         (<FormWrapper
@@ -98,7 +111,6 @@ class Login extends React.Component {
         </FormWrapper>)
       :
         (<FormWrapper title="Вход" errorMessage={this.state.errorMessage}>
-          {this.state.successfulLogin ? <Redirect to="/"/> : null}
           {getFieldDecorator('username', {
             rules: [{required: true, message: 'Введите логин'}],
           })(<Input

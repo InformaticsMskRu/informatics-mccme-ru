@@ -7,6 +7,7 @@ import problems from './problemsReducer';
 import statements from './statementsReducer';
 import ui from './uiReducer';
 import user from './userReducer';
+import routing from './routingReducer';
 
 
 export default combineReducers({
@@ -17,4 +18,5 @@ export default combineReducers({
   statements,
   ui,
   user,
+  routing
 })

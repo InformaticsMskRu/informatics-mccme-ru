@@ -31,6 +31,7 @@ import 'antd/dist/antd.css';
 import '../isomorphic/containers/App/global.css';
 import '../../css/style.css';
 import '../../css/ionicons.min.css';
+import LoginRequiredContainer from "./utility/LoginRequiredContainer";
 
 
 @withRouter
@@ -78,6 +79,9 @@ export default class App extends React.Component {
                 <Route exact path="/goto" component={TempGotoProblemPage} />
                 <Route exact path="/login" component={Login} />
                 <Route exact path="/problem/:problemId" component={ProblemPage} />
+                <Route component={LoginRequiredContainer}>
+                  <Route exact path="/some_login_required_url"/>
+                </Route>
               </Switch>
             </Content>
           </Layout>
