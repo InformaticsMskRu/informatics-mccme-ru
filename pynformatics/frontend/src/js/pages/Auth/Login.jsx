@@ -105,7 +105,7 @@ class Login extends React.Component {
       return <Redirect to="/"/>
     }
 
-    return <Spin spinning={this.state.loading} size="large">
+    return <Spin spinning={this.state.loading} size="large" delay={500}>
       {!_.isEmpty(user)
         ?
         (<FormWrapper title={`Здраствуйте, ${user.firstname}`}>
