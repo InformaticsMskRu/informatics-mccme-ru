@@ -1,18 +1,19 @@
-import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import React from 'react';
 import styled from 'styled-components';
-import * as _ from 'lodash';
+import { connect } from 'react-redux';
 import { palette } from 'styled-theme';
+import * as _ from 'lodash';
 
 import Box from '../../components/utility/Box';
 import Header from '../../components/utility/Header';
 import Runs from '../Runs/Runs';
 import Sample from './Sample';
+import StandingsTable from '../StandingsTable/StandingsTable';
+import SubmissionsPane from './SubmissionsPane';
 import SubmitForm from './SubmitForm';
 import Tabs, { TabPane } from '../../components/utility/Tabs';
 import * as problemActions from '../../actions/problemActions';
-import SubmissionsPane from './SubmissionsPane';
 
 
 const ProblemWrapper = styled.div`
@@ -146,7 +147,7 @@ export class Problem extends React.Component {
           </div>
 
           <Tabs
-            defaultActiveKey="statement"
+            defaultActiveKey="standings"
             style={{ textAlign: 'center' }}
             {...additionalTabsProps}
           >
@@ -159,7 +160,9 @@ export class Problem extends React.Component {
               <SubmitForm problemId={problemId} />
               <Runs problemId={problemId} runs={userProblemRuns} />
             </TabPane>
-            <TabPane tab="Результаты" key="standings" />
+            <TabPane tab="Результаты" key="standings">
+              <StandingsTable />
+            </TabPane>
             <TabPane tab="Посылки" key="runs">
               <SubmissionsPane problemId={problemId} runs={problemRuns} />
             </TabPane>

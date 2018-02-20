@@ -72,10 +72,14 @@ class SimpleUser(Base):
             return latest_participant
         return None
 
-    def serialize(self,
-                  context=None,
-                  attributes=('id', 'firstname', 'lastname', 'active_virtual'),
-                  ):
+    def serialize(self, context, attributes=None):
+        if not attributes:
+            attributes = (
+                'id',
+                'firstname',
+                'lastname',
+                'active_virtual'
+            )
         serialized = attrs_to_dict(self, *attributes)
         if 'active_virtual' in attributes:  # TODO Убрать во внешний сериалайзер
             participant = self.get_active_participant()

@@ -250,12 +250,8 @@ exports[`renders correctly with empty localStorage 1`] = `
   margin-right: 0 !important;
 }
 
-.c5.ant-btn {
-  border-radius: 4px;
-}
-
-.c5.ant-btn.ant-btn-primary {
-  background-color: rgb(64,126,255);
+.c5.ant-btn.ant-btn-secondary {
+  color: #ffffff;
 }
 
 .c3 .ant-collapse {
@@ -468,6 +464,12 @@ exports[`renders correctly with empty localStorage 1`] = `
 @media (max-width:767px) {
   .c1.half {
     width: 100%;
+  }
+}
+
+@media (max-width:575px) {
+  .c0 {
+    padding-top: 72px;
   }
 }
 
@@ -1297,12 +1299,8 @@ exports[`renders correctly with panel closed 1`] = `
   margin-right: 0 !important;
 }
 
-.c5.ant-btn {
-  border-radius: 4px;
-}
-
-.c5.ant-btn.ant-btn-primary {
-  background-color: rgb(64,126,255);
+.c5.ant-btn.ant-btn-secondary {
+  color: #ffffff;
 }
 
 .c3 .ant-collapse {
@@ -1515,6 +1513,12 @@ exports[`renders correctly with panel closed 1`] = `
 @media (max-width:767px) {
   .c1.half {
     width: 100%;
+  }
+}
+
+@media (max-width:575px) {
+  .c0 {
+    padding-top: 72px;
   }
 }
 
@@ -2344,12 +2348,8 @@ exports[`renders correctly with panel open 1`] = `
   margin-right: 0 !important;
 }
 
-.c5.ant-btn {
-  border-radius: 4px;
-}
-
-.c5.ant-btn.ant-btn-primary {
-  background-color: rgb(64,126,255);
+.c5.ant-btn.ant-btn-secondary {
+  color: #ffffff;
 }
 
 .c3 .ant-collapse {
@@ -2562,6 +2562,12 @@ exports[`renders correctly with panel open 1`] = `
 @media (max-width:767px) {
   .c1.half {
     width: 100%;
+  }
+}
+
+@media (max-width:575px) {
+  .c0 {
+    padding-top: 72px;
   }
 }
 

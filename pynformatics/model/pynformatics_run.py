@@ -28,25 +28,27 @@ class PynformaticsRun(Base):
 
     run_id = Column('run_id', ForeignKey('ejudge.runs.run_id'), primary_key=True)
     contest_id = Column('contest_id', ForeignKey('ejudge.runs.contest_id'), primary_key=True)
+
+    statement_id = Column(Integer, ForeignKey('moodle.mdl_statements.id'))
+    source = Column(Unicode)
+
     run = relationship(
         'Run',
         foreign_keys='[PynformaticsRun.run_id, PynformaticsRun.contest_id]',
         backref=backref('pynformatics_run', lazy='joined', uselist=False),
         lazy='joined'
     )
-
-    statement_id = Column(Integer)
-    source = Column(Unicode)
+    statement = relationship('Statement', backref=backref('pynformatics_runs'))
 
     AUTHOR_ATTRS = [
         'source',
     ]
 
-    def serialize(self, context):
-        serialized = attrs_to_dict(
-            self,
-            'statement_id',
-        )
+    def serialize(self, context, attributes=None):
+        if not attributes:
+            attributes = ('statement_id',)
+
+        serialized = attrs_to_dict(self, *attributes)
         if context.user and self.run.user.id == context.user.id:
             serialized.update(attrs_to_dict(self, *PynformaticsRun.AUTHOR_ATTRS))
         return serialized

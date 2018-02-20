@@ -22,3 +22,14 @@ def hash_password(password):
 
 def check_password(password, hashed_password):
     return hash_password(password) == hashed_password
+
+
+def index_of(iterable, predicate, default=None):
+    return next(
+        (
+            index
+            for (index, element) in enumerate(iterable)
+            if predicate(element)
+        ),
+        default
+    )

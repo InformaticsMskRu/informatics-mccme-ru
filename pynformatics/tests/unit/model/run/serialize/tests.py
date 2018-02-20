@@ -89,6 +89,6 @@ class TestModel__run_serialize(TestCase):
                 'lang_id': None,
                 'score': None,
                 'size': None,
-                'user': self.author.serialize()
+                'user': self.author.serialize(mock.Mock())
             })
         )
