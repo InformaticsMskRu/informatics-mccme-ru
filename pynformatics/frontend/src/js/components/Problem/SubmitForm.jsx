@@ -148,6 +148,10 @@ export class SubmitForm extends React.Component {
 
     this.languageInfo[languageId] = (new Date()).getTime();
     localStorage.setItem('languageInfo', JSON.stringify(this.languageInfo));
+    if (!this.state.file && !this.state.source) {
+      alert('nothing to submit');
+      return;
+    }
     this.setState({showSubmitButtonSpinner: true});
     this.props.dispatch(problemAcitons.submitProblem(
       this.props.problemId,

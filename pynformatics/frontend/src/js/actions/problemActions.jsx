@@ -52,7 +52,7 @@ export function submitProblem(problemId, { languageId, file, source }, statement
       formData.append('file', blob, `source${LANGUAGES[languageId].extension}`);
     }
     else {
-      alert('nothing to submit');
+      console.log('nothing to submit');
       return;
     }
 
