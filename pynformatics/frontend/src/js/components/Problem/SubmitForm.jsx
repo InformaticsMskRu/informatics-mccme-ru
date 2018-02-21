@@ -115,6 +115,7 @@ export class SubmitForm extends React.Component {
       languageId: _.maxBy(_.keys(this.languageInfo), id => this.languageInfo[id]) || 1,
       showCodeMirror: false,
       submitProcessed: true,
+      showSubmitButtonSpinner: false,
     };
 
     this.toggleCodeMirror = this.toggleCodeMirror.bind(this);
@@ -147,7 +148,7 @@ export class SubmitForm extends React.Component {
 
     this.languageInfo[languageId] = (new Date()).getTime();
     localStorage.setItem('languageInfo', JSON.stringify(this.languageInfo));
-
+    this.setState({showSubmitButtonSpinner: true});
     this.props.dispatch(problemAcitons.submitProblem(
       this.props.problemId,
       _.pick(this.state, ['languageId', 'file', 'source']),
@@ -157,15 +158,17 @@ export class SubmitForm extends React.Component {
         ...this.state,
         showSubmitSuccess: true,
         showSubmitError: false,
+        showSubmitButtonSpinner: false,
       });
       setTimeout(() => this.setState({
         ...this.state,
-        showSubmitSuccess: false
+        showSubmitSuccess: false,
       }), 2000);
     }).catch(error => {
       this.setState({
         ...this.state,
         showSubmitError: true,
+        showSubmitButtonSpinner: false,
       });
       console.log(error);
     });
@@ -282,6 +285,7 @@ export class SubmitForm extends React.Component {
           <Button
             type="primary"
             onClick={this.submitProblem}
+            loading={this.state.showSubmitButtonSpinner}
           >
             Сдать решение
           </Button>
