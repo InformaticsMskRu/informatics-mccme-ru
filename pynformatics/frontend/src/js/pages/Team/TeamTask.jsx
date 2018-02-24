@@ -2,7 +2,6 @@ import React from 'react';
 
 import Box from '../../components/utility/Box';
 import Button from '../../components/utility/Button';
-import MainContentWrapper from '../../components/utility/MainContentWrapper';
 import TeamTaskWrapper from '../../components/utility/TeamTaskWrapper';
 import {
   gutter,
@@ -41,20 +40,20 @@ export default class TeamTask extends React.Component {
             closeText={<Button type="primary" size="small">Закрыть</Button>}
           />
         </Row>
-        <Box>
+        <Box style={{height: 'auto'}}>
           <Row gutter={gutter} style={{...rowStyle, textAlign: 'left'}}>
             <Col md={12} xs={24} style={colStyle}>
-              <header1>Командный контест</header1>
-              <div class="block"><text>
+              <div className="title_contest">Командный контест</div>
+              <div className="text_block">
                 На олимпиаде, в режиме командной олимпиады,
                 три ученика пишут задачи за одним компьютером.
                 Результаты команд хранятся отдельно от результатов учеников.
                 Выберите команду справа или создайте новую.
-              </text></div>
+              </div>
               <Button type="primary" size="medium">Создать команду</Button>
             </Col>
             <Col md={10} xs={12} style={colStyle}>
-              <header2>Выберите команду</header2>
+              <div className="title_team">Выберите команду</div>
               <RadioGroup style={{marginTop: '28.5px'}}>
                 <Popconfirm placement="bottomRight" title={text} okText="Да" cancelText="Нет">
                   <Radio style={radioStyle} value={1}>Вариант 1 (Фамилия, Фамилия, Фамилия)</Radio>
