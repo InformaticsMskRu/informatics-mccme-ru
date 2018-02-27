@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { palette } from 'styled-theme';
 
+import moment from '../../utils/moment';
 import { borderRadius } from '../../isomorphic/config/style-util';
 import { getProblemCellColor } from '../../utils/functions';
 
@@ -63,6 +64,7 @@ export default ({score, attempts, time, shrinkable=true, small=false}) => {
     );
   }
   const success = score === 100;
+
   return (
     <ProblemCellWrapper 
       score={score} 

@@ -74,10 +74,10 @@ const TopbarWrapper = styled(IsoTopbarWrapper)`
       & > * { margin: 0; }
       .backBtn { margin-left: 28px; }
     }
-    @media (max-width: 1023px) {
+    @media (max-width: 1279px) {
       .searchInput, .leftTitle { display: none; }
     }
-    @media (min-width: 1024px) {
+    @media (min-width: 1280px) {
       .centerTitle, .backBtn { display: none; }
     }
   }

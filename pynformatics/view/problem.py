@@ -331,18 +331,18 @@ def problem_runs(request, context):
     return runs_dict
 
 
-@view_config(route_name='problem.standings', renderer='json', request_method='GET')
-@validate_matchdict(IntParam('problem_id', required=True))
-@with_context
-def problem_standings(request, context):
-    if not context.problem:
-        raise ProblemNotFound
-
-    problem = context.problem
-
-    if problem.standings is None:
-        standings = ProblemStandings.create(problem_id=problem.id)
-    else:
-        standings = problem.standings
-
-    return standings.serialize(context)
+# @view_config(route_name='problem.standings', renderer='json', request_method='GET')
+# @validate_matchdict(IntParam('problem_id', required=True))
+# @with_context
+# def problem_standings(request, context):
+#     if not context.problem:
+#         raise ProblemNotFound
+#
+#     problem = context.problem
+#
+#     if problem.standings is None:
+#         standings = ProblemStandings.create(problem_id=problem.id)
+#     else:
+#         standings = problem.standings
+#
+#     return standings.serialize(context)

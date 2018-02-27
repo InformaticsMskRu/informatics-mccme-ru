@@ -1,76 +1,64 @@
 import * as _ from 'lodash';
 
+import moment from './moment';
+
+
 const tempStandingsData = {
   12547: {
-    first_name: 'Maxim',
-    last_name: 'Grishkin',
+    firstname: 'Maxim',
+    lastname: 'Grishkin',
     runs: [
       {
+        run_id: 1,
+        contest_id: 1,
         problem_id: 1,
         status: 0,
         score: 100,
-        time: '0:11',
+        create_time: '2018-02-10T15:45:52',
       },
       {
-        problem_id: 113736,
-        status: 1,
-        score: 0,
-        time: '0:42',
-      },
-      {
+        run_id: 2,
+        contest_id: 1,
         problem_id: 113736,
         status: 7,
-        score: 34,
-        time: '0:47',
+        score: 70,
+        create_time: '2018-02-10T18:45:52',
+      },
+      {
+        run_id: 3,
+        contest_id: 1,
+        problem_id: 113736,
+        status: 0,
+        score: 100,
+        create_time: '2018-02-10T20:00:52',
       },
     ],
   },
-  123: {
-    first_name: 'Somebody',
-    last_name: 'Once',
-    runs: [
-      {
-        problem_id: 1,
-        status: 0,
-        score: 100,
-        time: '0:11',
-      },
-      {
-        problem_id: 2,
-        status: 0,
-        score: 100,
-        time: '0:11',
-      },
-      {
-        problem_id: 3,
-        status: 0,
-        score: 100,
-        time: '0:11',
-      },
-      {
-        problem_id: 4,
-        status: 0,
-        score: 100,
-        time: '0:11',
-      },
-    ],
-  }
 }
 
 /**
  * @description Добавляет в data[user_id] поле processed
  * @param {object} data 
+ * @param {Date} startDate - начало олимпиады / виртуального контеста
+ * @param {Date} endDate - конец олимпиады / виртуального контеста
+ * @param {Date} maxDate - игнорирует посылки больше этого времени
  */
-export function processStandingsData(data = tempStandingsData) {
+export function processStandingsData({data, startDate, endDate, maxDate}) {
+  data = tempStandingsData;
   _.forEach(data, (userData, userId) => {
     userData.processed = _.reduce(
       userData.runs, 
       (processed, run) => {
-        const { problem_id, score, status, time } = run;
-        if (!_.has(processed.problems, `[${problem_id}]`)) {
-          processed.problems[problem_id.toString()] = { attempts: 0 };
+        const { problem_id: problemId, score, status, create_time: createTime } = run;
+        const time = new Date(createTime);
+
+        // Если посылка после maxDate, игнорируем
+        if (maxDate && time > maxDate) return processed;
+
+        if (!_.has(processed.problems, `[${problemId}]`)) {
+          processed.problems[problemId.toString()] = { attempts: 0 };
         }
-        const problem = processed.problems[problem_id];
+        const problem = processed.problems[problemId];
 
         // Если получен максимальный балл за задачу, игнорировать последующие посылки
         if (problem.score === 100) return processed;
@@ -79,7 +67,12 @@ export function processStandingsData(data = tempStandingsData) {
         problem.attempts += 1;
         problem.score = score;
         problem.status = status;
-        if (time) problem.time = time;
+
+        // Время указывается от начала контеста и только в том случае, если посылка отправлена во время
+        if (startDate && endDate && time >= startDate && time < endDate) {
+          const hours = Math.floor((time - startDate) / 1000 / 60 / 60);
+          problem.time = hours + moment.utc(time - startDate).format(':mm');
+        }
 
         if (problem.score === 100) {
           processed.summary.total += 1;

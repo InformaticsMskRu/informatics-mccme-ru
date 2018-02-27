@@ -58,6 +58,12 @@ def submit(run_file, contest_id, prob_id, lang_id, login, password, filename, ur
 
     c = requests.post(url, data=submit_data, cookies=cookies, files=files)
 
+    print('*' * 80)
+    print('*' * 80)
+    print('*' * 80)
+    print(c.text)
+    print('*' * 80)
+
     resp = json.loads(c.text)
 
     if 'run_id' in resp:

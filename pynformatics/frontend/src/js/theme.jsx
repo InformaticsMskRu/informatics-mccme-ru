@@ -19,6 +19,8 @@ theme.palette.other = [
   '#F9C999', // 11, problem cell 50 score
   '#92D673', // 12, problem cell 100 score
   '#788195', // 13, problem cell empty
+  '#D3D5D7', // 14 grey background
+  '#F3F5F7', // 15 grey background
 ];
 
 export default theme;

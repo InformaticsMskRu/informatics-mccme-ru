@@ -25,6 +25,13 @@ const columnsBeforeProblems = [
   },
 ];
 
+const attemptsColumn = {
+  title: 'Попыток',
+  dataIndex: 'attempts',
+  key: 'attempts',
+  className: 'standingsTableAttemptsColumn'
+};
+
 const columnsAfterProblems = [
   {
     title: 'Всего',
@@ -32,12 +39,7 @@ const columnsAfterProblems = [
     key: 'total',
     className: 'standingsTableTotalColumn'
   },
-  {
-    title: 'Попыток',
-    dataIndex: 'attempts',
-    key: 'attempts',
-    className: 'standingsTableAttemptsColumn'
-  },
+  attemptsColumn
 ];
 
 
@@ -72,37 +74,55 @@ export class StandingsTable extends React.Component {
   };
   
   static propTypes = {
+    problemId: PropTypes.number,
+    maxDate: PropTypes.instanceOf(Date),
     statements: PropTypes.object.isRequired,
   };
 
   constructor(props, context) {
     super(props, context);
 
+    const { statementId } = context;
+    const { problemId, maxDate } = props;
+
     this.state = {
       highlight: null,
     }
-    this.initProblemColumns();
+    this.initProblemColumns(statementId, problemId);
+    this.initData({statementId, problemId, maxDate});
 
     this.initProblemColumns = this.initProblemColumns.bind(this);
-
-    processStandingsData();
+    this.initData = this.initData.bind(this);
   }
 
-  initProblemColumns() {
-    const { statementId } = this.context;
-    this.singleProblem = typeof statementId === 'undefined';
+  componentWillReceiveProps(props, context) {
+    const { statementId: prevStatementId } = this.context;
+    const { problemId: prevProblemId, maxDate: prevMaxDate } = this.props;
+
+    const { statementId } = context;
+    const { problemId, maxDate } = props;
+
+    this.initProblemColumns(statementId, problemId);
+    if (statementId !== prevStatementId || maxDate !== prevMaxDate) {
+      this.initData({statementId, problemId, maxDate});
+    }
+  }
+
+  initProblemColumns(statementId, problemId) {
+    this.singleProblem = typeof problemId !== 'undefined';
 
     if (this.singleProblem) {
       this.columnsProblems = [
         {
           title: 'Результат',
-          dataIndex: 'problem',
+          dataIndex: problemId,
           key: 'problem',
           className: 'standingsTableProblemColumn',
-          render: ({score, time_created: time, attempts}) => <ProblemCell score={score} time={time} attempts={attempts} shrinkable={false} />,
-        }
+          render: ({score, create_time: time, attempts}) => <ProblemCell score={score} time={time} attempts={attempts} shrinkable={false} />,
+        },
+        attemptsColumn,
       ];
-      this.defaults = {problem: {}};
+      this.defaults = {[problemId]: {}};
     } else {
       const statement = this.props.statements[statementId];
       if (!statement) {
@@ -113,7 +133,7 @@ export class StandingsTable extends React.Component {
           dataIndex: problem.id,
           key: problem.id,
           className: 'standingsTableProblemColumn' + (this.state.highlight === problem.id ? 'highlighted' : ''),
-          render: ({score, time_created: time, attempts}) => <ProblemCell score={score} time={time} attempts={attempts} />,
+          render: ({score, time, attempts}) => <ProblemCell score={score} time={time} attempts={attempts} />,
           onCell: () => ({
             onMouseEnter: () => this.setState({...this.state, highlight: problem.id}),
             onMouseLeave: () => this.setState({...this.state, highlight: null})
@@ -125,16 +145,32 @@ export class StandingsTable extends React.Component {
     }
   }
 
-  render() {
-    let tempData = _.sortBy(_.map(processStandingsData(), (data, userId) => ({
+  initData({statementId, problemId, maxDate}) {
+    let standingsData = {};
+    const standingsAttrs = {};
+    if (maxDate) {
+      standingsAttrs.maxDate = maxDate;
+    }
+    if (statementId) {
+      const statement = this.props.statements[statementId];
+      if (statement.participant) {
+        const { start, duration } = statement.participant;
+        standingsAttrs.startDate = new Date(start * 1000);
+        standingsAttrs.endDate = new Date((start + duration) * 1000);
+      }
+      standingsData = _.get(this.props.statements, `[${statementId}].standings`, {});
+    }
+    this.data = _.sortBy(_.map(processStandingsData({data: standingsData, ...standingsAttrs}), (data, userId) => ({
       key: userId,
-      user: data.first_name + ' ' + data.last_name,
+      user: data.firstname + ' ' + data.lastname,
       ...this.defaults,
       ...data.processed.summary,
       ...data.processed.problems,
     })), [value => -value.total, value => value.attempts]);
-    tempData = _.map(tempData, (value, index) => ({...value, rowNumber: index + 1}));
+    this.data = _.map(this.data, (value, index) => ({...value, rowNumber: index + 1}));
+  }
 
+  render() {
     const columns = this.singleProblem 
       ? _.concat(columnsBeforeProblems, this.columnsProblems) 
       : _.concat(columnsBeforeProblems, this.columnsProblems, columnsAfterProblems)
@@ -144,7 +180,7 @@ export class StandingsTable extends React.Component {
         <Table
           bordered
           columns={columns}
-          dataSource={tempData}
+          dataSource={this.data}
           pagination={false}
         />
       </StandingsTableWrapper>

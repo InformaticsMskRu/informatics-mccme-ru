@@ -94,3 +94,21 @@ export function fetchProblemRunProtocol(problemId, contestId, runId) {
     });
   };
 }
+
+
+export function fetchProblemStandings(problemId) {
+  return (dispatch) => {
+    const url = `/problem/${problemId}/standings`;
+
+    return dispatch({
+      type: 'GET_PROBLEM_STANDINGS',
+      payload: axios.get(
+        url,
+        {
+          withCredentials: true,
+        }
+      ),
+      meta: { problemId },
+    });
+  }
+}

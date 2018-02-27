@@ -200,6 +200,10 @@ const MenuProblem = ({letter, rank, status, title, collapsed}) => (
 
 
 export class Menu extends React.Component {
+  static contextTypes = {
+    statementId: PropTypes.number,
+  };
+
   static propTypes = {
     collapsed: PropTypes.bool.isRequired,
     statement: PropTypes.object.isRequired,
@@ -237,6 +241,7 @@ export class Menu extends React.Component {
   }
 
   render() {
+    const { statementId } = this.context;
     const {
       collapsed,
       selectedKeys,
@@ -283,7 +288,7 @@ export class Menu extends React.Component {
             <div className="toggleDrawer" onClick={onCollapse}><ToggleDrawerIcon /></div>
             <div className="bootcampTitle">Название сборов</div>
             <div className="statementTitle">{statementTitle}</div>
-            <Link to='/'><Button type="secondary" size="small">Результаты контеста</Button></Link>
+            <Link to={`/contest/${statementId}/standings`}><Button type="secondary" size="small">Результаты контеста</Button></Link>
           </div>
 
           { (olympiad || virtualOlympiad) && typeof participant !== 'undefined'

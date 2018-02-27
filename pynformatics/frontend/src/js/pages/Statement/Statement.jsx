@@ -3,13 +3,14 @@ import { connect } from 'react-redux';
 import React from 'react';
 import { Layout } from 'antd';
 import PropTypes from 'prop-types';
-import { withRouter } from 'react-router-dom';
+import { withRouter, Switch, Route } from 'react-router-dom';
 
 import Box from '../../components/utility/Box';
 import Blockage from "./Blockage";
 import MainContentWrapper from '../../components/utility/MainContentWrapper';
 import Menu from './Menu';
 import Problem from '../../components/Problem/Problem';
+import Standings from './Standings';
 import { ToggleDrawerIcon } from '../../components/Icon';
 import * as contextActions from '../../actions/contextActions';
 import * as statementActions from '../../actions/statementActions';
@@ -41,6 +42,7 @@ const StatementPageWrapper = MainContentWrapper.extend`
       left: 20px;
       top: 30px;
       cursor: pointer;
+      z-index: 99;
     }
   }
   
@@ -99,6 +101,8 @@ export class StatementPage extends React.Component {
 
   fetchStatement() {
     const { statementId, problemRank } = this.props.match.params;
+    const showStandings = this.props.location.pathname.indexOf('standings') !== -1;
+
     this.props.dispatch(statementActions.fetchStatement(statementId)).then(result => {
       const {
         participant,
@@ -109,10 +113,11 @@ export class StatementPage extends React.Component {
 
       if ((olympiad || virtualOlympiad) && typeof participant === 'undefined') {
         this.props.history.replace(`/contest/${statementId}`);
-      } else if (problems && typeof problemRank === 'undefined') {
+      } else if (problems && typeof problemRank === 'undefined' && !showStandings) {
         this.changeProblemRank(_.keys(problems)[0]);
       }
     });
+    this.props.dispatch(statementActions.fetchStatementStandings(statementId));
   }
 
   toggleCollapse() {
@@ -192,11 +197,15 @@ export class StatementPage extends React.Component {
               className="toggleDrawer"
               onClick={this.toggleCollapse}
             />
-            {
-              problemRank
-                ? <Problem problemId={problems[problemRank].id} statementId={parseInt(statementId)} />
-                : null
-            }
+            <Route exact path="/contest/:statementId/standings" render={() => <Standings />} />
+            <Route exact path="/contest/:statementId/problem/:problemRank">
+              {
+                problemRank
+                  ? <Problem problemId={problems[problemRank].id} statementId={parseInt(statementId)} />
+                  : null
+              }
+            </Route>
+
           </div>
         </Layout>
       </StatementPageWrapper>

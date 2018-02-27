@@ -23,7 +23,10 @@ from pynformatics.utils.functions import (
     attrs_to_dict,
     index_of,
 )
-from pynformatics.utils.json_type import JsonType
+from pynformatics.utils.json_type import (
+    JsonType,
+    MutableDict,
+)
 
 
 log = logging.getLogger(__name__)
@@ -34,7 +37,7 @@ class StandingsMixin:
 
     @declared_attr
     def json(cls):
-        return Column('json', JsonType)
+        return Column('json', MutableDict.as_mutable(JsonType))
 
     def update(self, user):
         if not self.json:
@@ -74,8 +77,9 @@ class ProblemStandings(StandingsMixin, Base):
             )
         ).distinct().all()
 
-        for user in users:
-            instance.update(user)
+        with DBSession.no_autoflush:
+            for i, user in enumerate(users):
+                instance.update(user)
 
         log.info('ProblemStandings(problem_id=%s) Updates finished.' % instance.problem_id)
 
@@ -131,8 +135,9 @@ class StatementStandings(StandingsMixin, Base):
             statement_id=instance.statement_id
         ).all()
 
-        for pynformatics_run in pynformatics_runs:
-            instance.update(pynformatics_run.run)
+        with DBSession.no_autoflush:
+            for pynformatics_run in pynformatics_runs:
+                instance.update(pynformatics_run.run)
 
         log.info('StatementStandings(statement_id=%s) Updates finished.' % instance.statement_id)
 

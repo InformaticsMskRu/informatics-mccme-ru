@@ -147,7 +147,7 @@ export class Problem extends React.Component {
           </div>
 
           <Tabs
-            defaultActiveKey="standings"
+            defaultActiveKey="statement"
             style={{ textAlign: 'center' }}
             {...additionalTabsProps}
           >
@@ -161,7 +161,7 @@ export class Problem extends React.Component {
               <Runs problemId={problemId} runs={userProblemRuns} />
             </TabPane>
             <TabPane tab="Результаты" key="standings">
-              <StandingsTable />
+              <StandingsTable problemId={problemId} />
             </TabPane>
             <TabPane tab="Посылки" key="runs">
               <SubmissionsPane problemId={problemId} runs={problemRuns} />

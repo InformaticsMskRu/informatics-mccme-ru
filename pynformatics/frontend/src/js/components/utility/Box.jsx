@@ -43,8 +43,8 @@ const BoxHeader = ({title, subtitle}) => (
   </BoxHeaderWrapper>
 );
 
-const Box = ({ title, subtitle, children, style }) => (
-  <BoxWrapper style={style}>
+const Box = ({ title, subtitle, children, style, className }) => (
+  <BoxWrapper style={style} className={className}>
     { title || subtitle ? <BoxHeader title={title} subtitle={subtitle}/> : null }
     { children }
   </BoxWrapper>

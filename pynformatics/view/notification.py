@@ -31,8 +31,8 @@ def notification_update_standings(request):
     except Exception:
         raise RunNotFound
 
-    if run.problem.standings:
-        run.problem.standings.update(run.user)
+    # if run.problem.standings:
+    #     run.problem.standings.update(run.user)
 
     if (run.pynformatics_run
             and run.pynformatics_run.statement
