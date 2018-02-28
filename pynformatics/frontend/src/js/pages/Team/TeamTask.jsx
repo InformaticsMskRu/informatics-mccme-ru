@@ -43,8 +43,8 @@ export default class TeamTask extends React.Component {
           />
         </Row>
         <Box style={{height: 'auto'}}>
-          <Row gutter={gutter} style={{...rowStyle, textAlign: 'left'}}>
-            <Col md={12} xs={24} style={colStyle}>
+          <Row gutter={gutter} type="flex" justify="center" style={{...rowStyle, textAlign: 'left'}}>
+            <Col md={12} style={colStyle}>
               <div className="title_contest">Командный контест</div>
               <div className="text_block">
                 На олимпиаде, в режиме командной олимпиады,
@@ -52,9 +52,9 @@ export default class TeamTask extends React.Component {
                 Результаты команд хранятся отдельно от результатов учеников.
                 Выберите команду справа или создайте новую.
               </div>
-              <Button type="primary" size="medium">Создать команду</Button>
+              <Button type="primary" size="default">Создать команду</Button>
             </Col>
-            <Col md={10} xs={12} style={colStyle}>
+            <Col md={10} style={colStyle}>
               <div className="title_team">Выберите команду</div>
               <RadioGroup style={{marginTop: '28.5px'}}>
                 <Popconfirm placement="bottomRight" title={text} okText="Да" cancelText="Нет">
@@ -70,7 +70,7 @@ export default class TeamTask extends React.Component {
                   <Radio style={radioStyle} value={4}>Вариант 4 (Фамилия, Фамилия, Фамилия)</Radio>
                 </Popconfirm>
               </RadioGroup>
-              <Button type="primary" size="medium" style={{marginTop: '18px'}}>Показать все</Button>
+              <Button type="primary" size="default" style={{marginTop: '18px', display: 'block'}}>Показать все</Button>
             </Col>
           </Row>
         </Box>

@@ -48,10 +48,7 @@ const TeamTaskWrapper = MainContentWrapper.extend`
     color: #343a40;
   }
   
-  @media (max-width: 690px) {
-    padding-top: 70px;
-    padding-left: 10%;
-    padding-right: 10%;
+  @media (max-width: 767px) {
     width: 100%;
     height: 100%;
     margin: 0 auto;
@@ -103,7 +100,8 @@ const TeamTaskWrapper = MainContentWrapper.extend`
     }
     
     .text_block {
-      width: 344px;
+      max-width: 344px;
+      width: auto;
       margin-top: 28.5px;
       
       font-size: 13px;
