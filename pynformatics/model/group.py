@@ -1,4 +1,4 @@
-"""Group model"""
+'''Group model'''
 from sqlalchemy import ForeignKey, Column
 from sqlalchemy.types import Integer, String, Text, Float, Unicode
 from sqlalchemy.orm import relationship, backref, relation
@@ -11,7 +11,7 @@ from pynformatics.model.meta import Base
 
 
 class  Group(Base):
-    __tablename__ = "mdl_ejudge_group"
+    __tablename__ = 'mdl_ejudge_group'
     __table_args__ = {'schema':'moodle'}
 
     id = Column(Integer, primary_key=True)
@@ -21,15 +21,15 @@ class  Group(Base):
     visible = Column(Integer)
 
 class UserGroup(Base):
-    __tablename__ = "mdl_ejudge_group_users"
+    __tablename__ = 'mdl_ejudge_group_users'
     __table_args__ = {'schema':'moodle'}
 
     id = Column(Integer, primary_key=True)
-    user_id = Column(Integer, ForeignKey("moodle.mdl_user.id"))
-    group_id = Column(Integer, ForeignKey("moodle.mdl_ejudge_group.id"))
+    user_id = Column(Integer, ForeignKey('moodle.mdl_user.id'))
+    group_id = Column(Integer, ForeignKey('moodle.mdl_ejudge_group.id'))
 
-    group = relationship("Group", backref=backref("UserGroup", lazy="select"))
-    user = relationship("User", backref=backref("UserGroup", lazy="select"))
+    group = relationship('Group', backref=backref('user_group', lazy='select'))
+    user = relationship('User', backref=backref('user_group', lazy='select'))
 
     #firstname = association_proxy('user', 'firstname')
     #lastname = association_proxy('user', 'lastname')

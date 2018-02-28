@@ -12,10 +12,12 @@ import Sidebar from './Sidebar/Sidebar';
 
 import StatementPage from '../pages/Statement/Statement';
 import MainPage from '../pages/Main/Main';
+import TeamTask from '../pages/Team/TeamTask';
 import Auth from '../pages/Auth/Auth';
 import ProblemPage from '../pages/Problem/Problem';
 import TempGotoProblemPage from '../pages/TempGotoProblem';
 
+import User from './User';
 import StatementAdmin from '../pages/StatementAdmin';
 import StatementSettingsForm from './StatementSettingsForm';
 
@@ -74,6 +76,7 @@ export default class App extends React.Component {
                 <Route exact path="/goto" component={TempGotoProblemPage} />
                 <Route exact path="/login" component={Login} />
                 <Route exact path="/problem/:problemId" component={ProblemPage} />
+                <Route exact path="/team-task" component={TeamTask} />
               </Switch>
             </Content>
           </Layout>
@@ -127,6 +130,7 @@ export default class App extends React.Component {
   //               )
   //             }
   //           />
+  //           <Route exact path="/user/:userId" component={User} />
   //         </Switch>
   //       </div>
   //     </div>
