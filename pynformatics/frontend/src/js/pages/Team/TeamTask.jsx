@@ -26,6 +26,8 @@ export default class TeamTask extends React.Component {
       display: 'block',
       height: '30px',
       lineHeight: '30px',
+      fontSize: '14px',
+      color: '#788195',
     };
     const text = 'Отправить выбранную команду?';
     //annIcon = <i style={{color: "#ff9d61"}} class="material-icons">announcement</i>

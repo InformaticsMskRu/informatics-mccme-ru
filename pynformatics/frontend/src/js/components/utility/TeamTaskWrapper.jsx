@@ -48,36 +48,37 @@ const TeamTaskWrapper = MainContentWrapper.extend`
     color: #343a40;
   }
   
-  .box {
-    height: 336px;
-  }
-  
   @media (max-width: 690px) {
     padding-top: 70px;
-    width: 375px;
+    padding-left: 10%;
+    padding-right: 10%;
+    width: 100%;
     height: 100%;
     margin: 0 auto;
     
     .title_contest {
-      width: auto;
-      height: 24px;
-      margin-top: 24px;
-        
+      width: 100%;
+      height: 40px;
+      line-height: 40px;
+      margin-top: 17px;
+         
       font-size: 18px;
       font-weight: normal;
       font-style: normal;
       font-stretch: normal;
-      line-height: normal;
       letter-spacing: 0.6px;
       text-align: left;
       color: #788195;
-        
+      
+      display: flex;
+      align-items: center;
+      white-space: nowrap;
+            
       &:before {
         content: '';
         width: 5px;
         height: 40px;
-        margin-top: 17px;
-        margin-right: 12px;
+        margin-right: 15px;
         
         background: #e1e6ec;
         display: flex;
@@ -85,9 +86,10 @@ const TeamTaskWrapper = MainContentWrapper.extend`
        
       &:after {
         content: '';
-        width: auto;
+        width: 100%;
         height: 1px;
-        margin-right: 19px;
+        line-height: 40px;
+        margin-left: 15px;
         
         background: #e1e6ec;
         display: flex;
@@ -113,8 +115,6 @@ const TeamTaskWrapper = MainContentWrapper.extend`
       text-align: left;
       color: #343a40;
     }
-  }
-    
   }
 `;
 
