@@ -1,3 +1,5 @@
+from functools import wraps
+
 from pynformatics.utils.exceptions import BadRequest
 
 
@@ -20,22 +22,33 @@ class IntParam(Param):
         try:
             int(value)
         except:
-            raise BadRequest(message='Parameter "{}" should be int'.format(self.name))
+            raise BadRequest(message='Parameter "{}" must be int'.format(self.name))
 
     def transform(self, value):
         self.validate(value)
         return int(value)
 
 
-def validate_params(*params: Param):
+def validate(source, *params: Param):
     def decorator(view_function):
-        def wrapper(request):
+
+        @wraps(view_function)
+        def wrapper(request, *args):
+            data = getattr(request, source)
             for param in params:
-                if param.name not in request.params:
+                if param.name not in data:
                     if param.required:
                         raise BadRequest(message='Parameter "{}" is required'.format(param.name))
                 else:
-                    param.validate(request.params[param.name])
-            return view_function(request)
+                    param.validate(data[param.name])
+            return view_function(request, *args)
         return wrapper
     return decorator
+
+
+def validate_params(*params: Param):
+    return validate('params', *params)
+
+
+def validate_matchdict(*params: Param):
+    return validate('matchdict', *params)

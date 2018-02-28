@@ -10,6 +10,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm.collections import attribute_mapped_collection
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 
+from pynformatics.model.course import Course
 from pynformatics.model.meta import Base
 from pynformatics.model.participant import Participant
 from pynformatics.models import DBSession
@@ -22,6 +23,7 @@ from pynformatics.utils.exceptions import (
     StatementNotVirtual,
     StatementNotStarted,
     StatementOnlyOneOngoing,
+    StatementPasswordIsWrong,
     StatementSettingsValidationError,
 )
 from pynformatics.utils.functions import attrs_to_dict
@@ -32,7 +34,7 @@ class Statement(Base):
     __tablename__ = 'mdl_statements'
     __table_args__ = {'schema': 'moodle'}
     id = Column(Integer, primary_key=True)
-    course = Column(Integer)
+    course_id = Column('course', Integer, ForeignKey('moodle.mdl_course.id'))
     name = Column(Unicode)
     summary = Column(Unicode)
     numbering = Column(Integer)
@@ -47,6 +49,8 @@ class Statement(Base):
     virtual_olympiad = Column(Integer)
     virtual_duration = Column(Integer)
     settings = Column(JsonType)
+
+    course = relationship('Course', backref=backref('statements', lazy='dynamic'))
 
     course_module = relationship(
         'CourseModule',
@@ -166,12 +170,15 @@ class Statement(Base):
 
         self.time_modified = int(time.time())
 
-    def start_participant(self, user, duration):
-        now = time.time()
-        if now < self.time_start:
-            raise StatementNotStarted
-        if now >= self.time_stop:
-            raise StatementFinished
+    def start_participant(self,
+                          user,
+                          duration,
+                          password=None,
+                          ):
+        if self.course \
+                and self.course.require_password() \
+                and password != self.course.password:
+            raise StatementPasswordIsWrong
 
         if self.participants.filter(Participant.user_id == user.id).count():
             raise StatementCanOnlyStartOnce
@@ -197,13 +204,23 @@ class Statement(Base):
         active_participant.duration = int(time.time() - active_participant.start)
         return active_participant
 
-    def start(self, user):
+    def start(self,
+              user,
+              password=None,
+              ):
         if not self.olympiad:
             raise StatementNotOlympiad
 
+        now = time.time()
+        if now < self.time_start:
+            raise StatementNotStarted
+        if now >= self.time_stop:
+            raise StatementFinished
+
         return self.start_participant(
             user=user,
-            duration=self.time_stop - int(time.time())
+            duration=self.time_stop - int(time.time()),
+            password=password,
         )
 
     def finish(self, user):
@@ -212,13 +229,14 @@ class Statement(Base):
 
         return self.finish_participant(user)
 
-    def start_virtual(self, user):
+    def start_virtual(self, user, password=None):
         if not self.virtual_olympiad:
             raise StatementNotVirtual
 
         return self.start_participant(
             user=user,
-            duration=self.virtual_duration
+            duration=self.virtual_duration,
+            password=password,
         )
 
     def finish_virtual(self, user):
@@ -230,7 +248,6 @@ class Statement(Base):
     def serialize(self, context):
         serialized = attrs_to_dict(
             self,
-            'course',
             'id',
             'name',
             'olympiad',
@@ -240,7 +257,13 @@ class Statement(Base):
             'virtual_olympiad',
             'virtual_duration',
         )
+        serialized['course_id'] = getattr(self.course, 'id', None)
         serialized['course_module_id'] = getattr(self.course_module, 'id', None)
+
+        if self.course:
+            serialized['require_password'] = self.course.require_password()
+        else:
+            serialized['require_password'] = False
 
         if self.olympiad or self.virtual_olympiad:
             if not context.user:
@@ -254,9 +277,12 @@ class Statement(Base):
             serialized['participant'] = participant.serialize(context)
 
         serialized['problems'] = {
-            rank: statement_problem.problem.id
+            rank: {
+                'id': statement_problem.problem.id,
+                'name': statement_problem.problem.name,
+            }
             for rank, statement_problem in self.StatementProblems.items()
-            if not statement_problem.hidden
+            if statement_problem.problem and not statement_problem.hidden
         }
         return serialized
 

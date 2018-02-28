@@ -1,6 +1,7 @@
-import styled from 'styled-components';
-
-import IsoInput, { InputGroup as IsoInputGroup, InputSearch as IsoInputSearch } from '../../isomorphic/components/uielements/input';
+import IsoInput, {
+  InputGroup as IsoInputGroup,
+  InputSearch as IsoInputSearch
+} from '../../isomorphic/components/uielements/input';
 
 
 const Input = IsoInput;

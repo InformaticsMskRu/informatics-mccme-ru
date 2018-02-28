@@ -5,9 +5,10 @@ from hamcrest import (
 )
 import time
 
-from pynformatics.testutils import TestCase
+from pynformatics.model.course import Course
 from pynformatics.model.user import User
 from pynformatics.model.statement import Statement
+from pynformatics.testutils import TestCase
 
 
 class TestAPI__statement_start_virtual(TestCase):
@@ -29,11 +30,49 @@ class TestAPI__statement_start_virtual(TestCase):
 
     def test_simple(self):
         self.set_session({'user_id': self.user.id})
-        response = self.app.post('/statement/1/start_virtual')
+        response = self.app.post_json('/statement/1/start_virtual', {})
         assert_that(
             response.json,
             has_entries({
                 'duration': self.virtual_statement.virtual_duration,
                 'start': close_to(time.time(), 1),
             })
+        )
+
+    def test_with_password(self):
+        password = 'secret'
+        course = Course(password=password)
+        self.session.add(course)
+        self.virtual_statement.course = course
+
+        self.set_session({'user_id': self.user.id})
+        response = self.app.post_json(
+            url='/statement/1/start_virtual',
+            params={},
+            status=403,
+        )
+        assert_that(
+            response.json,
+            has_entries({
+                'code': 403,
+                'message': 'Password is wrong or missing',
+            })
+        )
+
+        response = self.app.post_json(
+            url='/statement/1/start_virtual',
+            params={'password': 'wrong'},
+            status=403,
+        )
+        assert_that(
+            response.json,
+            has_entries({
+                'code': 403,
+                'message': 'Password is wrong or missing',
+            })
+        )
+
+        self.app.post_json(
+            url='/statement/1/start_virtual',
+            params={'password': password},
         )

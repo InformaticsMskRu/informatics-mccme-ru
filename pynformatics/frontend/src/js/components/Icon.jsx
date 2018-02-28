@@ -15,6 +15,9 @@ import MenuSendings from '../../svg/menu_sendings.svg';
 import MenuSettings from '../../svg/menu_settings.svg';
 import MenuTop from '../../svg/menu_top.svg';
 
+import Upload from '../../svg/upload.svg';
+import ToggleDrawer from '../../svg/toggle-drawer.svg';
+
 
 const IconWrapper = styled.i`
   text-align: center;
@@ -27,7 +30,7 @@ const IconWrapper = styled.i`
     max-height: 24px;
   }
   
-  .icon-sz-18 {
+  &.icon-sz-18 {
     width: 18px;
     height: 18px;
     svg {
@@ -35,13 +38,24 @@ const IconWrapper = styled.i`
       max-height: 18px;
     }
   }
+  
+  &.icon-sz-30 {
+    width: 30px;
+    height: 30px;
+    svg {
+      max-width: 30px;
+      max-height: 30px;
+    }
+  }
 `;
 
-const Icon = svg => ({ size = 24 }) => {
+const Icon = svg => props => {
+  const { size = 24, className = null } = props;
   return (
     <IconWrapper
-      className={`icon icon-sz-${size}`}
+      className={`icon icon-sz-${size} ${className}`}
       dangerouslySetInnerHTML={{__html: svg}}
+      {...props}
     />
   )
 };
@@ -59,3 +73,6 @@ export const MenuRatingIcon = Icon(MenuRating);
 export const MenuSendingsIcon = Icon(MenuSendings);
 export const MenuSettingsIcon = Icon(MenuSettings);
 export const MenuTopIcon = Icon(MenuTop);
+
+export const ToggleDrawerIcon = Icon(ToggleDrawer);
+export const UploadIcon = Icon(Upload);

@@ -6,12 +6,14 @@ def strip_cstring(cstring):
     """cstring is c style string with ending zero, return string withoout any extra characters in the end"""
     return cstring.split("\x00")[0]
 
+
 class VersionError(object):
     """VersionError is exception class for error, when version of Ejudge Archive
     is different from current version of EjudgeArchiveReader"""
     def __init__(self, arg):
         super (VersionError, self).__init__()
         self.arg = arg
+
 
 class EjudgeArchiveReader:
     """class implements reading ejudge archive format"""

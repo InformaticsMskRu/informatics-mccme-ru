@@ -4,7 +4,7 @@
 
 <body>
     %for course in courses:
-        <a href="/course/view.php?id=${course.id}">${course.fullname}</a><br>
+        <a href="/course/view.php?id=${course.id}">${course.full_name}</a><br>
     %endfor
 </body>
 

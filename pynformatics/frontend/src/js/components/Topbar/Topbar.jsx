@@ -24,11 +24,11 @@ const TopbarWrapper = styled(IsoTopbarWrapper)`
       @media (min-width: 1280px) {
         padding-left: calc(68px + 320px);
       }
-      @media (max-width: 768px) {
+      @media (max-width: 767px) {
         padding: 0 15px !important;
       }
     }
-    @media (max-width: 768px) {
+    @media (max-width: 767px) {
       padding: 0 15px;
     }
     
@@ -69,15 +69,15 @@ const TopbarWrapper = styled(IsoTopbarWrapper)`
       height: 34px; 
     }
     
-    @media (max-width: 576px) {
+    @media (max-width: 575px) {
       .bufferBtn, .notificationBtn { display: none; } 
       & > * { margin: 0; }
       .backBtn { margin-left: 28px; }
     }
-    @media (max-width: 1024px) {
+    @media (max-width: 1023px) {
       .searchInput, .leftTitle { display: none; }
     }
-    @media (min-width: 1025px) {
+    @media (min-width: 1024px) {
       .centerTitle, .backBtn { display: none; }
     }
   }

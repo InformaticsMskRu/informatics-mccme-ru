@@ -60,6 +60,7 @@ def main(global_config, **settings):
     config.add_route('comment.get_count_unread', '/comment/unread/count')
 
     config.add_route('protocol.get', '/protocol/get/{contest_id}/{run_id}')
+    config.add_route('protocol.get_v2', '/protocol/get_v2/{contest_id}/{run_id}')
     config.add_route('protocol.get_full', '/protocol/get-full/{contest_id}/{run_id}')
     config.add_route('protocol.get_test', '/protocol/get_test/{contest_id}/{run_id}/{test_num}')
     config.add_route('protocol.get_corr', '/protocol/get_corr/{contest_id}/{run_id}/{test_num}')
@@ -116,6 +117,7 @@ def main(global_config, **settings):
 
     config.add_route('submits.get', '/submits/get')
 
+    config.add_route('statement.get_by_course_module', '/statement')
     config.add_route('statement.get', '/statement/{statement_id}')
     config.add_route('statement.set_settings', '/statement/{statement_id}/set_settings')
     config.add_route('statement.start_virtual', '/statement/{statement_id}/start_virtual')

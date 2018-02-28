@@ -9,7 +9,9 @@ from sqlalchemy.types import Integer, String, DateTime
 from sqlalchemy.orm import *
 
 from pynformatics.model.meta import Base
+from pynformatics.model.pynformatics_run import PynformaticsRun
 from pynformatics.models import DBSession
+from pynformatics.utils.functions import attrs_to_dict
 from pynformatics.utils.run import *
 from pynformatics.utils.ejudge_archive import EjudgeArchiveReader
 
@@ -20,10 +22,16 @@ class Run(Base):
     """
     __tablename__ = 'runs'
     __table_args__ = (
-        ForeignKeyConstraint(['contest_id', 'prob_id'], ['moodle.mdl_ejudge_problem.ejudge_contest_id', 'moodle.mdl_ejudge_problem.problem_id']),
-        ForeignKeyConstraint(['user_id'], ['moodle.mdl_user.ej_id']),
-        {'schema':'ejudge'}
-        )
+        ForeignKeyConstraint(
+            ['contest_id', 'prob_id'],
+            ['moodle.mdl_ejudge_problem.ejudge_contest_id', 'moodle.mdl_ejudge_problem.problem_id']
+        ),
+        ForeignKeyConstraint(
+            ['user_id'],
+            ['moodle.mdl_user.ej_id']
+        ),
+        {'schema': 'ejudge'}
+    )
 
    
     run_id = Column(Integer, primary_key=True)
@@ -33,7 +41,10 @@ class Run(Base):
     user = relationship('SimpleUser', backref=backref('simpleuser'), uselist=False)
     comments = relation('Comment', backref=backref('comments'))
     contest_id = Column(Integer, primary_key=True)
+
+    # TODO: rename to problem_id
     prob_id = Column(Integer)
+
     problem = relationship('EjudgeProblem', backref=backref('runs', lazy='dynamic'), uselist=False)
     lang_id = Column(Integer)
     status = Column(Integer)
@@ -55,18 +66,18 @@ class Run(Base):
         15: "Termination signal"
     }
     
-    def __init__(self, run_id, contest_id, size, create_time, user_id, prob_id, lang_id, status, score, test_num):
-        self.run_id = run_id
-        self.contest_id = contest_id
-        self.size = size
-        self.create_time = create_time
-        self.user_id = user_id
-        self.prob_id = prob_id
-        self.lang_id = lang_id
-        self.status = status
-        self.score = score
-        self.test_num = test_num
-        self.init_on_load()
+    # def __init__(self, run_id, contest_id, size, create_time, user_id, prob_id, lang_id, status, score, test_num):
+    #     self.run_id = run_id
+    #     self.contest_id = contest_id
+    #     self.size = size
+    #     self.create_time = create_time
+    #     self.user_id = user_id
+    #     self.prob_id = prob_id
+    #     self.lang_id = lang_id
+    #     self.status = status
+    #     self.score = score
+    #     self.test_num = test_num
+    #     self.init_on_load()
 
     @reconstructor
     def init_on_load(self):
@@ -300,3 +311,34 @@ class Run(Base):
 
     def _set_output_archive(self, val):
         self.output_archive = val
+
+    def get_pynformatics_run(self):
+        if self.pynformatics_run:
+            return self.pynformatics_run
+
+        pynformatics_run = PynformaticsRun(
+            run=self,
+            source=self.get_sources(),
+        )
+        DBSession.add(pynformatics_run)
+        return pynformatics_run
+
+    def serialize(self, context):
+        serialized = attrs_to_dict(
+            self,
+            'run_id',
+            'contest_id',
+            'create_time',
+            'lang_id',
+            'prob_id',
+            'score',
+            'size',
+            'status',
+        )
+
+        serialized['create_time'] = str(serialized['create_time'])
+        serialized.update(self.get_pynformatics_run().serialize(context))
+
+        if context.user.ejudge_id != self.user.ejudge_id:
+            serialized['user'] = self.user.serialize(context)
+        return serialized

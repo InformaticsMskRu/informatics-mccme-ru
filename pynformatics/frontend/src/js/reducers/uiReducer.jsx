@@ -18,7 +18,7 @@ export default function reducer(state = initialState, action) {
         ...state,
         width,
         height,
-      }
+      };
   }
   return state;
 }

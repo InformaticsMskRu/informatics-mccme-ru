@@ -35,7 +35,7 @@
             %for item in courses:
                 <tr style="background-color: ${"#fff" if loop.index % 2 else "#f0f0f0"}">
                     <td>
-                        <a href="/course/view.php?id=${item['course'].id}">${item['course'].fullname}</a>
+                        <a href="/course/view.php?id=${item['course'].id}">${item['course'].full_name}</a>
                     </td>
                     <td>
                         %for path in item['paths']:
