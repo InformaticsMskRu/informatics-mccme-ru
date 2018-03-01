@@ -70,9 +70,11 @@ def submit(run_file, contest_id, prob_id, lang_id, login, password, filename, ur
     code = resp["error_code"]
     if code in status_repr:
         return status_repr[code]
+    elif -code in status_repr:
+        return status_repr[-code]
     else:
         report_error(code, login_data, submit_data, run_file, filename, user_id, c.text)
-        return default_error_str
+        return default_error_str + " (" + str(code) + ")" 
 
 
 def rejudge(contest_id, run_id, status_id, login, password, url):
