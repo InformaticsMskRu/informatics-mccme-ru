@@ -57,6 +57,9 @@ def main(global_config, **settings):
     config.add_route('comment.get_unread_limit', '/comment/unread/{start}/{stop}')
     config.add_route('comment.get_unread_limit_html', '/comment/unread/{start}/{stop}/html')
     config.add_route('comment.get_count_unread', '/comment/unread/count')
+
+    # config.add_route('group.get', '/group/get/{id}') # TODO
+    config.add_route('group.get_owned', '/group/get/owned')
     
     config.add_route('protocol.get', '/protocol/get/{contest_id}/{run_id}')
     config.add_route('protocol.get_v2', '/protocol/get_v2/{contest_id}/{run_id}')

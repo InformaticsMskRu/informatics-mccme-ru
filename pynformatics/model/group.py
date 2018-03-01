@@ -4,18 +4,15 @@ from sqlalchemy import (
     ForeignKey,
     ForeignKeyConstraint,
 )
-from sqlalchemy.types import Integer, String, Text, Float, Unicode
-from sqlalchemy.orm import relationship, backref, relation
+from sqlalchemy.types import Integer, Unicode
+from sqlalchemy.orm import relationship, backref
 
-from sqlalchemy.ext.associationproxy import association_proxy
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm.collections import attribute_mapped_collection
 
 from pynformatics.model.meta import Base
 from pynformatics.utils.functions import attrs_to_dict
 
 
-class  Group(Base):
+class Group(Base):
     __tablename__ = 'mdl_ejudge_group'
     __table_args__ = (
         ForeignKeyConstraint(
@@ -33,9 +30,10 @@ class  Group(Base):
 
     owner = relationship('SimpleUser', backref=backref('groups', lazy='select'), lazy='joined')
 
-    def serialize(self, context, attributes=None):
+    def serialize(self, context=None, attributes=None):
         if not attributes:
             attributes = (
+                'id',
                 'name',
                 'description',
                 'owner_id',
@@ -47,7 +45,7 @@ class  Group(Base):
 
 class UserGroup(Base):
     __tablename__ = 'mdl_ejudge_group_users'
-    __table_args__ = {'schema':'moodle'}
+    __table_args__ = {'schema': 'moodle'}
 
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey('moodle.mdl_user.id'))
