@@ -110,7 +110,6 @@ export class StandingsTable extends React.Component {
 
   initProblemColumns(statementId, problemId) {
     this.singleProblem = typeof problemId !== 'undefined';
-
     if (this.singleProblem) {
       this.columnsProblems = [
         {
@@ -123,11 +122,12 @@ export class StandingsTable extends React.Component {
         attemptsColumn,
       ];
       this.defaults = {[problemId]: {}};
-    } else {
-      const statement = this.props.statements[statementId];
-      if (!statement) {
-        this.columnsProblems = [];
-      } else {
+    }
+    const statement = this.props.statements[statementId];
+    if (statement) {
+      this.defaults = {};
+      _.forEach(statement.problems, problem => this.defaults[problem.id] = {});
+      if (!this.singleProblem) {
         this.columnsProblems = _.map(statement.problems, (problem, rank) => ({
           title: <ProblemColumnHeader rank={rank} title={problem.name} />,
           dataIndex: problem.id,
@@ -139,9 +139,10 @@ export class StandingsTable extends React.Component {
             onMouseLeave: () => this.setState({...this.state, highlight: null})
           })
         }));
-        this.defaults = {};
-        _.forEach(statement.problems, problem => this.defaults[problem.id] = {});
       }
+    }
+    else {
+      this.columnsProblems = [];
     }
   }
 
@@ -172,8 +173,8 @@ export class StandingsTable extends React.Component {
 
   render() {
     const columns = this.singleProblem 
-      ? _.concat(columnsBeforeProblems, this.columnsProblems) 
-      : _.concat(columnsBeforeProblems, this.columnsProblems, columnsAfterProblems)
+      ? _.concat(columnsBeforeProblems, this.columnsProblems)
+      : _.concat(columnsBeforeProblems, this.columnsProblems, columnsAfterProblems);
 
     return (
       <StandingsTableWrapper>
