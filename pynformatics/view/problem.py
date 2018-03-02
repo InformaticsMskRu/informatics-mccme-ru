@@ -326,7 +326,7 @@ def problem_runs(request, context):
 
     runs_dict = {
         run.run_id: run.serialize(context)
-        for run in runs
+        for run in runs.all()
     }
     return runs_dict
 

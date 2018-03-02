@@ -10,9 +10,9 @@ from email.utils import COMMASPACE, formatdate
 from email import encoders
 import json
 
-default_error_str = 'Ошибка отправки задачи'
+DEFAULT_ERROR_STR = 'Ошибка отправки задачи'
 
-status_repr = {
+STATUS_REPR = {
   0 : 'Задача отправлена на проверку', # NEW_SRV_ERR_NO_ERROR
 120 : 'Отправка пустого файла',        # NEW_SRV_ERR_FILE_EMPTY
 105 : 'Отправка бинарного файла',      # NEW_SRV_ERR_BINARY_FILE
@@ -74,21 +74,21 @@ def submit(run_file, contest_id, prob_id, lang_id, login, password, filename, ur
         }
 
     code = resp["error_code"]
-    if code in status_repr:
+    if code in STATUS_REPR:
         return {
             'code': code,
-            'message': status_repr[code]
+            'message': STATUS_REPR[code]
         }
-    elif -code in status_repr:
+    elif -code in STATUS_REPR:
         return {
             'code': -code,
-            'message': status_repr[-code]
+            'message': STATUS_REPR[-code]
         }
     else:
         report_error(code, login_data, submit_data, run_file, filename, user_id, c.text)
         return {
             'code': None,
-            'message': default_error_str + " (" + str(code) + ")",
+            'message': DEFAULT_ERROR_STR + " (" + str(code) + ")",
         }
 
 

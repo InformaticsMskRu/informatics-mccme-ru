@@ -32,35 +32,35 @@ class TestAPI__notification_update_standings(TestCase):
         )
         return response
 
-    def test_problem_standings(self):
-        # Создает пустую таблицу результатов, так как ее нет в базе
-        response = self.app.get('/problem/1/standings')
-        assert_that(response.json, equal_to(None))
-
-        run = Run(
-            run_id=1,
-            problem=self.problems[0],
-            user=self.users[0],
-            score=99,
-            status=7,
-        )
-        self.session.add(run)
-
-        self.send_request()
-
-        response = self.app.get('/problem/1/standings')
-        assert_that(
-            response.json,
-            equal_to({
-                '1': {
-                    'firstname': 'Maxim',
-                    'lastname': 'Grishkin',
-                    'attempts': 1,
-                    'score': 99,
-                    'status': 7,
-                }
-            })
-        )
+    # def test_problem_standings(self):
+    #     # Создает пустую таблицу результатов, так как ее нет в базе
+    #     response = self.app.get('/problem/1/standings')
+    #     assert_that(response.json, equal_to(None))
+    #
+    #     run = Run(
+    #         run_id=1,
+    #         problem=self.problems[0],
+    #         user=self.users[0],
+    #         score=99,
+    #         status=7,
+    #     )
+    #     self.session.add(run)
+    #
+    #     self.send_request()
+    #
+    #     response = self.app.get('/problem/1/standings')
+    #     assert_that(
+    #         response.json,
+    #         equal_to({
+    #             '1': {
+    #                 'firstname': 'Maxim',
+    #                 'lastname': 'Grishkin',
+    #                 'attempts': 1,
+    #                 'score': 99,
+    #                 'status': 7,
+    #             }
+    #         })
+    #     )
 
     def test_statement_standings(self):
         response = self.app.get('/statement/1/standings')
@@ -81,64 +81,6 @@ class TestAPI__notification_update_standings(TestCase):
         self.session.add_all((run, pynformatics_run))
 
         self.send_request()
-
-        response = self.app.get('/statement/1/standings')
-        assert_that(
-            response.json,
-            equal_to({
-                '1': {
-                    'firstname': 'Maxim',
-                    'lastname': 'Grishkin',
-                    'runs': [
-                        {
-                            'run_id': 1,
-                            'problem_id': 1,
-                            'contest_id': 1,
-                            'score': 99,
-                            'status': 7,
-                            'create_time': '2018-02-25T13:57:22',
-                        }
-                    ]
-                }
-            })
-        )
-
-    def test_both_standings(self):
-        response = self.app.get('/problem/1/standings')
-        assert_that(response.json, equal_to(None))
-
-        response = self.app.get('/statement/1/standings')
-        assert_that(response.json, equal_to(None))
-
-        run = Run(
-            run_id=1,
-            problem=self.problems[0],
-            user=self.users[0],
-            score=99,
-            status=7,
-            create_time=datetime.datetime(2018, 2, 25, 13, 57, 22)
-        )
-        pynformatics_run = PynformaticsRun(
-            run=run,
-            statement=self.statements[0],
-        )
-        self.session.add_all((run, pynformatics_run))
-
-        self.send_request()
-
-        response = self.app.get('/problem/1/standings')
-        assert_that(
-            response.json,
-            equal_to({
-                '1': {
-                    'firstname': 'Maxim',
-                    'lastname': 'Grishkin',
-                    'attempts': 1,
-                    'score': 99,
-                    'status': 7,
-                }
-            })
-        )
 
         response = self.app.get('/statement/1/standings')
         assert_that(

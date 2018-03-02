@@ -58,7 +58,7 @@ class TestModel__statement_standings_update(TestCase):
         assert_that(
             self.standings.json,
             equal_to({
-                1: {
+                '1': {
                     'firstname': 'Maxim',
                     'lastname': 'Grishkin',
                     'runs': [
@@ -80,7 +80,7 @@ class TestModel__statement_standings_update(TestCase):
         for run in self.runs:
             self.standings.update(run)
 
-        json_runs = self.standings.json[1]['runs']
+        json_runs = self.standings.json['1']['runs']
         assert_that(
             [json_run['run_id'] for json_run in json_runs],
             equal_to([2, 3, 4])
@@ -90,7 +90,7 @@ class TestModel__statement_standings_update(TestCase):
         for run in self.runs[::-1]:
             self.standings.update(run)
 
-        json_runs = self.standings.json[1]['runs']
+        json_runs = self.standings.json['1']['runs']
         assert_that(
             [json_run['run_id'] for json_run in json_runs],
             equal_to([2, 3, 4])
@@ -101,7 +101,7 @@ class TestModel__statement_standings_update(TestCase):
         for run in self.runs:
             self.standings.update(run)
 
-        json_runs = self.standings.json[1]['runs']
+        json_runs = self.standings.json['1']['runs']
         assert_that(
             [json_run['run_id'] for json_run in json_runs],
             equal_to([2, 3, 4])
@@ -114,7 +114,7 @@ class TestModel__statement_standings_update(TestCase):
         self.runs[0].score = 100
         self.standings.update(self.runs[0])
 
-        json_runs = self.standings.json[1]['runs']
+        json_runs = self.standings.json['1']['runs']
         assert_that(
             [json_run['run_id'] for json_run in json_runs],
             equal_to([2, 3, 4])
@@ -123,4 +123,3 @@ class TestModel__statement_standings_update(TestCase):
             json_runs[0]['score'],
             equal_to(100)
         )
-

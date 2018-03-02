@@ -3,39 +3,6 @@ import * as _ from 'lodash';
 import moment from './moment';
 
 
-const tempStandingsData = {
-  12547: {
-    firstname: 'Maxim',
-    lastname: 'Grishkin',
-    runs: [
-      {
-        run_id: 1,
-        contest_id: 1,
-        problem_id: 1,
-        status: 0,
-        score: 100,
-        create_time: '2018-02-10T15:45:52',
-      },
-      {
-        run_id: 2,
-        contest_id: 1,
-        problem_id: 113736,
-        status: 7,
-        score: 70,
-        create_time: '2018-02-10T18:45:52',
-      },
-      {
-        run_id: 3,
-        contest_id: 1,
-        problem_id: 113736,
-        status: 0,
-        score: 100,
-        create_time: '2018-02-10T20:00:52',
-      },
-    ],
-  },
-}
-
 /**
  * @description Добавляет в data[user_id] поле processed
  * @param {object} data 
@@ -44,7 +11,6 @@ const tempStandingsData = {
  * @param {Date} maxDate - игнорирует посылки больше этого времени
  */
 export function processStandingsData({data, startDate, endDate, maxDate}) {
-  data = tempStandingsData;
   _.forEach(data, (userData, userId) => {
     userData.processed = _.reduce(
       userData.runs, 

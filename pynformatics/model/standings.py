@@ -43,8 +43,8 @@ class StandingsMixin:
         if not self.json:
             self.json = {}
 
-        if user.id not in self.json:
-            self.json[user.id] = {
+        if str(user.id) not in self.json:
+            self.json[str(user.id)] = {
                 **attrs_to_dict(user, 'firstname', 'lastname'),
             }
 
@@ -161,23 +161,25 @@ class StatementStandings(StandingsMixin, Base):
         user = run.user
         super(StatementStandings, self).update(user)
 
-        user_data = self.json[user.id]
-        if 'runs' not in user_data:
-            user_data['runs'] = []
+        runs = self.json[str(user.id)].get('runs', [])
 
         replace_index = index_of(
-            user_data['runs'],
+            runs,
             lambda run_json: run_json['run_id'] == run.run_id and run_json['contest_id'] == run.contest_id
         )
+
         if replace_index is not None:
-            user_data['runs'][replace_index] = StatementStandings.serialize_run(run)
+            runs[replace_index] = StatementStandings.serialize_run(run)
         else:
             insert_index = index_of(
-                user_data['runs'],
+                runs,
                 lambda run_json: run_json['create_time'] > run.create_time.isoformat(),
-                len(user_data['runs'])
+                len(runs)
             )
-            user_data['runs'].insert(insert_index, StatementStandings.serialize_run(run))
+            runs.insert(insert_index, StatementStandings.serialize_run(run))
+
+        self.json[str(user.id)]['runs'] = runs
+        self.json.changed()
 
     # TODO: добавить обработку настроек контеста
     def serialize(self, context):
