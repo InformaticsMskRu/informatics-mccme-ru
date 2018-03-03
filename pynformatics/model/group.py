@@ -3,6 +3,7 @@ from sqlalchemy import (
     Column,
     ForeignKey,
     ForeignKeyConstraint,
+    Boolean
 )
 from sqlalchemy.types import Integer, Unicode
 from sqlalchemy.orm import relationship, backref
@@ -10,6 +11,7 @@ from sqlalchemy.orm import relationship, backref
 
 from pynformatics.model.meta import Base
 from pynformatics.utils.functions import attrs_to_dict
+from pynformatics.utils.url_generator import IntUrlGenerator
 
 
 class Group(Base):
@@ -53,3 +55,23 @@ class UserGroup(Base):
 
     group = relationship('Group', backref=backref('user_groups', lazy='select'))
     user = relationship('SimpleUser', backref=backref('user_groups', lazy='select'))
+
+class GroupInviteLinkWithContest(Base):
+    __tablename__ = "group_invite_link_with_statement"
+    __table_args__ = {'schema': 'moodle'}
+
+    id = Column(Integer, primary_key=True)
+    group_id = Column(Integer, ForeignKey("moodle.mdl_ejudge_group.id"))
+    contest_id = Column(Integer, ForeignKey("moodle.mdl_ejudge_contest.id"))
+    is_active = Column(Boolean)
+
+    def __init__(self, group_id, contest_id):
+        self.group_id = group_id
+        self.contest_id = contest_id
+        self.is_active = True
+
+    def serialize(self, context=None, attributes=('id', 'group_id', 'contest_id', 'is_active')):
+        return {
+            'link': IntUrlGenerator().encode(self.id),
+            **attrs_to_dict(self, *attributes)
+        }

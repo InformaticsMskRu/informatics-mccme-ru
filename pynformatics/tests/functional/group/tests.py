@@ -1,14 +1,14 @@
 from hamcrest import assert_that, has_entries, contains, only_contains
 
 from pynformatics import User
-from pynformatics.model import Group, UserGroup
+from pynformatics.model import Group, UserGroup, GroupInviteLinkWithContest
 from pynformatics.testutils import TestCase
 from source_tree.model.role import RoleAssignment
 
 
-class TestAPI__group_get_owned(TestCase):
+class TestAPI__group(TestCase):
     def setUp(self):
-        super(TestAPI__group_get_owned, self).setUp()
+        super(TestAPI__group, self).setUp()
 
         self.create_roles()
 
@@ -50,9 +50,8 @@ class TestAPI__group_get_owned(TestCase):
         ))
         self.session.flush()
 
-    def test_simple(self):
-        self.set_session({'user_id': self.teacher.id})
-        response = self.app.get("/group/get/owned")
+    def test_group_get(self):
+        response = self.app.get("/group/1")
         assert_that(
             response.json,
             has_entries({
@@ -61,6 +60,66 @@ class TestAPI__group_get_owned(TestCase):
                         'id': 1,
                         'name': 'test_group',
                         'owner_id': 1
+                    }),
+                ),
+            })
+        )
+
+    def test_group_get_owned_by(self):
+        response = self.app.get("/group/owned_by/2")
+        assert_that(
+            response.json,
+            has_entries({
+                'data': only_contains(
+                    has_entries({
+                        'id': 2,
+                        'name': 'test_group2',
+                        'owner_id': 2
+                    }),
+                ),
+            })
+        )
+
+    def test_group_add_invite_link(self):
+        self.set_session({'user_id': self.teacher.id})
+        response = self.app.post_json("/group/1/add_invite_link", params={
+            "contest_id": 100
+        })
+        assert_that(
+            response.json,
+            has_entries({
+                'id': 1,
+                'group_id': 1,
+                'contest_id': 100,
+                'is_active': True,
+                'link': '867nv'
+            })
+        )
+
+    def test_group_get_invite_links(self):
+        self.session.add_all((
+            GroupInviteLinkWithContest(2, 100),
+            GroupInviteLinkWithContest(2, 102),
+        ))
+        self.session.flush()
+        response = self.app.get("/group/2/invite_links")
+        assert_that(
+            response.json,
+            has_entries({
+                'data': only_contains(
+                    has_entries({
+                        'id': 1,
+                        'group_id': 2,
+                        'contest_id': 100,
+                        'is_active': True,
+                        'link': '867nv'
+                    }),
+                    has_entries({
+                        'id': 2,
+                        'group_id': 2,
+                        'contest_id': 102,
+                        'is_active': True,
+                        'link': '25t52'
                     }),
                 ),
             })
