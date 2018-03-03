@@ -75,3 +75,42 @@ class TestAPI__group(TestCase):
             self.session.query(UserGroup).filter(UserGroup.group_id==2).count(),
             equal_to(1)
         )
+
+    def test_invite_get_not_active(self):
+        self.set_session({'user_id': self.user1.id})
+        invite = GroupInviteLink(group_id=2, redirect_type='STATEMENT', redirect_id=1)
+        invite.is_active = False
+        self.session.add_all((
+            invite,
+            Statement(id=1)
+        ))
+        self.session.flush()
+        self.app.get(
+            '/invite/' + invite.get_link(),
+            status=400
+        )
+        assert_that(
+            self.session.query(UserGroup).filter(UserGroup.group_id==2).count(),
+            equal_to(0)
+        )
+
+    def test_invite_no_redirect(self):
+        self.set_session({'user_id': self.user1.id})
+        invite = GroupInviteLink(group_id=2)
+        self.session.add_all((
+            invite,
+        ))
+        self.session.flush()
+        responce = self.app.get('/invite/' + invite.get_link())
+        assert_that(responce.json, has_entries({
+            'redirect': None,
+            'group': has_entries({
+                'id': 2,
+                'name': 'test_group2',
+                'owner_id': 2
+            })
+        }))
+        assert_that(
+            self.session.query(UserGroup).filter(UserGroup.group_id==2).count(),
+            equal_to(1)
+        )
