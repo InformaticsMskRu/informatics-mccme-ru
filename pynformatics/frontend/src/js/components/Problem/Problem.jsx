@@ -36,6 +36,21 @@ const ProblemWrapper = styled.div`
     }
     span { margin: auto; }
   }
+
+  .problemLimits {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-around;
+    padding: 10px;
+
+    background: ${palette('other', 15)};
+    color: ${palette('other', 13)};
+    border-radius: 4px;
+
+    @media (max-width: 575px) {
+      flex-flow: column nowrap;
+    }
+  }
     
   .problemStatement {
     text-align: left;
@@ -131,6 +146,9 @@ export class Problem extends React.Component {
       name: problemTitle,
       content: problemStatement,
       sample_tests_json: problemSamples,
+      timelimit: problemTimeLimit,
+      memorylimit: problemMemoryLimit,
+      show_limits: problemShowLimits,
     } = _.get(this.props.problems, `[${problemId}].data`, {});
     const problemRuns = _.get(this.props.problems[problemId], 'runs', {});
     const userProblemRuns = _.pickBy(problemRuns, (value) => typeof value.user === 'undefined');
@@ -152,6 +170,15 @@ export class Problem extends React.Component {
             {...additionalTabsProps}
           >
             <TabPane className="tabStatement" tab="Условие" key="statement">
+              {
+                problemShowLimits
+                ? (
+                  <div className="problemLimits">
+                    <div>Ограничение по времени, сек: {problemTimeLimit}</div>
+                    <div>Ограничение по памяти, мегабайт: {problemMemoryLimit / 1024 / 1024}</div>
+                  </div>
+                ) : null
+              }
               <div className="problemStatement" dangerouslySetInnerHTML={{ __html: problemStatement }} />
               <Header style={{ marginBottom: 30 }}>Примеры</Header>
               <div className="problemSamples">
