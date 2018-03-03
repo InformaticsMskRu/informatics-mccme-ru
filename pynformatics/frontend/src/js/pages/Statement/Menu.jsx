@@ -257,7 +257,9 @@ export class Menu extends React.Component {
       participant,
       olympiad,
       virtual_olympiad: virtualOlympiad,
+      course: bootcamp,
     } = statement;
+    const { full_name: bootcampTitle } = bootcamp;
 
     const problemItems = _.map(problems, (value, key) => {
       const { name: title } = value;
@@ -286,7 +288,7 @@ export class Menu extends React.Component {
         >
           <div className="title">
             <div className="toggleDrawer" onClick={onCollapse}><ToggleDrawerIcon /></div>
-            <div className="bootcampTitle">Название сборов</div>
+            <div className="bootcampTitle">{bootcampTitle}</div>
             <div className="statementTitle">{statementTitle}</div>
             <Link to={`/contest/${statementId}/standings`}><Button type="secondary" size="small">Результаты контеста</Button></Link>
           </div>

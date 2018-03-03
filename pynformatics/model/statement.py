@@ -245,25 +245,31 @@ class Statement(Base):
 
         return self.finish_participant(user)
 
-    def serialize(self, context):
-        serialized = attrs_to_dict(
-            self,
-            'id',
-            'name',
-            'olympiad',
-            'settings',
-            'time_start',
-            'time_stop',
-            'virtual_olympiad',
-            'virtual_duration',
-        )
-        serialized['course_id'] = getattr(self.course, 'id', None)
+    def serialize(self, context, attributes=None):
+        if not attributes:
+            attributes = (
+                'id',
+                'name',
+                'olympiad',
+                'settings',
+                'time_start',
+                'time_stop',
+                'virtual_olympiad',
+                'virtual_duration',
+                'course_module_id',
+                'course',
+                'require_password',
+            )
+        serialized = attrs_to_dict(self, *attributes)
+        if 'course' in attributes and self.course:
+            serialized['course'] = self.course.serialize(context)
         serialized['course_module_id'] = getattr(self.course_module, 'id', None)
 
-        if self.course:
-            serialized['require_password'] = self.course.require_password()
-        else:
-            serialized['require_password'] = False
+        if 'require_password' in attributes:
+            if self.course:
+                serialized['require_password'] = self.course.require_password()
+            else:
+                serialized['require_password'] = False
 
         if self.olympiad or self.virtual_olympiad:
             if not context.user:

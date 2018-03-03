@@ -43,7 +43,7 @@ const ProblemWrapper = styled.div`
     justify-content: space-around;
     padding: 10px;
 
-    background: ${palette('other', 15)};
+    background: #f8f8f8;
     color: ${palette('other', 13)};
     border-radius: 4px;
 

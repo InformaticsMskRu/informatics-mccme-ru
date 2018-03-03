@@ -87,6 +87,7 @@ export class Standings extends React.Component {
     const { dateFilterMode, date } = this.state;
 
     const statement = this.props.statements[statementId];
+    const bootcampTitle = _.get(statement, 'course.full_name', null);
 
     const { start, duration } = _.get(statement, 'participant', {});
     if (start && duration) {
@@ -100,7 +101,7 @@ export class Standings extends React.Component {
     return (
       <StandingsWrapper>
         <Box>
-          <ContentHeader statementTitle="Результаты контеста"/>
+          <ContentHeader statementTitle="Результаты контеста" bootcampTitle={bootcampTitle}/>
           <Row style={rowStyle} gutter={gutter}>
             <Col className="standingsRadioCol" style={colStyle}>
               <RadioGroup 

@@ -42,10 +42,10 @@ const ContentHeaderWrapper = styled.div`
   }
 `;
 
-export default ({statementTitle, className}) => (
+export default ({statementTitle, bootcampTitle, className}) => (
   <ContentHeaderWrapper className={className}>
     <BackButton className="backBtn"/>
-    <div className="bootcampTitle">Название сборов</div>
+    <div className="bootcampTitle">{bootcampTitle}</div>
     <div className="statementTitle">{statementTitle}</div>
   </ContentHeaderWrapper>
 )
