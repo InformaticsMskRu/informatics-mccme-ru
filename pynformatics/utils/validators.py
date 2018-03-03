@@ -36,6 +36,21 @@ class IntParam(Param):
         return int(value)
 
 
+class EnumParam(Param):
+    def __init__(self, name, values, required=False, alias=None):
+        super(EnumParam, self).__init__(name, required=required, alias=alias)
+        self.values = values
+
+    def validate(self, value):
+        super(EnumParam, self).validate(value)
+        if value not in self.values:
+            raise BadRequest(message='Parameter "{}" must be one of {}, but was {}'.format(
+                self.name,
+                ', '.join(tuple(self.values)),
+                value
+            ))
+
+
 def validate(source, *params: Param):
     """
     Примеры использования

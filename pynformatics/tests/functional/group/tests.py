@@ -1,7 +1,7 @@
-from hamcrest import assert_that, has_entries, contains, only_contains
+from hamcrest import assert_that, has_entries, only_contains
 
 from pynformatics import User
-from pynformatics.model import Group, UserGroup, GroupInviteLinkWithContest
+from pynformatics.model import Group, UserGroup, GroupInviteLink, EjudgeContest
 from pynformatics.testutils import TestCase
 from source_tree.model.role import RoleAssignment
 
@@ -86,15 +86,23 @@ class TestAPI__group(TestCase):
 
     def test_group_add_invite_link(self):
         self.set_session({'user_id': self.teacher.id})
+        c1 = EjudgeContest()
+        c2 = EjudgeContest()
+        c1.id = 1
+        c2.id = 2
+        self.session.add_all((c1, c2))
+        self.session.flush()
         response = self.app.post_json("/group/1/add_invite_link", params={
-            "contest_id": 100
+            "redirect_type": "CONTEST",
+            "redirect_id": 1
         })
         assert_that(
             response.json,
             has_entries({
                 'id': 1,
                 'group_id': 1,
-                'contest_id': 100,
+                'redirect_type': "CONTEST",
+                'redirect_id': 1,
                 'is_active': True,
                 'link': '867nv'
             })
@@ -102,9 +110,14 @@ class TestAPI__group(TestCase):
 
     def test_group_get_invite_links(self):
         self.set_session({'user_id': self.teacher2.id})
+        c1 = EjudgeContest()
+        c2 = EjudgeContest()
+        c1.id = 1
+        c2.id = 2
         self.session.add_all((
-            GroupInviteLinkWithContest(2, 100),
-            GroupInviteLinkWithContest(2, 102),
+            c1, c2,
+            GroupInviteLink(2, 'CONTEST', 1),
+            GroupInviteLink(2, 'CONTEST', 2),
         ))
         self.session.flush()
         response = self.app.get("/group/2/invite_links")
@@ -115,14 +128,16 @@ class TestAPI__group(TestCase):
                     has_entries({
                         'id': 1,
                         'group_id': 2,
-                        'contest_id': 100,
+                        'redirect_type': "CONTEST",
+                        'redirect_id': 1,
                         'is_active': True,
                         'link': '867nv'
                     }),
                     has_entries({
                         'id': 2,
                         'group_id': 2,
-                        'contest_id': 102,
+                        'redirect_type': "CONTEST",
+                        'redirect_id': 2,
                         'is_active': True,
                         'link': '25t52'
                     }),
@@ -132,18 +147,43 @@ class TestAPI__group(TestCase):
 
     def test_group_get_invite_links_not_an_owner(self):
         self.set_session({'user_id': self.teacher.id})
+        c1 = EjudgeContest()
+        c2 = EjudgeContest()
+        c1.id = 1
+        c2.id = 2
         self.session.add_all((
-            GroupInviteLinkWithContest(2, 100),
-            GroupInviteLinkWithContest(2, 102),
+            c1, c2,
+            GroupInviteLink(2, 'CONTEST', 1),
+            GroupInviteLink(2, 'CONTEST', 2),
         ))
         self.session.flush()
         self.app.get("/group/2/invite_links", status=403)
 
     def test_group_add_invite_link_not_an_owner(self):
         self.set_session({'user_id': self.teacher.id})
+        c1 = EjudgeContest()
+        c1.id = 1
+        self.session.add(c1)
         self.app.post_json(
             "/group/2/add_invite_link",
-            params={"contest_id": 100},
+            params={
+                "redirect_type": "CONTEST",
+                "redirect_id": 1
+            },
             status=403
+        )
+
+    def test_group_add_invite_link_bad_foreign_key(self):
+        self.set_session({'user_id': self.teacher2.id})
+        c1 = EjudgeContest()
+        c1.id = 1
+        self.session.add(c1)
+        self.app.post_json(
+            "/group/2/add_invite_link",
+            params={
+                "redirect_type": "CONTEST",
+                "redirect_id": 2
+            },
+            status=400
         )
 

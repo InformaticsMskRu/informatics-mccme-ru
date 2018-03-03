@@ -5,7 +5,7 @@ from sqlalchemy import (
     ForeignKeyConstraint,
     Boolean
 )
-from sqlalchemy.types import Integer, Unicode
+from sqlalchemy.types import Integer, Unicode, Enum
 from sqlalchemy.orm import relationship, backref
 
 
@@ -56,21 +56,26 @@ class UserGroup(Base):
     group = relationship('Group', backref=backref('user_groups', lazy='select'))
     user = relationship('SimpleUser', backref=backref('user_groups', lazy='select'))
 
-class GroupInviteLinkWithContest(Base):
-    __tablename__ = "group_invite_link_with_statement"
+class GroupInviteLink(Base):
+    __tablename__ = "group_invite_link"
     __table_args__ = {'schema': 'moodle'}
+
+    REDIRECT_TYPES = ('STATEMENT', 'CONTEST', 'COURSE')
 
     id = Column(Integer, primary_key=True)
     group_id = Column(Integer, ForeignKey("moodle.mdl_ejudge_group.id"))
-    contest_id = Column(Integer, ForeignKey("moodle.mdl_ejudge_contest.id"))
+    redirect_type = Column(Enum(*REDIRECT_TYPES))
+    redirect_id = Column(Integer)
     is_active = Column(Boolean)
 
-    def __init__(self, group_id, contest_id):
+    def __init__(self, group_id, redirect_type, redirect_id):
         self.group_id = group_id
-        self.contest_id = contest_id
+        self.redirect_type = redirect_type
+        self.redirect_id = redirect_id
         self.is_active = True
 
-    def serialize(self, context=None, attributes=('id', 'group_id', 'contest_id', 'is_active')):
+    def serialize(self, context=None,
+                  attributes=('id', 'group_id', 'redirect_type', 'redirect_id', 'is_active')):
         return {
             'link': IntUrlGenerator().encode(self.id),
             **attrs_to_dict(self, *attributes)

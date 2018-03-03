@@ -1,11 +1,13 @@
 from pyramid.view import view_config
 from sqlalchemy import and_
+from sqlalchemy.orm.exc import NoResultFound
 
-from pynformatics.model import Group, GroupInviteLinkWithContest
+from pynformatics.model import Group, GroupInviteLink, Statement, EjudgeContest
+from pynformatics.model.course import Course
 from pynformatics.models import DBSession
 from pynformatics.utils.context import with_context
-from pynformatics.utils.exceptions import Forbidden
-from pynformatics.utils.validators import validate_matchdict, IntParam, validate_json
+from pynformatics.utils.exceptions import Forbidden, BadRequest
+from pynformatics.utils.validators import validate_matchdict, IntParam, validate_json, EnumParam
 
 from pynformatics.utils.exceptions import GroupNotFound
 from pynformatics.utils.validators import (
@@ -49,21 +51,40 @@ def group_get_invite_links(request, context, *, id):
     group = DBSession.query(Group).get(id)
     if group.owner_id != user_id:
         raise Forbidden("You are not an owner of group {}".format(id))
-    links = DBSession.query(GroupInviteLinkWithContest)\
-        .filter(GroupInviteLinkWithContest.group_id == id).all()
+    links = DBSession.query(GroupInviteLink)\
+        .filter(GroupInviteLink.group_id == id).all()
     return {'data': [elem.serialize() for elem in links]}
 
 
 @view_config(route_name='group.add_invite_link', renderer='json', request_method='POST')
 @with_context(require_auth=True, require_roles=('admin',))
 @validate_matchdict(IntParam('id', required=True))
-@validate_json(IntParam('contest_id', required=True))
-def group_add_invite_link(request, context, *, id, contest_id):
+@validate_json(
+    EnumParam(
+        'redirect_type',
+        values=GroupInviteLink.REDIRECT_TYPES,
+        required=True
+    ),
+    IntParam(
+        'redirect_id',
+        required=True)
+)
+def group_add_invite_link(request, context, *, id, redirect_type, redirect_id):
     user_id = context.user.id
     group = DBSession.query(Group).get(id)
     if group.owner_id != user_id:
         raise Forbidden("You are not an owner of group {}".format(id))
-    link = GroupInviteLinkWithContest(id, contest_id)
+    redirect_classes = {
+        'STATEMENT': Statement,
+        'CONTEST': EjudgeContest,
+        'COURSE': Course
+    }
+    try:
+        DBSession.query(redirect_classes[redirect_type])\
+            .filter(redirect_classes[redirect_type].id==redirect_id).one()
+    except NoResultFound:
+        raise BadRequest("Can't find {} with id {}".format(redirect_type, redirect_id))
+    link = GroupInviteLink(id, redirect_type, redirect_id)
     DBSession.add(link)
     DBSession.flush()
     return link.serialize()
