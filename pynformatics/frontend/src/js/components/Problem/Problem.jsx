@@ -193,8 +193,8 @@ export class Problem extends React.Component {
             <TabPane tab="Посылки" key="runs">
               <SubmissionsPane problemId={problemId} runs={problemRuns} />
             </TabPane>
-            <TabPane tab="Решение" key="solution" />
-            <TabPane tab="Темы и источники" key="sources" />
+            <TabPane tab="Решение" key="solution" disabled />
+            <TabPane tab="Темы и источники" key="sources" disabled />
           </Tabs>
         </Box>
       </ProblemWrapper>

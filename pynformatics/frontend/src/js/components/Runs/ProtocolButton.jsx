@@ -20,6 +20,25 @@ const ProtocolButtonModalContentWrapper = styled.div`
   .ant-table td {
     white-space: nowrap;
   }
+
+  .ant-table-content { overflow-x: auto; }
+
+  .protocolColumnId {
+    width: 1px;
+    white-space: nowrap;
+  }
+
+  .protocolColumnStatus,
+  .protocolColumnMemoryUsed {
+    white-space: nowrap;
+    text-align: center;
+  }
+  .protocolColumnTime,
+  .protocolColumnRealTime {
+    white-space: nowrap;
+    text-align: center;
+    width: 1px;
+  }
   
   @media (max-width: 575px) {
     .ant-tabs {
@@ -74,28 +93,33 @@ export class ProtocolButton extends React.Component {
       {
         dataIndex: 'key',
         key: 'key',
-        title: '#'
+        title: '#',
+        className: 'protocolColumnId',
       },
       {
         dataIndex: 'status',
         key: 'status',
         title: 'Статус',
-        render: status => <Status status={status}/>
+        render: status => <Status status={status}/>,
+        className: 'protocolColumnStatus',
       },
       {
         dataIndex: 'time',
         key: 'time',
         title: <Tooltip title="Время работы">🕓</Tooltip>,
+        className: 'protocolColumnTime',
       },
       {
         dataIndex: 'realTime',
         key: 'realTime',
-        title: <Tooltip title="Астрономическое время работы">👩‍🚀</Tooltip>
+        title: <Tooltip title="Астрономическое время работы">👩‍🚀</Tooltip>,
+        className: 'protocolColumnRealTime',
       },
       {
         dataIndex: 'maxMemoryUsed',
         key: 'maxMemoryUsed',
-        title: 'Используемая память'
+        title: 'Используемая память',
+        className: 'protocolColumnMemoryUsed',
       },
     ];
     const testsData = _.map(tests, (value, key) => ({
@@ -137,7 +161,6 @@ export class ProtocolButton extends React.Component {
                 columns={testsColumns}
                 size="small"
                 pagination={false}
-                scroll={{x: 600}}
               />
               { compilerOutput
                 ? (
