@@ -52,13 +52,12 @@ def validate(source, *params: Param):
     "*" означает, что дальше идут KEYWORD_ONLY аргументы
     """
     def decorator(view_function):
-        view_function_keywords_names = map(lambda x: x.name, filter(
-            lambda v: v.kind == v.KEYWORD_ONLY,  # KEYWORD_ONLY это те которые после *args или *
-            inspect.signature(view_function).parameters.values()
-        ))
-
         @wraps(view_function)
         def wrapper(request, *args, **kwargs):
+            view_function_keywords_names = map(lambda x: x.name, filter(
+                lambda v: v.kind == v.KEYWORD_ONLY,  # KEYWORD_ONLY это те которые после *args или *
+                inspect.signature(view_function).parameters.values()
+            ))
             data = getattr(request, source)
             for param in params:
                 if param.name not in data:

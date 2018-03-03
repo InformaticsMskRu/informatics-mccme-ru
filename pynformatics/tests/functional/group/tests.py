@@ -39,6 +39,10 @@ class TestAPI__group(TestCase):
                 user_id=self.teacher.id,
                 role_id=self.admin_role.id,
             ),
+            RoleAssignment(
+                user_id=self.teacher2.id,
+                role_id=self.admin_role.id,
+            ),
             UserGroup(
                 user_id=self.user1.id,
                 group_id=self.group.id
@@ -97,6 +101,7 @@ class TestAPI__group(TestCase):
         )
 
     def test_group_get_invite_links(self):
+        self.set_session({'user_id': self.teacher2.id})
         self.session.add_all((
             GroupInviteLinkWithContest(2, 100),
             GroupInviteLinkWithContest(2, 102),
@@ -124,3 +129,21 @@ class TestAPI__group(TestCase):
                 ),
             })
         )
+
+    def test_group_get_invite_links_not_an_owner(self):
+        self.set_session({'user_id': self.teacher.id})
+        self.session.add_all((
+            GroupInviteLinkWithContest(2, 100),
+            GroupInviteLinkWithContest(2, 102),
+        ))
+        self.session.flush()
+        self.app.get("/group/2/invite_links", status=403)
+
+    def test_group_add_invite_link_not_an_owner(self):
+        self.set_session({'user_id': self.teacher.id})
+        self.app.post_json(
+            "/group/2/add_invite_link",
+            params={"contest_id": 100},
+            status=403
+        )
+

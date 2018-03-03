@@ -4,6 +4,7 @@ from sqlalchemy import and_
 from pynformatics.model import Group, GroupInviteLinkWithContest
 from pynformatics.models import DBSession
 from pynformatics.utils.context import with_context
+from pynformatics.utils.exceptions import Forbidden
 from pynformatics.utils.validators import validate_matchdict, IntParam, validate_json
 
 from pynformatics.utils.exceptions import GroupNotFound
@@ -41,11 +42,16 @@ def group_get_owned_by(request, *, owner_id):
 
 
 @view_config(route_name='group.get_invite_links', renderer='json', request_method='GET')
+@with_context(require_auth=True, require_roles=('admin',))
 @validate_matchdict(IntParam('id', required=True))
-def group_get_invite_links(request, *, id):
-    data = DBSession.query(GroupInviteLinkWithContest)\
+def group_get_invite_links(request, context, *, id):
+    user_id = context.user.id
+    group = DBSession.query(Group).get(id)
+    if group.owner_id != user_id:
+        raise Forbidden("You are not an owner of group {}".format(id))
+    links = DBSession.query(GroupInviteLinkWithContest)\
         .filter(GroupInviteLinkWithContest.group_id == id).all()
-    return {'data': [elem.serialize() for elem in data]}
+    return {'data': [elem.serialize() for elem in links]}
 
 
 @view_config(route_name='group.add_invite_link', renderer='json', request_method='POST')
@@ -53,6 +59,10 @@ def group_get_invite_links(request, *, id):
 @validate_matchdict(IntParam('id', required=True))
 @validate_json(IntParam('contest_id', required=True))
 def group_add_invite_link(request, context, *, id, contest_id):
+    user_id = context.user.id
+    group = DBSession.query(Group).get(id)
+    if group.owner_id != user_id:
+        raise Forbidden("You are not an owner of group {}".format(id))
     link = GroupInviteLinkWithContest(id, contest_id)
     DBSession.add(link)
     DBSession.flush()
