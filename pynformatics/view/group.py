@@ -2,8 +2,7 @@ from pyramid.view import view_config
 from sqlalchemy import and_
 from sqlalchemy.orm.exc import NoResultFound
 
-from pynformatics.model import Group, GroupInviteLink, Statement, EjudgeContest
-from pynformatics.model.course import Course
+from pynformatics.model import Group, GroupInviteLink
 from pynformatics.models import DBSession
 from pynformatics.utils.context import with_context
 from pynformatics.utils.exceptions import Forbidden, BadRequest
@@ -74,20 +73,14 @@ def group_add_invite_link(request, context, *, id, redirect_type, redirect_id):
     group = DBSession.query(Group).get(id)
     if group.owner_id != user_id:
         raise Forbidden("You are not an owner of group {}".format(id))
-    redirect_classes = {
-        'STATEMENT': Statement,
-        'CONTEST': EjudgeContest,
-        'COURSE': Course
-    }
+    invite = GroupInviteLink(id, redirect_type, redirect_id)
     try:
-        DBSession.query(redirect_classes[redirect_type])\
-            .filter(redirect_classes[redirect_type].id==redirect_id).one()
+        invite.get_redirect(DBSession)
     except NoResultFound:
         raise BadRequest("Can't find {} with id {}".format(redirect_type, redirect_id))
-    link = GroupInviteLink(id, redirect_type, redirect_id)
-    DBSession.add(link)
+    DBSession.add(invite)
     DBSession.flush()
-    return link.serialize()
+    return invite.serialize()
 
 
 @view_config(route_name='group.search', renderer='json', request_method='GET')

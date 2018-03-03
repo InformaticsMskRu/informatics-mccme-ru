@@ -8,7 +8,8 @@ from sqlalchemy import (
 from sqlalchemy.types import Integer, Unicode, Enum
 from sqlalchemy.orm import relationship, backref
 
-
+from pynformatics.model import Statement, EjudgeContest
+from pynformatics.model.course import Course
 from pynformatics.model.meta import Base
 from pynformatics.utils.functions import attrs_to_dict
 from pynformatics.utils.url_generator import IntUrlGenerator
@@ -68,15 +69,29 @@ class GroupInviteLink(Base):
     redirect_id = Column(Integer)
     is_active = Column(Boolean)
 
-    def __init__(self, group_id, redirect_type, redirect_id):
+    def __init__(self, group_id, redirect_type=None, redirect_id=None):
         self.group_id = group_id
         self.redirect_type = redirect_type
         self.redirect_id = redirect_id
         self.is_active = True
 
+    def get_redirect(self, session):
+        if self.redirect_type is None or self.redirect_id is None:
+            return None
+        redirect_classes = {
+            'STATEMENT': Statement,
+            'CONTEST': EjudgeContest,
+            'COURSE': Course
+        }
+        return session.query(redirect_classes[self.redirect_type])\
+            .filter(redirect_classes[self.redirect_type].id==self.redirect_id).one()
+
+    def get_link(self):
+        return IntUrlGenerator().encode(self.id)
+
     def serialize(self, context=None,
                   attributes=('id', 'group_id', 'redirect_type', 'redirect_id', 'is_active')):
         return {
-            'link': IntUrlGenerator().encode(self.id),
+            'link': self.get_link(),
             **attrs_to_dict(self, *attributes)
         }

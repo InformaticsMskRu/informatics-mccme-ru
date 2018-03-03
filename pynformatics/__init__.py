@@ -62,6 +62,8 @@ def main(global_config, **settings):
     config.add_route('group.get_owned_by', '/group/owned_by/{owner_id}')
     config.add_route('group.get_invite_links', '/group/{id}/invite_links')
     config.add_route('group.add_invite_link', '/group/{id}/add_invite_link')
+
+    config.add_route('invite.get', '/invite/{link}')
     
     config.add_route('protocol.get', '/protocol/get/{contest_id}/{run_id}')
     config.add_route('protocol.get_v2', '/protocol/get_v2/{contest_id}/{run_id}')
