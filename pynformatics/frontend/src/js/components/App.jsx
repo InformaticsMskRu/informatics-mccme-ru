@@ -46,8 +46,14 @@ export default class App extends React.Component {
     dispatch: PropTypes.func,
   };
 
+  constructor(props) {
+    super(props);
+    this.state = {isFirstTimeMounted: true};
+  }
+
   componentDidMount() {
     this.props.dispatch(bootstrapActions.fetchBootstrap());
+    this.setState({isFirstTimeMounted: false}) // Так и не нашел как обойти этот ужасный костыль
   }
 
   render() {
@@ -72,7 +78,7 @@ export default class App extends React.Component {
               className="isomorphicContent"
               style={{ height: '100vh', overflowY: 'scroll' }}
             >
-              {user.bootstrapPending
+              {user.bootstrapPending || this.state.isFirstTimeMounted
                 ?
                 <MainContentWrapper>
                   <div style={{textAlign: "center"}}>
@@ -88,7 +94,7 @@ export default class App extends React.Component {
                 <Route exact path="/goto" component={TempGotoProblemPage} />
                 <Route exact path="/login" component={Login} />
                 <Route exact path="/problem/:problemId" component={ProblemPage} />
-                <ProtectedRoute exact path="/some_login_required_url"component={NotFound}/>
+                <ProtectedRoute exact path="/some_login_required_url" component={NotFound}/>
                 <Route path="*" component={NotFound}/>
               </Switch>}
             </Content>

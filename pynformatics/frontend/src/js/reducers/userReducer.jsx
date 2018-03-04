@@ -1,4 +1,6 @@
-const initialState = {};
+const initialState = {
+  bootstrapPending: false,
+};
 
 
 export default function reducer(state = initialState, action) {
