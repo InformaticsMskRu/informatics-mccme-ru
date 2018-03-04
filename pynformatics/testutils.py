@@ -125,7 +125,28 @@ class TestCase(unittest.TestCase):
 
     def create_roles(self):
         self.admin_role = Role(shortname='admin')
-        self.session.add_all((self.admin_role,))
+        self.course_creator = Role(shortname='coursecreator')
+        self.teacher = Role(shortname='editingteacher')
+        self.non_editing_teacher = Role(shortname='teacher')
+        self.student = Role(shortname='student')
+        self.guest = Role(shortname='guest')
+        self.authenticated_user = Role(shortname='user')
+        self.group_teacher = Role(shortname='group')
+        self.ejudge_teacher = Role(shortname='ejudge')
+        self.editor = Role(shortname='editor')
+        self.testing = Role(shortname='testing')
+        self.source_editor = Role(shortname='source_editor')
+        self.course_editor = Role(shortname='course_editor')
+        self.view_courses = Role(shortname='view_courses')
+        self.session.add_all((
+            self.admin_role, self.course_creator,
+            self.teacher, self.non_editing_teacher,
+            self.student, self.guest,
+            self.authenticated_user, self.group_teacher,
+            self.ejudge_teacher, self.editor,
+            self.testing, self.source_editor,
+            self.course_editor, self.view_courses
+        ))
 
     def create_statements(self):
         self.statements = [
