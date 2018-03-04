@@ -1,28 +1,35 @@
 import React from "react";
-import {NavLink, Route} from "react-router-dom";
+import { connect } from "react-redux";
+import { NavLink, Route } from "react-router-dom";
 
-import {Menu} from "antd";
+import { Menu } from "antd";
+import isUserLoggedIn from "../../utils/isUserLoggedIn";
 
 import Login from "./Login";
+import Logout from "./Logout";
 import RegisterAsStudent from "./RegisterAsStudent";
 import RegisterAsTeacher from "./RegisterAsTeacher";
 import RegisterAsTeam from "./RegisterAsTeam";
 import ResetPassword from "./ResetPassword";
 
 import MainContentWrapper from '../../components/utility/MainContentWrapper';
-import {Col, Row} from '../../components/utility/Grid';
+import { Col, Row } from '../../components/utility/Grid';
 import Telegram from "../../components/Sidebar/Telegram";
 
 import StyleWrapper from './style';
 
+
+@connect(state => ({
+  isLoggedIn: isUserLoggedIn(state.user),
+}))
 export default class LoginPage extends React.Component {
   render() {
-    const { match } = this.props;
+    const { match, isLoggedIn } = this.props;
 
     const usersArrays = [
-      [{key: 'johnn', username: 'johnn', firstname: 'John', lastname: 'Doe'},
-        {key: 'doee', username: 'doee', firstname: 'Doe', lastname: 'John'},
-        {key: 'dojo', username: 'dojo', firstname: 'Jo', lastname: 'Do'}],
+      [{ key: 'johnn', username: 'johnn', firstname: 'John', lastname: 'Doe' },
+        { key: 'doee', username: 'doee', firstname: 'Doe', lastname: 'John' },
+        { key: 'dojo', username: 'dojo', firstname: 'Jo', lastname: 'Do' }],
       [], []
     ];
 
@@ -53,6 +60,13 @@ export default class LoginPage extends React.Component {
         component: ResetPassword
       },
     ];
+    if (isLoggedIn) {
+      options.push({
+        url: `${match.url}/logout`,
+        linkText: "Выйти",
+        component: Logout
+      });
+    }
 
     const menuItems = options.map(option => (
       <Menu.Item key={option.url}>
@@ -73,10 +87,10 @@ export default class LoginPage extends React.Component {
     return (
       <MainContentWrapper>
         <Row type="flex" justify="center">
-          <Col xs={22} md={20} style={{marginBottom: "16px"}}>
+          <Col xs={22} md={20} style={{ marginBottom: "16px" }}>
             <StyleWrapper>
               <Row type="flex" className="wrapper">
-                <Col xs={{span: 22, offset: 1, order: 2}} md={{span: 8, offset: 1, order: 1}}>
+                <Col xs={{ span: 22, offset: 1, order: 2 }} md={{ span: 8, offset: 1, order: 1 }}>
                   <div className="leftColumn">
                     <Menu className="menu">
                       {menuItems}
@@ -84,7 +98,7 @@ export default class LoginPage extends React.Component {
                     <Telegram/>
                   </div>
                 </Col>
-                <Col xs={{span: 22, offset: 1, order: 1}} md={{span: 13, offset: 1, order: 2}}>
+                <Col xs={{ span: 22, offset: 1, order: 1 }} md={{ span: 13, offset: 1, order: 2 }}>
                   {routes}
                 </Col>
               </Row>

@@ -9,6 +9,7 @@ import { getRedirectUrl } from '../utils/oauth';
 import * as userActions from '../actions/userActions';
 import MainContentWrapper from '../components/utility/MainContentWrapper';
 
+import isUserLoggedIn from "../utils/isUserLoggedIn";
 
 const formName = 'loginForm';
 const valueSelector = formValueSelector(formName);
@@ -69,7 +70,7 @@ export default class LoginForm extends React.Component {
   render() {
     const { handleSubmit, user } = this.props;
 
-    if (!_.isEmpty(user)) {
+    if (isUserLoggedIn(user)) {
       return (
         <MainContentWrapper>
           {/*Connect account*/}

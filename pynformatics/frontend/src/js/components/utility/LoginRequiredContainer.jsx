@@ -1,8 +1,9 @@
 import * as React from "react";
 import Redirect from "react-router-dom/es/Redirect";
+import { connect } from "react-redux";
 
-import {connect} from "react-redux";
-import {setRedirectUrl} from "../../actions/routingActions";
+import { setRedirectUrl } from "../../actions/routingActions";
+import isUserLoggedIn from "../../utils/isUserLoggedIn";
 
 
 const LOGIN_URL = "/auth/login";
@@ -16,7 +17,7 @@ const LoginRequiredContainer = (props) => {
 
 function mapStateToProps(state, ownProps) {
   return {
-    isLoggedIn: !_.isEmpty(state.user),
+    isLoggedIn: isUserLoggedIn(state.user),
     currentURL: ownProps.location.pathname
   }
 }

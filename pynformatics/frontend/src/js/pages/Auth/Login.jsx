@@ -2,6 +2,7 @@ import React from "react";
 import {connect} from "react-redux";
 import {Link, Redirect} from "react-router-dom";
 
+import isUserLoggedIn from "../../utils/isUserLoggedIn";
 import {Form, Spin} from "antd";
 import * as _ from "lodash";
 
@@ -13,12 +14,10 @@ import Checkbox from "../../components/utility/Checkbox";
 import {Col, Row} from '../../components/utility/Grid';
 
 import * as userActions from "../../actions/userActions";
-import {resetRedirectUrl} from "../../actions/routingActions";
 
 
 @connect(state => ({
   user: state.user,
-  redirectUrl: state.routing.redirectUrl
 }))
 @Form.create()
 class Login extends React.Component {
@@ -95,20 +94,19 @@ class Login extends React.Component {
 
   render() {
     const {getFieldDecorator} = this.props.form;
-    const {user, redirectUrl, dispatch} = this.props;
+    const {user, dispatch} = this.props;
+    const { from } = this.props.location.state || { from: { pathname: "/" } };
 
     if (this.state.successfulLogin) {
-      if (redirectUrl !== undefined) {
-        dispatch(resetRedirectUrl());
-        return <Redirect to={redirectUrl}/>
-      }
-      return <Redirect to="/"/>
+      return <Redirect to={from}/>
     }
 
-    if (!_.isEmpty(user)) {
+    if (isUserLoggedIn(user)) {
       return (<FormWrapper title={`Здраствуйте, ${user.firstname}`}>
         <div>{`Вы успешно вошли в систему как ${user.lastname} ${user.firstname}.`}</div>
-        <div>Перейти на <Link to="/">главную страницу</Link> или <Link to="/logout">Выйти</Link></div>
+        <div>
+          Перейти на <Link to="/">главную страницу</Link> или <Link to="/auth/logout">Выйти</Link>
+        </div>
       </FormWrapper>);
     }
 

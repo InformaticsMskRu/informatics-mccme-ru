@@ -16,6 +16,7 @@ import Select, { SelectOption } from '../../components/utility/Select';
 import * as problemAcitons from '../../actions/problemActions';
 
 import { getExtensionByFilename }  from '../../utils/functions';
+import isUserLoggedIn from "../../utils/isUserLoggedIn";
 
 const SubmitFormWrapper = styled.div`
   position: relative;
@@ -179,7 +180,7 @@ export class SubmitForm extends React.Component {
   }
 
   render() {
-    const loggedIn = !_.isEmpty(this.props.user);
+    const loggedIn = isUserLoggedIn(this.props.user);
 
     if (!loggedIn) {
       return (
