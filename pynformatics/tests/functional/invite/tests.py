@@ -114,3 +114,14 @@ class TestAPI__group(TestCase):
             self.session.query(UserGroup).filter(UserGroup.group_id==2).count(),
             equal_to(1)
         )
+
+    def test_invite_not_found(self):
+        self.set_session({'user_id': self.user1.id})
+        invite = GroupInviteLink(group_id=2)
+        self.session.add_all((
+            invite,
+        ))
+        self.session.flush()
+        self.app.get(
+            '/invite/aaa', status=404
+        )
