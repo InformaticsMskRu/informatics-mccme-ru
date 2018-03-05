@@ -2,7 +2,7 @@
 
 exports[`renders correctly with sidebar collapsed 1`] = `
 <div
-  className="sc-jTzLTM gPwBuz sc-bdVaJa EJzqM"
+  className="sc-jTzLTM dwFtUk sc-bdVaJa EJzqM"
   data-rtl={null}
 >
   <div
@@ -143,7 +143,7 @@ exports[`renders correctly with sidebar collapsed 1`] = `
           onTouchStart={[Function]}
         >
           <img
-            src="https://avatars0.githubusercontent.com/u/7108312?s=400&u=2539cc56457c0e10d6ff79d13c1e6d6cc654e284&v=4"
+            src="invalid url"
           />
         </div>
       </div>
@@ -154,7 +154,7 @@ exports[`renders correctly with sidebar collapsed 1`] = `
 
 exports[`renders correctly with sidebar not collapsed 1`] = `
 <div
-  className="sc-jTzLTM gPwBuz sc-bdVaJa EJzqM"
+  className="sc-jTzLTM dwFtUk sc-bdVaJa EJzqM"
   data-rtl={null}
 >
   <div
@@ -295,7 +295,7 @@ exports[`renders correctly with sidebar not collapsed 1`] = `
           onTouchStart={[Function]}
         >
           <img
-            src="https://avatars0.githubusercontent.com/u/7108312?s=400&u=2539cc56457c0e10d6ff79d13c1e6d6cc654e284&v=4"
+            src="invalid url"
           />
         </div>
       </div>

@@ -323,20 +323,24 @@ class Run(Base):
         DBSession.add(pynformatics_run)
         return pynformatics_run
 
-    def serialize(self, context):
-        serialized = attrs_to_dict(
-            self,
-            'run_id',
-            'contest_id',
-            'create_time',
-            'lang_id',
-            'prob_id',
-            'score',
-            'size',
-            'status',
-        )
+    def serialize(self, context, attributes=None):
+        if not attributes:
+            attributes = (
+                'run_id',
+                'contest_id',
+                'create_time',
+                'lang_id',
+                'prob_id',
+                'score',
+                'size',
+                'status',
+            )
 
-        serialized['create_time'] = str(serialized['create_time'])
+        serialized = attrs_to_dict(self, *attributes)
+
+        if 'create_time' in serialized:
+            serialized['create_time'] = str(serialized['create_time'])
+
         serialized.update(self.get_pynformatics_run().serialize(context))
 
         if context.user.ejudge_id != self.user.ejudge_id:

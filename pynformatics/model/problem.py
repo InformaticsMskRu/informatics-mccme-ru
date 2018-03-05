@@ -64,20 +64,38 @@ class EjudgeProblemDummy(Base):
 
 
 class EjudgeProblem(Problem):
+    """
+    Модель задачи из ejudge
+
+    ejudge_prid -- primary key, на который ссылается Problem.pr_id.
+        После инициализации, соответствтующему объекту Problem проставляется корректный pr_id
+
+    contest_id --
+
+    ejudge_contest_id -- соответствует contest_id из ejudge
+
+    secondary_ejudge_contest_id --
+
+    problem_id -- соответствует problem_id из ejudge
+
+    short_id -- короткий id (обычно буква)
+    """
+
     __tablename__ = 'mdl_ejudge_problem'
     __table_args__ = {'schema':'moodle', 'extend_existing': True}
     __mapper_args__ = {'polymorphic_identity': 'ejudgeproblem'}
 
-#    id = Column(Integer, ForeignKey('moodle.mdl_problems.pr_id'), primary_key=True)
     ejudge_prid = Column('id', Integer, primary_key=True) #global id in ejudge
     contest_id = Column(Integer, primary_key=True, nullable=False, autoincrement=False)
     ejudge_contest_id = Column(Integer, primary_key=True, nullable=False, autoincrement=False)
     secondary_ejudge_contest_id = Column(Integer, nullable=True)
     problem_id = Column(Integer, primary_key=True, nullable=False, autoincrement=False) #id in contest
     short_id = Column(String(100))
-    ejudgeName = Column('name', String(100))
-    # runs = relation('Run', backref='runs', uselist=True)
- 
+    ejudge_name = Column('name', String(100))
+
+    def __init__(self, **kwargs):
+        super(EjudgeProblem, self).__init__(**kwargs)
+        self.pr_id = self.ejudge_prid
 
     def serialize(self, context):
         if self.sample_tests:

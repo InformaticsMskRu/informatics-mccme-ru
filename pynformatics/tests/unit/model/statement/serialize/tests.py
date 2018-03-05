@@ -1,5 +1,6 @@
 from hamcrest import (
     assert_that,
+    anything,
     has_entries,
     has_items,
     is_not,
@@ -47,7 +48,7 @@ class TestModel__statement_serialize(TestCase):
         assert_that(
             self.statement.serialize(self.mock_context),
             has_entries({
-                'course_id': self.course.id,
+                'course': anything(),
                 'course_module_id': 1,
                 'id': self.statement.id,
                 'name': None,

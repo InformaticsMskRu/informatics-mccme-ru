@@ -9,7 +9,21 @@ from unittest.mock import PropertyMock
 from webtest import TestApp
 
 from pynformatics import main
+from pynformatics.model.group import (
+    Group,
+    UserGroup,
+)
 from pynformatics.model.meta import Base
+from pynformatics.model.problem import EjudgeProblem
+from pynformatics.model.statement import Statement
+from pynformatics.model.user import SimpleUser
+
+# TODO: Импорт необходим, иначе не создает таблицы в тестах
+from pynformatics.model.standings import (
+    ProblemStandings,
+    StatementStandings,
+)
+
 from pynformatics.models import DBSession
 from source_tree.model.role import Role
 
@@ -71,9 +85,88 @@ class TestCase(unittest.TestCase):
         session.save()
         self.app.set_cookie('session', session.id)
 
+    def create_groups(self):
+        self.groups = [
+            Group(
+                name='group 1',
+                visible=1,
+            ),
+            Group(
+                name='group 2',
+                visible=1,
+            ),
+        ]
+        self.session.add_all(self.groups)
+        self.session.flush(self.groups)
+
+    def create_problems(self):
+        self.problems = [
+            EjudgeProblem(
+                ejudge_prid=1,
+                contest_id=1,
+                ejudge_contest_id=1,
+                problem_id=1,
+            ),
+            EjudgeProblem(
+                ejudge_prid=2,
+                contest_id=2,
+                ejudge_contest_id=1,
+                problem_id=2,
+            ),
+            EjudgeProblem(
+                ejudge_prid=3,
+                contest_id=3,
+                ejudge_contest_id=2,
+                problem_id=1,
+            )
+        ]
+        self.session.add_all(self.problems)
+        self.session.flush(self.problems)
+
     def create_roles(self):
         self.admin_role = Role(shortname='admin')
         self.session.add_all((self.admin_role,))
+
+    def create_statements(self):
+        self.statements = [
+            Statement(),
+            Statement(),
+        ]
+        self.session.add_all(self.statements)
+        self.session.flush(self.statements)
+
+    def create_user_groups(self):
+        self.create_groups()
+        self.create_users()
+
+        self.user_groups = [
+            UserGroup(
+                group=self.groups[0],
+                user=self.users[0],
+            ),
+            UserGroup(
+                group=self.groups[1],
+                user=self.users[1],
+            ),
+        ]
+        self.session.add_all(self.user_groups)
+        self.session.flush(self.user_groups)
+
+    def create_users(self):
+        self.users = [
+            SimpleUser(
+                firstname='Maxim',
+                lastname='Grishkin',
+                ejudge_id=179,
+            ),
+            SimpleUser(
+                firstname='Somebody',
+                lastname='Oncetoldme',
+                ejudge_id=1543,
+            ),
+        ]
+        self.session.add_all(self.users)
+        self.session.flush(self.users)
 
 
 def dummy_decorator(*args, **kwargs):

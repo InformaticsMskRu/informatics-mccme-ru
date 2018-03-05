@@ -77,6 +77,7 @@ def main(global_config, **settings):
     config.add_route('problem.limits.show', '/problem/{problem_id}/limits/show')
     config.add_route('problem.limits.hide', '/problem/{problem_id}/limits/hide')
     config.add_route('problem.runs', '/problem/{problem_id}/runs')
+    # config.add_route('problem.standings', '/problem/{problem_id}/standings')
     config.add_route('problem.submit', '/problem/{problem_id}/submit')
     config.add_route('problem.submit_v2', '/problem/{problem_id}/submit_v2')
     config.add_route('problem.tests.add', '/problem/{problem_id}/tests/add')
@@ -121,6 +122,7 @@ def main(global_config, **settings):
     config.add_route('statement.set_settings', '/statement/{statement_id}/set_settings')
     config.add_route('statement.start_virtual', '/statement/{statement_id}/start_virtual')
     config.add_route('statement.finish_virtual', '/statement/{statement_id}/finish_virtual')
+    config.add_route('statement.standings', '/statement/{statement_id}/standings')
     config.add_route('statement.start', '/statement/{statement_id}/start')
     config.add_route('statement.finish', '/statement/{statement_id}/finish')
 
@@ -129,6 +131,11 @@ def main(global_config, **settings):
     config.add_route('auth.login', 'auth/login')
     config.add_route('auth.logout', 'auth/logout')
     config.add_route('auth.oauth_login', 'auth/oauth_login')
+
+    config.add_route('notification.update_standings', 'notification/update_standings')
+
+    config.add_route('group.get', 'group/{group_id}')
+    config.add_route('group.search', 'group')
 
     config.scan(ignore='pynformatics.tests')
 

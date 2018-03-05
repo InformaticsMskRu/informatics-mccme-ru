@@ -99,6 +99,15 @@ export default function reducer(state=initialState, action) {
       };
     case 'GET_PROBLEM_RUN_PROTOCOL_REJECTED':
       return state;
+    
+    case 'GET_PROBLEM_STANDINGS_FULFILLED':
+      return {
+        ...state,
+        [problemId]: {
+          ...state[problemId],
+          standings: actions.payload.data,
+        }
+      };
   }
   return state;
 }

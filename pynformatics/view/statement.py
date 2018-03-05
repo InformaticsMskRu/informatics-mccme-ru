@@ -2,7 +2,7 @@ from pyramid.view import view_config
 from sqlalchemy import and_
 
 from pynformatics.model.course_module import CourseModule
-from pynformatics.model.statement import Statement
+from pynformatics.model.standings import StatementStandings
 from pynformatics.models import DBSession
 from pynformatics.utils.validators import (
     IntParam,
@@ -83,3 +83,27 @@ def statement_get_by_module(request):
 
     request.matchdict = {'statement_id': course_module.instance}
     return statement_get(request)
+
+
+@view_config(route_name='statement.standings', renderer='json', request_method='GET')
+@validate_matchdict(IntParam('statement_id', required=True))
+@validate_params(IntParam('group_id'))
+@with_context
+def statement_standings(request, context):
+    if not context.statement:
+        raise StatementNotFound
+
+    statement = context.statement
+    if statement.standings is None:
+        standings = StatementStandings.create(statement_id=statement.id)
+    else:
+        standings = statement.standings
+
+    group_id = None
+    if 'group_id' in request.params:
+        group_id = int(request.params['group_id'])
+
+    return standings.serialize(
+        context=context,
+        group_id=group_id,
+    )

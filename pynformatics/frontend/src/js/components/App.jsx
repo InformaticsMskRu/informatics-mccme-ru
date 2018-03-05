@@ -64,13 +64,16 @@ export default class App extends React.Component {
             <Sidebar />
             <Content
               className="isomorphicContent"
-              style={{ height: '100vh' }}
+              style={{ height: '100vh', overflowY: 'scroll' }}
             >
               <Switch>
                 <Route exact path="/" component={MainPage} />
                 <Route path="/auth" component={Auth} />
+
                 <Route exact path="/contest/:statementId" component={StatementPage} />
+                <Route exact path="/contest/:statementId/standings" component={StatementPage} />
                 <Route exact path="/contest/:statementId/problem/:problemRank" component={StatementPage} />
+
                 <Route exact path="/goto" component={TempGotoProblemPage} />
                 <Route exact path="/login" component={Login} />
                 <Route exact path="/problem/:problemId" component={ProblemPage} />

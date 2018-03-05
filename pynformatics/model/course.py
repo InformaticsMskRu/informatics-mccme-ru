@@ -25,12 +25,15 @@ class Course(Base):
     def require_password(self):
         return bool(self.password)
 
-    def serialize(self, context):
-        serialized = attrs_to_dict(
-            self,
-            'id',
-            'full_name',
-            'short_name',
-        )
-        serialized['require_password'] = self.require_password()
+    def serialize(self, context, attributes=None):
+        if not attributes:
+            attributes = (
+                'id',
+                'full_name',
+                'short_name',
+                'require_password',
+            )
+        serialized = attrs_to_dict(self, *attributes)
+        if 'require_password' in attributes:
+            serialized['require_password'] = self.require_password()
         return serialized

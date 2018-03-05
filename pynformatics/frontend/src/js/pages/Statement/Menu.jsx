@@ -200,6 +200,10 @@ const MenuProblem = ({letter, rank, status, title, collapsed}) => (
 
 
 export class Menu extends React.Component {
+  static contextTypes = {
+    statementId: PropTypes.number,
+  };
+
   static propTypes = {
     collapsed: PropTypes.bool.isRequired,
     statement: PropTypes.object.isRequired,
@@ -237,6 +241,7 @@ export class Menu extends React.Component {
   }
 
   render() {
+    const { statementId } = this.context;
     const {
       collapsed,
       selectedKeys,
@@ -252,7 +257,9 @@ export class Menu extends React.Component {
       participant,
       olympiad,
       virtual_olympiad: virtualOlympiad,
+      course: bootcamp,
     } = statement;
+    const { full_name: bootcampTitle } = bootcamp;
 
     const problemItems = _.map(problems, (value, key) => {
       const { name: title } = value;
@@ -281,9 +288,9 @@ export class Menu extends React.Component {
         >
           <div className="title">
             <div className="toggleDrawer" onClick={onCollapse}><ToggleDrawerIcon /></div>
-            <div className="bootcampTitle">Название сборов</div>
+            <div className="bootcampTitle">{bootcampTitle}</div>
             <div className="statementTitle">{statementTitle}</div>
-            <Link to='/'><Button type="secondary" size="small">Результаты контеста</Button></Link>
+            <Link to={`/contest/${statementId}/standings`}><Button type="secondary" size="small">Результаты контеста</Button></Link>
           </div>
 
           { (olympiad || virtualOlympiad) && typeof participant !== 'undefined'

@@ -1,34 +1,40 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import styled from 'styled-components';
-import PropTypes from 'prop-types';
 import { Table } from 'antd'
-import * as _ from 'lodash';
-import { palette } from 'styled-theme';
 import { connect } from 'react-redux';
+import { palette } from 'styled-theme';
+import * as _ from 'lodash';
 
-import { LANGUAGES } from '../../constants';
 import Button from '../../components/utility/Button';
 import ProtocolButton from './ProtocolButton';
 import Status from './Status';
+import moment from '../../utils/moment';
+import { LANGUAGES } from '../../constants';
 import * as problemActions from '../../actions/problemActions';
 
 
 const RunsWrapper = styled.div`
   .ant-table-thead > tr > th {
-    background: #F3F5F7;
+    background: ${palette('other', 15)};
     color: rgba(33, 37, 41,0.5);
     font-weight: normal;
     font-size: 12px;
   }
-  
-  .ant-table { 
-    border-radius: 0;
-    color: ${palette('other', 7)}; 
-  }
-  .ant-table table { border-radius: 0; }
-  .ant-table td { 
+  .ant-table-content { overflow-x: auto; }
+
+  .runsColumnScore,
+  .refreshBtn {
+    width: 1px;
+    text-align: center;
     white-space: nowrap;
-    word-break: keep-all; 
+  }
+  .runsColumnId,
+  .runsColumnStatus,
+  .runsColumnDate,
+  .runsColumnLanguage {
+    text-align: center;
+    white-space: nowrap;
   }
   
   .buttons {
@@ -72,21 +78,16 @@ export class Runs extends React.Component {
       showMore: false,
     };
 
-    this.fetchProblemRunsPromise = null;
-
     this.fetchProblemRuns = this.fetchProblemRuns.bind(this);
     this.toggleShowMore = this.toggleShowMore.bind(this);
   }
 
   fetchProblemRuns() {
+    const { statementId } = this.context;
     const { problemId } = this.props;
-    if (!this.fetchProblemRunsPromise) {
-      this.fetchProblemRunsPromise = this.props.dispatch(
-        problemActions.fetchProblemRuns(problemId, this.context.statementId)
-      ).then(() => {
-        this.fetchProblemRunsPromise = null;
-      });
-    }
+    this.fetchProblemRunsPromise = this.props.dispatch(
+      problemActions.fetchProblemRuns(problemId, statementId)
+    );
   }
 
   toggleShowMore() {
@@ -110,28 +111,32 @@ export class Runs extends React.Component {
       {
         dataIndex: 'status',
         key: 'status',
-        title: '',
         render: status => <Status status={status}/>,
+        className: 'runsColumnStatus',
       },
       {
         dataIndex: 'id',
         key: 'id',
         title: '#',
+        className: 'runsColumnId',
       },
       {
         dataIndex: 'time',
         key: 'time',
         title: 'Дата',
+        className: 'runsColumnDate',
       },
       {
         dataIndex: 'language',
         key: 'language',
         title: 'Язык',
+        className: 'runsColumnLanguage',
       },
       {
         dataIndex: 'score',
         key: 'score',
         title: 'Баллы',
+        className: 'runsColumnScore',
       },
       {
         className: 'refreshBtn',
@@ -168,7 +173,13 @@ export class Runs extends React.Component {
       contestId: parseInt(value.contest_id),
       id: parseInt(key),
       status: value.status,
-      time: value.create_time || '',
+      time: value.create_time 
+        ? moment(value.create_time).calendar(null, {
+          sameDay: 'HH:mm',
+          lastDay: '[Вчера в] HH:mm',
+          lastWeek: 'DD.MM.YYYY HH:mm',
+          sameElse: 'DD.MM.YYYY HH:mm',
+        }) : '',
       language: LANGUAGES[value.lang_id].name || '',
       score: value.score,
       user: (
@@ -177,7 +188,6 @@ export class Runs extends React.Component {
           : user.firstname + ' ' + user.lastname
       )
     })), row => -row.id);
-
 
     return (
       <RunsWrapper>

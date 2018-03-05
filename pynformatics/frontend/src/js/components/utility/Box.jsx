@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { palette } from 'styled-theme';
 
 import { BoxWrapper as IsoBoxWrapper } from '../../isomorphic/components/utility/box.style';
 import {
@@ -10,6 +11,7 @@ import {
 
 const BoxWrapper = IsoBoxWrapper.extend`
   border-radius: 4px;
+  color: ${palette("other", 7)};
   
   &&& {
     margin: 0;
@@ -21,6 +23,7 @@ const BoxTitleWrapper = IsoBoxTitleWrapper.extend`
   margin-right: 10px;
   display: inline-block;
   margin-bottom: 0;
+  color: ${palette("other", 7)};
 `;
 
 const BoxSubTitleWrapper = IsoBoxSubTitleWrapper.extend`
@@ -40,8 +43,8 @@ const BoxHeader = ({title, subtitle}) => (
   </BoxHeaderWrapper>
 );
 
-const Box = ({ title, subtitle, children, style }) => (
-  <BoxWrapper style={style}>
+const Box = ({ title, subtitle, children, style, className }) => (
+  <BoxWrapper style={style} className={className}>
     { title || subtitle ? <BoxHeader title={title} subtitle={subtitle}/> : null }
     { children }
   </BoxWrapper>

@@ -88,7 +88,6 @@ export default class StatementSettingsForm extends React.Component {
 
     const {statementId} = props;
     props.dispatch(statementActions.fetchStatement(statementId)).then((res) => {
-      console.log('oki');
       console.log(res);
     });
 

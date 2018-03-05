@@ -957,12 +957,8 @@ exports[`renders correctly not collapsed 1`] = `
   margin-right: 0 !important;
 }
 
-.c4.ant-btn {
-  border-radius: 4px;
-}
-
-.c4.ant-btn.ant-btn-primary {
-  background-color: rgb(64,126,255);
+.c4.ant-btn.ant-btn-secondary {
+  color: #ffffff;
 }
 
 .c3 {
@@ -989,14 +985,24 @@ exports[`renders correctly not collapsed 1`] = `
   max-height: 24px;
 }
 
-.c2 .icon-sz-18 {
+.c2.icon-sz-18 {
   width: 18px;
   height: 18px;
 }
 
-.c2 .icon-sz-18 svg {
+.c2.icon-sz-18 svg {
   max-width: 18px;
   max-height: 18px;
+}
+
+.c2.icon-sz-30 {
+  width: 30px;
+  height: 30px;
+}
+
+.c2.icon-sz-30 svg {
+  max-width: 30px;
+  max-height: 30px;
 }
 
 .c0 {
@@ -1211,7 +1217,7 @@ exports[`renders correctly not collapsed 1`] = `
                   className="isoMenuHolder"
                 >
                   <i
-                    className="icon icon-sz-24 c2"
+                    className="icon icon-sz-24 null c2"
                     dangerouslySetInnerHTML={
                       Object {
                         "__html": "test-file-stub",
@@ -1249,7 +1255,7 @@ exports[`renders correctly not collapsed 1`] = `
                   className="isoMenuHolder"
                 >
                   <i
-                    className="icon icon-sz-24 c2"
+                    className="icon icon-sz-24 null c2"
                     dangerouslySetInnerHTML={
                       Object {
                         "__html": "test-file-stub",
@@ -1287,7 +1293,7 @@ exports[`renders correctly not collapsed 1`] = `
                   className="isoMenuHolder"
                 >
                   <i
-                    className="icon icon-sz-24 c2"
+                    className="icon icon-sz-24 null c2"
                     dangerouslySetInnerHTML={
                       Object {
                         "__html": "test-file-stub",
@@ -1325,7 +1331,7 @@ exports[`renders correctly not collapsed 1`] = `
                   className="isoMenuHolder"
                 >
                   <i
-                    className="icon icon-sz-24 c2"
+                    className="icon icon-sz-24 null c2"
                     dangerouslySetInnerHTML={
                       Object {
                         "__html": "test-file-stub",
@@ -1363,7 +1369,7 @@ exports[`renders correctly not collapsed 1`] = `
                   className="isoMenuHolder"
                 >
                   <i
-                    className="icon icon-sz-24 c2"
+                    className="icon icon-sz-24 null c2"
                     dangerouslySetInnerHTML={
                       Object {
                         "__html": "test-file-stub",
@@ -1402,7 +1408,7 @@ exports[`renders correctly not collapsed 1`] = `
                   className="isoMenuHolder"
                 >
                   <i
-                    className="icon icon-sz-24 c2"
+                    className="icon icon-sz-24 null c2"
                     dangerouslySetInnerHTML={
                       Object {
                         "__html": "test-file-stub",
@@ -1440,7 +1446,7 @@ exports[`renders correctly not collapsed 1`] = `
                   className="isoMenuHolder"
                 >
                   <i
-                    className="icon icon-sz-24 c2"
+                    className="icon icon-sz-24 null c2"
                     dangerouslySetInnerHTML={
                       Object {
                         "__html": "test-file-stub",
@@ -1478,7 +1484,7 @@ exports[`renders correctly not collapsed 1`] = `
                   className="isoMenuHolder"
                 >
                   <i
-                    className="icon icon-sz-24 c2"
+                    className="icon icon-sz-24 null c2"
                     dangerouslySetInnerHTML={
                       Object {
                         "__html": "test-file-stub",
@@ -1516,7 +1522,7 @@ exports[`renders correctly not collapsed 1`] = `
                   className="isoMenuHolder"
                 >
                   <i
-                    className="icon icon-sz-24 c2"
+                    className="icon icon-sz-24 null c2"
                     dangerouslySetInnerHTML={
                       Object {
                         "__html": "test-file-stub",
@@ -1555,7 +1561,7 @@ exports[`renders correctly not collapsed 1`] = `
                   className="isoMenuHolder"
                 >
                   <i
-                    className="icon icon-sz-24 c2"
+                    className="icon icon-sz-24 null c2"
                     dangerouslySetInnerHTML={
                       Object {
                         "__html": "test-file-stub",
@@ -1593,7 +1599,7 @@ exports[`renders correctly not collapsed 1`] = `
                   className="isoMenuHolder"
                 >
                   <i
-                    className="icon icon-sz-24 c2"
+                    className="icon icon-sz-24 null c2"
                     dangerouslySetInnerHTML={
                       Object {
                         "__html": "test-file-stub",
@@ -1631,7 +1637,7 @@ exports[`renders correctly not collapsed 1`] = `
                   className="isoMenuHolder"
                 >
                   <i
-                    className="icon icon-sz-24 c2"
+                    className="icon icon-sz-24 null c2"
                     dangerouslySetInnerHTML={
                       Object {
                         "__html": "test-file-stub",
@@ -1669,7 +1675,7 @@ exports[`renders correctly not collapsed 1`] = `
                   className="isoMenuHolder"
                 >
                   <i
-                    className="icon icon-sz-24 c2"
+                    className="icon icon-sz-24 null c2"
                     dangerouslySetInnerHTML={
                       Object {
                         "__html": "test-file-stub",
@@ -1707,7 +1713,7 @@ exports[`renders correctly not collapsed 1`] = `
                   className="isoMenuHolder"
                 >
                   <i
-                    className="icon icon-sz-24 c2"
+                    className="icon icon-sz-24 null c2"
                     dangerouslySetInnerHTML={
                       Object {
                         "__html": "test-file-stub",

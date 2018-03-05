@@ -16,12 +16,14 @@ from pynformatics.model.problem import (
 )
 from pynformatics.model.pynformatics_run import PynformaticsRun
 from pynformatics.model.run import Run
+from pynformatics.model.standings import ProblemStandings
 from pynformatics.models import DBSession
 from pynformatics.view.utils import *
 from pynformatics.utils.context import with_context
 from pynformatics.utils.exceptions import (
     EjudgeError,
     Forbidden,
+    ProblemNotFound,
 )
 from pynformatics.utils.validators import (
     validate_matchdict,
@@ -301,8 +303,12 @@ def problem_get(request, context):
 
 
 @view_config(route_name='problem.runs', renderer='json')
-@validate_matchdict(IntParam('problem_id', required=True))
-@validate_params(IntParam('statement_id'))
+@validate_matchdict(
+    IntParam('problem_id', required=True)
+)
+@validate_params(
+    IntParam('statement_id'),
+)
 @with_context
 def problem_runs(request, context):
     runs = context.problem.runs
@@ -324,6 +330,23 @@ def problem_runs(request, context):
 
     runs_dict = {
         run.run_id: run.serialize(context)
-        for run in runs
+        for run in runs.all()
     }
     return runs_dict
+
+
+# @view_config(route_name='problem.standings', renderer='json', request_method='GET')
+# @validate_matchdict(IntParam('problem_id', required=True))
+# @with_context
+# def problem_standings(request, context):
+#     if not context.problem:
+#         raise ProblemNotFound
+#
+#     problem = context.problem
+#
+#     if problem.standings is None:
+#         standings = ProblemStandings.create(problem_id=problem.id)
+#     else:
+#         standings = problem.standings
+#
+#     return standings.serialize(context)
