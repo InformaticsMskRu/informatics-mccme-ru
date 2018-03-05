@@ -10,7 +10,7 @@ import MainContentWrapper from '../../components/utility/MainContentWrapper';
 const ContentHeaderWrapper = styled.div`
   position: relative;
   text-align: center;
-  margin: 10px 0 80px 0;
+  margin: 10px 0 25px 0;
   padding-bottom: 25px;
   border-bottom: 1px solid ${palette('other', 9)};
 

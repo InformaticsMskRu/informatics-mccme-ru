@@ -7,12 +7,15 @@ import * as _ from 'lodash';
 import Box from '../../components/utility/Box';
 import Button from '../../components/utility/Button';
 import ContentHeader from './ContentHeader';
+import GroupFilter from '../../components/GroupFilter/GroupFilter';
 import MainContentWrapper from '../../components/utility/MainContentWrapper';
 import Slider from '../../components/utility/Slider';
 import StandingsTable from '../../components/StandingsTable/StandingsTable';
 import moment from '../../utils/moment';
 import { RadioButton, RadioGroup } from '../../components/utility/Radio';
 import { Row, Col, rowStyle, colStyle, gutter } from '../../components/utility/Grid';
+
+import { createGroupSelect } from '../../components/GroupSelect/GroupSelect';
 
 
 const StandingsWrapper = MainContentWrapper.extend`
@@ -53,6 +56,7 @@ export class Standings extends React.Component {
 
   static propTypes = {
     statements: PropTypes.object.isRequired,
+    filterGroup: PropTypes.object,
   };
 
   constructor(props, context) {
@@ -85,6 +89,7 @@ export class Standings extends React.Component {
   render() {
     const { statementId } = this.context;
     const { dateFilterMode, date } = this.state;
+    const { filterGroup } = this.props;
 
     const statement = this.props.statements[statementId];
     const bootcampTitle = _.get(statement, 'course.full_name', null);
@@ -102,6 +107,11 @@ export class Standings extends React.Component {
       <StandingsWrapper>
         <Box>
           <ContentHeader statementTitle="Результаты контеста" bootcampTitle={bootcampTitle}/>
+          <Row style={rowStyle} gutter={gutter}>
+            <Col xs={24} style={colStyle}>
+              <GroupFilter/>
+            </Col>
+          </Row>
           <Row style={rowStyle} gutter={gutter}>
             <Col className="standingsRadioCol" style={colStyle}>
               <RadioGroup 
@@ -156,7 +166,10 @@ export class Standings extends React.Component {
               </Box>
             ) : null
           }
-          <StandingsTable maxDate={date}/>
+          <StandingsTable 
+            maxDate={date} 
+            filterGroupId={_.get(filterGroup, 'id')} 
+          />
         </Box>
       </StandingsWrapper>
     );
@@ -165,4 +178,5 @@ export class Standings extends React.Component {
 
 export default connect(state => ({
   statements: state.statements,
+  filterGroup: state.group.filterGroup,
 }))(Standings);

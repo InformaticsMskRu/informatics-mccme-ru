@@ -87,6 +87,7 @@ def statement_get_by_module(request):
 
 @view_config(route_name='statement.standings', renderer='json', request_method='GET')
 @validate_matchdict(IntParam('statement_id', required=True))
+@validate_params(IntParam('group_id'))
 @with_context
 def statement_standings(request, context):
     if not context.statement:
@@ -98,4 +99,11 @@ def statement_standings(request, context):
     else:
         standings = statement.standings
 
-    return standings.serialize(context)
+    group_id = None
+    if 'group_id' in request.params:
+        group_id = int(request.params['group_id'])
+
+    return standings.serialize(
+        context=context,
+        group_id=group_id,
+    )

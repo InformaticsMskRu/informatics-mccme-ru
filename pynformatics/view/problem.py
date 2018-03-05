@@ -303,8 +303,12 @@ def problem_get(request, context):
 
 
 @view_config(route_name='problem.runs', renderer='json')
-@validate_matchdict(IntParam('problem_id', required=True))
-@validate_params(IntParam('statement_id'))
+@validate_matchdict(
+    IntParam('problem_id', required=True)
+)
+@validate_params(
+    IntParam('statement_id'),
+)
 @with_context
 def problem_runs(request, context):
     runs = context.problem.runs

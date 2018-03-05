@@ -134,6 +134,9 @@ def main(global_config, **settings):
 
     config.add_route('notification.update_standings', 'notification/update_standings')
 
+    config.add_route('group.get', 'group/{group_id}')
+    config.add_route('group.search', 'group')
+
     config.scan(ignore='pynformatics.tests')
 
     fill_oauth_config_secrets(settings)

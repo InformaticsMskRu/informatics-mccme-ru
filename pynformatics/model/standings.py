@@ -12,13 +12,14 @@ from sqlalchemy.orm import (
 )
 from sqlalchemy.types import Integer
 
+from pynformatics.model.group import Group
 from pynformatics.model.meta import Base
 from pynformatics.model.problem import EjudgeProblem
 from pynformatics.model.pynformatics_run import PynformaticsRun
 from pynformatics.model.run import Run
 from pynformatics.model.user import SimpleUser
 from pynformatics.models import DBSession
-from pynformatics.utils.exceptions import RunNotFound
+from pynformatics.utils.exceptions import GroupNotFound
 from pynformatics.utils.functions import (
     attrs_to_dict,
     index_of,
@@ -182,5 +183,18 @@ class StatementStandings(StandingsMixin, Base):
         self.json.changed()
 
     # TODO: добавить обработку настроек контеста
-    def serialize(self, context):
-        return self.json
+    def serialize(self, context, group_id=None):
+        result = self.json
+        if group_id:
+            try:
+                group = DBSession.query(Group).filter_by(id=group_id).one()
+            except Exception:
+                raise GroupNotFound
+
+            result = {
+                str(user_group.user_id): result[str(user_group.user_id)]
+                for user_group in group.user_groups
+                if str(user_group.user_id) in result
+            }
+
+        return result

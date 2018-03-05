@@ -78,20 +78,36 @@ export class StatementPage extends React.Component {
     statements: PropTypes.object.isRequired,
   };
 
-  constructor(props) {
-    super(props);
+  constructor(props, context) {
+    super(props, context);
 
     this.state = {
       collapsed: false,
     };
 
+    this.fetchStandings = this.fetchStandings.bind(this);
     this.fetchStatement = this.fetchStatement.bind(this);
     this.toggleCollapse = this.toggleCollapse.bind(this);
     this.changeProblemRank = this.changeProblemRank.bind(this);
   }
 
   componentDidMount() {
-    this.fetchStatement();
+    const statementId = _.get(this.props, 'match.params.statementId');
+    this.fetchStatement(statementId);
+  }
+
+  componentWillReceiveProps(props, context) {
+    const filterGroupId = _.get(props, 'filterGroup.id');
+    const oldFilterGroupId = _.get(this.props, 'filterGroup.id');
+
+    const statementId = _.get(props, 'match.params.statementId');
+    const oldStatementId = _.get(props, 'match.params.statementId');
+
+    if (statementId !== oldStatementId) {
+      this.fetchStatement(statementId);
+    } else if (filterGroupId !== oldFilterGroupId) {
+      this.fetchStandings(statementId, filterGroupId);
+    }
   }
 
   getChildContext() {
@@ -99,8 +115,9 @@ export class StatementPage extends React.Component {
     return { statementId: parseInt(statementId) };
   }
 
-  fetchStatement() {
-    const { statementId, problemRank } = this.props.match.params;
+  fetchStatement(statementId) {
+    const { filterGroup } = this.props;
+    const { problemRank } = this.props.match.params;
     const showStandings = this.props.location.pathname.indexOf('standings') !== -1;
 
     this.props.dispatch(statementActions.fetchStatement(statementId)).then(result => {
@@ -117,7 +134,14 @@ export class StatementPage extends React.Component {
         this.changeProblemRank(_.keys(problems)[0]);
       }
     });
-    this.props.dispatch(statementActions.fetchStatementStandings(statementId));
+
+    this.fetchStandings(statementId, _.get(filterGroup, 'id'));
+  }
+
+  fetchStandings(statementId, filterGroupId) {
+    this.props.dispatch(statementActions.fetchStatementStandings(
+      statementId, filterGroupId
+    ));
   }
 
   toggleCollapse() {
@@ -156,7 +180,7 @@ export class StatementPage extends React.Component {
       return (
         <Blockage
           statement={statement}
-          fetchStatement={this.fetchStatement}
+          fetchStatement={this.fetchStatement.bind(this, statementId)}
         />
       );
     }
@@ -218,5 +242,6 @@ export default compose(
   connect(state => ({
     statements: state.statements,
     windowWidth: state.ui.width,
+    filterGroup: state.group.filterGroup,
   }))
 )(StatementPage);

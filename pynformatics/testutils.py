@@ -9,6 +9,10 @@ from unittest.mock import PropertyMock
 from webtest import TestApp
 
 from pynformatics import main
+from pynformatics.model.group import (
+    Group,
+    UserGroup,
+)
 from pynformatics.model.meta import Base
 from pynformatics.model.problem import EjudgeProblem
 from pynformatics.model.statement import Statement
@@ -81,6 +85,20 @@ class TestCase(unittest.TestCase):
         session.save()
         self.app.set_cookie('session', session.id)
 
+    def create_groups(self):
+        self.groups = [
+            Group(
+                name='group 1',
+                visible=1,
+            ),
+            Group(
+                name='group 2',
+                visible=1,
+            ),
+        ]
+        self.session.add_all(self.groups)
+        self.session.flush(self.groups)
+
     def create_problems(self):
         self.problems = [
             EjudgeProblem(
@@ -116,6 +134,23 @@ class TestCase(unittest.TestCase):
         ]
         self.session.add_all(self.statements)
         self.session.flush(self.statements)
+
+    def create_user_groups(self):
+        self.create_groups()
+        self.create_users()
+
+        self.user_groups = [
+            UserGroup(
+                group=self.groups[0],
+                user=self.users[0],
+            ),
+            UserGroup(
+                group=self.groups[1],
+                user=self.users[1],
+            ),
+        ]
+        self.session.add_all(self.user_groups)
+        self.session.flush(self.user_groups)
 
     def create_users(self):
         self.users = [

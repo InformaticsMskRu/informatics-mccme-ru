@@ -77,12 +77,13 @@ export function fetchStatementByCourseModuleId(courseModuleId) {
 }
 
 
-export function fetchStatementStandings(statementId) {
+export function fetchStatementStandings(statementId, groupId) {
   return (dispatch) => {
     const url = `/statement/${statementId}/standings`;
+    const params = { group_id: groupId }
     return dispatch({
       type: 'GET_STATEMENT_STANDINGS',
-      payload: axios.get(url),
+      payload: axios.get(url, { params }),
       meta: { statementId },
     })
   }

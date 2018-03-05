@@ -1,17 +1,17 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import styled from 'styled-components';
-import PropTypes from 'prop-types';
 import { Table } from 'antd'
-import * as _ from 'lodash';
-import { palette } from 'styled-theme';
 import { connect } from 'react-redux';
+import { palette } from 'styled-theme';
+import * as _ from 'lodash';
 
-import { LANGUAGES } from '../../constants';
 import Button from '../../components/utility/Button';
 import ProtocolButton from './ProtocolButton';
 import Status from './Status';
-import * as problemActions from '../../actions/problemActions';
 import moment from '../../utils/moment';
+import { LANGUAGES } from '../../constants';
+import * as problemActions from '../../actions/problemActions';
 
 
 const RunsWrapper = styled.div`
@@ -78,21 +78,16 @@ export class Runs extends React.Component {
       showMore: false,
     };
 
-    this.fetchProblemRunsPromise = null;
-
     this.fetchProblemRuns = this.fetchProblemRuns.bind(this);
     this.toggleShowMore = this.toggleShowMore.bind(this);
   }
 
   fetchProblemRuns() {
+    const { statementId } = this.context;
     const { problemId } = this.props;
-    if (!this.fetchProblemRunsPromise) {
-      this.fetchProblemRunsPromise = this.props.dispatch(
-        problemActions.fetchProblemRuns(problemId, this.context.statementId)
-      ).then(() => {
-        this.fetchProblemRunsPromise = null;
-      });
-    }
+    this.fetchProblemRunsPromise = this.props.dispatch(
+      problemActions.fetchProblemRuns(problemId, statementId)
+    );
   }
 
   toggleShowMore() {

@@ -76,6 +76,7 @@ export class StandingsTable extends React.Component {
   static propTypes = {
     problemId: PropTypes.number,
     maxDate: PropTypes.instanceOf(Date),
+    filterGroupId: PropTypes.number,
     statements: PropTypes.object.isRequired,
   };
 
@@ -88,27 +89,30 @@ export class StandingsTable extends React.Component {
     this.state = {
       highlight: null,
     }
-    this.initProblemColumns(statementId, problemId);
-    this.initData({statementId, problemId, maxDate});
+    this.initProblemColumns(props, context);
+    this.initData(props, context);
 
     this.initProblemColumns = this.initProblemColumns.bind(this);
     this.initData = this.initData.bind(this);
   }
 
   componentWillReceiveProps(props, context) {
-    const { statementId: prevStatementId } = this.context;
-    const { problemId: prevProblemId, maxDate: prevMaxDate } = this.props;
+    this.initProblemColumns(props, context);
 
-    const { statementId } = context;
-    const { problemId, maxDate } = props;
-
-    this.initProblemColumns(statementId, problemId);
-    if (statementId !== prevStatementId || maxDate !== prevMaxDate) {
-      this.initData({statementId, problemId, maxDate});
+    if (!_.isEqual(props, this.props)) {
+      this.initData(props, context);
     }
   }
 
-  initProblemColumns(statementId, problemId) {
+  /**
+   * @function
+   * @description Инициализирует столбцы таблицы
+   * @param {object} props 
+   * @param {object} context 
+   */
+  initProblemColumns(props, context) {
+    const { statementId } = context;
+    const { problemId, statements } = props;
     this.singleProblem = typeof problemId !== 'undefined';
     if (this.singleProblem) {
       this.columnsProblems = [
@@ -123,7 +127,7 @@ export class StandingsTable extends React.Component {
       ];
       this.defaults = {[problemId]: {}};
     }
-    const statement = this.props.statements[statementId];
+    const statement = statements[statementId];
     if (statement) {
       this.defaults = {};
       _.forEach(statement.problems, problem => this.defaults[problem.id] = {});
@@ -146,20 +150,29 @@ export class StandingsTable extends React.Component {
     }
   }
 
-  initData({statementId, problemId, maxDate}) {
+  /**
+   * @method
+   * @description Инициализирует данные для заполнения таблицы
+   * @param {object} props 
+   * @param {object} context 
+   */
+  initData(props, context) {
+    const { statementId } = context;
+    const { problemId, maxDate, statements } = props;
+
     let standingsData = {};
     const standingsAttrs = {};
     if (maxDate) {
       standingsAttrs.maxDate = maxDate;
     }
     if (statementId) {
-      const statement = this.props.statements[statementId];
+      const statement = statements[statementId];
       if (statement.participant) {
         const { start, duration } = statement.participant;
         standingsAttrs.startDate = new Date(start * 1000);
         standingsAttrs.endDate = new Date((start + duration) * 1000);
       }
-      standingsData = _.get(this.props.statements, `[${statementId}].standings`, {});
+      standingsData = _.get(statements, `[${statementId}].standings`, {});
     }
     this.data = _.sortBy(_.map(processStandingsData({data: standingsData, ...standingsAttrs}), (data, userId) => ({
       key: userId,

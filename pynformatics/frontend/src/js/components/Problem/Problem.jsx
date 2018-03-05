@@ -6,10 +6,11 @@ import { palette } from 'styled-theme';
 import * as _ from 'lodash';
 
 import Box from '../../components/utility/Box';
+import GroupFilter from '../../components/GroupFilter/GroupFilter';
 import Header from '../../components/utility/Header';
 import Runs from '../Runs/Runs';
 import Sample from './Sample';
-import StandingsTable from '../StandingsTable/StandingsTable';
+import StandingsPane from './StandingsPane';
 import SubmissionsPane from './SubmissionsPane';
 import SubmitForm from './SubmitForm';
 import Tabs, { TabPane } from '../../components/utility/Tabs';
@@ -188,7 +189,7 @@ export class Problem extends React.Component {
               <Runs problemId={problemId} runs={userProblemRuns} />
             </TabPane>
             <TabPane tab="Результаты" key="standings">
-              <StandingsTable problemId={problemId} />
+              <StandingsPane problemId={problemId} />
             </TabPane>
             <TabPane tab="Посылки" key="runs">
               <SubmissionsPane problemId={problemId} runs={problemRuns} />
