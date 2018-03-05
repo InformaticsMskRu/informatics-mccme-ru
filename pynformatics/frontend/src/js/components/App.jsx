@@ -4,6 +4,7 @@ import WindowResizeListener from 'react-window-size-listener';
 import { connect } from 'react-redux';
 import { Switch, Route, withRouter } from 'react-router-dom';
 import { Debounce } from 'react-throttle';
+import GroupDetailPage from "../pages/Group/GroupDetail";
 
 
 import Login from './LoginForm';
@@ -77,6 +78,7 @@ export default class App extends React.Component {
                 <Route exact path="/goto" component={TempGotoProblemPage} />
                 <Route exact path="/login" component={Login} />
                 <Route exact path="/problem/:problemId" component={ProblemPage} />
+                <Route exact path="/group/:groupId" component={GroupDetailPage} />
               </Switch>
             </Content>
           </Layout>
