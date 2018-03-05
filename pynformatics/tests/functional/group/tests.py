@@ -59,13 +59,9 @@ class TestAPI__group(TestCase):
         assert_that(
             response.json,
             has_entries({
-                'data': only_contains(
-                    has_entries({
-                        'id': 1,
-                        'name': 'test_group',
-                        'owner_id': 1
-                    }),
-                ),
+                'id': 1,
+                'name': 'test_group',
+                'owner_id': 1
             })
         )
 

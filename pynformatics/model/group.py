@@ -29,7 +29,7 @@ class Group(Base):
     name = Column(Unicode)
     description = Column(Unicode)
     owner_id = Column(Integer)
-    visible = Column(Integer)
+    visible = Column(Boolean, default=True)
 
     owner = relationship('SimpleUser', backref=backref('groups', lazy='select'), lazy='joined')
 

@@ -23,6 +23,7 @@ class TestAPI__group_get(TestCase):
         assert_that(
             response.json,
             equal_to({
+                'id': 1,
                 'name': 'group 1',
                 'visible': 1,
                 'description': None,

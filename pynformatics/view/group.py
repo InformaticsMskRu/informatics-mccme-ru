@@ -18,10 +18,9 @@ from pynformatics.utils.validators import (
 
 
 @view_config(route_name='group.get', renderer='json', request_method='GET')
-@validate_matchdict(IntParam('group_id', required=True))
 @with_context
-def group_get(request, context):
-    group_id = int(request.matchdict['group_id'])
+@validate_matchdict(IntParam('group_id', required=True))
+def group_get(request, context, *, group_id):
     try:
         group = DBSession.query(Group).filter(
             and_(
