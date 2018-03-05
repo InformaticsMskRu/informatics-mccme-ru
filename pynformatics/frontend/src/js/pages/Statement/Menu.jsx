@@ -303,7 +303,8 @@ export class Menu extends React.Component {
             : null }
 
           <div className="info">
-            Количество элементов во всех структурах данных не превышает 10000, если это не указано особо.
+            Данные вводятся с&nbsp;клавиатуры или из&nbsp;файла input.txt, выводятся на экран или в&nbsp;файл output.txt. 
+            Первые тесты не&nbsp;всегда совпадают с&nbsp;примерами из&nbsp;условия.
           </div>
         </div>
         <div className="problems">
