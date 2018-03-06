@@ -61,6 +61,8 @@ def main(global_config, **settings):
     config.add_route('group.get', '/group/{group_id}')
     config.add_route('group.get_owned_by', '/group/owned_by/{owner_id}')
     config.add_route('group.get_invite_links', '/group/{id}/invite_links')
+    config.add_route('group.get_students', '/group/{id}/students')
+    config.add_route('group.get_teachers', '/group/{id}/teachers')
     config.add_route('group.add_invite_link', '/group/{id}/add_invite_link')
     config.add_route('group.search', '/group')
 

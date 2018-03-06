@@ -72,7 +72,7 @@ class SimpleUser(Base):
             return latest_participant
         return None
 
-    def serialize(self, context, attributes=None):
+    def serialize(self, context=None, attributes=None):
         if not attributes:
             attributes = (
                 'id',

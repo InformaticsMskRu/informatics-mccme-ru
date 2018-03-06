@@ -1,5 +1,6 @@
 import styled from "styled-components";
 
+// language=SCSS
 const StyleWrapper = styled.div`.root-wrapper {
   background-color: #ffffff;
   border: solid 1px #e6e5e5;
@@ -28,15 +29,23 @@ const StyleWrapper = styled.div`.root-wrapper {
   }
   
   .group-body {
+    padding: 0;
+    border-bottom: solid 1px #e6e5e5;
     
     .group-body_column {
-      padding: 0 20px;
+      padding: 25px;
       
       .header {
         opacity: 0.9;
         font-size: 18px;
         color: #343a40;
       }
+    }
+  }
+  
+  .group-add {
+    .group-add_column {
+      padding: 25px;
     }
   }
 }`;

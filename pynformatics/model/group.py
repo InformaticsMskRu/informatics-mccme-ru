@@ -40,7 +40,7 @@ class Group(Base):
                 'name',
                 'description',
                 'owner_id',
-                'visible',
+                'visible'
             )
         serialized = attrs_to_dict(self, *attributes)
         return serialized
@@ -56,6 +56,7 @@ class UserGroup(Base):
 
     group = relationship('Group', backref=backref('user_groups', lazy='select'))
     user = relationship('SimpleUser', backref=backref('user_groups', lazy='select'))
+
 
 class GroupInviteLink(Base):
     __tablename__ = "group_invite_link"
