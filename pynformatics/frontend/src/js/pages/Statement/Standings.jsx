@@ -94,6 +94,8 @@ export class Standings extends React.Component {
     const statement = this.props.statements[statementId];
     const bootcampTitle = _.get(statement, 'course.full_name', null);
 
+    const { olympiad, virtual_olympiad: virtualOlympiad } = statement;
+
     const { start, duration } = _.get(statement, 'participant', {});
     if (start && duration) {
       this.startDate = new Date(start * 1000);
@@ -112,32 +114,37 @@ export class Standings extends React.Component {
               <GroupFilter/>
             </Col>
           </Row>
-          <Row style={rowStyle} gutter={gutter}>
-            <Col className="standingsRadioCol" style={colStyle}>
-              <RadioGroup 
-                value={dateFilterMode} 
-                onChange={(event) => this.handleDateFilterModeChange(event.target.value)}
-              >
-                <RadioButton value="before" disabled>До старта</RadioButton>
-                <RadioButton value="start">Старт</RadioButton>
-                <RadioButton value="freeze" disabled>Заморозка</RadioButton>
-                <RadioButton value="end">Конец</RadioButton>
-                <RadioButton value="upsolving">Дорешивание</RadioButton>
-              </RadioGroup>
-            </Col>
-            <Col style={colStyle}>
-              <Button 
-                size="small" 
-                type={dateFilterMode === 'custom' ? 'primary' : 'secondary'}
-                onClick={() => this.handleDateFilterModeChange('custom')}
-                disabled={!this.sliderEnd}
-              >
-                Выбрать момент
-              </Button>
-            </Col>
-          </Row>
           {
-            dateFilterMode === 'custom'
+            olympiad || virtualOlympiad
+            ? (
+              <Row style={rowStyle} gutter={gutter}>
+                <Col className="standingsRadioCol" style={colStyle}>
+                  <RadioGroup 
+                    value={dateFilterMode} 
+                    onChange={(event) => this.handleDateFilterModeChange(event.target.value)}
+                  >
+                    <RadioButton value="before" disabled>До старта</RadioButton>
+                    <RadioButton value="start">Старт</RadioButton>
+                    <RadioButton value="freeze" disabled>Заморозка</RadioButton>
+                    <RadioButton value="end">Конец</RadioButton>
+                    <RadioButton value="upsolving">Дорешивание</RadioButton>
+                  </RadioGroup>
+                </Col>
+                <Col style={colStyle}>
+                  <Button 
+                    size="small" 
+                    type={dateFilterMode === 'custom' ? 'primary' : 'secondary'}
+                    onClick={() => this.handleDateFilterModeChange('custom')}
+                    disabled={!this.sliderEnd}
+                  >
+                    Выбрать момент
+                  </Button>
+                </Col>
+              </Row>
+            ) : null
+          }
+          {
+            (olympiad || virtualOlympiad) && dateFilterMode === 'custom'
             ? (
               <Box className="sliderBox">
                 <Row 
