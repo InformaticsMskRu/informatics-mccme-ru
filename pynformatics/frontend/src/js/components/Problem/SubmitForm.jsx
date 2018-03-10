@@ -178,7 +178,7 @@ export class SubmitForm extends React.Component {
       return (
         <SubmitFormWrapper>
           <div className="loginBtn">
-            <Link to="/login">
+            <Link to="/auth/login">
               <Button type="primary">Войдите в систему, чтобы сдать задачу</Button>
             </Link>
           </div>

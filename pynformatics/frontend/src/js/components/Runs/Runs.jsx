@@ -180,7 +180,7 @@ export class Runs extends React.Component {
           lastWeek: 'DD.MM.YYYY HH:mm',
           sameElse: 'DD.MM.YYYY HH:mm',
         }) : '',
-      language: LANGUAGES[value.lang_id].name || '',
+      language: _.get(LANGUAGES, `[${value.lang_id}].name`, ''),
       score: value.score,
       user: (
         value.user
