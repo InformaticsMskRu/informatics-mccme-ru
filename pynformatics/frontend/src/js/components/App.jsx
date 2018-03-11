@@ -30,6 +30,7 @@ import theme from '../theme';
 import 'antd/dist/antd.css';
 import '../isomorphic/containers/App/global.css';
 import '../../css/style.css';
+import '../../css/ionicons.min.css';
 
 
 @withRouter
