@@ -1,20 +1,18 @@
-import { Link } from 'react-router-dom';
+import PropTypes from 'prop-types';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import styled from 'styled-components';
-import { palette } from 'styled-theme';
-import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
 import { Menu as AntdMenu } from 'antd';
+import { palette } from 'styled-theme';
 import * as _ from 'lodash';
-
-
-import { borderRadius, transition } from '../../isomorphic/config/style-util';
 
 import Button from '../../components/utility/Button';
 import MenuTime from './MenuTime';
-import { ToggleDrawerIcon } from '../../components/Icon';
-import { getProblemShortNameByNumber } from '../../utils/functions';
 import Status from '../../components/Runs/Status';
+import { ToggleDrawerIcon } from '../../components/Icon';
+import { borderRadius, transition } from '../../isomorphic/config/style-util';
+import { getProblemShortNameByNumber } from '../../utils/functions';
 
 
 const MenuWrapper = styled.div`
@@ -231,6 +229,9 @@ export class Menu extends React.Component {
       ...this.state,
       headerHeight,
     });
+    if (window.innerWidth < 1280) {
+      this.props.onCollapse();
+    }
   }
 
 
