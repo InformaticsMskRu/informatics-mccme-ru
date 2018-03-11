@@ -113,6 +113,7 @@ class Login extends React.Component {
             placeholder="Пароль"
             type="password"
             onChange={this.handlePasswordChange}
+            onPressEnter={this.handleSubmit}
           />)}
           <InputGroup className="inputGroup">
             <Button

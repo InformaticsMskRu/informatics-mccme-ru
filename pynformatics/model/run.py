@@ -343,6 +343,6 @@ class Run(Base):
 
         serialized.update(self.get_pynformatics_run().serialize(context))
 
-        if context.user.ejudge_id != self.user.ejudge_id:
+        if not context.user or context.user.ejudge_id != self.user.ejudge_id:
             serialized['user'] = self.user.serialize(context)
         return serialized

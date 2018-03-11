@@ -1,9 +1,9 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import styled from 'styled-components';
 import { connect } from 'react-redux';
 import { Table } from 'antd';
 import * as _ from 'lodash';
-import styled from 'styled-components';
 
 import Button from '../utility/Button';
 import CodeMirror from '../../components/utility/CodeMirror';
@@ -151,7 +151,7 @@ export class ProtocolButton extends React.Component {
                   lineNumbers: true,
                   readOnly: true,
                   tabSize: 4,
-                  mode: LANGUAGES[langId].mime,
+                  mode: _.get(LANGUAGES, `[${langId}].mime`, ''),
                 }}
               />
             </TabPane>

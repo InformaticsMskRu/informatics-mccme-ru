@@ -11,6 +11,7 @@ from sqlalchemy.orm.collections import attribute_mapped_collection
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 
 from pynformatics.model.course import Course
+from pynformatics.model.course_module import CourseModule
 from pynformatics.model.meta import Base
 from pynformatics.model.participant import Participant
 from pynformatics.models import DBSession
