@@ -11,12 +11,12 @@ import reducers from './reducers';
 
 const persistConfig = {
   key: 'root',
-  whitelist: ['group'],
+  whitelist: ['group', 'user'],
   transforms: [
     createWhitelistFilter('group', ['filterGroup']),
   ],
   storage,
-}
+};
 
 const persistedReducer = persistReducer(persistConfig, reducers);
 
