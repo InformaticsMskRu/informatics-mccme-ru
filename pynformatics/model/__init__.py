@@ -8,10 +8,11 @@ from pynformatics.model.comment import Comment
 from pynformatics.model.stars import Stars
 from pynformatics.model.ejudgeContest import EjudgeContest
 from pynformatics.model.ideal_solution import Ideal
-from pynformatics.model.group import Group, UserGroup
+from pynformatics.model.group import Group, UserGroup, GroupInviteLink
 from pynformatics.model.hint import Hint
 from pynformatics.model.recommendation import Recommendation
 from pynformatics.model.contests_statistic import ContestsStatistic
+
 
 def init_model(engine):
     """Call me before using any of the tables or classes in the model"""

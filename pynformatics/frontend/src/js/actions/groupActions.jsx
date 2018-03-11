@@ -14,6 +14,42 @@ export function fetchGroup(groupId) {
 }
 
 
+export function getGroupStudents(groupId) {
+  return (dispatch) => {
+    const url = `/group/${groupId}/students`;
+
+    return dispatch({
+      type: 'GET_GROUP_STUDENTS',
+      payload: axios.get(url),
+      meta: { groupId },
+    });
+  };
+}
+
+export function getGroupTeachers(groupId) {
+  return (dispatch) => {
+    const url = `/group/${groupId}/teachers`;
+
+    return dispatch({
+      type: 'GET_GROUP_TEACHERS',
+      payload: axios.get(url),
+      meta: { groupId },
+    });
+  };
+}
+
+export function getGroupInvites(groupId) {
+  return (dispatch) => {
+    const url = `/group/${groupId}/invite_links`;
+
+    return dispatch({
+      type: 'GET_GROUP_INVITES',
+      payload: axios.get(url),
+      meta: { groupId },
+    });
+  };
+}
+
 export function searchGroup(name, uid) {
   return (dispatch) => {
     const url = '/group';

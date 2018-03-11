@@ -65,6 +65,16 @@ def main(global_config, **settings):
     config.add_route('comment.get_unread_limit', '/comment/unread/{start}/{stop}')
     config.add_route('comment.get_unread_limit_html', '/comment/unread/{start}/{stop}/html')
     config.add_route('comment.get_count_unread', '/comment/unread/count')
+
+    config.add_route('group.get', '/group/{group_id}')
+    config.add_route('group.get_owned_by', '/group/owned_by/{owner_id}')
+    config.add_route('group.get_invite_links', '/group/{id}/invite_links')
+    config.add_route('group.get_students', '/group/{id}/students')
+    config.add_route('group.get_teachers', '/group/{id}/teachers')
+    config.add_route('group.add_invite_link', '/group/{id}/add_invite_link')
+    config.add_route('group.search', '/group')
+
+    config.add_route('invite.get', '/invite/{link}')
     
     config.add_route('protocol.get', '/protocol/get/{contest_id}/{run_id}')
     config.add_route('protocol.get_v2', '/protocol/get_v2/{contest_id}/{run_id}')
@@ -141,9 +151,6 @@ def main(global_config, **settings):
     config.add_route('auth.oauth_login', 'auth/oauth_login')
 
     config.add_route('notification.update_standings', 'notification/update_standings')
-
-    config.add_route('group.get', 'group/{group_id}')
-    config.add_route('group.search', 'group')
 
     config.scan(ignore='pynformatics.tests')
 

@@ -24,6 +24,7 @@
     "query-string": "^5.0.1",
     "react": "^16.0.0",
     "react-codemirror": "^1.0.0",
+    "react-copy-to-clipboard": "^5.0.1",
     "react-custom-scrollbars": "^4.2.1",
     "react-dom": "^16.0.0",
     "react-dropzone-component": "^3.0.0",
