@@ -78,7 +78,8 @@ class SimpleUser(Base):
                 'id',
                 'firstname',
                 'lastname',
-                'active_virtual'
+                'active_virtual',
+                'ejudge_id',
             )
         serialized = attrs_to_dict(self, *attributes)
         if 'active_virtual' in attributes:  # TODO Убрать во внешний сериалайзер
