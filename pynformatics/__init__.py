@@ -1,8 +1,9 @@
+from logging.config import fileConfig
 from pyramid.config import Configurator
 from pyramid_beaker import session_factory_from_settings
 from sqlalchemy import engine_from_config
 
-from .models import DBSession
+from pynformatics.models import DBSession
 from pynformatics.view.comment import *
 from pynformatics.utils.oauth import fill_oauth_config_secrets
 
@@ -10,6 +11,9 @@ from pynformatics.utils.oauth import fill_oauth_config_secrets
 def main(global_config, **settings):
     """ This function returns a Pyramid WSGI application.
     """
+    if 'logging.config' in settings:
+        fileConfig(settings['logging.config'], disable_existing_loggers=False)
+
     if global_config.get('TEST'):
         engine = global_config.get('engine')
     else:
