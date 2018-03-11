@@ -1,3 +1,4 @@
+from gevent import monkey
 from logging.config import fileConfig
 from pyramid.config import Configurator
 from pyramid_beaker import session_factory_from_settings
@@ -6,6 +7,9 @@ from sqlalchemy import engine_from_config
 from pynformatics.models import DBSession
 from pynformatics.view.comment import *
 from pynformatics.utils.oauth import fill_oauth_config_secrets
+
+
+monkey.patch_all()
 
 
 def main(global_config, **settings):

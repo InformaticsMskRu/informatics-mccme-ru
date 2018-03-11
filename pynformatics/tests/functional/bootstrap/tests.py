@@ -35,6 +35,7 @@ class TestAPI__bootstrap(TestCase):
                     'id': self.user.id,
                     'firstname': self.user.firstname,
                     'lastname': self.user.lastname,
+                    'ejudge_id': None,
                 }
             })
         )
