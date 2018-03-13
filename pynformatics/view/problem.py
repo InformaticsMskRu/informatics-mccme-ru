@@ -9,6 +9,7 @@ from sqlalchemy import and_
 
 from pynformatics.contest.ejudge.ejudge_proxy import submit
 from pynformatics.contest.ejudge.serve_internal import EjudgeContestCfg
+from pynformatics.contest.ejudge.submit_queue import queue_submit
 from pynformatics.model.user import SimpleUser
 from pynformatics.model.problem import (
     EjudgeProblem,
@@ -89,40 +90,21 @@ def problem_submits(request, context):
 )
 @with_context(require_auth=True)
 def problem_submits_v2(request, context):
-    lang_id = int(request.params['lang_id'])
+    language_id = int(request.params['lang_id'])
     file = request.params['file']
-    filename = request.params['file'].filename
     ejudge_url = request.registry.settings['ejudge.new_client_url']
 
-    if lang_id not in context.get_allowed_languages():
-        raise Forbidden('Language id "%s" is not allowed' % lang_id)
+    if language_id not in context.get_allowed_languages():
+        raise Forbidden(f'Language id "{language_id}" is not allowed')
 
-    ejudge_response = submit(
-        run_file=file.file,
-        contest_id=context.problem.ejudge_contest_id,
-        prob_id=context.problem.problem_id,
-        lang_id=lang_id,
-        login=context.user.login,
-        password=context.user.password,
-        filename=filename,
-        url=ejudge_url,
-        user_id=context.user_id,
+    queue_submit(
+        context=context,
+        file=file,
+        language_id=language_id,
+        ejudge_url=ejudge_url
     )
-    if ejudge_response['code'] != 0:
-        raise EjudgeError(ejudge_response['message'])
 
-    run_id = ejudge_response['run_id']
-    run = PynformaticsRun(
-        run_id=run_id,
-        contest_id=context.problem.ejudge_contest_id,
-        statement_id=getattr(context.statement, 'id', None),
-        source=file.value.decode('unicode_escape'),
-    )
-    DBSession.add(run)
-    DBSession.flush()
-
-    return run.run.serialize(context)
-
+    return {}
 
 @view_config(route_name='problem.ant.submit', renderer='json')
 def problem_ant_submits(request):

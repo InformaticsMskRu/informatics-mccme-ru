@@ -44,6 +44,15 @@ export default class App extends React.Component {
 
   componentDidMount() {
     this.props.dispatch(bootstrapActions.fetchBootstrap());
+
+    const ws = new WebSocket('ws://informatics.msk.ru:6349/websocket');
+    ws.onopen = event => {
+      console.log('open', event)
+    };
+    ws.onmessage = event => {
+      console.log('message', event)
+    };
+    window.ws = ws;
   }
 
   render() {
