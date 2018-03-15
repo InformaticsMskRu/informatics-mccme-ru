@@ -15,7 +15,7 @@ class Client:
         self._queue = Queue()
 
         _clients[user_id].append(self)
-        log.debug('New client created for user %s', user_id)
+        log.debug('User %s. New client created. Total clients for user: %s', user_id, len(_clients[user_id]))
 
     def has_notification(self):
         return not self._queue.empty()
@@ -38,7 +38,6 @@ class Client:
 def notify_user(user_id,
                 data=None,
                 runs=None,
-
                 ):
     data = data or {}
     if runs:

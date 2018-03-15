@@ -2,9 +2,11 @@ from pyramid.view import view_config
 
 from pynformatics.model.run import Run
 from pynformatics.models import DBSession
+from pynformatics.utils.context import with_context
 from pynformatics.utils.exceptions import (
     RunNotFound,
 )
+from pynformatics.utils.notify import notify_user
 from pynformatics.utils.validators import (
     IntParam,
     validate_params,
@@ -15,7 +17,8 @@ from pynformatics.utils.validators import (
     IntParam('contest_id', required=True),
     IntParam('run_id', required=True),
 )
-def notification_update_standings(request):
+@with_context
+def notification_update_standings(request, context):
     """
     Обновляет таблицы результатов, в которых есть посылка
     """
@@ -39,5 +42,8 @@ def notification_update_standings(request):
             and run.pynformatics_run.statement.standings
     ):
         run.pynformatics_run.statement.standings.update(run)
+
+    context.user_id = run.user.id
+    notify_user(user_id=run.user.id, runs=[run.serialize(context)])
 
     return {}

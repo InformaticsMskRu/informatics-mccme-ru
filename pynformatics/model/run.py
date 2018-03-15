@@ -334,12 +334,16 @@ class Run(Base):
                 'score',
                 'size',
                 'status',
+                'problem_id',
             )
 
         serialized = attrs_to_dict(self, *attributes)
 
-        if 'create_time' in serialized:
+        if 'create_time' in attributes:
             serialized['create_time'] = str(serialized['create_time'])
+
+        if 'problem_id' in attributes:
+            serialized['problem_id'] = self.problem.id
 
         serialized.update(self.get_pynformatics_run().serialize(context))
 

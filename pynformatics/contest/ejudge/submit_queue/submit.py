@@ -75,13 +75,14 @@ class Submit:
             return
 
         run_id = ejudge_response['run_id']
+
         pynformatics_run = PynformaticsRun(
             run_id=run_id,
             contest_id=self.problem.ejudge_contest_id,
             statement_id=self.statement_id,
             source=self.file.value.decode('unicode_escape'),
         )
-        DBSession.add(pynformatics_run)
+        pynformatics_run = DBSession.merge(pynformatics_run)
         DBSession.flush([pynformatics_run])
         DBSession.refresh(pynformatics_run.run)
 
