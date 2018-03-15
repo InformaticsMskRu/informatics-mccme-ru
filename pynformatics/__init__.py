@@ -1,15 +1,21 @@
+import logging
 from gevent import monkey
 from logging.config import fileConfig
 from pyramid.config import Configurator
 from pyramid_beaker import session_factory_from_settings
 from sqlalchemy import engine_from_config
 
+from pynformatics.contest.ejudge.submit_queue import init_submit_queue
 from pynformatics.models import DBSession
 from pynformatics.view.comment import *
 from pynformatics.utils.oauth import fill_oauth_config_secrets
 
 
+log = logging.getLogger(__name__)
 monkey.patch_all()
+
+
+SCAN_IGNORE = ['pynformatics.tests']
 
 
 def main(global_config, **settings):
@@ -145,9 +151,18 @@ def main(global_config, **settings):
     config.add_route('group.get', 'group/{group_id}')
     config.add_route('group.search', 'group')
 
-    config.scan(ignore='pynformatics.tests')
+    try:
+        import uwsgi
+        config.add_route('websocket', 'websocket')
+    except ImportError:
+        log.error('UWSGI is not imported. Websockets will not work!')
+        SCAN_IGNORE.append('pynformatics.view.websocket')
+
 
     fill_oauth_config_secrets(settings)
+    init_submit_queue(settings)
+
+    config.scan(ignore=SCAN_IGNORE)
 
     return config.make_wsgi_app()
 

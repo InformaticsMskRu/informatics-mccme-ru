@@ -32,24 +32,55 @@ class Run(Base):
         ),
         {'schema': 'ejudge'}
     )
-
    
     run_id = Column(Integer, primary_key=True)
+    contest_id = Column(Integer, primary_key=True)
     size = Column(Integer)
     create_time = Column(DateTime)
+    create_nsec = Column(Integer)
     user_id = Column(Integer)
-    user = relationship('SimpleUser', backref=backref('simpleuser'), uselist=False)
-    comments = relation('Comment', backref=backref('comments'))
-    contest_id = Column(Integer, primary_key=True)
-
-    # TODO: rename to problem_id
-    prob_id = Column(Integer)
-
-    problem = relationship('EjudgeProblem', backref=backref('runs', lazy='dynamic'), uselist=False)
+    prob_id = Column(Integer) # TODO: rename to problem_id
     lang_id = Column(Integer)
     status = Column(Integer)
+    ssl_flag = Column(Integer)
+    ip_version = Column(Integer)
+    ip = Column(String)
+    hash = Column(String)
+    run_uuid = Column(String)
     score = Column(Integer)
     test_num = Column(Integer)
+    score_adj = Column(Integer)
+    locale_id = Column(Integer)
+    judge_id = Column(Integer)
+    variant = Column(Integer)
+    pages = Column(Integer)
+    is_imported = Column(Integer)
+    is_hidden = Column(Integer)
+    is_readonly = Column(Integer)
+    is_examinable = Column(Integer)
+    mime_type = Column(String)
+    examiners0 = Column(Integer)
+    examiners1 = Column(Integer)
+    examiners2 = Column(Integer)
+    exam_score0 = Column(Integer)
+    exam_score1 = Column(Integer)
+    exam_score2 = Column(Integer)
+    last_change_time = Column(DateTime)
+    last_change_nsec = Column(Integer)
+    is_marked = Column(Integer)
+    is_saved = Column(Integer)
+    saved_status = Column(Integer)
+    saved_score = Column(Integer)
+    saved_test = Column(Integer)
+    passed_mode = Column(Integer)
+    eoln_type = Column(Integer)
+    store_flags = Column(Integer)
+    token_flags = Column(Integer)
+    token_count = Column(Integer)
+
+    comments = relationship('Comment', backref=backref('comments'))
+    user = relationship('SimpleUser', backref=backref('simpleuser'), uselist=False)
+    problem = relationship('EjudgeProblem', backref=backref('runs', lazy='dynamic'), uselist=False)
 
     SIGNAL_DESCRIPTION = {
         1: "Hangup detected on controlling terminal or death of controlling process",
@@ -334,12 +365,16 @@ class Run(Base):
                 'score',
                 'size',
                 'status',
+                'problem_id',
             )
 
         serialized = attrs_to_dict(self, *attributes)
 
-        if 'create_time' in serialized:
+        if 'create_time' in attributes:
             serialized['create_time'] = str(serialized['create_time'])
+
+        if 'problem_id' in attributes:
+            serialized['problem_id'] = self.problem.id
 
         serialized.update(self.get_pynformatics_run().serialize(context))
 

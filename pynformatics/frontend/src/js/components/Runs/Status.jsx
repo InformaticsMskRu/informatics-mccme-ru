@@ -43,14 +43,17 @@ const StatusWrapper = styled.div`
   } 
 `;
 
-export default ({status, collapsed}) => (
-  <StatusWrapper color={STATUSES[status].color}>
-    <Tooltip placement="right" title={STATUSES[status].long}>
-      <div
-        className={`statusShort ${collapsed ? 'collapsed' : ''}`}
-      >
-        <div>{STATUSES[status].short}</div>
-      </div>
-    </Tooltip>
-  </StatusWrapper>
-);
+export default ({status, collapsed}) => {
+  const {color = 'blue', long = 'Неизвестный статус', short = '??'} = STATUSES[status] || {};
+  return (
+    <StatusWrapper color={color}>
+      <Tooltip placement="right" title={long}>
+        <div
+          className={`statusShort ${collapsed ? 'collapsed' : ''}`}
+        >
+          <div>{short}</div>
+        </div>
+      </Tooltip>
+    </StatusWrapper>
+  );
+}

@@ -7,10 +7,21 @@ const initialState = {
 };
 
 export default function reducer(state=initialState, action) {
-  if (!action.meta)
-    return state;
-  const {problemId, runId} = action.meta;
+  const {problemId, runId} = action.meta || {};
+
   switch (action.type) {
+    case 'WEBSOCKET_MESSAGE':
+      const { runs } = action.data;
+      const runsForMerge = _.chain(runs)
+        .groupBy(run => run.problem_id)
+        .mapValues(
+          problemRuns => (
+            { runs: _.keyBy(problemRuns, run => run.run_id) }
+          )
+        )
+        .value();
+      return _.merge({}, state, runsForMerge);
+
     case 'GET_PROBLEM_PENDING':
       return {
         ...state,

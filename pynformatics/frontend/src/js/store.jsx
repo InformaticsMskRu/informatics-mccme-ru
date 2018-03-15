@@ -2,11 +2,12 @@ import promise from 'redux-promise-middleware';
 import storage from 'redux-persist/lib/storage';
 import thunk from 'redux-thunk';
 import { composeWithDevTools } from 'redux-devtools-extension';
-import { createStore, applyMiddleware } from 'redux';
+import { applyMiddleware, createStore } from 'redux';
 import { persistStore, persistReducer } from 'redux-persist';
 import { createWhitelistFilter } from 'redux-persist-transform-filter';
 
 import reducers from './reducers';
+import Socket from './utils/websocket';
 
 
 const persistConfig = {
@@ -28,6 +29,9 @@ const middleware = applyMiddleware(
 
 const store = createStore(persistedReducer, composeWithDevTools(middleware));
 const persistor = persistStore(store);
+
+const socket = new Socket(__websocket__, store.dispatch.bind(store));
+
 
 export {
   store,

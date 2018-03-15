@@ -3,6 +3,16 @@ const webpack = require('webpack');
 const path = require('path');
 
 
+const API_URLS = {
+  'debug': {
+    'websocket': JSON.stringify('ws://informatics.msk.ru:6349/websocket'),
+  },
+  'production': {
+    'websocket': JSON.stringify('wss://rmatics.msk.ru/websocket'),
+  }
+}
+
+
 module.exports = {
   context: path.join(__dirname, 'src'),
   devtool: debug ? 'inline-sourcemap' : false,
@@ -66,9 +76,13 @@ module.exports = {
   },
   plugins: debug ? [
     new webpack.optimize.OccurrenceOrderPlugin(),
+    new webpack.DefinePlugin({
+      '__websocket__': API_URLS['debug']['websocket'],
+    })
   ] : [
     new webpack.DefinePlugin({
-      'process.env.NODE_ENV': JSON.stringify('production')
+      'process.env.NODE_ENV': JSON.stringify('production'),
+      '__websocket__': API_URLS['production']['websocket'],
     }),
     new webpack.optimize.OccurrenceOrderPlugin(),
     new webpack.optimize.UglifyJsPlugin({

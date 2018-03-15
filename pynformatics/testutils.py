@@ -64,9 +64,12 @@ class TestCase(unittest.TestCase):
         self.mock_context_check_roles = mock.patch('pynformatics.utils.context.Context.check_roles')
         self.mock_context_user = mock.patch('pynformatics.utils.context.Context.user', new_callable=PropertyMock)
 
+        self.txn = transaction.begin()
+        self.txn.doom()
+
     def tearDown(self):
         testing.tearDown()
-        transaction.abort()
+        self.txn.abort()
 
     def get_session(self):
         session_id = self.app.cookies.get('session', None)

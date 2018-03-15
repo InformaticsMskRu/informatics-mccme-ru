@@ -73,7 +73,7 @@ export function submitProblem(problemId, { languageId, file, source }, statement
         },
       ),
       meta: { problemId },
-    }).then(() => dispatch(fetchProblemRuns(problemId, statementId)));
+    });
   };
 }
 

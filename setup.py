@@ -41,5 +41,6 @@ setup(
         main = pynformatics:main
         [console_scripts]
         populate_Pynformatics = pynformatics.scripts.populate:main
+        pynformatics_copy_runs = pynformatics.scripts.copy_runs:main
     """,
 )
