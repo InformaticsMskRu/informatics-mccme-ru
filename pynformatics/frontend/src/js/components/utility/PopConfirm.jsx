@@ -35,10 +35,12 @@ const PopConfirmTitle = ({title}) => (
 export default class PopConfirm extends React.Component {
   constructor(props) {
     super(props);
-      this.state = {visible: false};
+    this.state = {visible: false};
+    this.closeFunction = this.closeFunction.bind(this);
   }
-  closeFunction = () => {
+  closeFunction = (func) => {
     this.setState({...this.state, visible: false});
+    func();
   };
   render() {
     return (
@@ -54,10 +56,12 @@ export default class PopConfirm extends React.Component {
               <PopConfirmTitle title={this.props.title}/>
             </Row>
             <Row style={rowStyle}>
-              <Button type="primary" size="small" onclick={this.props.onConfirm} style={{marginRight: '15px'}}>
+              <Button type="primary" size="small"
+                      onClick={() => {this.closeFunction(this.props.onConfirm)}} style={{marginRight: '15px'}}>
                 {this.props.okText}
               </Button>
-              <Button type="primary" size="small" onclick={this.closeFunction}>
+              <Button type="primary" size="small"
+                      onClick={() => {this.closeFunction(this.props.onCancel)}}>
                 {this.props.cancelText}
               </Button>
             </Row>

@@ -13,7 +13,6 @@ import {
 import PopConfirm from '../../components/utility/PopConfirm';
 
 import Radio, {RadioGroup} from '../../isomorphic/components/uielements/radio';
-import Popconfirm from '../../isomorphic/components/feedback/popconfirm';
 import Alert from '../../isomorphic/components/feedback/alert';
 
 
@@ -61,15 +60,15 @@ export default class TeamTask extends React.Component {
                 <PopConfirm placement="bottom" title={text} okText="Да" cancelText="Нет">
                   <Radio style={radioStyle} value={1}>Вариант 1 (Фамилия, Фамилия, Фамилия)</Radio>
                 </PopConfirm>
-                <Popconfirm placement="bottomRight" title={text} okText="Да" cancelText="Нет">
+                <PopConfirm placement="bottom" title={text} okText="Да" cancelText="Нет">
                   <Radio style={radioStyle} value={2}>Вариант 2 (Фамилия, Фамилия, Фамилия)</Radio>
-                </Popconfirm>
-                <Popconfirm placement="bottomRight" title={text} okText="Да" cancelText="Нет">
+                </PopConfirm>
+                <PopConfirm placement="bottom" title={text} okText="Да" cancelText="Нет">
                   <Radio style={radioStyle} value={3}>Вариант 3 (Фамилия, Фамилия, Фамилия)</Radio>
-                </Popconfirm>
-                <Popconfirm placement="bottomRight" title={text} okText="Да" cancelText="Нет">
+                </PopConfirm>
+                <PopConfirm placement="bottom" title={text} okText="Да" cancelText="Нет">
                   <Radio style={radioStyle} value={4}>Вариант 4 (Фамилия, Фамилия, Фамилия)</Radio>
-                </Popconfirm>
+                </PopConfirm>
               </RadioGroup>
               <Button type="primary" size="default" style={{marginTop: '18px', display: 'block'}}>Показать все</Button>
             </Col>
