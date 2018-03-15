@@ -1,4 +1,5 @@
 import mock
+import sys
 from hamcrest import (
     assert_that,
     anything,
@@ -15,6 +16,8 @@ from pynformatics.model.pynformatics_run import PynformaticsRun
 from pynformatics.model.run import Run
 from pynformatics.testutils import TestCase
 
+
+del sys.modules['pynformatics.contest.ejudge.submit_queue.submit']
 with mock.patch('pynformatics.contest.ejudge.ejudge_proxy.submit') as ejudge_submit_mock, \
         mock.patch('pynformatics.utils.notify.notify_user') as notify_user_mock:
     from pynformatics.contest.ejudge.submit_queue.submit import Submit

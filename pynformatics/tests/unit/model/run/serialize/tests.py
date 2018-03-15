@@ -15,6 +15,8 @@ class TestModel__run_serialize(TestCase):
     def setUp(self):
         super(TestModel__run_serialize, self).setUp()
 
+        self.create_problems()
+
         self.author = SimpleUser(
             ejudge_id=1,
             firstname='author_firstname',
@@ -31,9 +33,10 @@ class TestModel__run_serialize(TestCase):
         self.run = Run(
             user=self.author,
             run_id=123,
-            contest_id=456,
+            problem=self.problems[0],
         )
         self.session.add(self.run)
+        self.session.flush([self.run])
 
         self.context_mock = mock.Mock()
 
@@ -58,7 +61,7 @@ class TestModel__run_serialize(TestCase):
             has_entries({
                 'status': None,
                 'contest_id': self.run.contest_id,
-                'prob_id': None,
+                'prob_id': 1,
                 'run_id': self.run.run_id,
                 'create_time': 'None',
                 'lang_id': None,
@@ -83,7 +86,7 @@ class TestModel__run_serialize(TestCase):
             has_entries({
                 'status': None,
                 'contest_id': self.run.contest_id,
-                'prob_id': None,
+                'prob_id': 1,
                 'run_id': self.run.run_id,
                 'create_time': 'None',
                 'lang_id': None,
