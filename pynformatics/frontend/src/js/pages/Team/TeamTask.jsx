@@ -10,10 +10,11 @@ import {
   Col,
   Row,
 } from '../../components/utility/Grid';
+import PopConfirm from '../../components/utility/PopConfirm';
 
-import Radio, {RadioGroup} from '../../isomorphic/components/uielements/radio'
-import Popconfirm from '../../isomorphic/components/feedback/popconfirm'
-import Alert from '../../isomorphic/components/feedback/alert'
+import Radio, {RadioGroup} from '../../isomorphic/components/uielements/radio';
+import Popconfirm from '../../isomorphic/components/feedback/popconfirm';
+import Alert from '../../isomorphic/components/feedback/alert';
 
 
 export default class TeamTask extends React.Component {
@@ -57,9 +58,9 @@ export default class TeamTask extends React.Component {
             <Col md={10} style={colStyle}>
               <div className="title_team">Выберите команду</div>
               <RadioGroup style={{marginTop: '28.5px'}}>
-                <Popconfirm placement="bottomRight" title={text} okText="Да" cancelText="Нет">
+                <PopConfirm placement="bottom" title={text} okText="Да" cancelText="Нет">
                   <Radio style={radioStyle} value={1}>Вариант 1 (Фамилия, Фамилия, Фамилия)</Radio>
-                </Popconfirm>
+                </PopConfirm>
                 <Popconfirm placement="bottomRight" title={text} okText="Да" cancelText="Нет">
                   <Radio style={radioStyle} value={2}>Вариант 2 (Фамилия, Фамилия, Фамилия)</Radio>
                 </Popconfirm>
