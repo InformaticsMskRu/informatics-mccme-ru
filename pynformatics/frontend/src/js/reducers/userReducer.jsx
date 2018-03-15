@@ -1,19 +1,26 @@
-import * as _ from 'lodash';
-
-const initialState = {};
+const initialState = {
+  bootstrapPending: false,
+};
 
 
 export default function reducer(state = initialState, action) {
   switch (action.type) {
     case 'GET_BOOTSTRAP_PENDING':
-      return state;
+      return {
+        ...state,
+        bootstrapPending: true
+      };
     case 'GET_BOOTSTRAP_FULFILLED':
       return {
         ...state,
         ...action.payload.data.user,
+        bootstrapPending: false
       };
     case 'GET_BOOTSTRAP_REJECTED':
-      return state;
+      return {
+        ...state,
+        bootstrapPending: false
+      };
 
     case 'POST_LOGIN_PENDING':
       return state;

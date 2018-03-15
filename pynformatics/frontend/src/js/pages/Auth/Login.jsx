@@ -2,7 +2,8 @@ import React from "react";
 import {connect} from "react-redux";
 import {Link, Redirect} from "react-router-dom";
 
-import {Form} from "antd";
+import isUserLoggedIn from "../../utils/isUserLoggedIn";
+import {Form, Spin} from "antd";
 import * as _ from "lodash";
 
 import FormWrapper from "./FormWrapper";
@@ -15,7 +16,9 @@ import {Col, Row} from '../../components/utility/Grid';
 import * as userActions from "../../actions/userActions";
 
 
-@connect(state => ({user: state.user}))
+@connect(state => ({
+  user: state.user,
+}))
 @Form.create()
 class Login extends React.Component {
   constructor(props) {
@@ -25,16 +28,20 @@ class Login extends React.Component {
       usernameTouched: false,
       passwordTouched: false,
       successfulLogin: false,
+      loading: false
     }
   }
 
   login(username, password) {
+    this.setState({loading: true});
     this.props.dispatch(userActions.login(username, password)).then(() => {
       this.setState({
         successfulLogin: true,
-        errorMessage: ''
+        errorMessage: '',
+        loading: false
       });
     }).catch((error) => {
+      this.setState({loading: false});
       if (error.response && error.response.status === 403 && error.response.data) {
         if (error.response.data.message === "Wrong username or password") { // TODO убрать костыль
           this.setState({errorMessage: "Неправильное имя пользователя или пароль"});
@@ -86,54 +93,59 @@ class Login extends React.Component {
   };
 
   render() {
-    const { getFieldDecorator } = this.props.form;
-    const { user } = this.props;
-    return !_.isEmpty(user)
-      ?
-        (<FormWrapper
-          title={`Здраствуйте, ${user.firstname}`}
-        >
-          <div>{`Вы успешно вошли в систему как ${user.lastname} ${user.firstname}.`}</div>
-          <div>Перейти на <Link to="/">главную страницу</Link> или <Link to="/logout">Выйти</Link></div>
-        </FormWrapper>)
-      :
-        (<FormWrapper title="Вход" errorMessage={this.state.errorMessage}>
-          {this.state.successfulLogin ? <Redirect to="/"/> : null}
-          {getFieldDecorator('username', {
-            rules: [{required: true, message: 'Введите логин'}],
-          })(<Input
-            size="large"
-            placeholder="Логин"
-            onChange={this.handleUsernameChange}
-          />)}
-          {getFieldDecorator('password', {
-            rules: [{required: true, message: 'Введите пароль'}],
-          })(<Input
-            size="large"
-            placeholder="Пароль"
-            type="password"
-            onChange={this.handlePasswordChange}
-            onPressEnter={this.handleSubmit}
-          />)}
-          <InputGroup className="inputGroup">
-            <Button
-              type="primary"
-              htmlType="submit"
-              onClick={this.handleSubmit}
-              className="mainButton"
-            >Войти</Button>
-            {getFieldDecorator('remember', {
-              valuePropName: 'checked',
-              initialValue: true,
-            })(<Checkbox>Запомнить меня</Checkbox>)}
-          </InputGroup>
-          <Row>
-            <Col span={"24"} className="inputGroup socialButtonGroup">
-              <Button className="smallButton VKButton">Войти через ВКонтакте</Button>
-              <Button className="smallButton GmailButton">Войти через Gmail</Button>
-            </Col>
-          </Row>
-        </FormWrapper>);
+    const {getFieldDecorator} = this.props.form;
+    const {user, dispatch} = this.props;
+    const { from } = this.props.location.state || { from: { pathname: "/" } };
+
+    if (this.state.successfulLogin) {
+      return <Redirect to={from}/>
+    }
+
+    if (isUserLoggedIn(user)) {
+      return (<FormWrapper title={`Здраствуйте, ${user.firstname}`}>
+        <div>{`Вы успешно вошли в систему как ${user.lastname} ${user.firstname}.`}</div>
+        <div>
+          Перейти на <Link to="/">главную страницу</Link> или <Link to="/auth/logout">Выйти</Link>
+        </div>
+      </FormWrapper>);
+    }
+
+    return (<FormWrapper title="Вход" errorMessage={this.state.errorMessage}>
+      {getFieldDecorator('username', {
+        rules: [{required: true, message: 'Введите логин'}],
+      })(<Input
+        size="large"
+        placeholder="Логин"
+        onChange={this.handleUsernameChange}
+      />)}
+      {getFieldDecorator('password', {
+        rules: [{required: true, message: 'Введите пароль'}],
+      })(<Input
+        size="large"
+        placeholder="Пароль"
+        type="password"
+        onChange={this.handlePasswordChange}
+      />)}
+      <InputGroup className="inputGroup">
+        <Button
+          type="primary"
+          htmlType="submit"
+          onClick={this.handleSubmit}
+          className="mainButton"
+          loading={this.state.loading}
+        >Войти</Button>
+        {getFieldDecorator('remember', {
+          valuePropName: 'checked',
+          initialValue: true,
+        })(<Checkbox>Запомнить меня</Checkbox>)}
+      </InputGroup>
+      <Row>
+        <Col span={"24"} className="inputGroup socialButtonGroup">
+          <Button className="smallButton VKButton">Войти через ВКонтакте</Button>
+          <Button className="smallButton GmailButton">Войти через Gmail</Button>
+        </Col>
+      </Row>
+    </FormWrapper>);
   }
 }
 

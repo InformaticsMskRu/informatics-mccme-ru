@@ -15,27 +15,27 @@ import MainPage from '../pages/Main/Main';
 import Auth from '../pages/Auth/Auth';
 import ProblemPage from '../pages/Problem/Problem';
 import TempGotoProblemPage from '../pages/TempGotoProblem';
-
-import StatementAdmin from '../pages/StatementAdmin';
-import StatementSettingsForm from './StatementSettingsForm';
+import NotFound from '../pages/Errors/NotFound';
 
 import * as bootstrapActions from '../actions/bootstrapActions';
-import * as userActions from '../actions/userActions';
 import * as uiActions from '../actions/uiActions';
 
 import { ThemeProvider } from 'styled-components';
-import { Layout } from 'antd';
+import { Layout, Spin } from 'antd';
 import theme from '../theme';
 
 import 'antd/dist/antd.css';
 import '../isomorphic/containers/App/global.css';
 import '../../css/style.css';
+import MainContentWrapper from "./utility/MainContentWrapper";
+import ProtectedRoute from "./utility/ProtectedRoute";
 import '../../css/ionicons.min.css';
 
 
 @withRouter
 @connect(state => ({
   user: state.user,
+  rehydrated: state._persist.rehydrated
 }))
 export default class App extends React.Component {
   static propTypes = {
@@ -48,6 +48,7 @@ export default class App extends React.Component {
 
   render() {
     const { Content } = Layout;
+    const { user, rehydrated } = this.props;
 
     return (
       <ThemeProvider theme={theme}>
@@ -67,18 +68,26 @@ export default class App extends React.Component {
               className="isomorphicContent"
               style={{ height: '100vh', overflowY: 'scroll' }}
             >
-              <Switch>
-                <Route exact path="/" component={MainPage} />
-                <Route path="/auth" component={Auth} />
-
-                <Route exact path="/contest/:statementId" component={StatementPage} />
-                <Route exact path="/contest/:statementId/standings" component={StatementPage} />
-                <Route exact path="/contest/:statementId/problem/:problemRank" component={StatementPage} />
-
-                <Route exact path="/goto" component={TempGotoProblemPage} />
-                <Route exact path="/login" component={Login} />
-                <Route exact path="/problem/:problemId" component={ProblemPage} />
-              </Switch>
+              {user.bootstrapPending || !rehydrated
+                ?
+                <MainContentWrapper>
+                  <div style={{textAlign: "center"}}>
+                    <Spin size="large"/>
+                  </div>
+                </MainContentWrapper>
+                :
+                <Switch>
+                  <Route exact path="/" component={MainPage} />
+                  <Route path="/auth" component={Auth} />
+                  <Route exact path="/contest/:statementId" component={StatementPage} />
+                  <Route exact path="/contest/:statementId/standings" component={StatementPage} />
+                  <Route exact path="/contest/:statementId/problem/:problemRank" component={StatementPage} />
+                  <Route exact path="/goto" component={TempGotoProblemPage} />
+                  <Route exact path="/login" component={Login} />
+                  <Route exact path="/problem/:problemId" component={ProblemPage} />
+                  <ProtectedRoute exact path="/some_login_required_url" component={NotFound}/>
+                  <Route path="*" component={NotFound}/>
+                </Switch>}
             </Content>
           </Layout>
         </Layout>
