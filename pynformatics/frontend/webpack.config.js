@@ -8,7 +8,7 @@ const API_URLS = {
     'websocket': JSON.stringify('ws://informatics.msk.ru:6349/websocket'),
   },
   'production': {
-    'websocket': JSON.stringify('wss://rmatics.msk.ru/websocket'),
+    'websocket': JSON.stringify('wss://rmatics.info/api_v2/websocket'),
   }
 }
 

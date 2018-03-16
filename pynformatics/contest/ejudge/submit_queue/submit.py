@@ -62,19 +62,32 @@ class Submit:
             )
             return
 
-        if ejudge_response['code'] != 0:
+        try:
+            if ejudge_response['code'] != 0:
+                notify_user(
+                    user_id=self.user.id,
+                    data={
+                        'ejudge_error': {
+                            'code': ejudge_response.get('code', ''),
+                            'message': ejudge_response.get('message', ''),
+                        }
+                    }
+                )
+                return
+
+            run_id = ejudge_response['run_id']
+        except Exception:
+            log.exception('ejudge_proxy.submit returned bad value')
             notify_user(
                 user_id=self.user.id,
                 data={
                     'ejudge_error': {
-                        'code': ejudge_response['code'],
-                        'message': ejudge_response.get('message', ''),
+                        'code': None,
+                        'message': 'Ошибка отправки задачи'
                     }
                 }
             )
             return
-
-        run_id = ejudge_response['run_id']
 
         pynformatics_run = PynformaticsRun(
             run_id=run_id,

@@ -11,6 +11,12 @@ export default function reducer(state=initialState, action) {
 
   switch (action.type) {
     case 'WEBSOCKET_MESSAGE':
+      const { ejudge_error } = action.data;
+      if (typeof ejudge_error !== 'undefined') {
+        const { code, message } = ejudge_error;
+        alert(code + ' ' + message);
+      }
+
       const { runs } = action.data;
       const runsForMerge = _.chain(runs)
         .groupBy(run => run.problem_id)
