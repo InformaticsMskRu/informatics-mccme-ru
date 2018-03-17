@@ -1,4 +1,8 @@
+import clone from 'clone';
+import * as _ from 'lodash';
+
 import axios from '../utils/axios';
+import { processStandingsData } from '../utils/standings';
 
 
 export function fetchStatement(statementId) {
@@ -84,6 +88,21 @@ export function fetchStatementStandings(statementId, groupId) {
     return dispatch({
       type: 'GET_STATEMENT_STANDINGS',
       payload: axios.get(url, { params }),
+      meta: { statementId },
+    })
+  }
+}
+
+
+export function processStandings(statementId, processAttrs = {}) {
+  return (dispatch, getState) => {
+
+    const standings = _.get(getState(), `statements[${statementId}].standings`, {});
+    const processed = processStandingsData({data: clone(standings), ...processAttrs});
+
+    return dispatch({
+      type: 'STATEMENT_PROCESS_STANDINGS',
+      payload: processed,
       meta: { statementId },
     })
   }

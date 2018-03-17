@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import clone from 'clone';
 import styled from 'styled-components';
 import { Table } from 'antd';
 import { connect } from 'react-redux';
@@ -8,6 +9,7 @@ import * as _ from 'lodash';
 import ProblemCell from './ProblemCell';
 import ProblemColumnHeader from './ProblemColumnHeader';
 import { processStandingsData } from '../../utils/standings';
+import * as statementActions from '../../actions/statementActions';
 
 
 const columnsBeforeProblems = [
@@ -99,7 +101,13 @@ export class StandingsTable extends React.Component {
   componentWillReceiveProps(props, context) {
     this.initProblemColumns(props, context);
 
-    if (!_.isEqual(props, this.props)) {
+    const statementId = _.get(context, 'statementId');
+    const oldStatementId = _.get(this.context, 'statementId');
+
+    const standings = _.get(props, `statements[${statementId}].standings`);
+    const oldStandings = _.get(this.props, `statements[${oldStatementId}].standings`);
+
+    if (statementId !== oldStatementId || !_.isEqual(standings, oldStandings)) {
       this.initData(props, context);
     }
   }
@@ -113,7 +121,10 @@ export class StandingsTable extends React.Component {
   initProblemColumns(props, context) {
     const { statementId } = context;
     const { problemId, statements } = props;
+
+    // Если передан параметр problemId, отображает только одну задачу
     this.singleProblem = typeof problemId !== 'undefined';
+
     if (this.singleProblem) {
       this.columnsProblems = [
         {
@@ -128,10 +139,13 @@ export class StandingsTable extends React.Component {
       ];
       this.defaults = {[problemId]: {}};
     }
+
     const statement = statements[statementId];
+
     if (statement) {
       this.defaults = {};
       _.forEach(statement.problems, problem => this.defaults[problem.id] = {});
+
       if (!this.singleProblem) {
         this.columnsProblems = _.map(statement.problems, (problem, rank) => ({
           title: <ProblemColumnHeader rank={rank} title={problem.name} />,
@@ -182,14 +196,20 @@ export class StandingsTable extends React.Component {
       }
       standingsData = _.get(statements, `[${statementId}].standings`, {});
     }
-    this.data = _.sortBy(_.map(processStandingsData({data: standingsData, ...standingsAttrs}), (data, userId) => ({
-      key: userId,
-      user: data.firstname + ' ' + data.lastname,
-      ...this.defaults,
-      ...data.processed.summary,
-      ...data.processed.problems,
-    })), [value => -value.total, value => value.attempts]);
-    this.data = _.map(this.data, (value, index) => ({...value, rowNumber: index + 1}));
+
+    const { payload: processed } = props.dispatch(statementActions.processStandings(statementId, standingsAttrs));
+
+    this.data = _.chain(processed)
+      .map((data, userId) => ({
+        key: userId,
+        user: data.firstname + ' ' + data.lastname,
+        ...this.defaults,
+        ...data.processed.summary,
+        ...data.processed.problems,
+      }))
+      .sortBy([value => -value.total, value => value.attempts])
+      .map((value, index) => ({...value, rowNumber: index + 1}))
+      .value();
   }
 
   render() {

@@ -76,6 +76,7 @@ export class StatementPage extends React.Component {
   static propTypes = {
     match: PropTypes.object.isRequired,
     statements: PropTypes.object.isRequired,
+    user: PropTypes.object.isRequired,
   };
 
   constructor(props, context) {
@@ -108,7 +109,7 @@ export class StatementPage extends React.Component {
 
     if (statementId !== oldStatementId) {
       this.fetchStatement(statementId);
-    } else if (filterGroupId !== oldFilterGroupId || location !== oldLocation) {
+    } else if (filterGroupId !== oldFilterGroupId) {
       this.fetchStandings(statementId, filterGroupId);
     }
   }
@@ -144,7 +145,7 @@ export class StatementPage extends React.Component {
   fetchStandings(statementId, filterGroupId) {
     this.props.dispatch(statementActions.fetchStatementStandings(
       statementId, filterGroupId
-    ));
+    )).then(() => this.props.dispatch(statementActions.processStandings(statementId)));
   }
 
   toggleCollapse() {
@@ -167,7 +168,7 @@ export class StatementPage extends React.Component {
   render() {
     const { statementId, problemRank } = this.props.match.params;
     const { collapsed } = this.state;
-    const { windowWidth, filterGroup } = this.props;
+    const { filterGroup, user, windowWidth } = this.props;
 
     const statement = this.props.statements[statementId] || {};
     const {
@@ -213,6 +214,7 @@ export class StatementPage extends React.Component {
                   collapsed={collapsed}
                   selectedKeys={ [problemRank] }
                   statement={statement}
+                  user={user}
                   onCollapse={this.toggleCollapse}
                   onSelect={({ key }) => this.changeProblemRank(key)}
                 />
@@ -249,8 +251,9 @@ export class StatementPage extends React.Component {
 export default compose(
   withRouter,
   connect(state => ({
-    statements: state.statements,
-    windowWidth: state.ui.width,
     filterGroup: state.group.filterGroup,
+    statements: state.statements,
+    user: state.user,
+    windowWidth: state.ui.width,
   }))
 )(StatementPage);
