@@ -7,7 +7,23 @@ from pynformatics.model.pynformatics_run import PynformaticsRun
 from pynformatics.utils.notify import notify_user
 
 
-log = logging.getLogger(__name__)
+log = logging.getLogger('submit_queue')
+
+
+def ejudge_error_notification(ejudge_response=None):
+    code = None
+    message = 'Ошибка отправки задачи'
+    try:
+        code = ejudge_response['code']
+        message = ejudge_response['message']
+    except Exception:
+        pass
+    return {
+        'ejudge_error': {
+            'code': code,
+            'message': message,
+        }
+    }
 
 
 class Submit:
@@ -53,12 +69,7 @@ class Submit:
             log.exception('Unknown Ejudge submit error')
             notify_user(
                 user_id=self.user.id,
-                data={
-                    'ejudge_error': {
-                        'code': None,
-                        'message': 'Ошибка отправки задачи'
-                    }
-                }
+                data=ejudge_error_notification(),
             )
             return
 
@@ -66,12 +77,7 @@ class Submit:
             if ejudge_response['code'] != 0:
                 notify_user(
                     user_id=self.user.id,
-                    data={
-                        'ejudge_error': {
-                            'code': ejudge_response.get('code', ''),
-                            'message': ejudge_response.get('message', ''),
-                        }
-                    }
+                    data=ejudge_error_notification(ejudge_response)
                 )
                 return
 
@@ -80,12 +86,7 @@ class Submit:
             log.exception('ejudge_proxy.submit returned bad value')
             notify_user(
                 user_id=self.user.id,
-                data={
-                    'ejudge_error': {
-                        'code': None,
-                        'message': 'Ошибка отправки задачи'
-                    }
-                }
+                data=ejudge_error_notification(),
             )
             return
 

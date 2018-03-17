@@ -1,22 +1,22 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { palette } from 'styled-theme';
-import styled from 'styled-components';
-import { connect } from 'react-redux';
-import * as _ from 'lodash';
-import { Tag } from 'antd';
 import PropTypes from 'prop-types';
+import React from 'react';
+import styled from 'styled-components';
+import { Link, withRouter } from 'react-router-dom';
+import { Tag } from 'antd';
+import { connect } from 'react-redux';
+import { palette } from 'styled-theme';
+import * as _ from 'lodash';
 
-import { borderRadius } from '../../isomorphic/config/style-util';
 import Button from '../../components/utility/Button';
 import CodeMirror from '../../components/utility/CodeMirror';
 import Dropzone, { DropzoneWrapper } from '../../components/utility/Dropzone';
-import { LANGUAGES } from '../../constants';
 import Select, { SelectOption } from '../../components/utility/Select';
+import isUserLoggedIn from "../../utils/isUserLoggedIn";
+import { LANGUAGES } from '../../constants';
+import { borderRadius } from '../../isomorphic/config/style-util';
+import { getExtensionByFilename }  from '../../utils/functions';
 import * as problemAcitons from '../../actions/problemActions';
 
-import { getExtensionByFilename }  from '../../utils/functions';
-import isUserLoggedIn from "../../utils/isUserLoggedIn";
 
 const SubmitFormWrapper = styled.div`
   position: relative;
@@ -186,7 +186,12 @@ export class SubmitForm extends React.Component {
       return (
         <SubmitFormWrapper>
           <div className="loginBtn">
-            <Link to="/auth/login">
+            <Link 
+              to={{
+                pathname: '/auth/login',
+                state: { from: this.props.location.pathname }
+              }}
+            >
               <Button type="primary">Войдите в систему, чтобы сдать задачу</Button>
             </Link>
           </div>
@@ -309,7 +314,7 @@ export class SubmitForm extends React.Component {
   }
 }
 
-export default connect(state => ({
+export default withRouter(connect(state => ({
   user: state.user,
   windowWidth: state.ui.width,
-}))(SubmitForm);
+}))(SubmitForm));

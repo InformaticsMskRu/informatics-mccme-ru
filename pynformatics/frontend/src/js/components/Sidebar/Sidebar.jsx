@@ -301,7 +301,7 @@ export class Sidebar extends React.Component {
               </Link>
             </Menu.Item>
             <Menu.Item key={'about'}>
-              <Link to="/">
+              <Link to="/about">
                 <span className="isoMenuHolder">
                   <MenuAboutIcon />
                   <span className="nav-text">

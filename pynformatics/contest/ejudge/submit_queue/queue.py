@@ -5,7 +5,7 @@ from .submit import Submit
 from .worker import SubmitWorker
 
 
-log = logging.getLogger('SubmitQueue')
+log = logging.getLogger('submit_queue')
 
 
 class SubmitQueue(Queue):

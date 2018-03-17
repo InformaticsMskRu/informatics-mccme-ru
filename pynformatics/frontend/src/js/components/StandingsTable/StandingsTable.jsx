@@ -121,7 +121,8 @@ export class StandingsTable extends React.Component {
           dataIndex: problemId,
           key: 'problem',
           className: 'standingsTableProblemColumn',
-          render: ({score, create_time: time, attempts}) => <ProblemCell score={score} time={time} attempts={attempts} shrinkable={false} />,
+          render: ({score, create_time: time, attempts}) => 
+            <ProblemCell score={score} time={time} attempts={attempts} shrinkable={false} />,
         },
         attemptsColumn,
       ];
@@ -137,7 +138,14 @@ export class StandingsTable extends React.Component {
           dataIndex: problem.id,
           key: problem.id,
           className: 'standingsTableProblemColumn' + (this.state.highlight === problem.id ? 'highlighted' : ''),
-          render: ({score, time, attempts}) => <ProblemCell score={score} time={time} attempts={attempts} />,
+          render: ({score, time, attempts}) => (
+            <ProblemCell 
+              score={score} 
+              time={time} 
+              attempts={attempts}
+              small={_.size(statement.problems) >= 8}
+            />
+          ),
           onCell: () => ({
             onMouseEnter: () => this.setState({...this.state, highlight: problem.id}),
             onMouseLeave: () => this.setState({...this.state, highlight: null})

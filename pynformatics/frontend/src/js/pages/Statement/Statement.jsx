@@ -1,9 +1,9 @@
-import { compose } from 'redux';
-import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 import React from 'react';
 import { Layout } from 'antd';
-import PropTypes from 'prop-types';
-import { withRouter, Switch, Route } from 'react-router-dom';
+import { Route, Switch, withRouter } from 'react-router-dom';
+import { compose } from 'redux';
+import { connect } from 'react-redux';
 
 import Box from '../../components/utility/Box';
 import Blockage from "./Blockage";
@@ -103,9 +103,12 @@ export class StatementPage extends React.Component {
     const statementId = _.get(props, 'match.params.statementId');
     const oldStatementId = _.get(props, 'match.params.statementId');
 
+    const location = _.get(props, 'location.pathname');
+    const oldLocation = _.get(this.props, 'location.pathname');
+
     if (statementId !== oldStatementId) {
       this.fetchStatement(statementId);
-    } else if (filterGroupId !== oldFilterGroupId) {
+    } else if (filterGroupId !== oldFilterGroupId || location !== oldLocation) {
       this.fetchStandings(statementId, filterGroupId);
     }
   }
@@ -164,7 +167,7 @@ export class StatementPage extends React.Component {
   render() {
     const { statementId, problemRank } = this.props.match.params;
     const { collapsed } = this.state;
-    const { windowWidth } = this.props;
+    const { windowWidth, filterGroup } = this.props;
 
     const statement = this.props.statements[statementId] || {};
     const {
@@ -221,12 +224,18 @@ export class StatementPage extends React.Component {
               className="toggleDrawer"
               onClick={this.toggleCollapse}
             />
-            <Route exact path="/contest/:statementId/standings" render={() => <Standings />} />
+            <Route exact path="/contest/:statementId/standings" component={Standings} />
             <Route exact path="/contest/:statementId/problem/:problemRank">
               {
                 problemRank
-                  ? <Problem problemId={problems[problemRank].id} statementId={parseInt(statementId)} />
-                  : null
+                  ? (
+                    <Problem 
+                      problemId={problems[problemRank].id} 
+                      statementId={parseInt(statementId)} 
+                      // onTabChange={() => console.log('tab changed', statementId, _.get(filterGroup, 'id'))}
+                      onTabChange={() => this.fetchStandings(statementId, _.get(filterGroup, 'id'))}
+                    />
+                  ) : null
               }
             </Route>
 

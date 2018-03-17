@@ -56,13 +56,6 @@ export default function reducer(state=initialState, action) {
         }
       };
 
-    case 'PROBLEM_SUBMIT_PENDING':
-      return state;
-    case 'PROBLEM_SUBMIT_FULFILLED':
-      return state;
-    case 'PROBLEM_SUBMIT_REJECTED':
-      return state;
-
     case 'GET_PROBLEM_RUNS_PENDING':
       return {
         ...state,

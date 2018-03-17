@@ -5,7 +5,7 @@ from gevent import (
 )
 
 
-log = logging.getLogger(__name__)
+log = logging.getLogger('submit_queue')
 
 
 class SubmitWorker(Greenlet):

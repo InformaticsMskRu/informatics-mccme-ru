@@ -112,6 +112,7 @@ export class Problem extends React.Component {
 
   static propTypes = {
     problemId: PropTypes.number.isRequired,
+    onTabChange: PropTypes.func,
   };
 
   constructor(props, context) {
@@ -168,6 +169,7 @@ export class Problem extends React.Component {
           <Tabs
             defaultActiveKey="statement"
             style={{ textAlign: 'center' }}
+            onChange={this.props.onTabChange}
             {...additionalTabsProps}
           >
             <TabPane className="tabStatement" tab="Условие" key="statement">

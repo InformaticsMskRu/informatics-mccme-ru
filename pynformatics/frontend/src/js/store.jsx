@@ -12,7 +12,7 @@ import Socket from './utils/websocket';
 
 const persistConfig = {
   key: 'root',
-  whitelist: ['group', 'user'],
+  whitelist: ['group'],
   transforms: [
     createWhitelistFilter('group', ['filterGroup']),
   ],
