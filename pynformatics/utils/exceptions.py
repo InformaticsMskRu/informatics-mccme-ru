@@ -56,7 +56,7 @@ class EjudgeError(BadRequest):
 
 # Group
 class GroupNotFound(NotFound):
-    message = 'No group with this id'
+    message = 'Group not found'
 
 
 # Problem

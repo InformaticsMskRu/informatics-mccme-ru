@@ -17,6 +17,7 @@ import theme from '../theme';
 
 import AboutPage from '../pages/About/About';
 import Auth from '../pages/Auth/Auth';
+import GroupInvitePage from '../pages/GroupInvite/GroupInvite';
 import MainPage from '../pages/Main/Main';
 import NotFound from '../pages/Errors/NotFound';
 import ProblemPage from '../pages/Problem/Problem';
@@ -70,10 +71,8 @@ export default class App extends React.Component {
             >
               { user.bootstrapPending
                 ? (
-                  <MainContentWrapper>
-                    <div style={{textAlign: "center"}}>
-                      <Spin size="large"/>
-                    </div>
+                  <MainContentWrapper style={{ display: 'flex', alignContent: 'center', justifyContent: 'center' }}>
+                      <Spin size="large" style={{ margin: '20% auto' }} />
                   </MainContentWrapper>
                 ) : (
                   <Switch>
@@ -86,7 +85,7 @@ export default class App extends React.Component {
                     <Route exact path="/login" component={Login} />
                     <Route exact path="/problem/:problemId" component={ProblemPage} />
                     <Route exact path="/about" component={AboutPage} />
-                    <ProtectedRoute exact path="/some_login_required_url" component={NotFound}/>
+                    <ProtectedRoute exact path="/join/:groupInviteUrl" component={GroupInvitePage} />
                     <Route path="*" component={NotFound}/>
                   </Switch>
                 ) }

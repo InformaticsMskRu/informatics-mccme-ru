@@ -9,6 +9,7 @@ from pynformatics.contest.ejudge.submit_queue import init_submit_queue
 from pynformatics.models import DBSession
 from pynformatics.view.comment import *
 from pynformatics.utils.oauth import fill_oauth_config_secrets
+from pynformatics.utils.url_encoder import init_url_encoder
 
 
 log = logging.getLogger(__name__)
@@ -150,6 +151,9 @@ def main(global_config, **settings):
 
     config.add_route('group.get', 'group/{group_id}')
     config.add_route('group.search', 'group')
+    config.add_route('group.join_by_invite', 'group/join/{group_invite_url}')
+
+    config.add_route('group_invite.get', 'group_invite')
 
     try:
         import uwsgi
@@ -161,6 +165,7 @@ def main(global_config, **settings):
 
     fill_oauth_config_secrets(settings)
     init_submit_queue(settings)
+    init_url_encoder(settings)
 
     config.scan(ignore=SCAN_IGNORE)
 

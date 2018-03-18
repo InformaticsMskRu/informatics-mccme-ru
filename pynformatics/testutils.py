@@ -9,6 +9,7 @@ from unittest.mock import PropertyMock
 from webtest import TestApp
 
 from pynformatics import main
+from pynformatics.model import *
 from pynformatics.model.group import (
     Group,
     UserGroup,
@@ -17,16 +18,8 @@ from pynformatics.model.meta import Base
 from pynformatics.model.problem import EjudgeProblem
 from pynformatics.model.statement import Statement
 from pynformatics.model.user import SimpleUser
-
-# TODO: Импорт необходим, иначе не создает таблицы в тестах
-from pynformatics.model.standings import (
-    ProblemStandings,
-    StatementStandings,
-)
-
 from pynformatics.models import DBSession
 from source_tree.model.role import Role
-
 
 class TestCase(unittest.TestCase):
     @classmethod
@@ -45,6 +38,7 @@ class TestCase(unittest.TestCase):
             },
             **{
                 'session.key': 'session',
+                'url_encoder.alphabet': 'abc',
             }
         )
 

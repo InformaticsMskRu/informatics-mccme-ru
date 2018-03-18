@@ -36,7 +36,7 @@ class TestAPI__group_get(TestCase):
             response.json,
             equal_to({
                 'code': 404,
-                'message': 'No group with this id',
+                'message': 'Group not found',
             })
         )
 
@@ -50,6 +50,6 @@ class TestAPI__group_get(TestCase):
             response.json,
             equal_to({
                 'code': 404,
-                'message': 'No group with this id',
+                'message': 'Group not found',
             })
         )

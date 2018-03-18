@@ -1,5 +1,5 @@
 const initialState = {
-  bootstrapPending: false,
+  bootstrapPending: true,
 };
 
 

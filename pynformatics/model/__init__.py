@@ -13,6 +13,32 @@ from pynformatics.model.hint import Hint
 from pynformatics.model.recommendation import Recommendation
 from pynformatics.model.contests_statistic import ContestsStatistic
 
+__all__ = [
+    'action',
+    'comment',
+    'contests_statistic',
+    'course',
+    'course_module',
+    'ejudgeContest',
+    'group',
+    'group_invite',
+    'hint',
+    'ideal_solution',
+    'log',
+    'meta',
+    'participant',
+    'problem',
+    'pynformatics_run',
+    'recommendation',
+    'run',
+    'standings',
+    'stars',
+    'statement',
+    'user',
+    'user_oauth_provider'
+]
+
+
 def init_model(engine):
     """Call me before using any of the tables or classes in the model"""
     Session.configure(bind=engine)
