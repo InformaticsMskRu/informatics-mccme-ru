@@ -114,16 +114,16 @@ class TestAPI__auth_login(TestCase):
             message='Wrong username or password',
         )
 
-    def test_moodle_session(self):
-        moodle_session = 'somesession'
-        self.check_request(
-            moodle_user_id=self.user.id,
-            moodle_session=moodle_session,
-        )
-        assert_that(
-            self.app.cookies.get('MoodleSession'),
-            equal_to(moodle_session),
-        )
+    # def test_moodle_session(self):
+    #     moodle_session = 'somesession'
+    #     self.check_request(
+    #         moodle_user_id=self.user.id,
+    #         moodle_session=moodle_session,
+    #     )
+    #     assert_that(
+    #         self.app.cookies.get('MoodleSession'),
+    #         equal_to(moodle_session),
+    #     )
 
     def test_moodle_bad_session(self):
         self.check_request(
