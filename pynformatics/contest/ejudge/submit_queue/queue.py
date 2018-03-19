@@ -12,6 +12,8 @@ class SubmitQueue(Queue):
     def __init__(self, workers):
         super(SubmitQueue, self).__init__()
         self.total_in = 0
+        self.total_successful = 0
+        self.total_failed = 0
         self.workers = [
             SubmitWorker(self)
             for _ in range(workers)
@@ -20,8 +22,8 @@ class SubmitQueue(Queue):
             worker.start()
 
     @property
-    def total_out(self):
-        return sum([worker.submitted for worker in self.workers])
+    def size(self):
+        return self.total_in - self.total_successful - self.total_failed
 
     def submit(self, context, file, language_id, ejudge_url):
         self.put(
@@ -33,4 +35,10 @@ class SubmitQueue(Queue):
             )
         )
         self.total_in += 1
-        log.info('Current size: %s. Total submitted: %s.', self.total_in - self.total_out, self.total_out)
+        log.info(
+            '[PUT] size: %s, in: %s, out: %s, failed: %s',
+            self.size,
+            self.total_in,
+            self.total_successful,
+            self.total_failed
+        )
