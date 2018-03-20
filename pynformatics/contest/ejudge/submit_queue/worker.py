@@ -1,8 +1,5 @@
 import logging
-from gevent import (
-    Greenlet,
-    sleep
-)
+from gevent import Greenlet
 
 
 log = logging.getLogger('submit_queue')
@@ -13,18 +10,18 @@ class SubmitWorker(Greenlet):
         super(SubmitWorker, self).__init__()
         self.queue = queue
 
+    def handle_submit(self):
+        submit = self.queue.get()
+        try:
+            submit.send()
+            self.queue.total_successful += 1
+        except Exception:
+            log.exception('Submit worker caught exception and skipped submit without notifying user')
+            self.queue.total_failed += 1
+
     def _run(self):
         while True:
-            if not self.queue:
-                sleep(1)
-                continue
-            try:
-                submit = self.queue.get()
-                submit.send()
-                self.queue.total_successful += 1
-            except Exception:
-                log.exception('Submit worker caught exception and skipped submit without notifying user')
-                self.queue.total_failed += 1
+            self.handle_submit()
 
             log.info(
                 '[GET] size: %s, in: %s, out: %s, failed: %s',

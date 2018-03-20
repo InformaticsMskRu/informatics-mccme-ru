@@ -10,6 +10,7 @@ from pynformatics.models import DBSession
 from pynformatics.view.comment import *
 from pynformatics.utils.oauth import fill_oauth_config_secrets
 from pynformatics.utils.url_encoder import init_url_encoder
+from pynformatics.utils.redis import init_redis
 
 
 log = logging.getLogger(__name__)
@@ -166,6 +167,7 @@ def main(global_config, **settings):
     fill_oauth_config_secrets(settings)
     init_submit_queue(settings)
     init_url_encoder(settings)
+    init_redis(settings)
 
     config.scan(ignore=SCAN_IGNORE)
 

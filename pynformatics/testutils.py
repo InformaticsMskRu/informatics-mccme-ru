@@ -3,10 +3,14 @@ import unittest
 import sys
 import transaction
 from beaker.session import Session
+from mockredis import mock_strict_redis_client
 from pyramid import testing
 from sqlalchemy import create_engine
 from unittest.mock import PropertyMock
 from webtest import TestApp
+
+mock.patch('redis.StrictRedis', mock_strict_redis_client).start()
+from pynformatics.utils.redis import redis
 
 from pynformatics import main
 from pynformatics.model import *
@@ -20,6 +24,7 @@ from pynformatics.model.statement import Statement
 from pynformatics.model.user import SimpleUser
 from pynformatics.models import DBSession
 from source_tree.model.role import Role
+
 
 class TestCase(unittest.TestCase):
     @classmethod
@@ -37,7 +42,11 @@ class TestCase(unittest.TestCase):
                 'engine': engine,
             },
             **{
+                'redis.host': 'localhost',
+                'redis.port': '6379',
+                'redis.db': '0',
                 'session.key': 'session',
+                'submit_queue.workers': '0',
                 'url_encoder.alphabet': 'abc',
             }
         )
@@ -60,6 +69,9 @@ class TestCase(unittest.TestCase):
 
         self.txn = transaction.begin()
         self.txn.doom()
+
+        self.redis = redis
+        self.redis.flushdb()
 
     def tearDown(self):
         testing.tearDown()

@@ -4,6 +4,7 @@ import logging
 from pynformatics.contest.ejudge.ejudge_proxy import submit
 from pynformatics.models import DBSession
 from pynformatics.model.pynformatics_run import PynformaticsRun
+from pynformatics.utils.context import Context
 from pynformatics.utils.notify import notify_user
 
 
@@ -106,3 +107,21 @@ class Submit:
         )
 
         transaction.commit()
+
+    def encode(self):
+        return {
+            'context': self.context.encode(),
+            'file': self.file,
+            'language_id': self.language_id,
+            'ejudge_url': self.ejudge_url,
+        }
+
+    @staticmethod
+    def decode(encoded):
+        context = Context.decode(encoded['context'])
+        return Submit(
+            context=context,
+            file=encoded['file'],
+            language_id=encoded['language_id'],
+            ejudge_url=encoded['ejudge_url'],
+        )
