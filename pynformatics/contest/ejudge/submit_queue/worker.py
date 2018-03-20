@@ -1,7 +1,6 @@
 import logging
 from gevent import Greenlet
 
-
 log = logging.getLogger('submit_queue')
 
 

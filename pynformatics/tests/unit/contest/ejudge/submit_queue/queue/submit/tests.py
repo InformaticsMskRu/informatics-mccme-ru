@@ -8,8 +8,9 @@ from hamcrest import (
 )
 
 from pynformatics.testutils import TestCase
-from pynformatics.contest.ejudge.submit_queue.submit import Submit
 from pynformatics.contest.ejudge.submit_queue.queue import SubmitQueue
+from pynformatics.contest.ejudge.submit_queue.submit import Submit
+from pynformatics.contest.ejudge.submit_queue.worker import SubmitWorker
 from pynformatics.utils.context import Context
 
 
@@ -21,7 +22,7 @@ class TestEjudge__submit_queue_submit_queue_submit(TestCase):
         self.create_problems()
 
     def test_submit_get(self):
-        queue = SubmitQueue(workers=0)
+        queue = SubmitQueue()
         assert_that(queue.total_in, equal_to(0))
 
         queue.submit(
@@ -44,7 +45,9 @@ class TestEjudge__submit_queue_submit_queue_submit(TestCase):
         file_mock = mock.Mock()
         file_mock.__reduce__ = lambda self: (mock.Mock, ())
 
-        queue = SubmitQueue(workers=1)
+        queue = SubmitQueue()
+        worker = SubmitWorker(queue)
+        worker.start()
 
         with mock.patch.object(Submit, 'send', autospec=True) as send_mock:
             queue.submit(

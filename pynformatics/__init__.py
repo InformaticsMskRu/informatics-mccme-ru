@@ -5,7 +5,6 @@ from pyramid.config import Configurator
 from pyramid_beaker import session_factory_from_settings
 from sqlalchemy import engine_from_config
 
-from pynformatics.contest.ejudge.submit_queue import init_submit_queue
 from pynformatics.models import DBSession
 from pynformatics.view.comment import *
 from pynformatics.utils.oauth import fill_oauth_config_secrets
@@ -165,7 +164,6 @@ def main(global_config, **settings):
 
 
     fill_oauth_config_secrets(settings)
-    init_submit_queue(settings)
     init_url_encoder(settings)
     init_redis(settings)
 

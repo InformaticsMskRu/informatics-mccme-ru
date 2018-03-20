@@ -12,17 +12,17 @@ DEFAULT_SUBMIT_QUEUE = 'submit.queue'
 
 
 class SubmitQueue(RedisQueue):
-    def __init__(self, workers, key=DEFAULT_SUBMIT_QUEUE):
+    def __init__(self, key=DEFAULT_SUBMIT_QUEUE):
         super(SubmitQueue, self).__init__(key=key)
         self.total_in = 0
         self.total_successful = 0
         self.total_failed = 0
-        self.workers = [
-            SubmitWorker(self)
-            for _ in range(workers)
-        ]
-        for worker in self.workers:
-            worker.start()
+        # self.workers = [
+        #     SubmitWorker(self)
+        #     for _ in range(workers)
+        # ]
+        # for worker in self.workers:
+        #     worker.start()
 
     @property
     def size(self):
