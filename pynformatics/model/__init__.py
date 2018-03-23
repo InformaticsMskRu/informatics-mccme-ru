@@ -12,6 +12,7 @@ from pynformatics.model.group import Group, UserGroup
 from pynformatics.model.hint import Hint
 from pynformatics.model.recommendation import Recommendation
 from pynformatics.model.contests_statistic import ContestsStatistic
+from pynformatics.model.run import Run
 
 __all__ = [
     'action',
@@ -31,6 +32,7 @@ __all__ = [
     'problem',
     'pynformatics_run',
     'recommendation',
+    'run',
     'standings',
     'stars',
     'statement',

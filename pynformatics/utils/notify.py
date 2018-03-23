@@ -23,18 +23,28 @@ class Client:
             self.pubsub.subscribe(user_channel(user_id))
 
     def get_message(self):
-        message = self.pubsub.get_message(ignore_subscribe_messages=True)
+        message = None
+        while True:
+            message = self.pubsub.get_message()
+            if not (message and message['type'] == 'subscribe'):
+                break
         if message:
             message = pickle.loads(message['data'])
         return message
 
 
-def format_message(message=None, meta=None, runs=None):
+def format_message(message=None,
+                   meta=None,
+                   runs=None,
+                   event=None,
+                   ):
     message = message or {}
     if meta:
         message['meta'] = meta
     if runs:
         message['runs'] = runs
+    if event:
+        message['event'] = event
     return message
 
 

@@ -3,8 +3,9 @@ import logging
 
 from pynformatics.contest.ejudge.ejudge_proxy import submit
 from pynformatics.models import DBSession
-from pynformatics.model.pynformatics_run import PynformaticsRun
+from pynformatics.model.run import Run
 from pynformatics.utils.context import Context
+from pynformatics.utils.functions import attrs_to_dict
 from pynformatics.utils.notify import notify_user
 
 
@@ -29,12 +30,16 @@ def ejudge_error_notification(ejudge_response=None):
 
 class Submit:
     def __init__(self,
+                 id,
                  context,
+                 create_time,
                  file,
                  language_id,
                  ejudge_url,
                  ):
+        self.id = id
         self.context = context
+        self.create_time = create_time
         self.file = file
         self.language_id = language_id
         self.ejudge_url = ejudge_url
@@ -46,6 +51,13 @@ class Submit:
     @property
     def problem(self):
         return self.context.problem
+
+    @property
+    def source(self):
+        if not hasattr(self, '_source'):
+            self._source = self.file.file.read().decode('utf-8')
+            self.file.file.seek(0)
+        return self._source
 
     @property
     def statement_id(self):
@@ -91,26 +103,32 @@ class Submit:
             )
             return
 
-        pynformatics_run = PynformaticsRun(
-            run_id=run_id,
-            contest_id=self.problem.ejudge_contest_id,
+        run = Run(
+            user=self.user,
+            problem=self.problem,
             statement_id=self.statement_id,
-            source=self.file.value.decode('unicode_escape'),
+            create_time=self.create_time,
+            ejudge_language_id=self.language_id,
         )
-        pynformatics_run = DBSession.merge(pynformatics_run)
-        DBSession.flush([pynformatics_run])
-        DBSession.refresh(pynformatics_run.run)
+        DBSession.add(run)
+        DBSession.flush([run])
 
         notify_user(
             user_id=self.user.id,
-            runs=[pynformatics_run.run.serialize(self.context)],
+            runs=[run.serialize(self.context)],
+            event={
+                'type': 'RUN_CREATED_FROM_SUBMIT',
+                'submit_id': self.id,
+            }
         )
 
         transaction.commit()
 
     def encode(self):
         return {
+            'id': self.id,
             'context': self.context.encode(),
+            'create_time': self.create_time,
             'file': self.file,
             'language_id': self.language_id,
             'ejudge_url': self.ejudge_url,
@@ -120,8 +138,26 @@ class Submit:
     def decode(encoded):
         context = Context.decode(encoded['context'])
         return Submit(
+            id=encoded['id'],
             context=context,
+            create_time=encoded['create_time'],
             file=encoded['file'],
             language_id=encoded['language_id'],
             ejudge_url=encoded['ejudge_url'],
         )
+    
+    def serialize(self, context, attributes=None):
+        if attributes is None:
+            attributes = (
+                'id',
+                'user_id',
+                'problem_id',
+                'source',
+                'language_id',
+            )
+        serialized = attrs_to_dict(self, *attributes)
+        if 'user_id' in attributes:
+            serialized['user_id'] = self.user.id
+        if 'problem_id' in attributes:
+            serialized['problem_id'] = self.problem.id
+        return serialized

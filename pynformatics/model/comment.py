@@ -23,7 +23,7 @@ class Comment(Base):
     user_id = Column(Integer)
     author_user_id = Column(Integer, ForeignKey('moodle.mdl_user.id'))
     author_user = relationship(SimpleUser, backref = backref('simpleuser1'), uselist=False, lazy=False, primaryjoin = author_user_id == SimpleUser.id)
-    run = relationship('EjudgeRun', backref = backref('run'), uselist=False)
+    run = relationship('EjudgeRun', backref='comment', uselist=False)
     lines = Column(Text)
     comment = Column(Unicode)
     is_read = Column(Boolean)

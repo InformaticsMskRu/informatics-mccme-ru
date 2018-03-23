@@ -1,5 +1,6 @@
 import pickle
 import mock
+import time
 from hamcrest import (
     assert_that,
     equal_to,
@@ -25,18 +26,14 @@ class TestUtils__notify_client_get_message(TestCase):
         channel = client_channel(self.client.uuid)
         data = pickle.dumps(123)
 
-        # ignore_subsrcibe_messages в fakeredis дописывает None в очередь
-        assert_that(self.client.get_message(), equal_to(None))
-        assert_that(self.client.get_message(), equal_to(None))
         redis.publish(channel, data)
+        time.sleep(0.1)
         assert_that(self.client.get_message(), equal_to(123))
     
     def test_user_channel(self):
         channel = user_channel(self.users[0].id)
         data = pickle.dumps(123)
 
-        # ignore_subsrcibe_messages в fakeredis дописывает None в очередь
-        assert_that(self.client.get_message(), equal_to(None))
-        assert_that(self.client.get_message(), equal_to(None))
         redis.publish(channel, data)
+        time.sleep(0.1)
         assert_that(self.client.get_message(), equal_to(123))

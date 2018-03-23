@@ -80,7 +80,7 @@ class EjudgeRun(Base):
 
     comments = relationship('Comment', backref=backref('comments'))
     user = relationship('SimpleUser', backref=backref('simpleuser'), uselist=False)
-    problem = relationship('EjudgeProblem', backref=backref('runs', lazy='dynamic'), uselist=False)
+    problem = relationship('EjudgeProblem', backref=backref('ejudge_runs', lazy='dynamic'), uselist=False)
 
     SIGNAL_DESCRIPTION = {
         1: "Hangup detected on controlling terminal or death of controlling process",

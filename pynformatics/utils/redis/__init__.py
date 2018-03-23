@@ -1,22 +1,14 @@
-from redis import StrictRedis
+from redis import (
+    ConnectionPool,
+    StrictRedis,
+)
 
 
-class RedisWrapper:
-    def __init__(self):
-        self.redis = None
-
-    def configure(self, host, port, db):
-        self.redis = StrictRedis(host=host, port=port, db=db)
-
-    def __getattr__(self, item):
-        return getattr(self.redis, item)
-
-
-redis = RedisWrapper()
+redis = StrictRedis(host=None, port=None, db=None)
 
 
 def init_redis(settings):
-    redis.configure(
+    redis.connection_pool = ConnectionPool(
         host=settings['redis.host'],
         port=settings['redis.port'],
         db=settings['redis.db'],

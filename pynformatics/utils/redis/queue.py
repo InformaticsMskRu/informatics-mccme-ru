@@ -7,17 +7,26 @@ class RedisQueue:
     def __init__(self, key):
         self.key = key
 
-    def put(self, value):
-        redis.rpush(self.key, pickle.dumps(value))
+    def put(self, value, pipe=None):
+        if pipe is None:
+            pipe = redis
 
-    def get(self):
-        value = redis.lpop(self.key)
+        pipe.rpush(self.key, pickle.dumps(value))
+
+    def get(self, pipe=None):
+        if pipe is None:
+            pipe = redis
+
+        value = pipe.lpop(self.key)
         if value:
             value = pickle.loads(value)
         return value
 
-    def get_blocking(self, timeout=0):
-        value = redis.blpop(self.key, timeout=timeout)
+    def get_blocking(self, timeout=0, pipe=None):
+        if pipe is None:
+            pipe = redis
+
+        value = pipe.blpop(self.key, timeout=timeout)
         if value:
             value = pickle.loads(value[1])
         return value

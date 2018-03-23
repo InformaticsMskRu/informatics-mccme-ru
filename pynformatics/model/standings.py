@@ -89,7 +89,7 @@ class ProblemStandings(StandingsMixin, Base):
     def update(self, user):
         super(ProblemStandings, self).update(user)
 
-        user_runs = self.problem.runs.filter_by(
+        user_runs = self.problem.ejudge_runs.filter_by(
             user_id=user.ejudge_id
         ).order_by(EjudgeRun.create_time).all()
 

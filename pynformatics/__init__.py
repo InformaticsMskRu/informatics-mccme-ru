@@ -130,7 +130,7 @@ def main(global_config, **settings):
     config.add_route('recommendation.get', '/recommendation/get')
     config.add_route('recommendation.get_html', '/recommendation/get_html')
 
-    config.add_route('submits.get', '/submits/get')
+    config.add_route('submit.get', '/submit')
 
     config.add_route('statement.get_by_course_module', '/statement')
     config.add_route('statement.get', '/statement/{statement_id}')
@@ -147,7 +147,7 @@ def main(global_config, **settings):
     config.add_route('auth.logout', 'auth/logout')
     config.add_route('auth.oauth_login', 'auth/oauth_login')
 
-    config.add_route('notification.update_standings', 'notification/update_standings')
+    config.add_route('notification.update_run', 'notification/update_run')
 
     config.add_route('group.get', 'group/{group_id}')
     config.add_route('group.search', 'group')

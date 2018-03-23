@@ -60,7 +60,7 @@ def problem_show_limits(request):
         return {"result" : "error", "message" : e.__str__(), "stack" : traceback.format_exc()}
 
 
-@view_config(route_name='problem.submit', renderer='json')
+@view_config(route_name='problem.submit', renderer='json', request_method='POST')
 @with_context(require_auth=True)
 def problem_submits(request, context):
     lang_id = request.params['lang_id']
@@ -285,15 +285,11 @@ def problem_get(request, context):
 
 
 @view_config(route_name='problem.runs', renderer='json')
-@validate_matchdict(
-    IntParam('problem_id', required=True)
-)
-@validate_params(
-    IntParam('statement_id'),
-)
+@validate_matchdict(IntParam('problem_id', required=True))
+@validate_params(IntParam('statement_id'))
 @with_context
 def problem_runs(request, context):
-    runs = context.problem.runs
+    runs = context.problem.ejudge_runs
     if 'statement_id' in request.params:
         statement_id = int(request.params['statement_id'])
         runs = runs.join(

@@ -1,14 +1,12 @@
+import datetime
 import mock
 from hamcrest import (
     assert_that,
-    has_entries,
-    has_key,
-    is_not,
+    equal_to,
 )
 
+from pynformatics.model.run import Run
 from pynformatics.testutils import TestCase
-from pynformatics.model.ejudge_run import EjudgeRun
-from pynformatics.model.user import SimpleUser
 
 
 class TestModel__run_serialize(TestCase):
@@ -16,82 +14,33 @@ class TestModel__run_serialize(TestCase):
         super(TestModel__run_serialize, self).setUp()
 
         self.create_problems()
-
-        self.author = SimpleUser(
-            ejudge_id=1,
-            firstname='author_firstname',
-            lastname='author_lastname',
+        self.create_statements()
+        self.create_users()
+    
+    def test_simple(self):
+        run = Run(
+            user=self.users[0],
+            problem=self.problems[0],
+            statement=self.statements[0],
+            score=123,
+            create_time=datetime.datetime(2018, 3, 24, 10, 49, 0),
+            ejudge_score=456,
+            ejudge_status=7,
+            ejudge_language_id=27,
+            ejudge_create_time=datetime.datetime(2010, 1, 1, 1, 1, 1)
         )
-        self.other = SimpleUser(
-            ejudge_id=2,
-            firstname='other_firstname',
-            lastname='other_lastname',
-        )
-        self.session.add_all([self.author, self.other])
+        self.session.add(run)
         self.session.flush()
 
-        self.run = EjudgeRun(
-            user=self.author,
-            run_id=123,
-            problem=self.problems[0],
-        )
-        self.session.add(self.run)
-        self.session.flush([self.run])
-
-        self.context_mock = mock.Mock()
-
-        self.pynformatics_run_serialized = {
-            'some_key': 'some_value',
-        }
-        self.pynformatics_run_mock = mock.Mock()
-        self.pynformatics_run_mock.serialize = mock.Mock(return_value=self.pynformatics_run_serialized)
-
-    def call_serialize(self):
-        with mock.patch(
-                'pynformatics.model.ejudge_run.EjudgeRun.get_pynformatics_run',
-                mock.Mock(return_value=self.pynformatics_run_mock)
-        ):
-            return self.run.serialize(self.context_mock)
-
-    def test_for_author(self):
-        self.context_mock.user = self.author
-        result = self.call_serialize()
         assert_that(
-            result,
-            has_entries({
-                'status': None,
-                'contest_id': self.run.contest_id,
-                'prob_id': 1,
-                'run_id': self.run.run_id,
-                'create_time': 'None',
-                'lang_id': None,
-                'score': None,
-                'size': None,
-            })
-        )
-        assert_that(
-            result,
-            has_entries(self.pynformatics_run_serialized)
-        )
-        assert_that(
-            result,
-            is_not(has_key('user'))
-        )
-
-    def test_for_other(self):
-        self.context_mock.user = self.other
-        result = self.call_serialize()
-        assert_that(
-            result,
-            has_entries({
-                'status': None,
-                'contest_id': self.run.contest_id,
-                'prob_id': 1,
-                'run_id': self.run.run_id,
-                'create_time': 'None',
-                'lang_id': None,
-                'score': None,
-                'size': None,
-                'user': self.author.serialize(mock.Mock())
+            run.serialize(mock.Mock()),
+            equal_to({
+                'id': 1,
+                'problem_id': self.problems[0].id,
+                'statement_id': self.statements[0].id,
+                'score': 123,
+                'status': 7,
+                'language_id': 27,
+                'create_time': '2018-03-24 10:49:00',
             })
         )

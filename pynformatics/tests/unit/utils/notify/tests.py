@@ -1,3 +1,4 @@
+import time
 from hamcrest import (
     assert_that,
     equal_to,
@@ -21,8 +22,6 @@ class TestUtils__notify_notify_client(TestCase):
 
     def test_simple(self):
         notify_client(self.client.uuid, message={'test': 123})
-        self.client.get_message()
-        self.client.get_message()
         assert_that(self.client.get_message(), equal_to({'test': 123}))
 
 
@@ -35,6 +34,5 @@ class TestUtils__notify_notify_user(TestCase):
 
     def test_simple(self):
         notify_user(self.users[0].id, message={'test': 123})
-        self.client.get_message()
-        self.client.get_message()
+        time.sleep(0.1)
         assert_that(self.client.get_message(), equal_to({'test': 123}))

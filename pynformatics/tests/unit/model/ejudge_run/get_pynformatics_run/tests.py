@@ -9,9 +9,9 @@ from pynformatics.model.ejudge_run import EjudgeRun
 from pynformatics.model.pynformatics_run import PynformaticsRun
 
 
-class TestModel__run_get_pynformatics_run(TestCase):
+class TestModel__ejudge_run_get_pynformatics_run(TestCase):
     def setUp(self):
-        super(TestModel__run_get_pynformatics_run, self).setUp()
+        super(TestModel__ejudge_run_get_pynformatics_run, self).setUp()
         self.run_id = 123
         self.contest_id = 456
         self.run = EjudgeRun(

@@ -10,12 +10,12 @@ from sqlalchemy import create_engine
 from unittest.mock import PropertyMock
 from webtest import TestApp
 
-mock.patch('redis.StrictRedis', mock_strict_redis_client).start()
+# mock.patch('redis.StrictRedis', mock_strict_redis_client).start()
 from pynformatics.utils.redis import redis
-# Костыль исправляющий поведение mockredis в отношении pubsub
-fake_redis = FakeStrictRedis()
-redis.pubsub = fake_redis.pubsub
-redis.publish = fake_redis.publish
+# # Костыль исправляющий поведение mockredis в отношении pubsub
+# fake_redis = FakeStrictRedis()
+# redis.pubsub = fake_redis.pubsub
+# redis.publish = fake_redis.publish
 
 from pynformatics import main
 from pynformatics.model import *
@@ -47,9 +47,10 @@ class TestCase(unittest.TestCase):
                 'engine': engine,
             },
             **{
+                'ejudge.new_client_url': 'bad_url',
                 'redis.host': 'localhost',
                 'redis.port': '6379',
-                'redis.db': '0',
+                'redis.db': '2',
                 'session.key': 'session',
                 'submit_queue.workers': '0',
                 'url_encoder.alphabet': 'abc',
@@ -75,8 +76,9 @@ class TestCase(unittest.TestCase):
         self.txn = transaction.begin()
         self.txn.doom()
 
-        self.redis = redis
-        self.redis.flushdb()
+        # Дополнительная проверка, чтобы случайно не удалить ничего лишнего
+        assert redis.connection_pool.connection_kwargs['db'] == '2'
+        redis.flushdb()
 
     def tearDown(self):
         testing.tearDown()
