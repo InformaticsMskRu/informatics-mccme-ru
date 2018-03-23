@@ -1,7 +1,7 @@
 from pynformatics.utils.check_role import check_global_role, is_admin 
 from pyramid.view import view_config
 from pynformatics.view.utils import *
-from pynformatics.model import User, Ideal, Problem, EjudgeProblem, Run, Hint, Recommendation, SimpleUser
+from pynformatics.model import User, Ideal, Problem, EjudgeProblem, EjudgeRun, Hint, Recommendation, SimpleUser
 import sys, traceback
 from phpserialize import *
 import transaction
@@ -31,7 +31,7 @@ def get_recommedation(request):
 
 
 
-        runs = DBSession.query(Run).filter(Run.user_id==ejuser_id).filter(Run.status==0).order_by(desc(Run.create_time)).all()
+        runs = DBSession.query(EjudgeRun).filter(EjudgeRun.user_id==ejuser_id).filter(EjudgeRun.status==0).order_by(desc(EjudgeRun.create_time)).all()
 
         last_run = runs[0]
         contest_id = last_run.contest_id

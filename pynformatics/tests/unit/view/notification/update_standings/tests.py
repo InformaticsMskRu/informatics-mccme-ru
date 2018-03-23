@@ -8,7 +8,7 @@ from hamcrest import (
 )
 
 from pynformatics.model.pynformatics_run import PynformaticsRun
-from pynformatics.model.run import Run
+from pynformatics.model.ejudge_run import EjudgeRun
 from pynformatics.model.standings import (
     ProblemStandings,
     StatementStandings,
@@ -45,7 +45,7 @@ class TestView__notification_update_standings(TestCase):
 
     def test_nothing_to_update(self):
         # Таблиц результатов нет, обновлять ничего не нужно
-        run = Run(
+        run = EjudgeRun(
             run_id=1,
             problem=self.problems[0],
             user=self.users[0],
@@ -67,7 +67,7 @@ class TestView__notification_update_standings(TestCase):
         # Есть таблица результатов для задачи, обновляется только она
         ProblemStandings.create(problem=self.problems[0])
 
-        run = Run(
+        run = EjudgeRun(
             run_id=1,
             problem=self.problems[0],
             user=self.users[0],
@@ -90,7 +90,7 @@ class TestView__notification_update_standings(TestCase):
         # Есть таблица результатов для контеста, обновляется только она
         StatementStandings.create(statement=self.statements[0])
 
-        run = Run(
+        run = EjudgeRun(
             run_id=1,
             problem=self.problems[0],
             user=self.users[0],
@@ -113,7 +113,7 @@ class TestView__notification_update_standings(TestCase):
         ProblemStandings.create(problem=self.problems[0])
         StatementStandings.create(statement=self.statements[0])
 
-        run = Run(
+        run = EjudgeRun(
             run_id=1,
             problem=self.problems[0],
             user=self.users[0],
@@ -137,7 +137,7 @@ class TestView__notification_update_standings(TestCase):
         ProblemStandings.create(problem=self.problems[1])
         StatementStandings.create(statement=self.statements[1])
 
-        run = Run(
+        run = EjudgeRun(
             run_id=1,
             problem=self.problems[0],
             user=self.users[0],

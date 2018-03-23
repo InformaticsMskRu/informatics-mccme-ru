@@ -7,7 +7,7 @@ from hamcrest import (
 )
 
 from pynformatics.testutils import TestCase
-from pynformatics.model.run import Run
+from pynformatics.model.ejudge_run import EjudgeRun
 from pynformatics.model.user import SimpleUser
 
 
@@ -30,7 +30,7 @@ class TestModel__run_serialize(TestCase):
         self.session.add_all([self.author, self.other])
         self.session.flush()
 
-        self.run = Run(
+        self.run = EjudgeRun(
             user=self.author,
             run_id=123,
             problem=self.problems[0],
@@ -48,7 +48,7 @@ class TestModel__run_serialize(TestCase):
 
     def call_serialize(self):
         with mock.patch(
-                'pynformatics.model.run.Run.get_pynformatics_run',
+                'pynformatics.model.ejudge_run.EjudgeRun.get_pynformatics_run',
                 mock.Mock(return_value=self.pynformatics_run_mock)
         ):
             return self.run.serialize(self.context_mock)

@@ -6,7 +6,7 @@ from hamcrest import (
 )
 
 from pynformatics.model.pynformatics_run import PynformaticsRun
-from pynformatics.model.run import Run
+from pynformatics.model.ejudge_run import EjudgeRun
 from pynformatics.model.statement import Statement
 from pynformatics.testutils import TestCase
 
@@ -34,7 +34,7 @@ class TestAPI__statement_standings(TestCase):
 
     def test_simple(self):
         runs = [
-            Run(
+            EjudgeRun(
                 run_id=1,
                 contest_id=1,
                 problem=self.problems[0],
@@ -79,7 +79,7 @@ class TestAPI__statement_standings(TestCase):
 
     def test_filter_by_group_id(self):
         runs = [
-            Run(
+            EjudgeRun(
                 run_id=1,
                 contest_id=1,
                 problem=self.problems[0],
@@ -88,7 +88,7 @@ class TestAPI__statement_standings(TestCase):
                 score=100,
                 status=0,
             ),
-            Run(
+            EjudgeRun(
                 run_id=2,
                 contest_id=1,
                 problem=self.problems[0],

@@ -7,7 +7,7 @@ from hamcrest import (
 )
 
 from pynformatics.model.pynformatics_run import PynformaticsRun
-from pynformatics.model.run import Run
+from pynformatics.model.ejudge_run import EjudgeRun
 from pynformatics.model.user import SimpleUser
 from pynformatics.testutils import TestCase
 
@@ -18,7 +18,7 @@ class TestModel__pynformatics_run__serialize(TestCase):
 
         self.author = SimpleUser(ejudge_id=666)
         self.other = SimpleUser(ejudge_id=777)
-        self.run = Run(
+        self.run = EjudgeRun(
             run_id=1,
             contest_id=2,
             user=self.author,

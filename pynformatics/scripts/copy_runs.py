@@ -21,7 +21,7 @@ from sqlalchemy.types import (
 from zope.sqlalchemy import mark_changed
 
 from pynformatics.models import DBSession
-from pynformatics.model.run import Run
+from pynformatics.model.ejudge_run import EjudgeRun
 from pynformatics.model.meta import Base
 from pynformatics.utils.functions import attrs_to_dict
 
@@ -137,10 +137,10 @@ def get_last_copied(session):
 
 def get_first_not_copied(session):
     temp_run = get_last_copied(session)
-    run_query = session.query(Run)
+    run_query = session.query(EjudgeRun)
     if temp_run:
-        run_query = run_query.filter(Run.create_time > temp_run.create_time)
-    run = run_query.order_by(Run.create_time).first()
+        run_query = run_query.filter(EjudgeRun.create_time > temp_run.create_time)
+    run = run_query.order_by(EjudgeRun.create_time).first()
     return run
 
 

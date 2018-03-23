@@ -5,7 +5,7 @@ from pyramid.view import view_config
 from sqlalchemy import desc, asc
 
 from pynformatics.models import DBSession
-from pynformatics.model import SimpleUser, Run, Group, UserGroup, EjudgeProblem, UserGroup
+from pynformatics.model import SimpleUser, EjudgeRun, Group, UserGroup, EjudgeProblem, UserGroup
 from pynformatics.view.utils import RequestGetUserId
 from pynformatics.utils.run import get_status_by_id, get_lang_name_by_id
 
@@ -34,9 +34,9 @@ class SubmitQueryParams:
 
 def get_submits_query(params):
 
-    query = DBSession.query(Run, SimpleUser, EjudgeProblem)\
-    .join(SimpleUser, SimpleUser.ejudge_id == Run.user_id)\
-    .join(EjudgeProblem, (EjudgeProblem.ejudge_contest_id == Run.contest_id) & (EjudgeProblem.problem_id == Run.prob_id))
+    query = DBSession.query(EjudgeRun, SimpleUser, EjudgeProblem)\
+    .join(SimpleUser, SimpleUser.ejudge_id == EjudgeRun.user_id)\
+    .join(EjudgeProblem, (EjudgeProblem.ejudge_contest_id == EjudgeRun.contest_id) & (EjudgeProblem.problem_id == EjudgeRun.prob_id))
     
     if params.group_id is not None:
         query = query.join(UserGroup, SimpleUser.id == UserGroup.user_id).filter(UserGroup.group_id == params.group_id)
@@ -48,7 +48,7 @@ def get_submits_query(params):
         query = query.filter(EjudgeProblem.id == params.problem_id)
 
     
-    query = query.order_by(desc(Run.create_time))
+    query = query.order_by(desc(EjudgeRun.create_time))
     query = query.slice(params.offset, params.offset + params.limit)
 
     return query

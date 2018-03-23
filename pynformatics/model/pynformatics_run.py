@@ -33,7 +33,7 @@ class PynformaticsRun(Base):
     source = Column(Unicode)
 
     run = relationship(
-        'Run',
+        'EjudgeRun',
         foreign_keys='[PynformaticsRun.run_id, PynformaticsRun.contest_id]',
         backref=backref('pynformatics_run', lazy='joined', uselist=False),
         lazy='joined'

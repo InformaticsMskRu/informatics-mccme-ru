@@ -15,7 +15,7 @@ from pyramid.view import view_config
 
 from pynformatics.models import DBSession
 from pynformatics.view.utils import *
-from pynformatics.model import User, Run, PynformaticsUser, Group, UserGroup
+from pynformatics.model import User, EjudgeRun, PynformaticsUser, Group, UserGroup
 
 
 class RatingRequestParams:

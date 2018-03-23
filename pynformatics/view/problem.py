@@ -16,7 +16,7 @@ from pynformatics.model.problem import (
     Problem,
 )
 from pynformatics.model.pynformatics_run import PynformaticsRun
-from pynformatics.model.run import Run
+from pynformatics.model.ejudge_run import EjudgeRun
 from pynformatics.model.standings import ProblemStandings
 from pynformatics.models import DBSession
 from pynformatics.view.utils import *
@@ -299,8 +299,8 @@ def problem_runs(request, context):
         runs = runs.join(
             PynformaticsRun,
             and_(
-                PynformaticsRun.run_id == Run.run_id,
-                PynformaticsRun.contest_id == Run.contest_id
+                PynformaticsRun.run_id == EjudgeRun.run_id,
+                PynformaticsRun.contest_id == EjudgeRun.contest_id
             )
         ).filter(
             PynformaticsRun.statement_id == statement_id

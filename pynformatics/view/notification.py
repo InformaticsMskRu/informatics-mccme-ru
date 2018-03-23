@@ -1,6 +1,6 @@
 from pyramid.view import view_config
 
-from pynformatics.model.run import Run
+from pynformatics.model.ejudge_run import EjudgeRun
 from pynformatics.models import DBSession
 from pynformatics.utils.context import with_context
 from pynformatics.utils.exceptions import (
@@ -26,7 +26,7 @@ def notification_update_standings(request, context):
     run_id = int(request.params['run_id'])
 
     try:
-        run = DBSession.query(Run).filter_by(
+        run = DBSession.query(EjudgeRun).filter_by(
             contest_id=contest_id
         ).filter_by(
             run_id=run_id

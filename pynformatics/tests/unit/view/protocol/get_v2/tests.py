@@ -8,7 +8,7 @@ from hamcrest import (
 )
 
 from pynformatics.model.problem import EjudgeProblem
-from pynformatics.model.run import Run
+from pynformatics.model.ejudge_run import EjudgeRun
 from pynformatics.model.user import SimpleUser
 from pynformatics.testutils import TestCase
 from pynformatics.view.protocol import protocol_get_v2
@@ -40,7 +40,7 @@ class TestView__protocol_get_v2(TestCase):
         self.session.flush()
 
 
-        self.run = Run(
+        self.run = EjudgeRun(
             run_id=self.run_id,
             problem=self.problem,
             user_id=self.user.ejudge_id,
@@ -84,8 +84,8 @@ class TestView__protocol_get_v2(TestCase):
         self.problem.sample_tests = '1,3'
         self.session.flush()
 
-        with mock.patch('pynformatics.model.Run.fetch_tested_protocol_data', autospec=True) as fetch_protocol_mock, \
-                mock.patch('pynformatics.model.Run.get_test_full_protocol', autospec=True) as get_test_mock:
+        with mock.patch('pynformatics.model.EjudgeRun.fetch_tested_protocol_data', autospec=True) as fetch_protocol_mock, \
+                mock.patch('pynformatics.model.EjudgeRun.get_test_full_protocol', autospec=True) as get_test_mock:
             fetch_protocol_mock.side_effect = fetch_mock_data
             get_test_mock.side_effect = get_mock_full_protocol
             result = self.call_view()
@@ -110,7 +110,7 @@ class TestView__protocol_get_v2(TestCase):
     def test_fetch_data_fail(self):
         # При вызове run.fetch_tested_protocol_data может возникнуть какая угодно ошибка, поэтому нужно
         # ее залогировать и выдать пользователю 500
-        with mock.patch('pynformatics.model.Run.fetch_tested_protocol_data', mock.Mock()) as fetch_protocol_mock:
+        with mock.patch('pynformatics.model.EjudgeRun.fetch_tested_protocol_data', mock.Mock()) as fetch_protocol_mock:
             fetch_protocol_mock.side_effect = lambda: 1 / 0
             assert_that(
                 calling(self.call_view),
@@ -129,7 +129,7 @@ class TestView__protocol_get_v2(TestCase):
         )
 
     def test_author_only(self):
-        run = Run(
+        run = EjudgeRun(
             run_id=321,
             contest_id=654,
         )

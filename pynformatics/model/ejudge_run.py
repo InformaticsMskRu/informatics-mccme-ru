@@ -16,7 +16,7 @@ from pynformatics.utils.run import *
 from pynformatics.utils.ejudge_archive import EjudgeArchiveReader
 
 
-class Run(Base):
+class EjudgeRun(Base):
     """
     Run model
     """
@@ -286,7 +286,7 @@ class Run(Base):
     @staticmethod
     def get_by(run_id, contest_id):
         try:
-            return DBSession.query(Run).filter(Run.run_id == int(run_id)).filter(Run.contest_id == int(contest_id)).first()            
+            return DBSession.query(EjudgeRun).filter(EjudgeRun.run_id == int(run_id)).filter(EjudgeRun.contest_id == int(contest_id)).first()            
         except:
             return None
 

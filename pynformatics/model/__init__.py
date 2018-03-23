@@ -1,7 +1,7 @@
 """The application's model objects"""
 from pynformatics.model.meta import Session, Base
 from pynformatics.model.user import User, SimpleUser, PynformaticsUser
-from pynformatics.model.run import Run
+from pynformatics.model.ejudge_run import EjudgeRun
 from pynformatics.model.problem import Problem, EjudgeProblem, EjudgeProblemDummy
 from pynformatics.model.statement import Statement
 from pynformatics.model.comment import Comment
@@ -19,6 +19,7 @@ __all__ = [
     'contests_statistic',
     'course',
     'course_module',
+    'ejudge_run',
     'ejudgeContest',
     'group',
     'group_invite',
@@ -30,7 +31,6 @@ __all__ = [
     'problem',
     'pynformatics_run',
     'recommendation',
-    'run',
     'standings',
     'stars',
     'statement',

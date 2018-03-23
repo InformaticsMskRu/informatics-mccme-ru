@@ -13,7 +13,7 @@ from hamcrest import (
 from transaction.interfaces import DoomedTransaction
 
 from pynformatics.model.pynformatics_run import PynformaticsRun
-from pynformatics.model.run import Run
+from pynformatics.model.ejudge_run import EjudgeRun
 from pynformatics.testutils import TestCase
 
 
@@ -34,7 +34,7 @@ class TestEjudge__submit_queue_submit_send(TestCase):
         self.create_problems()
         self.create_statements()
 
-        self.run = Run(
+        self.run = EjudgeRun(
             run_id=12,
             user=self.users[0],
             problem=self.problems[0],

@@ -4,7 +4,7 @@ from hamcrest import (
     equal_to,
 )
 
-from pynformatics.model.run import Run
+from pynformatics.model.ejudge_run import EjudgeRun
 from pynformatics.model.standings import StatementStandings
 from pynformatics.testutils import TestCase
 
@@ -20,7 +20,7 @@ class TestModel__statement_standings_update(TestCase):
         self.standings = StatementStandings(
             statement_id=self.statements[0].id
         )
-        self.run = Run(
+        self.run = EjudgeRun(
             run_id=1,
             problem=self.problems[0],
             user=self.users[0],
@@ -30,19 +30,19 @@ class TestModel__statement_standings_update(TestCase):
         )
 
         self.runs = [
-            Run(
+            EjudgeRun(
                 run_id=2,
                 problem=self.problems[0],
                 user=self.users[0],
                 create_time=datetime.datetime(2018, 2, 24, 12, 0, 0)
             ),
-            Run(
+            EjudgeRun(
                 run_id=3,
                 problem=self.problems[0],
                 user=self.users[0],
                 create_time=datetime.datetime(2018, 2, 24, 13, 0, 0)
             ),
-            Run(
+            EjudgeRun(
                 run_id=4,
                 problem=self.problems[0],
                 user=self.users[0],

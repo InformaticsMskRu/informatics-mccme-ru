@@ -1,5 +1,5 @@
 from pyramid.view import view_config
-from pynformatics.model import User, EjudgeContest, Run, Comment, EjudgeProblem, Problem, Statement
+from pynformatics.model import User, EjudgeContest, EjudgeRun, Comment, EjudgeProblem, Problem, Statement
 from pynformatics.contest.ejudge.serve_internal import EjudgeContestCfg
 from pynformatics.view.utils import *
 from pynformatics.contest.ejudge.ejudge_proxy import rejudge

@@ -4,7 +4,7 @@ from hamcrest import (
     equal_to,
 )
 
-from pynformatics.model.run import Run
+from pynformatics.model.ejudge_run import EjudgeRun
 from pynformatics.model.pynformatics_run import PynformaticsRun
 from pynformatics.testutils import TestCase
 
@@ -66,7 +66,7 @@ class TestAPI__notification_update_standings(TestCase):
         response = self.app.get('/statement/1/standings')
         assert_that(response.json, equal_to(None))
 
-        run = Run(
+        run = EjudgeRun(
             run_id=1,
             problem=self.problems[0],
             user=self.users[0],

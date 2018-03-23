@@ -6,7 +6,7 @@ from sqlalchemy.types import Integer, String, DateTime, Text, Unicode, Boolean
 from sqlalchemy.orm import relationship, backref, relation
 from sqlalchemy.schema import ForeignKeyConstraint
 from pynformatics.model.meta import Base
-from pynformatics.model import Run, User
+from pynformatics.model import EjudgeRun, User
 from pynformatics.models import DBSession
 import datetime
 
@@ -86,7 +86,7 @@ class Ideal(Base):
         self.problem_id = problem_id
         self.run_id = run_id
         self.contest_id = contest_id
-        run = DBSession.query(Run).filter_by(contest_id=contest_id).filter_by(run_id=run_id).one()
+        run = DBSession.query(EjudgeRun).filter_by(contest_id=contest_id).filter_by(run_id=run_id).one()
         user = DBSession.query(User).filter_by(id=author_id).one()
         self.lang_id = run.lang_id
         self.lang = LANG[self.lang_id]
