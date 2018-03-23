@@ -8,7 +8,6 @@ from pynformatics.models import DBSession
 from pynformatics.utils.constants import (
     LANG_NAME_BY_ID,
 )
-from pynformatics.view.utils import RequestGetUserId
 from pynformatics.utils.exceptions import (
     Forbidden,
     Unauthorized,

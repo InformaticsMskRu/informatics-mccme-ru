@@ -16,7 +16,7 @@ log = logging.getLogger(__name__)
 monkey.patch_all()
 
 
-SCAN_IGNORE = ['pynformatics.tests']
+SCAN_IGNORE = ['pynformatics.tests', 'pynformatics.testutils']
 
 
 def main(global_config, **settings):

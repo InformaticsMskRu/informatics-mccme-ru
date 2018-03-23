@@ -7,6 +7,7 @@ Cython==0.27.3
 chardet==3.0.4
 click==6.7
 demjson==2.2.4
+fakeredis==0.10.1
 gevent==1.2.2
 hupper==1.0
 idna==2.6

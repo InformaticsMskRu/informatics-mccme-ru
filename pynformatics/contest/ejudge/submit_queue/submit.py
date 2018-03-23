@@ -70,7 +70,7 @@ class Submit:
             log.exception('Unknown Ejudge submit error')
             notify_user(
                 user_id=self.user.id,
-                data=ejudge_error_notification(),
+                message=ejudge_error_notification(),
             )
             return
 
@@ -78,7 +78,7 @@ class Submit:
             if ejudge_response['code'] != 0:
                 notify_user(
                     user_id=self.user.id,
-                    data=ejudge_error_notification(ejudge_response)
+                    message=ejudge_error_notification(ejudge_response)
                 )
                 return
 
@@ -87,7 +87,7 @@ class Submit:
             log.exception('ejudge_proxy.submit returned bad value')
             notify_user(
                 user_id=self.user.id,
-                data=ejudge_error_notification(),
+                message=ejudge_error_notification(),
             )
             return
 

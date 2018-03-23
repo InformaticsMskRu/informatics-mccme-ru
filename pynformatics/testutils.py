@@ -3,6 +3,7 @@ import unittest
 import sys
 import transaction
 from beaker.session import Session
+from fakeredis import FakeStrictRedis
 from mockredis import mock_strict_redis_client
 from pyramid import testing
 from sqlalchemy import create_engine
@@ -11,6 +12,10 @@ from webtest import TestApp
 
 mock.patch('redis.StrictRedis', mock_strict_redis_client).start()
 from pynformatics.utils.redis import redis
+# Костыль исправляющий поведение mockredis в отношении pubsub
+fake_redis = FakeStrictRedis()
+redis.pubsub = fake_redis.pubsub
+redis.publish = fake_redis.publish
 
 from pynformatics import main
 from pynformatics.model import *

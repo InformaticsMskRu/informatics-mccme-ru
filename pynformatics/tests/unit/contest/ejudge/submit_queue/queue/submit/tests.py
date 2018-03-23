@@ -23,7 +23,6 @@ class TestEjudge__submit_queue_submit_queue_submit(TestCase):
 
     def test_submit_get(self):
         queue = SubmitQueue()
-        assert_that(queue.total_in, equal_to(0))
 
         queue.submit(
             context=Context(user_id=1, problem_id=2),
@@ -31,7 +30,6 @@ class TestEjudge__submit_queue_submit_queue_submit(TestCase):
             language_id='language_id',
             ejudge_url='ejudge_url',
         )
-        assert_that(queue.total_in, equal_to(1))
 
         submit = queue.get()
         assert_that(submit.context.user_id, equal_to(1))
@@ -56,9 +54,7 @@ class TestEjudge__submit_queue_submit_queue_submit(TestCase):
                 language_id='language_id',
                 ejudge_url='ejudge_url',
             )
-            assert_that(queue.total_in, equal_to(1))
             time.sleep(1)
-            assert_that(queue.total_successful, equal_to(1))
             assert_that(send_mock.call_count, equal_to(1))
 
             submit_from_queue = send_mock.call_args[0][0]

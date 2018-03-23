@@ -115,7 +115,7 @@ class TestEjudge__submit_queue_submit_send(TestCase):
 
         notify_user_mock.assert_called_once_with(
             user_id=self.users[0].id,
-            data={
+            message={
                 'ejudge_error': {
                     'code': None,
                     'message': 'Ошибка отправки задачи'
@@ -147,7 +147,7 @@ class TestEjudge__submit_queue_submit_send(TestCase):
 
         notify_user_mock.assert_called_once_with(
             user_id=self.users[0].id,
-            data={
+            message={
                 'ejudge_error': {
                     'code': 123,
                     'message': 'some message'

@@ -5,7 +5,7 @@ const path = require('path');
 
 const API_URLS = {
   'debug': {
-    'websocket': JSON.stringify('ws://informatics.msk.ru:6349/websocket'),
+    'websocket': JSON.stringify('ws://localhost:8080/websocket'),
   },
   'production': {
     'websocket': JSON.stringify('wss://rmatics.info/api_v2/websocket'),
@@ -117,6 +117,11 @@ module.exports = {
       '/api_v2': {
         target: 'http://informatics.msk.ru:6349',
         pathRewrite: {'^/api_v2': ''},
+      },
+      '/websocket': {
+        target: 'ws://informatics.msk.ru:6349/websocket',
+        pathRewrite: {'.*': ''},
+        ws: true,
       }
     },
   }
