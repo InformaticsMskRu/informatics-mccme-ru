@@ -1,12 +1,12 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import WindowResizeListener from 'react-window-size-listener';
+import loadScript from 'load-script';
 import { Debounce } from 'react-throttle';
 import { Switch, Route, withRouter } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
 import { Layout, Spin } from 'antd';
 import { connect } from 'react-redux';
-
 
 import Login from './LoginForm';
 import MainContentWrapper from './utility/MainContentWrapper';
@@ -33,6 +33,18 @@ import '../../css/style.css';
 import '../../css/ionicons.min.css';
 
 
+const MATHJAX_CDN = 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.3/MathJax.js?config=TeX-MML-AM_CHTML';
+
+const MATHJAX_CONFIG = {
+  tex2jax: {
+    inlineMath: [ ['$','$'], ['\\(','\\)'] ],
+    displayMath: [ ['$$','$$'], ['\[','\]'] ]
+  },
+  showMathMenu: false,
+  showMathMenuMSIE: false
+};
+
+
 @withRouter
 @connect(state => ({
   user: state.user,
@@ -42,6 +54,14 @@ export default class App extends React.Component {
   static propTypes = {
     dispatch: PropTypes.func,
   };
+
+  constructor(props) {
+    super(props);
+
+    loadScript(MATHJAX_CDN, () => {
+      window.MathJax.Hub.Config(MATHJAX_CONFIG);
+    });
+  }
 
   componentDidMount() {
     this.props.dispatch(bootstrapActions.fetchBootstrap());

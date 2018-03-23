@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import ReactDOM from 'react-dom';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
 import { palette } from 'styled-theme';
@@ -182,7 +183,11 @@ export class Problem extends React.Component {
                   </div>
                 ) : null
               }
-              <div className="problemStatement" dangerouslySetInnerHTML={{ __html: problemStatement }} />
+              <div 
+                className="problemStatement" 
+                dangerouslySetInnerHTML={{ __html: problemStatement }} 
+                ref={(node) => window.MathJax.Hub.Queue(['Typeset', window.MathJax.Hub, node])}
+              />
               <Header style={{ marginBottom: 30 }}>Примеры</Header>
               <div className="problemSamples">
                 { _.map(problemSamples, ({input, correct}, id) => <Sample key={id} input={input} correct={correct}/>) }
