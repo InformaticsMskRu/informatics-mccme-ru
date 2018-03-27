@@ -11,6 +11,7 @@ from pynformatics.contest.ejudge.serve_internal import EjudgeContestCfg
 
 from pynformatics.model.meta import Base
 from pynformatics.utils.run import read_file_unknown_encoding
+from pynformatics.utils.json_type import JsonType
 
 
 class Problem(Base):
@@ -30,6 +31,8 @@ class Problem(Base):
     show_limits = Column(Boolean)
     output_only = Column(Boolean)
     pr_id = Column(Integer, ForeignKey('moodle.mdl_ejudge_problem.id'))
+    settings = Column(JsonType)
+    
 #    ejudge_users = relation('EjudgeUser', backref="moodle.mdl_user", uselist=False)
 #    ejudge_user = relation('EjudgeUser', backref = backref('moodle.mdl_user'), uselist=False, primaryjoin = "EjudgeUser.user_id == User.id")
     def __init__(self, name, timelimit, memorylimit, output_only, content='', review='', description='', analysis='', sample_tests='', sample_tests_html='', pr_id=None):
@@ -61,7 +64,7 @@ class EjudgeProblemDummy(Base):
     short_id = Column(String(100))
     ejudgeName = Column('name', String(100))
 #    runs = relation('Run', backref='runs', uselist=True)
- 
+
     def __init__(self, name, contest_id, problem_id, short_id, ejudge_contest_id):
         self.contest_id = contest_id
         self.ejudge_contest_id = ejudge_contest_id
@@ -84,7 +87,7 @@ class EjudgeProblem(Problem):
     short_id = Column(String(100))
     ejudgeName = Column('name', String(100))
     runs = relation('Run', backref='runs', uselist=True)
- 
+
     def __init__(self, name, timelimit, memorylimit, output_only, contest_id, problem_id, short_id, ejudge_contest_id, content='', review='', description='', analysis='', sample_tests='', sample_tests_html=''):
         self.name = name
         self.content = content
@@ -119,7 +122,7 @@ class EjudgeProblem(Problem):
 
         test_file_name = (prob.tests_dir + prob.test_pat) % int(test_num)
         return os.stat(test_file_name).st_size
-        
+
     def get_corr(self, test_num, size=255):
         conf = EjudgeContestCfg(number = self.ejudge_contest_id)
         prob = conf.getProblem(self.problem_id)
@@ -138,7 +141,7 @@ class EjudgeProblem(Problem):
 
         corr_file_name = (prob.tests_dir + prob.corr_pat) % int(test_num)
         return os.stat(corr_file_name).st_size
-        
+
     def get_checker(self):
         conf = EjudgeContestCfg(number = self.ejudge_contest_id)
         prob = conf.getProblem(self.problem_id)
@@ -157,7 +160,7 @@ class EjudgeProblem(Problem):
         if find_res:
             check_src = open(find_res[0], "r").read()
             checker_ext = os.path.splitext(find_res[0])[1]
-        
+
         #if checker not found then try polygon package
         downloads_dir = os.path.join(conf.contest_path, "download")
         if check_src is None and os.path.exists(downloads_dir):
@@ -188,7 +191,7 @@ class EjudgeProblem(Problem):
         res = ""
         if self.sample_tests != '':
             res = "<div class='problem-statement'><div class='sample-tests'><div class='section-title'>Примеры</div>"
-            
+
             for i in self.sample_tests.split(","):
                 inp = self.get_test(i, 4096)
                 if inp[-1] == '\n':
@@ -202,8 +205,8 @@ class EjudgeProblem(Problem):
                 res += "</pre></div><div class='output'><div class='title'>Выходные данные</div><pre class='content'>"
                 res += corr
                 res += "</pre></div></div>"
-        
+
             res += "</div></div>"
 
-        self.sample_tests_html = res    
+        self.sample_tests_html = res
         return self.sample_tests
