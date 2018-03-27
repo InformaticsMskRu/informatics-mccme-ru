@@ -21,7 +21,7 @@ class Run(Base):
         {'schema':'ejudge'}
         )
 
-   
+
     run_id = Column(Integer, primary_key=True)
     size = Column(Integer)
     create_time = Column(DateTime)
@@ -35,7 +35,7 @@ class Run(Base):
     status = Column(Integer)
     score = Column(Integer)
     test_num = Column(Integer)
-    
+
     def __init__(self, run_id, contest_id, size, create_time, user_id, prob_id, lang_id, status, score, test_num):
         self.run_id = run_id
         self.contest_id = contest_id
@@ -63,7 +63,7 @@ class Run(Base):
 
     def get_output_file(self, test_num, tp="o", size=None): #tp: o - output, e - stderr, c - checker
         data = self.get_output_archive().getfile("{0:06}.{1}".format(test_num, tp)).decode('ascii')
-        if size is not None: 
+        if size is not None:
             data = data[:size]
         return data
 
@@ -83,6 +83,8 @@ class Run(Base):
         self.judge_tests_info = {}
         self.status_string = None
         self.maxtime = None
+        self.display_checker_comments = self.problem.settings.get('display_checker_comments', False)
+
         if self.xml:
             rep = self.xml.getElementsByTagName('testing-report')[0]
             self.tests_count = int(rep.getAttribute('run-tests'))
@@ -105,15 +107,18 @@ class Run(Base):
                    real_time = int(real_time)
                 except ValueError:
                    real_time = 0
-                   
-                test = {'status': status, 
-                        'string_status': get_string_status(status), 
-                        'real_time': real_time, 
+
+                test = {'status': status,
+                        'string_status': get_string_status(status),
+                        'real_time': real_time,
                         'time': time,
-                        'max_memory_used' : max_memory_used
+                        'max_memory_used' : max_memory_used,
                        }
+                if self.display_checker_comments:
+                    test['checker_comment'] = node.getAttribute('checker-comment')
+
                 judge_info = {}
-            
+
                 for _type in ('input', 'output', 'correct', 'stderr', 'checker'):
                     lst = node.getElementsByTagName(_type)
                     if lst and lst[0].firstChild:
@@ -132,17 +137,17 @@ class Run(Base):
                 #print([test['time'] for test in self.tests.values()] + [test['real_time'] for test in self.tests.values()])
                 self.maxtime = max([test['time'] for test in self.tests.values()] + [test['real_time'] for test in self.tests.values()])
             except ValueError:
-                pass        
-    
-    
+                pass
+
+
     def get_by(run_id, contest_id):
         try:
-            return DBSession.query(Run).filter(Run.run_id == int(run_id)).filter(Run.contest_id == int(contest_id)).first()            
+            return DBSession.query(Run).filter(Run.run_id == int(run_id)).filter(Run.contest_id == int(contest_id)).first()
         except:
             return None
 
-    @lazy      
-    def _get_compilation_protocol(self): 
+    @lazy
+    def _get_compilation_protocol(self):
         filename = submit_path(protocols_path, self.contest_id, self.run_id)
         if filename:
             if os.path.isfile(filename):
@@ -173,20 +178,20 @@ class Run(Base):
                 return e
         else:
             return ''
-    
-    @lazy      
-    def _get_protocol(self): 
+
+    @lazy
+    def _get_protocol(self):
         filename = submit_path(protocols_path, self.contest_id, self.run_id)
 #        return filename
         if filename != '':
             return get_protocol_from_file(filename)
         else:
             return '<a></a>'
-            
+
     protocol = property(_get_protocol)
     compilation_protocol = property(_get_compilation_protocol)
-    
-    @lazy 
+
+    @lazy
     def _get_tested_protocol_data(self):
         self.xml = xml.dom.minidom.parseString(str(self.protocol))
         self.parsetests()

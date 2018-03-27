@@ -45,19 +45,25 @@ def get_protocol(request):
         run = Run.get_by(run_id = run_id, contest_id = contest_id)
         try:
             run.tested_protocol
+            ret = {
+                'host': run.host,
+                'display_checker_comments': run.display_checker_comments,
+            }
             if (run.user.statement.filter(Statement.olympiad == 1).filter(Statement.timestop > time.time()).filter(Statement.timestart < time.time()).count() == 0):
                 res = OrderedDict()
                 for num in range(1, len(run.tests.keys()) + 1):
                     res[str(num)] = run.tests[str(num)]
-                return {"tests": res, "host": run.host}
+                ret["tests"] = res
+                return ret
             else:
                 try:
-                    return {"tests":run.tests["1"], "host": run.host}
+                    ret["tests"] = run.tests["1"]
+                    return ret
                 except KeyError as e:
                     return {"result" : "error", "message" : e.__str__(), "stack" : traceback.format_exc()}
         except Exception as e:
             return {"result" : "error", "message" : run.compilation_protocol, "error" : e.__str__(), "stack" : traceback.format_exc(), "protocol": run.protocol}
-    except Exception as e: 
+    except Exception as e:
         return {"result" : "error", "message" : e.__str__(), "stack" : traceback.format_exc(), "protocol": run.protocol}
 
 @view_config(route_name="protocol.get_full", renderer="json")
@@ -104,8 +110,8 @@ def protocol_get_full(request):
         except OSError as e:
             prot[test_num]["output"] = judge_info.get("output", "")
             prot[test_num]["big_output"] = False
-        
-            
+
+
         try:
             if run.get_output_file_size(int(test_num), tp='c') <= 255:
                 prot[test_num]["checker_output"] = run.get_output_file(int(test_num), tp='c')
@@ -113,7 +119,7 @@ def protocol_get_full(request):
                 prot[test_num]["checker_output"] = run.get_output_file(int(test_num), tp='c', size=255) + "...\n"
         except OSError as e:
             prot[test_num]["checker_output"] = judge_info.get("checker", "")
-        
+
         try:
             if run.get_output_file_size(int(test_num), tp='e') <= 255:
                 prot[test_num]["error_output"] = run.get_output_file(int(test_num), tp='e')
@@ -128,7 +134,7 @@ def protocol_get_full(request):
             if "extra" not in prot[test_num]:
                 prot[test_num]["extra"] = str()
             prot[test_num]["extra"] = prot[test_num]["extra"] + "\n Exit code {0}. ".format(judge_info["exit-code"])
-    
+
 
         for type_ in [("o", "output"), ("c", "checker_output"), ("e", "error_output")]:
             file_name = "{0:06d}.{1}".format(int(test_num), type_[0])
@@ -153,7 +159,7 @@ def protocol_get_test(request):
     contest_id = int(request.matchdict['contest_id'])
     run_id = int(request.matchdict['run_id'])
     run = Run.get_by(run_id = run_id, contest_id = contest_id)
-    prob = run.problem    
+    prob = run.problem
     return prob.get_test(int(request.matchdict['test_num']), prob.get_test_size(int(request.matchdict['test_num'])))
 
 @view_config(route_name="protocol.get_corr", renderer="string")
@@ -162,7 +168,7 @@ def protocol_get_corr(request):
     contest_id = int(request.matchdict['contest_id'])
     run_id = int(request.matchdict['run_id'])
     run = Run.get_by(run_id = run_id, contest_id = contest_id)
-    prob = run.problem    
+    prob = run.problem
     return prob.get_corr(int(request.matchdict['test_num']), prob.get_corr_size(int(request.matchdict['test_num'])))
 
 @view_config(route_name="protocol.get_outp", renderer="string")
@@ -170,7 +176,7 @@ def protocol_get_corr(request):
 def protocol_get_outp(request):
     contest_id = int(request.matchdict['contest_id'])
     run_id = int(request.matchdict['run_id'])
-    run = Run.get_by(run_id = run_id, contest_id = contest_id)    
+    run = Run.get_by(run_id = run_id, contest_id = contest_id)
     return run.get_output_file(int(request.matchdict['test_num']), tp='o')
 
 @view_config(route_name="protocol.get_submit_archive", renderer="string")
@@ -210,5 +216,3 @@ def get_submit_archive(request):
     archive.seek(0)
     response = Response(content_type="application/zip", content_disposition='attachment; filename="archive_{0}_{1}.zip"'.format(contest_id, run_id), body=archive.read())
     return response
-
-
