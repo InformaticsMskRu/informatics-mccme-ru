@@ -1,7 +1,7 @@
 from pynformatics.utils.check_role import check_global_role, is_admin 
 from pyramid.view import view_config
 from pynformatics.view.utils import *
-from pynformatics.model import User, Ideal, Problem, EjudgeProblem, Run, Hint
+from pynformatics.model import User, Ideal, Problem, EjudgeProblem, EjudgeRun, Hint
 import sys, traceback
 from phpserialize import *
 import transaction
@@ -65,7 +65,7 @@ def get_hint(request):
             run_id = request.params['run_id']
         except KeyError:
             return {"result": "error", "error": "run_id or contest_id is missing"}
-        run = Run.get_by(run_id, contest_id)
+        run = EjudgeRun.get_by(run_id, contest_id)
         if run is None:
             return {"result": "error", "error": "No such run"}
         author_id = run.user.firstname + ' ' + run.user.lastname
@@ -91,7 +91,7 @@ def get_run(request):
             run_id = request.params['run_id']
         except KeyError:
             return {"result": "error", "error": "run_id or contest_id is missing"}
-        run = Run.get_by(run_id, contest_id)
+        run = EjudgeRun.get_by(run_id, contest_id)
         if run is None:
             return {"result": "error", "error": "No such run"}
         moodle_pid = DBSession.query(Problem).filter(Problem.pr_id == run.problem.ejudge_prid).first().id

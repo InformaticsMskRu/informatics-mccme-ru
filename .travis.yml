@@ -7,3 +7,5 @@ install:
 script:
   - mkdir temp
   - python pynformatics/testutils.py
+services:
+  - redis-server

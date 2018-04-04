@@ -1,12 +1,7 @@
 from .queue import SubmitQueue
 
 
-submit_queue = None
-queue_submit = None
-
-
-def init_submit_queue(settings):
-    global submit_queue, queue_submit
-
-    submit_queue = SubmitQueue(int(settings.get('submit_queue.workers', '2')))
-    queue_submit = submit_queue.submit
+submit_queue = SubmitQueue()
+peek_all_submits = submit_queue.peek_all_submits
+peek_user_submits = submit_queue.peek_user_submits
+queue_submit = submit_queue.submit

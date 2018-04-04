@@ -8,7 +8,6 @@ from pynformatics.models import DBSession
 from pynformatics.utils.constants import (
     LANG_NAME_BY_ID,
 )
-from pynformatics.view.utils import RequestGetUserId
 from pynformatics.utils.exceptions import (
     Forbidden,
     Unauthorized,
@@ -25,26 +24,41 @@ class Context:
         'statement_id',
     ]
 
-    def __init__(self, request):
-        self._request = request
+    def __init__(self,
+                 request=None,
+                 user_id=None,
+                 problem_id=None,
+                 statement_id=None,
+                 ):
+        if request:
+            if request.session.get('user_id'):
+                self._user_id = request.session.get('user_id')
+            else:
+                self._user_id = -1
+            # else:
+            #     self._user_id = RequestGetUserId(self._request)
+            #     if self._user_id != -1:
+            #         request.session['user_id'] = self._user_id
+            self._user = None
 
-        if request.session.get('user_id'):
-            self._user_id = request.session.get('user_id')
+            self._problem = None
+            self._statement = None
+
+            for request_key in self.REQUEST_KEYS:
+                setattr(
+                    self,
+                    '_' + request_key,
+                    request.matchdict.get(request_key) or request.params.get(request_key)
+                )
         else:
-            self._user_id = RequestGetUserId(self._request)
-            if self._user_id != -1:
-                request.session['user_id'] = self._user_id
-        self._user = None
+            self._user_id = user_id
+            self._user = None
 
-        self._problem = None
-        self._statement = None
+            self._problem_id = problem_id
+            self._problem = None
 
-        for request_key in self.REQUEST_KEYS:
-            setattr(
-                self,
-                '_' + request_key,
-                request.matchdict.get(request_key) or request.params.get(request_key)
-            )
+            self._statement_id = statement_id
+            self._statement = None
 
     @property
     def user_id(self):
@@ -80,6 +94,21 @@ class Context:
         if not self._statement and self._statement_id:
             self._statement = DBSession.query(Statement).filter(Statement.id == self._statement_id).first()
         return self._statement
+
+    @staticmethod
+    def decode(encoded):
+        return Context(
+            user_id=encoded['user_id'],
+            problem_id=encoded['problem_id'],
+            statement_id=encoded['statement_id'],
+        )
+
+    def encode(self):
+        return {
+            'user_id': self._user_id,
+            'problem_id': self._problem_id,
+            'statement_id': self._statement_id,
+        }
 
     def check_auth(self):
         if self._user_id == -1 or not self.user:

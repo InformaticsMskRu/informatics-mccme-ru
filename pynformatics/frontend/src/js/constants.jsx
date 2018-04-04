@@ -83,10 +83,10 @@ export const LANGUAGES = {
     extension: '.pas',
     mime: 'text/x-pascal',
   },
-  31: {
-    name: '1C 8.3',
-    extension: '.1c',
-  },
+  // 31: {
+  //   name: '1C 8.3',
+  //   extension: '.1c',
+  // },
 };
 
 
@@ -98,107 +98,122 @@ export const STATUSES = {
   },
   0: {
     short: 'OK',
-    long: 'OK',
+    long: 'ОК',
     color: 'green',
   },
   1: {
     short: 'CE',
-    long: 'Compilation Error',
+    long: 'Ошибка компиляции',
     color: 'orange',
   },
   2: {
-    short: 'RE',
-    long: 'Runtime Error',
+    short: 'RT',
+    long: 'Ошибка при работе программы',
     color: 'orange',
   },
   3: {
     short: 'TL',
-    long: 'Time-limit Exceeded',
+    long: 'Ошибка превышения лимита времени',
     color: 'orange',
   },
   4: {
     short: 'PE',
-    long: 'Presentation Error',
+    long: 'Ошибка неправильного формата результата',
     color: 'orange',
   },
   5: {
     short: 'WA',
-    long: 'Wrong Answer',
+    long: 'Неправильный ответ',
     color: 'orange',
   },
   6: {
     short: 'CF',
-    long: 'Check Failed',
+    long: 'Внутренняя ошибка проверки',
     color: 'blue',
   },
   7: {
     short: 'PT',
-    long: 'Partial',
+    long: 'Частичное решение',
     color: 'orange',
   },
   8: {
     short: 'AC',
-    long: 'Accepted',
+    long: 'Принято на проверку',
     color: 'green',
   },
   9: {
     short: 'IG',
-    long: 'Ignored',
+    long: 'Решение проигнорировано',
     color: 'orange',
   },
   10: {
     short: 'DQ',
-    long: 'Disqualified',
+    long: 'Решение дисквалифицировано',
     color: 'orange',
   },
   11: {
     short: 'PD',
-    long: 'Pending',
+    long: 'Ожидает проверки',
     color: 'green',
   },
   12: {
     short: 'ML',
-    long: 'Memory-limit Exceeded',
+    long: 'Ошибка превышения лимита памяти',
     color: 'orange',
   },
   13: {
     short: 'SE',
-    long: 'Security error',
+    long: 'Ошибка нарушения ограничений безопасности',
     color: 'orange',
   },
   14: {
     short: 'SV',
-    long: 'Style Violation',
+    long: 'Ошибка нарушения стиля оформления исходного кода',
     color: 'orange',
   },
   15: {
     short: 'WL',
-    long: 'Wall Time Limit Exceeded',
+    long: 'Ошибка превышения лимита реального времени',
     color: 'orange',
   },
   16: {
     short: 'PR',
-    long: 'Pending Review',
+    long: 'Ожидает подтверждения',
     color: 'green',
   },
   17: {
     short: 'RJ',
-    long: 'Rejected',
+    long: 'Отклонено',
     color: 'orange',
   },
   18: {
     short: 'SK',
-    long: 'Skipped',
+    long: 'Пропущено',
+    color: 'orange',
+  },
+  95: {
+    short: 'FR',
+    long: 'Ожидает полной перепроверки',
     color: 'orange',
   },
   96: {
     short: 'RU',
-    long: 'Running...',
+    long: 'В очереди проверки или проверяется',
     color: 'orange'
+  },
+  97: {
+    short: 'CD',
+    long: 'Решение скомпилировно, но еще не отправлено на проверку',
+    color: 'orange',
   },
   98: {
     short: 'CO',
     long: 'Compiling...',
     color: 'orange',
-  }
+  },
+  99: {
+    short: 'RJ',
+    long: 'Решение отправлено на перепроверку',
+    color: 'orange',
+  },
 };

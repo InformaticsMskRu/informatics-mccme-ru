@@ -43,7 +43,7 @@ const StatusWrapper = styled.div`
   } 
 `;
 
-export default ({status, collapsed}) => {
+export default ({score, status, collapsed}) => {
   const {color = 'blue', long = 'Неизвестный статус', short = '??'} = STATUSES[status] || {};
   return (
     <StatusWrapper color={color}>
@@ -51,7 +51,13 @@ export default ({status, collapsed}) => {
         <div
           className={`statusShort ${collapsed ? 'collapsed' : ''}`}
         >
-          <div>{short}</div>
+          <div>
+            {
+              typeof score !== 'undefined' && score !== 100
+              ? score
+              : short
+            }
+          </div>
         </div>
       </Tooltip>
     </StatusWrapper>

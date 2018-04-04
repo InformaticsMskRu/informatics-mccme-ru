@@ -23,10 +23,10 @@ class TestUtils__context_check_auth(TestCase):
         context = Context(self.request)
         context.check_auth()
 
-    def test_moodle_session(self):
-        with mock.patch('pynformatics.utils.context.RequestGetUserId', mock.Mock(return_value=self.user.id)):
-            context = Context(self.request)
-        context.check_auth()
+    # def test_moodle_session(self):
+    #     with mock.patch('pynformatics.utils.context.RequestGetUserId', mock.Mock(return_value=self.user.id)):
+    #         context = Context(self.request)
+    #     context.check_auth()
 
     def test_no_user_id(self):
         context = Context(self.request)

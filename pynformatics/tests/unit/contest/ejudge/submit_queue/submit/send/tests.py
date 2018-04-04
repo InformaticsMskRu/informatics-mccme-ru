@@ -1,3 +1,4 @@
+import datetime
 import mock
 import sys
 from hamcrest import (
@@ -12,12 +13,13 @@ from hamcrest import (
 )
 from transaction.interfaces import DoomedTransaction
 
-from pynformatics.model.pynformatics_run import PynformaticsRun
 from pynformatics.model.run import Run
+from pynformatics.model.ejudge_run import EjudgeRun
 from pynformatics.testutils import TestCase
 
 
-del sys.modules['pynformatics.contest.ejudge.submit_queue.submit']
+if 'pynformatics.contest.ejudge.submit_queue.submit' in sys.modules:
+    del sys.modules['pynformatics.contest.ejudge.submit_queue.submit']
 with mock.patch('pynformatics.contest.ejudge.ejudge_proxy.submit') as ejudge_submit_mock, \
         mock.patch('pynformatics.utils.notify.notify_user') as notify_user_mock:
     from pynformatics.contest.ejudge.submit_queue.submit import Submit
@@ -34,7 +36,7 @@ class TestEjudge__submit_queue_submit_send(TestCase):
         self.create_problems()
         self.create_statements()
 
-        self.run = Run(
+        self.run = EjudgeRun(
             run_id=12,
             user=self.users[0],
             problem=self.problems[0],
@@ -53,7 +55,9 @@ class TestEjudge__submit_queue_submit_send(TestCase):
 
     def test_simple(self):
         submit = Submit(
+            id=1,
             context=self.context_mock,
+            create_time=datetime.datetime(2018, 3, 30, 16, 59, 0),
             file=self.file_mock,
             language_id=27,
             ejudge_url='ejudge_url',
@@ -82,26 +86,39 @@ class TestEjudge__submit_queue_submit_send(TestCase):
             user_id=1,
         )
 
-        run = self.session.query(PynformaticsRun).one()
-        assert_that(run.run_id, equal_to(self.run.run_id))
-        assert_that(run.contest_id, equal_to(1))
-        assert_that(run.statement, equal_to(self.statements[0]))
-        assert_that(run.source, equal_to('source'))
+        run = self.session.query(Run).one()
+        assert_that(run.user.id, equal_to(self.users[0].id))
+        assert_that(run.problem.id, equal_to(self.problems[0].id))
+        assert_that(run.create_time, equal_to(submit.create_time))
 
         assert_that(
             notify_user_mock.call_args_list[0][1],
             has_entries({
                 'user_id': 1,
-                'runs': contains_inanyorder(
-                    has_entries({'run_id': self.run.run_id})
-                )
+                'runs': [
+                    {
+                        'id': 1,
+                        'problem_id': 1,
+                        'statement_id': 1,
+                        'score': None,
+                        'status': None,
+                        'language_id': 27,
+                        'create_time': '2018-03-30 16:59:00',
+                    }
+                ],
+                'event': {
+                    'type': 'RUN_CREATED_FROM_SUBMIT',
+                    'submit_id': submit.id,
+                }
             })
         )
 
     def test_handles_submit_exception(self):
         # В случае, если функция submit бросила исключение
         submit = Submit(
+            id=1,
             context=self.context_mock,
+            create_time=datetime.datetime(2018, 3, 30, 17, 10, 11),
             file=self.file_mock,
             language_id=27,
             ejudge_url='ejudge_url',
@@ -115,7 +132,7 @@ class TestEjudge__submit_queue_submit_send(TestCase):
 
         notify_user_mock.assert_called_once_with(
             user_id=self.users[0].id,
-            data={
+            message={
                 'ejudge_error': {
                     'code': None,
                     'message': 'Ошибка отправки задачи'
@@ -129,7 +146,9 @@ class TestEjudge__submit_queue_submit_send(TestCase):
         # В случае, если ejudge вернул не 0 код
 
         submit = Submit(
+            id=1,
             context=self.context_mock,
+            create_time=datetime.datetime(2018, 3, 30, 17, 10, 11),
             file=self.file_mock,
             language_id=27,
             ejudge_url='ejudge_url',
@@ -147,7 +166,7 @@ class TestEjudge__submit_queue_submit_send(TestCase):
 
         notify_user_mock.assert_called_once_with(
             user_id=self.users[0].id,
-            data={
+            message={
                 'ejudge_error': {
                     'code': 123,
                     'message': 'some message'

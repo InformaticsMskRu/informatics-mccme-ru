@@ -2,7 +2,7 @@ import datetime
 import mock
 
 from pynformatics.model.pynformatics_run import PynformaticsRun
-from pynformatics.model.run import Run
+from pynformatics.model.ejudge_run import EjudgeRun
 from pynformatics.model.standings import StatementStandings
 from pynformatics.testutils import TestCase
 
@@ -32,14 +32,14 @@ class TestModel__statement_standings_create(TestCase):
             self.statements[1].id,
         ]
         runs = [
-            Run(
+            EjudgeRun(
                 run_id=1,
                 contest_id=self.problems[0].ejudge_contest_id,
                 prob_id=self.problems[0].problem_id,
                 user_id=self.users[0].ejudge_id,
                 create_time=datetime.datetime(2018, 2, 24, 16, 36, 0)
             ),
-            Run(
+            EjudgeRun(
                 run_id=2,
                 contest_id=self.problems[0].ejudge_contest_id,
                 prob_id=self.problems[0].problem_id,

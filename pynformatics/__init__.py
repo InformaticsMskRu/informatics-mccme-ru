@@ -5,17 +5,18 @@ from pyramid.config import Configurator
 from pyramid_beaker import session_factory_from_settings
 from sqlalchemy import engine_from_config
 
-from pynformatics.contest.ejudge.submit_queue import init_submit_queue
 from pynformatics.models import DBSession
 from pynformatics.view.comment import *
 from pynformatics.utils.oauth import fill_oauth_config_secrets
+from pynformatics.utils.url_encoder import init_url_encoder
+from pynformatics.utils.redis import init_redis
 
 
 log = logging.getLogger(__name__)
 monkey.patch_all()
 
 
-SCAN_IGNORE = ['pynformatics.tests']
+SCAN_IGNORE = ['pynformatics.tests', 'pynformatics.testutils']
 
 
 def main(global_config, **settings):
@@ -129,7 +130,7 @@ def main(global_config, **settings):
     config.add_route('recommendation.get', '/recommendation/get')
     config.add_route('recommendation.get_html', '/recommendation/get_html')
 
-    config.add_route('submits.get', '/submits/get')
+    config.add_route('submit.get', '/submit')
 
     config.add_route('statement.get_by_course_module', '/statement')
     config.add_route('statement.get', '/statement/{statement_id}')
@@ -146,10 +147,13 @@ def main(global_config, **settings):
     config.add_route('auth.logout', 'auth/logout')
     config.add_route('auth.oauth_login', 'auth/oauth_login')
 
-    config.add_route('notification.update_standings', 'notification/update_standings')
+    config.add_route('notification.update_run', 'notification/update_run')
 
     config.add_route('group.get', 'group/{group_id}')
     config.add_route('group.search', 'group')
+    config.add_route('group.join_by_invite', 'group/join/{group_invite_url}')
+
+    config.add_route('group_invite.get', 'group_invite')
 
     try:
         import uwsgi
@@ -160,7 +164,8 @@ def main(global_config, **settings):
 
 
     fill_oauth_config_secrets(settings)
-    init_submit_queue(settings)
+    init_url_encoder(settings)
+    init_redis(settings)
 
     config.scan(ignore=SCAN_IGNORE)
 

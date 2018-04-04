@@ -8,8 +8,8 @@ from pyramid.view import view_config
 from pyramid.response import Response
 from sqlalchemy import and_
 
-from pynformatics.model.run import (
-    Run,
+from pynformatics.model.ejudge_run import (
+    EjudgeRun,
     get_lang_ext_by_id,
 )
 from pynformatics.model.statement import Statement
@@ -51,7 +51,7 @@ def get_protocol(request):
     try:
         contest_id = int(request.matchdict['contest_id'])
         run_id = int(request.matchdict['run_id'])
-        run = Run.get_by(run_id=run_id, contest_id=contest_id)
+        run = EjudgeRun.get_by(run_id=run_id, contest_id=contest_id)
         try:
             run.fetch_tested_protocol_data()
             if run.user.statement.filter(
@@ -102,7 +102,7 @@ def protocol_get_v2(request, context):
     run_id = int(request.matchdict['run_id'])
     contest_id = int(request.matchdict['contest_id'])
 
-    run = DBSession.query(Run).filter(and_(Run.run_id == run_id, Run.contest_id == contest_id)).first()
+    run = DBSession.query(EjudgeRun).filter(and_(EjudgeRun.run_id == run_id, EjudgeRun.contest_id == contest_id)).first()
     if not run:
         raise RunNotFound
 
@@ -136,7 +136,7 @@ def protocol_get_v2(request, context):
 def protocol_get_full(request):
     contest_id = int(request.matchdict['contest_id'])
     run_id = int(request.matchdict['run_id'])
-    run = Run.get_by(run_id=run_id, contest_id=contest_id)
+    run = EjudgeRun.get_by(run_id=run_id, contest_id=contest_id)
     protocol = get_protocol(request)
     if protocol.get('result') == "error":
         return protocol
@@ -164,7 +164,7 @@ def protocol_get_full(request):
 def protocol_get_test(request):
     contest_id = int(request.matchdict['contest_id'])
     run_id = int(request.matchdict['run_id'])
-    run = Run.get_by(run_id = run_id, contest_id = contest_id)
+    run = EjudgeRun.get_by(run_id = run_id, contest_id = contest_id)
     prob = run.problem
     return prob.get_test(int(request.matchdict['test_num']), prob.get_test_size(int(request.matchdict['test_num'])))
 
@@ -174,7 +174,7 @@ def protocol_get_test(request):
 def protocol_get_corr(request):
     contest_id = int(request.matchdict['contest_id'])
     run_id = int(request.matchdict['run_id'])
-    run = Run.get_by(run_id = run_id, contest_id = contest_id)
+    run = EjudgeRun.get_by(run_id = run_id, contest_id = contest_id)
     prob = run.problem
     return prob.get_corr(int(request.matchdict['test_num']), prob.get_corr_size(int(request.matchdict['test_num'])))
 
@@ -184,7 +184,7 @@ def protocol_get_corr(request):
 def protocol_get_outp(request):
     contest_id = int(request.matchdict['contest_id'])
     run_id = int(request.matchdict['run_id'])
-    run = Run.get_by(run_id = run_id, contest_id = contest_id)
+    run = EjudgeRun.get_by(run_id = run_id, contest_id = contest_id)
     return run.get_output_file(int(request.matchdict['test_num']), tp='o')
 
 
@@ -203,7 +203,7 @@ def get_submit_archive(request):
         except ValueError:
             pass
 
-    run = Run.get_by(run_id = run_id, contest_id = contest_id)
+    run = EjudgeRun.get_by(run_id = run_id, contest_id = contest_id)
     run.parsetests
     prob = run.problem
     archive = BytesIO()

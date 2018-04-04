@@ -16,7 +16,7 @@ from pynformatics.model.group import Group
 from pynformatics.model.meta import Base
 from pynformatics.model.problem import EjudgeProblem
 from pynformatics.model.pynformatics_run import PynformaticsRun
-from pynformatics.model.run import Run
+from pynformatics.model.ejudge_run import EjudgeRun
 from pynformatics.model.user import SimpleUser
 from pynformatics.models import DBSession
 from pynformatics.utils.exceptions import GroupNotFound
@@ -71,10 +71,10 @@ class ProblemStandings(StandingsMixin, Base):
 
         log.info('ProblemStandings(problem_id=%s) Created. Starting updates' % instance.problem_id)
 
-        users = DBSession.query(SimpleUser).join(Run).filter(
+        users = DBSession.query(SimpleUser).join(EjudgeRun).filter(
             and_(
-                Run.contest_id == instance.problem.ejudge_contest_id,
-                Run.prob_id == instance.problem.problem_id
+                EjudgeRun.contest_id == instance.problem.ejudge_contest_id,
+                EjudgeRun.prob_id == instance.problem.problem_id
             )
         ).distinct().all()
 
@@ -89,9 +89,9 @@ class ProblemStandings(StandingsMixin, Base):
     def update(self, user):
         super(ProblemStandings, self).update(user)
 
-        user_runs = self.problem.runs.filter_by(
+        user_runs = self.problem.ejudge_runs.filter_by(
             user_id=user.ejudge_id
-        ).order_by(Run.create_time).all()
+        ).order_by(EjudgeRun.create_time).all()
 
         processed = {
             'attempts': 0,

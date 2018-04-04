@@ -185,13 +185,17 @@ const MenuWrapper = styled.div`
 `;
 
 
-const MenuProblem = ({letter, rank, status, title, collapsed}) => (
+const MenuProblem = ({letter, rank, score, status, title, collapsed}) => (
   <div className="problemMenuItem">
     <div className="problemSelected" />
     <div className="problemLetter">{letter}</div>
     <div className="problemTitle">{title}</div>
     <div className="problemStatus">
-      {/*<Status status={status} collapsed={collapsed}/>*/}
+      {
+        typeof status !== 'undefined'
+        ? <Status score={score} status={status} collapsed={collapsed}/>
+        : null
+      }
     </div>
   </div>
 );
@@ -205,6 +209,7 @@ export class Menu extends React.Component {
   static propTypes = {
     collapsed: PropTypes.bool.isRequired,
     statement: PropTypes.object.isRequired,
+    user: PropTypes.object.isRequired,
     onCollapse: PropTypes.func,
     onSelect: PropTypes.func,
   };
@@ -247,6 +252,7 @@ export class Menu extends React.Component {
       collapsed,
       selectedKeys,
       statement,
+      user,
       onCollapse,
       onSelect,
     } = this.props;
@@ -262,15 +268,19 @@ export class Menu extends React.Component {
     } = statement;
     const { full_name: bootcampTitle } = bootcamp;
 
-    const problemItems = _.map(problems, (value, key) => {
-      const { name: title } = value;
+    const userId = _.get(user, 'id')
+    const userResults = _.get(statement, `processed[${userId}].processed.problems`, {});
+
+    const problemItems = _.map(problems, ({ id, name: title }, key) => {
+      const { score, status } = userResults[id] || {};
       return (
         <AntdMenu.Item key={key}>
           <MenuProblem
             letter={getProblemShortNameByNumber(parseInt(key))}
             rank={key}
             title={title}
-            status={0}
+            score={score}
+            status={status}
             collapsed={collapsed || !hovered}
           />
         </AntdMenu.Item>

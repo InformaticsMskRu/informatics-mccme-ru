@@ -12,7 +12,7 @@ from pynformatics.testutils import (
 mock.patch('pynformatics.utils.check_role.check_global_role', dummy_decorator).start()
 
 from pynformatics.view.protocol import get_protocol
-from pynformatics.model import Run
+from pynformatics.model import EjudgeRun
 
 
 class TestView__get_protocol(TestCase):
@@ -54,7 +54,7 @@ class TestView__get_protocol(TestCase):
         compiler_output = 'mocked compiler output'
         run.compiler_output = compiler_output
 
-        with mock.patch.object(Run, 'get_by', mock.Mock(return_value=run)):
+        with mock.patch.object(EjudgeRun, 'get_by', mock.Mock(return_value=run)):
             result = get_protocol(self.request)
 
         assert_that(
@@ -85,7 +85,7 @@ class TestView__get_protocol(TestCase):
         compiler_output = 'mocked compiler output'
         run.compiler_output = compiler_output
 
-        with mock.patch.object(Run, 'get_by', mock.Mock(return_value=run)):
+        with mock.patch.object(EjudgeRun, 'get_by', mock.Mock(return_value=run)):
             result = get_protocol(self.request)
 
         assert_that(
@@ -115,7 +115,7 @@ class TestView__get_protocol(TestCase):
             sample_tests=[2, 3],
         )
 
-        with mock.patch.object(Run, 'get_by', mock.Mock(return_value=run)):
+        with mock.patch.object(EjudgeRun, 'get_by', mock.Mock(return_value=run)):
             result = get_protocol(self.request)
 
         assert_that(

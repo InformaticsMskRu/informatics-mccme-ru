@@ -6,7 +6,7 @@ from hamcrest import (
 
 from pynformatics.model.problem import EjudgeProblem, Problem
 from pynformatics.model.pynformatics_run import PynformaticsRun
-from pynformatics.model.run import Run
+from pynformatics.model.ejudge_run import EjudgeRun
 from pynformatics.model.statement import Statement
 from pynformatics.model.user import SimpleUser
 from pynformatics.testutils import TestCase
@@ -30,7 +30,7 @@ class TestView__problem_runs(TestCase):
 
         self.runs = [
             [
-                Run(
+                EjudgeRun(
                     run_id=i + user.ejudge_id * 3,
                     problem=self.problem,
                     user=user
@@ -48,7 +48,7 @@ class TestView__problem_runs(TestCase):
         self.mock_context.user = self.user1
 
     def test_filters_by_user_id(self):
-        with mock.patch('pynformatics.model.run.Run.serialize', autospec=True) as serialize_mock:
+        with mock.patch('pynformatics.model.ejudge_run.EjudgeRun.serialize', autospec=True) as serialize_mock:
             serialize_mock.side_effect = lambda self, *args: self
             response = problem_runs(self.request, self.mock_context)
 
@@ -74,8 +74,8 @@ class TestView__problem_runs(TestCase):
                 ))
 
         self.request.params = {'statement_id': statements[0].id}
-        with mock.patch('pynformatics.model.run.Run.serialize', autospec=True) as serialize_mock, \
-                mock.patch('pynformatics.model.run.Run.get_sources', mock.Mock(return_value='')):
+        with mock.patch('pynformatics.model.ejudge_run.EjudgeRun.serialize', autospec=True) as serialize_mock, \
+                mock.patch('pynformatics.model.ejudge_run.EjudgeRun.get_sources', mock.Mock(return_value='')):
             serialize_mock.side_effect = lambda self, *args: self
             response = problem_runs(self.request, self.mock_context)
 

@@ -1,9 +1,9 @@
-import { compose } from 'redux';
-import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 import React from 'react';
 import { Layout } from 'antd';
-import PropTypes from 'prop-types';
-import { withRouter, Switch, Route } from 'react-router-dom';
+import { Route, Switch, withRouter } from 'react-router-dom';
+import { compose } from 'redux';
+import { connect } from 'react-redux';
 
 import Box from '../../components/utility/Box';
 import Blockage from "./Blockage";
@@ -76,6 +76,7 @@ export class StatementPage extends React.Component {
   static propTypes = {
     match: PropTypes.object.isRequired,
     statements: PropTypes.object.isRequired,
+    user: PropTypes.object.isRequired,
   };
 
   constructor(props, context) {
@@ -102,6 +103,9 @@ export class StatementPage extends React.Component {
 
     const statementId = _.get(props, 'match.params.statementId');
     const oldStatementId = _.get(props, 'match.params.statementId');
+
+    const location = _.get(props, 'location.pathname');
+    const oldLocation = _.get(this.props, 'location.pathname');
 
     if (statementId !== oldStatementId) {
       this.fetchStatement(statementId);
@@ -141,7 +145,7 @@ export class StatementPage extends React.Component {
   fetchStandings(statementId, filterGroupId) {
     this.props.dispatch(statementActions.fetchStatementStandings(
       statementId, filterGroupId
-    ));
+    )).then(() => this.props.dispatch(statementActions.processStandings(statementId)));
   }
 
   toggleCollapse() {
@@ -164,7 +168,7 @@ export class StatementPage extends React.Component {
   render() {
     const { statementId, problemRank } = this.props.match.params;
     const { collapsed } = this.state;
-    const { windowWidth } = this.props;
+    const { filterGroup, user, windowWidth } = this.props;
 
     const statement = this.props.statements[statementId] || {};
     const {
@@ -210,6 +214,7 @@ export class StatementPage extends React.Component {
                   collapsed={collapsed}
                   selectedKeys={ [problemRank] }
                   statement={statement}
+                  user={user}
                   onCollapse={this.toggleCollapse}
                   onSelect={({ key }) => this.changeProblemRank(key)}
                 />
@@ -221,12 +226,18 @@ export class StatementPage extends React.Component {
               className="toggleDrawer"
               onClick={this.toggleCollapse}
             />
-            <Route exact path="/contest/:statementId/standings" render={() => <Standings />} />
+            <Route exact path="/contest/:statementId/standings" component={Standings} />
             <Route exact path="/contest/:statementId/problem/:problemRank">
               {
                 problemRank
-                  ? <Problem problemId={problems[problemRank].id} statementId={parseInt(statementId)} />
-                  : null
+                  ? (
+                    <Problem 
+                      problemId={problems[problemRank].id} 
+                      statementId={parseInt(statementId)} 
+                      // onTabChange={() => console.log('tab changed', statementId, _.get(filterGroup, 'id'))}
+                      onTabChange={() => this.fetchStandings(statementId, _.get(filterGroup, 'id'))}
+                    />
+                  ) : null
               }
             </Route>
 
@@ -240,8 +251,9 @@ export class StatementPage extends React.Component {
 export default compose(
   withRouter,
   connect(state => ({
-    statements: state.statements,
-    windowWidth: state.ui.width,
     filterGroup: state.group.filterGroup,
+    statements: state.statements,
+    user: state.user,
+    windowWidth: state.ui.width,
   }))
 )(StatementPage);

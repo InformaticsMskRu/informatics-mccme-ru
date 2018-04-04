@@ -5,16 +5,16 @@ from hamcrest import (
 )
 
 from pynformatics.testutils import TestCase
-from pynformatics.model.run import Run
+from pynformatics.model.ejudge_run import EjudgeRun
 from pynformatics.model.pynformatics_run import PynformaticsRun
 
 
-class TestModel__run_get_pynformatics_run(TestCase):
+class TestModel__ejudge_run_get_pynformatics_run(TestCase):
     def setUp(self):
-        super(TestModel__run_get_pynformatics_run, self).setUp()
+        super(TestModel__ejudge_run_get_pynformatics_run, self).setUp()
         self.run_id = 123
         self.contest_id = 456
-        self.run = Run(
+        self.run = EjudgeRun(
             run_id=self.run_id,
             contest_id=self.contest_id
         )
@@ -26,7 +26,7 @@ class TestModel__run_get_pynformatics_run(TestCase):
     def test_creates_if_none(self):
         sources = 'some sources'
         get_sources_mock = mock.Mock(return_value=sources)
-        with mock.patch('pynformatics.model.run.Run.get_sources', get_sources_mock):
+        with mock.patch('pynformatics.model.ejudge_run.EjudgeRun.get_sources', get_sources_mock):
             pynformatics_run = self.run.get_pynformatics_run()
 
         get_sources_mock.assert_called_once()

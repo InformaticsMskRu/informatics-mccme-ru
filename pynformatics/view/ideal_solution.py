@@ -1,7 +1,7 @@
 from pynformatics.utils.check_role import check_global_role, is_admin 
 from pyramid.view import view_config
 from pynformatics.view.utils import *
-from pynformatics.model import User, Ideal, Problem, EjudgeProblem, Run
+from pynformatics.model import User, Ideal, Problem, EjudgeProblem, EjudgeRun
 import sys, traceback
 from phpserialize import *
 import transaction
@@ -20,9 +20,9 @@ def get_ok_runs(user_id, problem_id):
     pr_id = problem.problem_id
     contest_id = problem.ejudge_contest_id
 
-    ok_runs = DBSession.query(Run).filter_by(user_id=user_ejudge_id,
+    ok_runs = DBSession.query(EjudgeRun).filter_by(user_id=user_ejudge_id,
         prob_id=pr_id, contest_id=contest_id, status=0).all()
-    ac_runs = DBSession.query(Run).filter_by(user_id=user_ejudge_id,
+    ac_runs = DBSession.query(EjudgeRun).filter_by(user_id=user_ejudge_id,
         prob_id=pr_id, contest_id=contest_id, status=8).all()
     return ok_runs + ac_runs
 

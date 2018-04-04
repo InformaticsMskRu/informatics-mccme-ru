@@ -49,7 +49,10 @@ def submit(run_file, contest_id, prob_id, lang_id, login, password, filename, ur
         SID = res.group(1)
     else:
         report_error(None, login_data, c.text, run_file, filename, user_id)
-        return DEFAULT_ERROR_STR
+        return {
+            'code': None,
+            'message': DEFAULT_ERROR_STR
+        }
 
     cookies = c.cookies
     files = {'file' : (filename, run_file)}

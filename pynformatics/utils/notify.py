@@ -1,49 +1,58 @@
-import json
-import logging
-from collections import defaultdict
-from gevent.queue import Queue
+import pickle
+import uuid
+
+from pynformatics.utils.redis import redis
+import sqlalchemy
 
 
-log = logging.getLogger(__name__)
+def client_channel(client_uuid):
+    return f'notify:client:{client_uuid}'
 
-_clients = defaultdict(list)
+
+def user_channel(user_id):
+    return f'notify:user:{user_id}'
 
 
 class Client:
     def __init__(self, user_id=None):
         self.user_id = user_id
-        self._queue = Queue()
+        self.uuid = str(uuid.uuid4())
+        self.pubsub = redis.pubsub()
+        self.pubsub.subscribe(client_channel(self.uuid))
+        if user_id:
+            self.pubsub.subscribe(user_channel(user_id))
 
-        _clients[user_id].append(self)
-        log.debug('User %s. New client created. Total clients for user: %s', user_id, len(_clients[user_id]))
-
-    def has_notification(self):
-        return not self._queue.empty()
-
-    def get_notification(self):
-        return json.dumps(self._queue.get(), separators=(',',':'))
-
-    def notify(self, data):
-        self._queue.put(data)
-
-    def disconnect(self):
-        client_index = next(
-            index
-            for index, client in enumerate(_clients[self.user_id])
-            if client is self
-        )
-        _clients[self.user_id].pop(client_index)
+    def get_message(self):
+        message = None
+        while True:
+            message = self.pubsub.get_message()
+            if not (message and message['type'] == 'subscribe'):
+                break
+        if message:
+            message = pickle.loads(message['data'])
+        return message
 
 
-def notify_user(user_id,
-                data=None,
-                runs=None,
-                ):
-    data = data or {}
+def format_message(message=None,
+                   meta=None,
+                   runs=None,
+                   event=None,
+                   ):
+    message = message or {}
+    if meta:
+        message['meta'] = meta
     if runs:
-        data['runs'] = runs
+        message['runs'] = runs
+    if event:
+        message['event'] = event
+    return message
 
-    user_clients = _clients[user_id]
-    for client in user_clients:
-        log.debug('Client of user %s is being notified', user_id)
-        client.notify(data)
+
+def notify_client(client_uuid, **kwargs):
+    message = format_message(**kwargs)
+    redis.publish(client_channel(client_uuid), pickle.dumps(message))
+
+
+def notify_user(user_id, **kwargs):
+    message = format_message(**kwargs)
+    redis.publish(user_channel(user_id), pickle.dumps(message))

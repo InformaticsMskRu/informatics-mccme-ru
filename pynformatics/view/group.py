@@ -1,7 +1,11 @@
 from pyramid.view import view_config
 from sqlalchemy import and_
 
-from pynformatics.model.group import Group
+from pynformatics.model.group import (
+    Group,
+    UserGroup,
+)
+from pynformatics.model.group_invite import GroupInvite
 from pynformatics.models import DBSession
 from pynformatics.utils.context import with_context
 from pynformatics.utils.exceptions import GroupNotFound
@@ -53,3 +57,26 @@ def group_search(request, context):
         for group in groups
     }
     return result
+
+
+@view_config(route_name='group.join_by_invite', renderer='json', request_method='POST')
+@validate_matchdict(Param('group_invite_url', required=True))
+@with_context(require_auth=True)
+def group_join_by_invite(request, context):
+    group_invite_url = request.matchdict['group_invite_url']
+    group_invite = GroupInvite.get_by_url(group_invite_url)
+
+    user_group = UserGroup.create_if_not_exists(
+        user_id=context.user_id,
+        group_id=group_invite.group_id
+    )
+    joined = bool(user_group)
+    if joined:
+        DBSession.add(user_group)
+
+    response = {
+        'joined': joined,
+        'redirect': group_invite.redirect
+    }
+
+    return response

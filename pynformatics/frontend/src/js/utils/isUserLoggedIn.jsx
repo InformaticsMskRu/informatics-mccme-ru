@@ -1,4 +1,4 @@
-const isUserLoggedIn = (user, state) => {
+const isUserLoggedIn = (user) => {
   if ('firstname' in user && 'lastname' in user && 'id' in user) {
     return true;
   } else {
@@ -6,4 +6,4 @@ const isUserLoggedIn = (user, state) => {
   }
 };
 
-export default isUserLoggedIn
+export default isUserLoggedIn;

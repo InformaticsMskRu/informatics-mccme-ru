@@ -60,5 +60,14 @@ export default function reducer(state=initialState, action) {
 
     default:
       return state;
+
+    case 'STATEMENT_PROCESS_STANDINGS':
+      return {
+        ...state,
+        [statementId]: {
+          ...state[statementId],
+          processed: action.payload,
+        }
+      }
   }
 }

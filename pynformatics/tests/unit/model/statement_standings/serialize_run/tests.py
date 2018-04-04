@@ -4,7 +4,7 @@ from hamcrest import (
     equal_to,
 )
 
-from pynformatics.model.run import Run
+from pynformatics.model.ejudge_run import EjudgeRun
 from pynformatics.model.standings import StatementStandings
 from pynformatics.testutils import TestCase
 
@@ -16,7 +16,7 @@ class TestModel__statement_standings_serialize_run(TestCase):
         self.create_problems()
 
     def test_simple(self):
-        run = Run(
+        run = EjudgeRun(
             run_id=1,
             contest_id=self.problems[1].ejudge_contest_id,
             prob_id=self.problems[1].problem_id,

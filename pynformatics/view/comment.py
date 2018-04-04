@@ -1,6 +1,6 @@
 from pyramid.view import view_config
 from pynformatics.view.utils import *
-from pynformatics.model import User, Run, Comment, EjudgeProblem
+from pynformatics.model import User, EjudgeRun, Comment, EjudgeProblem
 import sys, traceback
 from phpserialize import *
 import transaction
@@ -16,7 +16,7 @@ def add(request):
     try:
         if (not RequestCheckUserCapability(request, 'moodle/ejudge_submits:comment')):
             raise Exception("Auth Error")
-        run = Run.get_by(run_id = request.params['run_id'], contest_id = request.params['contest_id'])
+        run = EjudgeRun.get_by(run_id = request.params['run_id'], contest_id = request.params['contest_id'])
         if not run:
             raise Exception("Object not found")
         user = DBSession.query(User).filter(User.id == RequestGetUserId(request)).first()
@@ -95,7 +95,7 @@ def get(request):
         jsonpickle.set_encoder_options('json', cls=JSONDateTimeEncoder)
         r_id = request.matchdict['run_id']
         c_id = request.matchdict['contest_id']
-        run = Run.get_by(run_id = r_id, contest_id = c_id)
+        run = EjudgeRun.get_by(run_id = r_id, contest_id = c_id)
         if (not RequestCheckUserCapability(request, 'moodle/ejudge_submits:comment')):
             if ( int(run.user.id) != int(RequestGetUserId(request))):            
                 raise Exception("Auth Error")

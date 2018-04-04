@@ -10,7 +10,7 @@ from sqlalchemy.orm.exc import (
 
 from pynformatics.model.user import User
 from pynformatics.model.user_oauth_provider import UserOAuthProvider
-from pynformatics.model.run import Run
+from pynformatics.model.ejudge_run import EjudgeRun
 from pynformatics.models import DBSession
 from pynformatics.view.utils import *
 from pynformatics.utils.context import with_context
@@ -26,7 +26,7 @@ def add(request):
     try:
         if (not RequestCheckUserCapability(request, 'moodle/ejudge_submits:comment')):
             raise Exception("Auth Error")
-        run = Run.get_by(run_id = request.params['run_id'], contest_id = request.params['contest_id'])
+        run = EjudgeRun.get_by(run_id = request.params['run_id'], contest_id = request.params['contest_id'])
         if not run:
             raise Exception("Object not found")
         user = DBSession.query(User).filter(User.id == RequestGetUserId(request)).first()

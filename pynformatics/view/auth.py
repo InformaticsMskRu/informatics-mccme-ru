@@ -29,9 +29,10 @@ def auth_login(request, context):
         if not check_password(password, user.password_md5):
             raise AuthWrongUsernameOrPassword
 
-        moodle_user_id, moodle_session = moodle.sign_in(username=username, password=password)
-        if user.id == moodle_user_id:
-            request.response.set_cookie('MoodleSession', moodle_session)
+        # Сквозная авторизация в moodle. Бесполезна, потому что
+        # moodle_user_id, moodle_session = moodle.sign_in(username=username, password=password)
+        # if user.id == moodle_user_id:
+        #     request.response.set_cookie('MoodleSession', moodle_session)
     else:
         user = context.user
 

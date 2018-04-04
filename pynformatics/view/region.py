@@ -2,7 +2,7 @@ from pyramid.response import Response
 import random
 from pyramid.view import view_config
 from pyramid.httpexceptions import HTTPFound
-from pynformatics.model import SimpleUser, User, EjudgeContest, Run, Comment, EjudgeProblem, Problem
+from pynformatics.model import SimpleUser, User, EjudgeContest, EjudgeRun, Comment, EjudgeProblem, Problem
 from pynformatics.contest.ejudge.serve_internal import EjudgeContestCfg
 from pynformatics.contest.ejudge.ejudge_proxy import submit
 from pynformatics.view.utils import *
