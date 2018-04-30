@@ -64,6 +64,19 @@ class ProblemNotFound(NotFound):
     message = 'No problem with this id'
 
 
+# Problem Request
+class ProblemRequestNotFound(NotFound):
+    message = 'No problem request with this id'
+
+
+class ProblemRequestNoChanges(BadRequest):
+    message = 'No changes in the problem request'
+
+
+class ProblemRequestAlreadyReviewed(BadRequest):
+    message = 'Problem request is already reviewed'
+
+
 # Statement
 class StatementNotFound(NotFound):
     message = 'No statement with this id'
