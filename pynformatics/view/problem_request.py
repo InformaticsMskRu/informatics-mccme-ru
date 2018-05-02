@@ -11,7 +11,7 @@ from pynformatics.utils.exceptions import ProblemRequestNotFound, ProblemNotFoun
 @view_config(route_name='problem_request.create', renderer='json', request_method='POST')
 @with_context(require_auth=True)
 def create_problem_request(request, context):
-    request.json_body.get('provider')
+    #request.json_body.get('provider')
     problem_id = int(request.json_body.get('problem_id'))
     problem = DBSession.query(EjudgeProblem).filter(EjudgeProblem.id == problem_id).first()
 
@@ -32,14 +32,16 @@ def create_problem_request(request, context):
 
 
 @view_config(route_name='problem_requests.get', renderer='json')
-@with_context(require_auth=True, require_roles='admin')
+#@with_context(require_auth=True, require_roles='admin')
+@with_context
 def problem_requests_get(request, context):
     problem_requests = DBSession.query(ProblemRequest)
     return [problem_request.serialize(context) for problem_request in problem_requests]
 
 
 @view_config(route_name='problem_request.get', renderer='json')
-@with_context(require_auth=True, require_roles='admin')
+#@with_context(require_auth=True, require_roles='admin')
+@with_context
 def problem_request_get(request, context):
     problem_request_id = int(request.matchdict['problem_request_id'])
     problem_request = DBSession.query(ProblemRequest).filter(ProblemRequest.id == problem_request_id).first()
@@ -49,7 +51,8 @@ def problem_request_get(request, context):
 
 
 @view_config(route_name='problem_request_decline', renderer='json', request_method='POST')
-@with_context(require_auth=True, require_roles='admin')
+#@with_context(require_auth=True, require_roles='admin')
+@with_context
 def problem_request_decline(request, context):
     problem_request_id = int(request.json_body.get('problem_request_id'))
     problem_request = DBSession.query(ProblemRequest).filter(ProblemRequest.id == problem_request_id).first()
@@ -68,7 +71,8 @@ def problem_request_decline(request, context):
 
 
 @view_config(route_name='problem_request_approve', renderer='json', request_method='POST')
-@with_context(require_auth=True, require_roles='admin')
+#@with_context(require_auth=True, require_roles='admin')
+@with_context
 def problem_request_approve(request, context):
     problem_request_id = int(request.json_body.get('problem_request_id'))
     problem_request = DBSession.query(ProblemRequest).filter(
@@ -94,6 +98,6 @@ def problem_request_approve(request, context):
 
     with transaction.manager:
         DBSession.merge(problem_request)
-        DBSession.merge(problem)
+        #DBSession.merge(problem)
 
     return {'result': 'ok'}

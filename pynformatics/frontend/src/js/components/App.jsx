@@ -32,6 +32,8 @@ import '../isomorphic/containers/App/global.css';
 import '../../css/style.css';
 import '../../css/ionicons.min.css';
 
+import ProblemRequestsList from './ProblemRequest/ProblemRequestsList';
+import ProblemRequestReview from './ProblemRequest/ProblemRequestReview';
 
 const MATHJAX_CDN = 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.3/MathJax.js?config=TeX-MML-AM_CHTML';
 
@@ -106,6 +108,8 @@ export default class App extends React.Component {
                     <Route exact path="/problem/:problemId" component={ProblemPage} />
                     <Route exact path="/about" component={AboutPage} />
                     <ProtectedRoute exact path="/join/:groupInviteUrl" component={GroupInvitePage} />
+                    <Route exact path="/problem_requests" component={ProblemRequestsList}/>
+                    <Route exact path="/problem_request/:requestId" component={ProblemRequestReview}/>
                     <Route path="*" component={NotFound}/>
                   </Switch>
                 ) }
