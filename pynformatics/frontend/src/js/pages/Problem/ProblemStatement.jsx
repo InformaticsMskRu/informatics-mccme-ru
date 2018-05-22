@@ -1,6 +1,4 @@
 import React from "react";
-import 'brace/mode/html';
-import 'brace/theme/tomorrow';
 import styled from 'styled-components';
 import {palette} from 'styled-theme';
 

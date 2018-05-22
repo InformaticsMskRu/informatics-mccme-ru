@@ -104,8 +104,8 @@ export default class App extends React.Component {
                     <Route exact path="/contest/:statementId/problem/:problemRank" component={StatementPage} />
                     <Route exact path="/goto" component={TempGotoProblemPage} />
                     <Route exact path="/login" component={Login} />
+                    <Route exact path="/problem/:problemId/edit" component={EditProblem} />
                     <Route exact path="/problem/:problemId" component={ProblemPage} />
-                    <Route exact path="/edit-problem/:problemId" component={EditProblem} />
                     <Route exact path="/about" component={AboutPage} />
                     <ProtectedRoute exact path="/join/:groupInviteUrl" component={GroupInvitePage} />
                     <Route path="*" component={NotFound}/>

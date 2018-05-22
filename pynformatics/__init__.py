@@ -160,8 +160,8 @@ def main(global_config, **settings):
     config.add_route('problem_requests.get', '/problem_requests')
     config.add_route('problem_request.get', '/problem_request/{problem_request_id}')
 
-    config.add_route('problem_request_decline', '/problem_request_decline')
-    config.add_route('problem_request_approve', '/problem_request_approve')
+    config.add_route('problem_request.decline', '/problem_request/{problem_request_id}/decline')
+    config.add_route('problem_request.approve', '/problem_request/{problem_request_id}/approve')
 
 
     try:

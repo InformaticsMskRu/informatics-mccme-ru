@@ -2,22 +2,15 @@ import React from 'react';
 import * as problemActions from '../../actions/problemActions';
 import {connect} from 'react-redux';
 import MainContentWrapper from '../../components/utility/MainContentWrapper';
-import AceEditor from 'react-ace';
-import 'brace/mode/html';
-import 'brace/theme/tomorrow';
 import Button from '../../components/utility/Button';
 import styled from 'styled-components';
 import Box from '../../components/utility/Box';
 import {ProblemStatement} from "./ProblemStatement";
+import MonacoEditor from 'react-monaco-editor';
 
 const ProblemWrapper = styled.div`
   > div {
     height: auto;
-  }
-  
-  .asd {
-    font-size: 100%;
-    font: inherit;
   }
 `;
 
@@ -70,25 +63,15 @@ export default class EditProblem extends React.Component {
             <MainContentWrapper>
                 <ProblemWrapper>
                     <Box>
-                        <div>Название: <input onChange={event => this.setNewName(event.target.value)} type={'text'}
-                                              value={this.state.name}/></div>
-                        <styledNormalize>
-                            <AceEditor
-                                mode='html'
-                                theme='tomorrow'
-                                name='blah'
-                                value={this.state.code}
-                                showPrintMargin={true}
-                                showGutter={true}
-                                highlightActiveLine={true}
-                                onChange={(newCode) => this.setNewCode(newCode)}
-                                setOptions={{
-                                    enableBasicAutocompletion: true,
-                                    enableLiveAutocompletion: true,
-                                    enableSnippets: true,
-                                    showLineNumbers: true,
-                                }}/>
-                        </styledNormalize>
+                        <div>Название: <input
+                            onChange={event => this.setNewName(event.target.value)} type={'text'}
+                            value={this.state.name}/></div>
+                        <MonacoEditor
+                            height="600"
+                            language="html"
+                            value={this.state.code}
+                            onChange={(newCode) => this.setNewCode(newCode)}
+                        />
                         <h3>Предпросмотр:</h3>
                         <ProblemStatement statement={this.state.code}/>
                         <Button onClick={() => this.editProblem()} type="primary">Отправить</Button>
