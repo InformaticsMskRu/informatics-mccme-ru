@@ -44,25 +44,17 @@ class TestView__problem_request_create(TestCase):
             'content': 'New content',
         }
 
+        response = create_problem_request(self.request, self.context)
+        query = DBSession.query(ProblemRequest).filter(ProblemRequest.id == 1).all()
+
         assert_that(
-            calling(create_problem_request).with_args(self.request, self.context),
-            raises(transaction.interfaces.DoomedTransaction)
+            response,
+            equal_to({})
         )
-
-        with mock.patch('transaction.commit') as mock_transaction:
-            response = create_problem_request(self.request, self.context)
-            query = DBSession.query(ProblemRequest).filter(ProblemRequest.id == 1).all()
-
-            assert_that(
-                response,
-                has_entries({
-                    'result': 'ok',
-                })
-            )
-            assert_that(
-                len(query),
-                equal_to(1)
-            )
+        assert_that(
+            len(query),
+            equal_to(1)
+        )
 
     def test_no_problem(self):
         self.request.json_body = {

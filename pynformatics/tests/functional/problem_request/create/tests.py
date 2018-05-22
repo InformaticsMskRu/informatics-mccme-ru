@@ -66,9 +66,7 @@ class TestAPI__problem_request_create(TestCase):
             )
             assert_that(
                 response.json,
-                has_entries({
-                    'result': 'ok',
-                })
+                equal_to({})
             )
 
     def test_no_problem(self):

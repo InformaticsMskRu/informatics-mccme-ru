@@ -61,9 +61,8 @@ class TestAPI__problem_request_approve(TestCase):
         if session_user_id:
             self.set_session({'user_id': session_user_id})
         response = self.app.post_json(
-            url='/problem_request_approve',
+            url='/problem_request/{}/approve'.format(problem_request_id),
             params={
-                'problem_request_id': problem_request_id,
                 'name': name,
                 'content': content,
             },
@@ -72,19 +71,16 @@ class TestAPI__problem_request_approve(TestCase):
         return response
 
     def test_simple(self):
-        with mock.patch('transaction.commit') as mock_transaction:
-            response = self.send_request(
-                problem_request_id=self.problem_requests[0].id,
-                content='New content',
-                name='New name',
-                session_user_id=self.admin_user.id,
-            )
-            assert_that(
-                response.json,
-                has_entries({
-                    'result': 'ok',
-                })
-            )
+        response = self.send_request(
+            problem_request_id=self.problem_requests[0].id,
+            content='New content',
+            name='New name',
+            session_user_id=self.admin_user.id,
+        )
+        assert_that(
+            response.json,
+            equal_to({})
+        )
 
     def test_no_problem_request(self):
         response = self.send_request(

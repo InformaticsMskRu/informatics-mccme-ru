@@ -54,26 +54,20 @@ class TestAPI__problem_request_decline(TestCase):
         if session_user_id:
             self.set_session({'user_id': session_user_id})
         response = self.app.post_json(
-            url='/problem_request_decline',
-            params={
-                'problem_request_id': problem_request_id,
-            },
+            url='/problem_request/{}/decline'.format(problem_request_id),
             status=status_code,
         )
         return response
 
     def test_simple(self):
-        with mock.patch('transaction.commit') as mock_transaction:
-            response = self.send_request(
-                problem_request_id=self.problem_requests[0].id,
-                session_user_id=self.admin_user.id,
-            )
-            assert_that(
-                response.json,
-                has_entries({
-                    'result': 'ok',
-                })
-            )
+        response = self.send_request(
+            problem_request_id=self.problem_requests[0].id,
+            session_user_id=self.admin_user.id,
+        )
+        assert_that(
+            response.json,
+            equal_to({})
+        )
 
     def test_no_problem_request(self):
         response = self.send_request(

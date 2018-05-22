@@ -54,48 +54,33 @@ class TestView__problem_request_approve(TestCase):
 
 
     def test_simple(self):
-        self.request.json_body = {
-            'problem_request_id': self.problem_requests[2].id,
-        }
+        self.request.matchdict['problem_request_id'] = self.problem_requests[0].id
+        self.request.json_body = {}
         context = Context(user_id=self.admin_user.user_id)
 
+        problem_request = self.problem_requests[0]
+        response = problem_request_approve(self.request, context)
+        query = DBSession.query(ProblemRequest).filter(ProblemRequest.id == problem_request.id).first()
+        problem = problem_request.get_problem().serialize(context)
+
         assert_that(
-            calling(problem_request_approve).with_args(self.request, context),
-            raises(transaction.interfaces.DoomedTransaction)
+            response,
+            equal_to({})
+        )
+        assert_that(
+            query.status,
+            equal_to(ProblemRequestStatus.APPROVED.value)
+        )
+        assert_that(
+            problem,
+            has_entries({
+                'name': problem_request.name,
+                'content': problem_request.content,
+            })
         )
 
-        self.request.json_body = {
-            'problem_request_id': self.problem_requests[0].id,
-        }
-
-        with mock.patch('transaction.commit') as mock_transaction:
-            problem_request = self.problem_requests[0]
-            response = problem_request_approve(self.request, context)
-            query = DBSession.query(ProblemRequest).filter(ProblemRequest.id == problem_request.id).first()
-            problem = problem_request.get_problem().serialize(context)
-
-            assert_that(
-                response,
-                has_entries({
-                    'result': 'ok',
-                })
-            )
-            assert_that(
-                query.status,
-                equal_to(ProblemRequestStatus.APPROVED.value)
-            )
-            assert_that(
-                problem,
-                has_entries({
-                    'name': problem_request.name,
-                    'content': problem_request.content,
-                })
-            )
-
     def test_no_problem_request(self):
-        self.request.json_body = {
-            'problem_request_id': 1000,
-        }
+        self.request.matchdict['problem_request_id'] = 1000
         context = Context(user_id=self.admin_user.user_id)
 
         assert_that(
@@ -104,9 +89,8 @@ class TestView__problem_request_approve(TestCase):
         )
 
     def test_already_reviewed(self):
-        self.request.json_body = {
-            'problem_request_id': self.problem_requests[1].id,
-        }
+        self.request.matchdict['problem_request_id'] = self.problem_requests[1].id
+        self.request.json_body = {}
         context = Context(user_id=self.admin_user.user_id)
 
         assert_that(
@@ -115,8 +99,8 @@ class TestView__problem_request_approve(TestCase):
         )
 
     def test_no_changes(self):
+        self.request.matchdict['problem_request_id'] = self.problem_requests[0].id
         self.request.json_body = {
-            'problem_request_id': self.problem_requests[0].id,
             'name': self.problem.name,
             'content': self.problem.content,
         }
@@ -127,9 +111,7 @@ class TestView__problem_request_approve(TestCase):
         )
 
     def test_not_admin(self):
-        self.request.json_body = {
-            'problem_request_id': self.problem_requests[0].id,
-        }
+        self.request.matchdict['problem_request_id'] = self.problem_requests[0].id
         context = Context(user_id=self.user.user_id)
 
         assert_that(
