@@ -124,5 +124,8 @@ module.exports = {
         ws: true,
       }
     },
+  },
+  node: {
+    fs: 'empty'
   }
 };

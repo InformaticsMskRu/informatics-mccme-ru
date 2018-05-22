@@ -1,11 +1,10 @@
-import transaction
 from pyramid.view import view_config
 
 from pynformatics import DBSession, EjudgeProblem
 from pynformatics.model.problem_request import ProblemRequest, ProblemRequestStatus
 from pynformatics.utils.context import with_context
-from pynformatics.utils.exceptions import ProblemRequestNotFound, ProblemNotFound, ProblemRequestNoChanges, \
-    ProblemRequestAlreadyReviewed
+from pynformatics.utils.exceptions import ProblemRequestNotFound, ProblemNotFound, \
+    ProblemRequestNoChanges, ProblemRequestAlreadyReviewed
 
 
 @view_config(route_name='problem_request.create', renderer='json', request_method='POST')
@@ -27,8 +26,7 @@ def create_problem_request(request, context):
     problem_request = ProblemRequest(problem_id, user_id, name, content)
 
     DBSession.add(problem_request)
-    transaction.commit()
-    return {'result': 'ok'}
+    return {}
 
 
 @view_config(route_name='problem_requests.get', renderer='json')
@@ -44,18 +42,20 @@ def problem_requests_get(request, context):
 #@with_context
 def problem_request_get(request, context):
     problem_request_id = int(request.matchdict['problem_request_id'])
-    problem_request = DBSession.query(ProblemRequest).filter(ProblemRequest.id == problem_request_id).first()
+    problem_request = DBSession.query(ProblemRequest).filter(
+        ProblemRequest.id == problem_request_id).first()
     if not problem_request:
         raise ProblemRequestNotFound
     return problem_request.serialize(context)
 
 
-@view_config(route_name='problem_request_decline', renderer='json', request_method='POST')
+@view_config(route_name='problem_request.decline', renderer='json', request_method='POST')
 @with_context(require_auth=True, require_roles='admin')
 #@with_context
 def problem_request_decline(request, context):
-    problem_request_id = int(request.json_body.get('problem_request_id'))
-    problem_request = DBSession.query(ProblemRequest).filter(ProblemRequest.id == problem_request_id).first()
+    problem_request_id = int(request.matchdict['problem_request_id'])
+    problem_request = DBSession.query(ProblemRequest).filter(
+        ProblemRequest.id == problem_request_id).first()
 
     if not problem_request:
         raise ProblemRequestNotFound
@@ -66,15 +66,15 @@ def problem_request_decline(request, context):
     problem_request.status = ProblemRequestStatus.DECLINED.value
 
     DBSession.merge(problem_request)
-    transaction.commit()
-    return {'result': 'ok'}
+
+    return {}
 
 
-@view_config(route_name='problem_request_approve', renderer='json', request_method='POST')
+@view_config(route_name='problem_request.approve', renderer='json', request_method='POST')
 @with_context(require_auth=True, require_roles='admin')
 #@with_context
 def problem_request_approve(request, context):
-    problem_request_id = int(request.json_body.get('problem_request_id'))
+    problem_request_id = int(request.matchdict['problem_request_id'])
     problem_request = DBSession.query(ProblemRequest).filter(
         ProblemRequest.id == problem_request_id).first()
 
@@ -96,9 +96,7 @@ def problem_request_approve(request, context):
     problem.name = problem_request.name
     problem.content = problem_request.content
 
-
     DBSession.merge(problem_request)
-    #DBSession.merge(problem)
+    DBSession.merge(problem)
 
-    transaction.commit()
-    return {'result': 'ok'}
+    return {}
