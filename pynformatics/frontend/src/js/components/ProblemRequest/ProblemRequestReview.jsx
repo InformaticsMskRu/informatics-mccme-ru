@@ -5,12 +5,6 @@ import {Link, Redirect} from 'react-router-dom'
 import * as problemRequestReviewActions from '../../actions/problemRequestReviewActions';
 import MainContentWrapper from "../utility/MainContentWrapper";
 
-import {split as SplitEditor} from 'react-ace';
-import {diff as DiffEditor} from 'react-ace';
-import AceEditor from 'react-ace';
-
-import 'brace/mode/html';
-import 'brace/theme/tomorrow';
 
 import Box from '../../components/utility/Box';
 import Button from '../../components/utility/Button';
@@ -22,8 +16,12 @@ import {
   Row,
 } from '../../components/utility/Grid';
 
+import message from '../../isomorphic/components/feedback/message';
+import { MonacoDiffEditor } from 'react-monaco-editor';
+
+
 @connect(state => ({
-  problem_request: state.problem_request_review,
+  problemRequest: state.problemRequestReview,
 }))
 export default class ProblemRequestReview extends React.Component {
   constructor(props) {
@@ -31,7 +29,13 @@ export default class ProblemRequestReview extends React.Component {
     this.requestId = parseInt(this.props.match.params.requestId, 10);
     this.fetchRequest(this.requestId);
 
-    this.state = {name: undefined, content: undefined, problem: ''};
+    this.state = {
+      name: undefined,
+      content: undefined,
+      problem: '',
+      approveLoading: false,
+      declineLoading: false,
+    };
   }
 
   fetchRequest(requestId) {
@@ -39,14 +43,29 @@ export default class ProblemRequestReview extends React.Component {
   }
 
   approveRequest(requestId) {
+    this.setState({ approveLoading: true});
     this.props.dispatch(problemRequestReviewActions.approveRequest(
       requestId, this.state.name, this.state.content
-    ));
+    )).then(result => {
+      this.setState({ approveLoading: false});
+      message.success('Изменения приняты');
+    }).catch(error => {
+      this.setState({ approveLoading: false});
+      message.error(error.response.data.message);
+    });
   }
 
   declineRequest(requestId) {
-    this.props.dispatch(problemRequestReviewActions.declineRequest(requestId));
-    //return <Redirect to="/problem_requests"/>
+    this.setState({ declineLoading: true});
+    this.props.dispatch(problemRequestReviewActions.declineRequest(
+      requestId
+    )).then(result => {
+      this.setState({ declineLoading: false});
+      message.success('Изменения отклонены');
+    }).catch(error => {
+      this.setState({ declineLoading: false});
+      message.error(error.response.data.message);
+    });
   }
 
   updateName(newName) {
@@ -54,12 +73,11 @@ export default class ProblemRequestReview extends React.Component {
   }
 
   updateContent(newContent) {
-    this.state.content = newContent;
-    //this.setState({content: newContent});
+    this.setState({content: newContent});
   }
 
   render() {
-    const data = this.props.problem_request[this.requestId];
+    const data = this.props.problemRequest[this.requestId];
 
     if (!data) {
       return <MainContentWrapper>
@@ -74,6 +92,10 @@ export default class ProblemRequestReview extends React.Component {
       this.updateContent(data.content);
     }
 
+    const options = {
+      readOnly: data.status !== "review",
+      language: "html",
+    };
     return (
       <MainContentWrapper>
         <Box style={{height: 'auto', width: 'auto'}}>
@@ -96,26 +118,29 @@ export default class ProblemRequestReview extends React.Component {
             </Col>
           </Row>
           <Row gutter={gutter} type="flex" justify="center" style={{...rowStyle}}>
-            <DiffEditor
-              mode="html"
-              theme="tomorrow"
-              value={[data.problem.content, this.state.content]}
-              fontSize={14}
-              width="900px"
-              height="400px"
-              editorProps={{$blockScrolling: true}}
-              readOnly={data.status !== "review"}
-              onChange={([oldContent, newContent]) => this.updateContent(newContent)}
+            <MonacoDiffEditor
+              width="900"
+              height="400"
+              language="html"
+              original={data.problem.content}
+              value={this.state.content}
+              onChange={(newContent) => this.updateContent(newContent)}
+              options={options}
             />
           </Row>
           <Row gutter={gutter} type="flex" justify="center" style={{...rowStyle, marginTop: '10px'}}>
             {data.status === "review" ? (
               <div>
                 <Button onClick={() => this.approveRequest(this.requestId)}
+                        loading={this.state.approveLoading}
                         type="primary" style={{marginRight: '20px'}}>
                   Принять
                 </Button>
-                <Button onClick={() => this.declineRequest(this.requestId)} type="primary">Отклонить</Button>
+                <Button onClick={() => this.declineRequest(this.requestId)}
+                        loading={this.state.declineLoading}
+                        type="primary">
+                  Отклонить
+                </Button>
               </div>
             ) : (
               <div/>

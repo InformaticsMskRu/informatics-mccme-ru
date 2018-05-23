@@ -12,12 +12,11 @@ export function fetchRequest(requestId) {
 }
 
 export function approveRequest(requestId, name, content) {
-    const url = '/problem_request_approve';
+    const url = `/problem_request/${requestId}/approve`;
 
     return {
         type: 'POST_PROBLEM_REQUEST_APPROVE',
         payload: axios.post(url, {
-            problem_request_id: requestId,
             name: name,
             content: content
         }),
@@ -25,12 +24,10 @@ export function approveRequest(requestId, name, content) {
 }
 
 export function declineRequest(requestId) {
-    const url = '/problem_request_decline';
+    const url = `/problem_request/${requestId}/decline`;
 
     return {
         type: 'POST_PROBLEM_REQUEST_DECLINE',
-        payload: axios.post(url, {
-            problem_request_id: requestId
-        }),
+        payload: axios.post(url, {}),
     };
 }

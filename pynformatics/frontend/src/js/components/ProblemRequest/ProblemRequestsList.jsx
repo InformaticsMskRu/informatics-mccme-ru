@@ -8,8 +8,9 @@ import MainContentWrapper from "../utility/MainContentWrapper";
 import Box from '../../components/utility/Box';
 import {List} from 'antd';
 
+
 @connect(state => ({
-  problem_requests: state.problem_requests_list,
+  problemRequests: state.problemRequestsList,
 }))
 export default class ProblemRequestsList extends React.Component {
   constructor(props) {
@@ -22,7 +23,7 @@ export default class ProblemRequestsList extends React.Component {
   }
 
   render() {
-    const data = this.props.problem_requests;
+    const data = this.props.problemRequests;
 
     if (!data) {
       return <MainContentWrapper>
@@ -36,7 +37,7 @@ export default class ProblemRequestsList extends React.Component {
           <List
             header={<div><h3>Список отредактированных задач</h3></div>}
             bordered
-            dataSource={Object.keys(data).map((i)  => data[i])}
+            dataSource={Object.keys(data).reverse().map((i)  => data[i])}
             renderItem={item => (
               <List.Item>
                 <List.Item.Meta
@@ -52,21 +53,6 @@ export default class ProblemRequestsList extends React.Component {
           />
         </Box>
       </MainContentWrapper>
-
     );
   }
 }
-/*
-<div>
-  <ul>
-    {Object.keys(data).map((i)  =>
-      <li key={i}>
-        id: {data[i].id},
-        status: {data[i].status},
-        problem: {data[i].problem.id} {data[i].problem.name},
-        link: {<Link to={`/problem_request/${data[i].id}`}> Ссылка</Link>}
-      </li>
-    )}
-  </ul>
-</div>
-*/

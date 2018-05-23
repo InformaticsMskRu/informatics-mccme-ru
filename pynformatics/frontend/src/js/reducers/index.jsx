@@ -4,8 +4,8 @@ import { reducer as form } from 'redux-form';
 import context from './contextReducer';
 import group from './groupReducer';
 import problems from './problemsReducer';
-import problem_request_review from './problemRequestReviewReducer';
-import problem_requests_list from './problemRequestsListReducer';
+import problemRequestReview from './problemRequestReviewReducer';
+import problemRequestsList from './problemRequestsListReducer';
 import statements from './statementsReducer';
 import ui from './uiReducer';
 import user from './userReducer';
@@ -17,8 +17,8 @@ export default combineReducers({
   group,
   form,
   problems,
-  problem_request_review,
-  problem_requests_list,
+  problemRequestReview,
+  problemRequestsList,
   statements,
   ui,
   user,
