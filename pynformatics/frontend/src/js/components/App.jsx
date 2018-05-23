@@ -23,6 +23,7 @@ import NotFound from '../pages/Errors/NotFound';
 import ProblemPage from '../pages/Problem/Problem';
 import StatementPage from '../pages/Statement/Statement';
 import TempGotoProblemPage from '../pages/TempGotoProblem';
+import EditProblem from "../pages/Problem/EditProblem";
 
 import * as bootstrapActions from '../actions/bootstrapActions';
 import * as uiActions from '../actions/uiActions';
@@ -32,6 +33,8 @@ import '../isomorphic/containers/App/global.css';
 import '../../css/style.css';
 import '../../css/ionicons.min.css';
 
+import ProblemRequestsList from './ProblemRequest/ProblemRequestsList';
+import ProblemRequestReview from './ProblemRequest/ProblemRequestReview';
 
 const MATHJAX_CDN = 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.3/MathJax.js?config=TeX-MML-AM_CHTML';
 
@@ -103,9 +106,12 @@ export default class App extends React.Component {
                     <Route exact path="/contest/:statementId/problem/:problemRank" component={StatementPage} />
                     <Route exact path="/goto" component={TempGotoProblemPage} />
                     <Route exact path="/login" component={Login} />
+                    <Route exact path="/problem/:problemId/edit" component={EditProblem} />
                     <Route exact path="/problem/:problemId" component={ProblemPage} />
                     <Route exact path="/about" component={AboutPage} />
                     <ProtectedRoute exact path="/join/:groupInviteUrl" component={GroupInvitePage} />
+                    <Route exact path="/problem_requests" component={ProblemRequestsList}/>
+                    <Route exact path="/problem_request/:requestId" component={ProblemRequestReview}/>
                     <Route path="*" component={NotFound}/>
                   </Switch>
                 ) }

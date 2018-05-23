@@ -112,3 +112,19 @@ export function fetchProblemStandings(problemId) {
     });
   }
 }
+
+export function editProblem(name, content, problemId) {
+    const url = `/problem_request`;
+
+    return {
+        type: 'EDIT_PROBLEM',
+        payload: axios.post(url, {
+            name,
+            content,
+            problem_id: problemId
+        }),
+        meta: {
+            problemId,
+        },
+    };
+}
