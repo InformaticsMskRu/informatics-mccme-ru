@@ -4,6 +4,9 @@ import { STATUSES } from '../constants';
 
 
 const initialState = {
+    problemRequest: {
+        fetching: false,
+    }
 };
 
 export default function reducer(state=initialState, action) {
@@ -109,7 +112,7 @@ export default function reducer(state=initialState, action) {
       };
     case 'GET_PROBLEM_RUN_PROTOCOL_REJECTED':
       return state;
-    
+
     case 'GET_PROBLEM_STANDINGS_FULFILLED':
       return {
         ...state,
@@ -118,6 +121,33 @@ export default function reducer(state=initialState, action) {
           standings: actions.payload.data,
         }
       };
+
+      case 'EDIT_PROBLEM_PENDING':
+          console.log(action);
+          return {
+              ...state,
+              problemRequest: {
+                  fetching: true,
+              },
+          };
+
+      case 'EDIT_PROBLEM_FULFILLED':
+          console.log(action);
+          return {
+              ...state,
+              problemRequest: {
+                  fetching: false,
+              },
+          };
+
+      case 'EDIT_PROBLEM_REJECTED':
+          console.log(action);
+          return {
+              ...state,
+              problemRequest: {
+                  fetching: false,
+              },
+          };
   }
   return state;
 }

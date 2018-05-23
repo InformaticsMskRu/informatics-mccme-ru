@@ -7,6 +7,7 @@ import styled from 'styled-components';
 import Box from '../../components/utility/Box';
 import {ProblemStatement} from "./ProblemStatement";
 import MonacoEditor from 'react-monaco-editor';
+import message from '../../isomorphic/components/feedback/message';
 
 const ProblemWrapper = styled.div`
   > div {
@@ -31,7 +32,9 @@ export default class EditProblem extends React.Component {
     }
 
     editProblem() {
-        this.props.dispatch(problemActions.editProblem(this.state.name, this.state.code, this.problemId));
+        this.props.dispatch(problemActions.editProblem(this.state.name, this.state.code, this.problemId))
+            .then(() => message.success('Изменения приняты'))
+            .catch(error => message.error(error.response.data.message));
     }
 
     setNewName(name) {
@@ -74,7 +77,12 @@ export default class EditProblem extends React.Component {
                         />
                         <h3>Предпросмотр:</h3>
                         <ProblemStatement statement={this.state.code}/>
-                        <Button onClick={() => this.editProblem()} type="primary">Отправить</Button>
+                        <Button
+                            onClick={() => this.editProblem()}
+                            type="primary"
+                            loading={this.props.problems.problemRequest.fetching}>
+                            Отправить
+                        </Button>
                     </Box>
                 </ProblemWrapper>
             </MainContentWrapper>
