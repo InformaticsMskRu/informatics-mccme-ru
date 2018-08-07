@@ -9,6 +9,7 @@ from collections import OrderedDict
 
 from pyramid.view import view_config
 from pyramid.response import Response
+import requests
 
 from pynformatics.model import User, EjudgeContest, Run, Comment, EjudgeProblem, Problem, Statement
 from pynformatics.contest.ejudge.serve_internal import EjudgeContestCfg
@@ -173,9 +174,18 @@ def protocol_get_outp(request):
     run = Run.get_by(run_id = run_id, contest_id = contest_id)    
     return run.get_output_file(int(request.matchdict['test_num']), tp='o')
 
+
+def check_captcha(resp, secret):
+    return requests.get("https://www.google.com/recaptcha/api/siteverify?secret={}&response={}".format(
+       secret,
+       resp)).json().get("success", False)
+
 @view_config(route_name="protocol.get_submit_archive", renderer="string")
-@check_global_role(("admin"))
+@check_global_role(("ejudge_teacher", "admin"))
 def get_submit_archive(request):
+    recaptha_resp = request.params['g-recaptcha-response']
+    if not check_captcha(recaptha_resp, request.registry.settings["recaptcha.secret"]):
+        return "Не получилось"
     contest_id = int(request.matchdict['contest_id'])
     run_id = int(request.matchdict['run_id'])
     sources = "sources" in request.params
