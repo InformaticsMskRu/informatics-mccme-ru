@@ -49,10 +49,10 @@ def get_protocol(request):
                 res = OrderedDict()
                 for num in range(1, len(run.tests.keys()) + 1):
                     res[str(num)] = run.tests[str(num)]
-                return {"tests": res, "host": run.host}
+                return {"tests": res, "host": run.host, "compiler_output": run.compiler_output}
             else:
                 try:
-                    return {"tests":run.tests["1"], "host": run.host}
+                    return {"tests":run.tests["1"], "host": run.host, "compiler_output": run.compiler_output}
                 except KeyError as e:
                     return {"result" : "error", "message" : e.__str__(), "stack" : traceback.format_exc()}
         except Exception as e:
@@ -61,7 +61,7 @@ def get_protocol(request):
         return {"result" : "error", "message" : e.__str__(), "stack" : traceback.format_exc(), "protocol": run.protocol}
 
 @view_config(route_name="protocol.get_full", renderer="json")
-@check_global_role(("teacher", "ejudge_teacher", "admin"))
+@check_global_role(("ejudge_teacher", "admin"))
 def protocol_get_full(request):
     contest_id = int(request.matchdict['contest_id'])
     run_id = int(request.matchdict['run_id'])
@@ -148,7 +148,7 @@ def protocol_get_full(request):
     return {"tests": prot, "audit": run.get_audit()}
 
 @view_config(route_name="protocol.get_test", renderer="string")
-@check_global_role(("teacher", "ejudge_teacher", "admin"))
+@check_global_role(("ejudge_teacher", "admin"))
 def protocol_get_test(request):
     contest_id = int(request.matchdict['contest_id'])
     run_id = int(request.matchdict['run_id'])
@@ -157,7 +157,7 @@ def protocol_get_test(request):
     return prob.get_test(int(request.matchdict['test_num']), prob.get_test_size(int(request.matchdict['test_num'])))
 
 @view_config(route_name="protocol.get_corr", renderer="string")
-@check_global_role(("teacher", "ejudge_teacher", "admin"))
+@check_global_role(("ejudge_teacher", "admin"))
 def protocol_get_corr(request):
     contest_id = int(request.matchdict['contest_id'])
     run_id = int(request.matchdict['run_id'])
@@ -166,7 +166,7 @@ def protocol_get_corr(request):
     return prob.get_corr(int(request.matchdict['test_num']), prob.get_corr_size(int(request.matchdict['test_num'])))
 
 @view_config(route_name="protocol.get_outp", renderer="string")
-@check_global_role(("teacher", "ejudge_teacher", "admin"))
+@check_global_role(("ejudge_teacher", "admin"))
 def protocol_get_outp(request):
     contest_id = int(request.matchdict['contest_id'])
     run_id = int(request.matchdict['run_id'])
@@ -174,7 +174,7 @@ def protocol_get_outp(request):
     return run.get_output_file(int(request.matchdict['test_num']), tp='o')
 
 @view_config(route_name="protocol.get_submit_archive", renderer="string")
-@check_global_role(("teacher", "ejudge_teacher", "admin"))
+@check_global_role(("admin"))
 def get_submit_archive(request):
     contest_id = int(request.matchdict['contest_id'])
     run_id = int(request.matchdict['run_id'])

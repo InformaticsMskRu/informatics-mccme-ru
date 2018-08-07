@@ -88,7 +88,10 @@ class Run(Base):
             self.tests_count = int(rep.getAttribute('run-tests'))
             self.status_string = rep.getAttribute('status')
             self.host = self.xml.getElementsByTagName('host')[0].firstChild.nodeValue
-
+            try:
+                self.compiler_output = self.xml.getElementsByTagName('compiler_output')[0].firstChild.nodeValue
+            except:
+                self.compiler_output = ""    
             for node in self.xml.getElementsByTagName('test'):
                 number = node.getAttribute('num')
                 status = node.getAttribute('status')
