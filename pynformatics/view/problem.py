@@ -1,22 +1,19 @@
-from pyramid.view import view_config
-from pynformatics.model import SimpleUser, User, EjudgeContest, Run, Comment, EjudgeProblem, Problem
-from pynformatics.contest.ejudge.serve_internal import EjudgeContestCfg
-from pynformatics.contest.ejudge.ejudge_proxy import submit
-from pynformatics.view.utils import *
-import sys, traceback
-#import jsonpickle, demjson
-from phpserialize import *
-from pynformatics.view.utils import *
-from pynformatics.models import DBSession
-import transaction
-#import jsonpickle, demjson
-import json
-import os
-from pynformatics.models import DBSession
-#from webhelpers.html import *
-from xml.etree.ElementTree import ElementTree
-import xmlrpc.client
 import io
+import os
+import traceback
+import xmlrpc.client
+
+import requests
+import transaction
+import pyramid.httpexceptions as exc
+from pyramid.view import view_config
+
+from pynformatics.contest.ejudge.ejudge_proxy import submit, status_repr
+from pynformatics.contest.ejudge.serve_internal import EjudgeContestCfg
+from pynformatics.model import SimpleUser, EjudgeProblem, Problem
+from pynformatics.models import DBSession
+from pynformatics.view.utils import *
+
 
 def checkCapability(request):
     if (not RequestCheckUserCapability(request, 'moodle/ejudge_contests:reload')):
@@ -40,17 +37,37 @@ def problem_show_limits(request):
         return {"result" : "error", "message" : e.__str__(), "stack" : traceback.format_exc()}
 
 
-@view_config(route_name='problem.submit', renderer='json')
+@view_config(route_name='problem.submit', renderer='json',  request_method='POST')
 def problem_submits(request):
     user_id = RequestGetUserId(request)
-    user = DBSession.query(SimpleUser).filter(SimpleUser.id == user_id).first()
     lang_id = request.params["lang_id"]
     problem_id = request.matchdict["problem_id"]
-    problem = DBSession.query(EjudgeProblem).filter(EjudgeProblem.id == problem_id).first()
     input_file = request.POST['file'].file
-    filename = request.POST['file'].filename
-    ejudge_url = request.registry.settings['ejudge.new_client_url']
-    return {'res' : submit(input_file, problem.ejudge_contest_id, problem.problem_id, lang_id, user.login, user.password, filename, ejudge_url, user_id)}
+
+    _data = {
+        'lang_id': lang_id,
+        'user_id': user_id,
+    }
+    _prob_id = problem_id
+    url = 'http://localhost:12346/problem/trusted/{}/submit_v2'.format(_prob_id)
+    try:
+        _resp = requests.post(url, files={'file': input_file}, data=_data)
+    except requests.exceptions.RequestException:
+        raise exc.HTTPInternalServerError('Can not send submit to submit queue')
+    if _resp.status_code != 200:
+        raise exc.HTTPInternalServerError('Something went wrong while submit sending')  # Поведение не изменилось
+
+    # TODO: Надо провести все проверки, которые делает ej на отправляемый файл
+    # TODO: ещё до тестирования, и вернуть нужный код ошибки
+    code = 0  # Задача отправлена на проверку
+    return {
+        'res':
+            {
+                'code': code,
+                'message': status_repr[0]
+            }
+    }
+
 
 @view_config(route_name='problem.ant.submit', renderer='json')
 def problem_ant_submits(request):
