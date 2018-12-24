@@ -12,6 +12,7 @@ from pynformatics.contest.ejudge.ejudge_proxy import submit, status_repr
 from pynformatics.contest.ejudge.serve_internal import EjudgeContestCfg
 from pynformatics.model import SimpleUser, EjudgeProblem, Problem
 from pynformatics.models import DBSession
+from pynformatics.utils.proxied_request_helpers import peek_request_args
 from pynformatics.view.utils import *
 
 
@@ -244,7 +245,7 @@ def problem_runs_filter_proxy(request):
     try:
         checkCapability(request)
     except Exception as e:
-        return {"result": "error", "message": e.__str__(), "stack": traceback.format_exc()}
+        return {"result": "error", "message": str(e), "stack": traceback.format_exc()}
 
     problem_id = request.matchdict.get('problem_id')
     if problem_id is None:
@@ -255,11 +256,7 @@ def problem_runs_filter_proxy(request):
                      'count', 'page',
                      'from_timestamp', 'to_timestamp']
 
-    params = {}
-    for param in filter_params:
-        req_param = request.params.get(param)
-        if req_param is not None:
-            params[param] = req_param
+    params, _ = peek_request_args(request, filter_params)
 
     try:
         resp = requests.get('http://localhost:12346/problem/{}/submissions/'.format(problem_id), params=params)
@@ -267,5 +264,4 @@ def problem_runs_filter_proxy(request):
     except Exception as e:
         print('Request to :12346 failed!')
         print(str(e))
-        return {"result": "error", "message": e.__str__(), "stack": traceback.format_exc()}
-
+        return {"result": "error", "message": str(e), "stack": traceback.format_exc()}
