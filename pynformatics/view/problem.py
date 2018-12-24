@@ -237,3 +237,35 @@ def problem_get_corr(request):
         return {"num" : int(test_num), "content" : problem.get_corr(test_num)}
     except Exception as e:
         return {"result" : "error", "num" : int(request.matchdict['test_num']), "content" : e.__str__(), "stack" : traceback.format_exc()}
+
+
+@view_config(route_name='problem.filter_runs', renderer='json')
+def problem_runs_filter_proxy(request):
+    try:
+        checkCapability(request)
+    except Exception as e:
+        return {"result": "error", "message": e.__str__(), "stack": traceback.format_exc()}
+
+    problem_id = request.matchdict.get('problem_id')
+    if problem_id is None:
+        return {"result": "error", "message": 'Problem id required'}
+
+    filter_params = ['user_id', 'group_id',
+                     'lang_id', 'status_id', 'statement_id',
+                     'count', 'page',
+                     'from_timestamp', 'to_timestamp']
+
+    params = {}
+    for param in filter_params:
+        req_param = request.params.get(param)
+        if req_param is not None:
+            params[param] = req_param
+
+    try:
+        resp = requests.get('http://localhost:12346/problem/{}/submissions/'.format(problem_id), params=params)
+        return resp.json()
+    except Exception as e:
+        print('Request to :12346 failed!')
+        print(str(e))
+        return {"result": "error", "message": e.__str__(), "stack": traceback.format_exc()}
+
