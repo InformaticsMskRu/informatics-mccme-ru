@@ -15,6 +15,7 @@ import gzip
 
 class Run(Base):
     __tablename__ = "runs"
+    # Constraint надо  удалить, в БД его нет
     __table_args__ = (
         ForeignKeyConstraint(['contest_id', 'prob_id'], ['moodle.mdl_ejudge_problem.ejudge_contest_id', 'moodle.mdl_ejudge_problem.problem_id']),
         ForeignKeyConstraint(['user_id'], ['moodle.mdl_user.ej_id']),
