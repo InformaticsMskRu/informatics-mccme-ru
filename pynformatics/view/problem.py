@@ -50,7 +50,24 @@ def problem_submits(request):
     input_file = request.POST['file'].file
     filename = request.POST['file'].filename
     ejudge_url = request.registry.settings['ejudge.new_client_url']
-    return {'res' : submit(input_file, problem.ejudge_contest_id, problem.problem_id, lang_id, user.login, user.password, filename, ejudge_url, user_id)}
+
+    res = submit(input_file, problem.ejudge_contest_id, problem.problem_id, lang_id, user.login, user.password, filename, ejudge_url, user_id)
+    try:
+        input_file.seek(0)
+        print('#######\nin try')
+        _data = {
+            'lang_id': lang_id,
+            'user_id': user_id,
+        }
+        _prob_id = problem_id
+        url = 'http://localhost:12346/problem/trusted/{}/submit_v2'.format(_prob_id)
+        import requests
+        _resp = requests.post(url, files={'file': input_file}, data=_data)
+        print('Response from :12346', _resp)
+    except Exception as e:
+        print(e)
+
+    return {'res': res}
 
 @view_config(route_name='problem.ant.submit', renderer='json')
 def problem_ant_submits(request):

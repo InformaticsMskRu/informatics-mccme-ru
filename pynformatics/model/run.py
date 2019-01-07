@@ -180,7 +180,6 @@ class Run(Base):
     @lazy      
     def _get_protocol(self): 
         filename = submit_path(protocols_path, self.contest_id, self.run_id)
-#        return filename
         if filename != '':
             return get_protocol_from_file(filename)
         else:
