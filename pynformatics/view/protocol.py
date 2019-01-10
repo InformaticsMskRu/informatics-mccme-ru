@@ -40,113 +40,62 @@ signal_description = {
 
 @view_config(route_name='protocol.get', renderer='json')
 def get_protocol(request):
-    try:
-        contest_id = int(request.matchdict['contest_id'])
-        run_id = int(request.matchdict['run_id'])
-        run = Run.get_by(run_id = run_id, contest_id = contest_id)
-        try:
-            run.tested_protocol
-            if (run.user.statement.filter(Statement.olympiad == 1).filter(Statement.timestop > time.time()).filter(Statement.timestart < time.time()).count() == 0):
-                res = OrderedDict()
-                for num in range(1, len(run.tests.keys()) + 1):
-                    res[str(num)] = run.tests[str(num)]
-                return {"tests": res, "host": run.host, "compiler_output": run.compiler_output}
-            else:
-                try:
-                    return {"tests":run.tests["1"], "host": run.host, "compiler_output": run.compiler_output}
-                except KeyError as e:
-                    return {"result" : "error", "message" : e.__str__(), "stack" : traceback.format_exc()}
-        except Exception as e:
-            return {"result" : "error", "message" : run.compilation_protocol, "error" : e.__str__(), "stack" : traceback.format_exc(), "protocol": run.protocol}
-    except Exception as e: 
-        return {"result" : "error", "message" : e.__str__(), "stack" : traceback.format_exc(), "protocol": run.protocol}
+    # Короче в чём разница protocol и full protocol
+    # В full_protocol есть audit
+    # И в тестах (protocol[tests] возвращает iterable)
+    # А в protocol[tests][i] лежат дополнительно:
+    # [input, big_input, corr, big_corr, output,
+    #  big_output, checker_output, error_output, extra]
+    run_id = int(request.matchdict['run_id'])
+    url = f'localhost:12346/problem/run/{run_id}/protocol'
+    response = requests.get(url)
+    response_data = response.json()
+
+    if response_data['status'] != 'success':
+        return response_data
+
+    data = response_data['data']
+
+    excluded_fields = ['audit']
+    excluded_test_fields = ['input', 'big_input', 'corr', 'big_corr', 'output',
+                            'big_output', 'checker_output', 'error_output', 'extra']
+
+    for field in excluded_fields:
+        data.pop(field, None)
+
+    tests: dict = data.get('tests')
+    if not tests:
+        return data
+
+
+    for _, test in tests.items():
+        for field in excluded_test_fields:
+            test.pop(field, None)
+
+    return data
+
 
 @view_config(route_name="protocol.get_full", renderer="json")
 @check_global_role(("ejudge_teacher", "admin"))
 def protocol_get_full(request):
-    contest_id = int(request.matchdict['contest_id'])
+    # Короче в чём разница protocol и full protocol
+    # В full_protocol есть audit
+    # И в тестах (protocol[tests] возвращает iterable)
+    # А в protocol[tests][i] лежат дополнительно:
+    # [input, big_input, corr, big_corr, output,
+    #  big_output, checker_output, error_output, extra]
     run_id = int(request.matchdict['run_id'])
-    run = Run.get_by(run_id = run_id, contest_id = contest_id)
-    prob = run.problem
-    out_path = "/home/judges/{0:06d}/var/archive/output/{1}/{2}/{3}/{4:06d}.zip".format(
-        contest_id, to32(run_id // (32 ** 3) % 32), to32(run_id // (32 ** 2) % 32), to32(run_id // 32 % 32), run_id
-    )
-    prot = get_protocol(request)
-    if "result" in prot and prot["result"] == "error":
-        return prot
 
-    prot = prot["tests"]
-    out_arch = None
+    url = f'localhost:12346/problem/run/{run_id}/protocol'
+    response = requests.get(url)
+    response_data = response.json()
 
-    for test_num in prot:
-        judge_info = run.judge_tests_info[test_num]
+    if response_data['status'] != 'success':
+        return response_data
 
-        if prob.get_test_size(int(test_num)) <= 255:
-            prot[test_num]["input"] = prob.get_test(int(test_num))
-            prot[test_num]["big_input"] = False
-        else:
-            prot[test_num]["input"] = prob.get_test(int(test_num)) + "...\n"
-            prot[test_num]["big_input"] = True
+    data = response_data['data']
 
-        if prob.get_corr_size(int(test_num)) <= 255:
-            prot[test_num]["corr"] = prob.get_corr(int(test_num))
-            prot[test_num]["big_corr"] = False
-        else:
-            prot[test_num]["corr"] = prob.get_corr(int(test_num)) + "...\n"
-            prot[test_num]["big_corr"] = True
-
-        try:
-            if run.get_output_file_size(int(test_num), tp='o') <= 255:
-                prot[test_num]["output"] = run.get_output_file(int(test_num), tp='o')
-                prot[test_num]["big_output"] = False
-            else:
-                prot[test_num]["output"] = run.get_output_file(int(test_num), tp='o', size=255) + "...\n"
-                prot[test_num]["big_output"] = True
-        except OSError as e:
-            prot[test_num]["output"] = judge_info.get("output", "")
-            prot[test_num]["big_output"] = False
-        
-            
-        try:
-            if run.get_output_file_size(int(test_num), tp='c') <= 255:
-                prot[test_num]["checker_output"] = run.get_output_file(int(test_num), tp='c')
-            else:
-                prot[test_num]["checker_output"] = run.get_output_file(int(test_num), tp='c', size=255) + "...\n"
-        except OSError as e:
-            prot[test_num]["checker_output"] = judge_info.get("checker", "")
-        
-        try:
-            if run.get_output_file_size(int(test_num), tp='e') <= 255:
-                prot[test_num]["error_output"] = run.get_output_file(int(test_num), tp='e')
-            else:
-                prot[test_num]["error_output"] = run.get_output_file(int(test_num), tp='e', size=255) + "...\n"
-        except OSError as e:
-            prot[test_num]["error_output"] = judge_info.get("stderr", "")
-
-        if "term-signal" in judge_info:
-            prot[test_num]["extra"] = "Signal {0}. ".format(judge_info["term-signal"]) + signal_description[judge_info["term-signal"]]
-        if "exit-code" in judge_info:
-            if "extra" not in prot[test_num]:
-                prot[test_num]["extra"] = str()
-            prot[test_num]["extra"] = prot[test_num]["extra"] + "\n Exit code {0}. ".format(judge_info["exit-code"])
-    
-
-        for type_ in [("o", "output"), ("c", "checker_output"), ("e", "error_output")]:
-            file_name = "{0:06d}.{1}".format(int(test_num), type_[0])
-            if out_arch is None:
-                try:
-                    out_arch = zipfile.ZipFile(out_path, "r")
-                    names = set(out_arch.namelist())
-                except:
-                    names = {}
-            if file_name not in names or type_[1] in prot[test_num]:
-                continue
-            with out_arch.open(file_name, 'r') as f:
-                prot[test_num][type_[1]] = f.read(1024).decode("utf-8") + "...\n"
-
-    if out_arch:
-        out_arch.close()
-    return {"tests": prot, "audit": run.get_audit()}
+    return data
 
 @view_config(route_name="protocol.get_test", renderer="string")
 @check_global_role(("ejudge_teacher", "admin"))
