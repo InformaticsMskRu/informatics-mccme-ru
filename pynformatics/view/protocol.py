@@ -20,9 +20,8 @@ from pynformatics.models import DBSession
 from pynformatics.models import DBSession
 from pynformatics.model.run import to32, get_lang_ext_by_id
 from pynformatics.utils.check_role import check_global_role
-from pynformatics.view.utils import del_keys
 
-ignal_dscription = {
+signal_description = {
     1: "Hangup detected on controlling terminal or death of controlling process",
     2: "Interrupt from keyboard",
     3: "Quit from keyboard",
@@ -62,14 +61,16 @@ def get_protocol(request):
         return content
 
     data = content['data']
-    del_keys(data, PROTOCOL_EXCLUDED_FIELDS)
+    for field in PROTOCOL_EXCLUDED_FIELDS:
+        data.pop(field, None)
     tests: dict = data.get('tests')
 
     if not tests:
         return data
 
     for test in tests.values():
-        del_keys(test, PROTOCOL_EXCLUDED_TEST_FIELDS)
+        for field in PROTOCOL_EXCLUDED_TEST_FIELDS:
+            test.pop(field, None)
 
     return data
 
@@ -172,6 +173,6 @@ def get_submit_archive(request):
     zf.close()
     archive.seek(0)
     response = Response(content_type="application/zip",
-                        content_disposition='attachment; filename="archive_{0}_{1}.zip"'.format(
-                            contest_id, run_id), body=archive.read())
+                        content_disposition='attachment; filename="archive_{0}_{1}.zip"'
+                        .format(contest_id, run_id), body=archive.read())
     return response
