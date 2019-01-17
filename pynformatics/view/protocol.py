@@ -47,7 +47,7 @@ def get_protocol(request):
     # [input, big_input, corr, big_corr, output,
     #  big_output, checker_output, error_output, extra]
     run_id = int(request.matchdict['run_id'])
-    url = f'localhost:12346/problem/run/{run_id}/protocol'
+    url = 'localhost:12346/problem/run/{}/protocol'.format(run_id)
     response = requests.get(url)
     response_data = response.json()
 
@@ -63,10 +63,9 @@ def get_protocol(request):
     for field in excluded_fields:
         data.pop(field, None)
 
-    tests: dict = data.get('tests')
+    tests = data.get('tests')
     if not tests:
         return data
-
 
     for _, test in tests.items():
         for field in excluded_test_fields:
@@ -86,7 +85,7 @@ def protocol_get_full(request):
     #  big_output, checker_output, error_output, extra]
     run_id = int(request.matchdict['run_id'])
 
-    url = f'localhost:12346/problem/run/{run_id}/protocol'
+    url = 'localhost:12346/problem/run/{}/protocol'.format(run_id)
     response = requests.get(url)
     response_data = response.json()
 
