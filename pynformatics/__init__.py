@@ -43,8 +43,8 @@ def main(global_config, **settings):
     config.add_route('comment.get_unread_limit_html', '/comment/unread/{start}/{stop}/html')
     config.add_route('comment.get_count_unread', '/comment/unread/count')
     
-    config.add_route('protocol.get', '/protocol/get/{contest_id}/{run_id}')
-    config.add_route('protocol.get_full', '/protocol/get-full/{contest_id}/{run_id}')
+    config.add_route('protocol.get', '/protocol/get/{run_id}')
+    config.add_route('protocol.get_full', '/protocol/get-full/{run_id}')
     config.add_route('protocol.get_test', '/protocol/get_test/{contest_id}/{run_id}/{test_num}')
     config.add_route('protocol.get_corr', '/protocol/get_corr/{contest_id}/{run_id}/{test_num}')
     config.add_route('protocol.get_outp', '/protocol/get_output/{contest_id}/{run_id}/{test_num}')
