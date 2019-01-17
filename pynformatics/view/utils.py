@@ -37,6 +37,16 @@ def getContestStrId(id):
     while len(res) < 6:
         res = "0" + res
     return res
+
+
+def del_keys(_dict, keys):
+    for key in keys:
+        try:
+            del _dict[key]
+        except KeyError:
+            pass
+
+
         
 #def RequestGetUserCapability(request, capability):
 #    str = "+++"
