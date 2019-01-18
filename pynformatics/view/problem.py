@@ -265,3 +265,19 @@ def problem_runs_filter_proxy(request):
         print('Request to :12346 failed!')
         print(str(e))
         return {"result": "error", "message": str(e), "stack": traceback.format_exc()}
+
+
+@view_config(route_name='problem.runs.source', renderer='json')
+def problem_get_run_source(request):
+    run_id = request.matchdict.get('run_id')
+    if run_id is None:
+        return {"result": "error", "message": 'Run id required'}
+
+
+    try:
+        resp = requests.get('http://localhost:12346/problem/run/{}/source/'.format(run_id))
+        return resp.json()
+    except Exception as e:
+        print('Request to :12346 failed!')
+        print(str(e))
+        return {"result": "error", "message": str(e), "stack": traceback.format_exc()}
