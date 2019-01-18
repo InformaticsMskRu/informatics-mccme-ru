@@ -273,8 +273,26 @@ def problem_get_run_source(request):
     if run_id is None:
         return {"result": "error", "message": 'Run id required'}
 
+    user_id = RequestGetUserId(request)  # Returns -1 if not authorised
+
+    if user_id == -1:
+        return {'result': 'error', 'message': 'Not authorized'}
+
+    is_admin = False
     try:
-        resp = requests.get('http://localhost:12346/problem/run/{}/source/'.format(run_id))
+        checkCapability(request)
+        is_admin = True
+    except Exception:
+        pass
+
+    params = {
+        'is_admin': is_admin,
+        'user_id': user_id,
+    }
+
+    try:
+        url = 'http://localhost:12346/problem/run/{}/source/'.format(run_id)
+        resp = requests.get(url, params=params)
         return resp.json()
     except (requests.RequestException, ValueError) as e:
         print('Request to :12346 failed!')
