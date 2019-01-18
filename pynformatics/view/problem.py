@@ -261,7 +261,7 @@ def problem_runs_filter_proxy(request):
     try:
         resp = requests.get('http://localhost:12346/problem/{}/submissions/'.format(problem_id), params=params)
         return resp.json()
-    except Exception as e:
+    except (requests.RequestException, ValueError) as e:
         print('Request to :12346 failed!')
         print(str(e))
         return {"result": "error", "message": str(e), "stack": traceback.format_exc()}
@@ -273,11 +273,10 @@ def problem_get_run_source(request):
     if run_id is None:
         return {"result": "error", "message": 'Run id required'}
 
-
     try:
         resp = requests.get('http://localhost:12346/problem/run/{}/source/'.format(run_id))
         return resp.json()
-    except Exception as e:
+    except (requests.RequestException, ValueError) as e:
         print('Request to :12346 failed!')
         print(str(e))
         return {"result": "error", "message": str(e), "stack": traceback.format_exc()}
