@@ -1,21 +1,11 @@
+import traceback
+
 from pyramid.view import view_config
-from pynformatics.model import User, EjudgeContest, Run, Comment, EjudgeProblem, Problem, Statement
-from pynformatics.contest.ejudge.serve_internal import EjudgeContestCfg
-from pynformatics.view.utils import *
+
 from pynformatics.contest.ejudge.ejudge_proxy import rejudge
-import sys, traceback
-#import jsonpickle, demjson
-import time
-from phpserialize import *
+
 from pynformatics.view.utils import *
-from pynformatics.models import DBSession
-import transaction
-#import jsonpickle, demjson
-import json
-from pynformatics.models import DBSession
-#from webhelpers.html import *
-from xml.etree.ElementTree import ElementTree
-from collections import OrderedDict
+
 
 @view_config(route_name='run.rejudge', renderer='json')
 def rejudge_url(request):
