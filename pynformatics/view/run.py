@@ -30,6 +30,7 @@ def rejudge_url(request):
 
 @view_config(route_name='problem.runs.update', renderer='json')
 def update_run(request):
+    """ Proxy View for core::problem/run/<run_id> """
     try:
         if not RequestCheckUserCapability(request, 'moodle/ejudge_submits:rejudge'):
             raise Exception('Access denied')
