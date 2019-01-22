@@ -1,8 +1,10 @@
 import traceback
 
+import requests
 from pyramid.view import view_config
 
 from pynformatics.contest.ejudge.ejudge_proxy import rejudge
+from pynformatics.utils.proxied_request_helpers import peek_request_args
 
 from pynformatics.view.utils import *
 
@@ -24,3 +26,24 @@ def rejudge_url(request):
         return {"result" : "ok"}
     except Exception as e:
         return {"result" : "error", "message" : e.__str__(), "stack" : traceback.format_exc()}
+
+
+@view_config(route_name='problem.runs.update', renderer='json')
+def update_run(request):
+    try:
+        if not RequestCheckUserCapability(request, 'moodle/ejudge_submits:rejudge'):
+            raise Exception('Access denied')
+    except Exception as e:
+        return {"result": "error", "message": str(e), "stack": traceback.format_exc()}
+
+    run_id = request.matchdict['run_id']
+    update_params = ['ejudge_status']
+    params, _ = peek_request_args(request, update_params)
+    url = 'http://localhost:12346/problem/run/{}'.format(run_id)
+    try:
+        resp = requests.put(url, params=params)
+        return resp.json()
+    except (requests.RequestException, ValueError) as e:
+        print('Request to :12346 failed!')
+        print(str(e))
+        return {"result": "error", "message": str(e), "stack": traceback.format_exc()}
