@@ -39,12 +39,12 @@ def update_run(request):
 
     run_id = request.matchdict['run_id']
     update_params = ['ejudge_status']
-    params, _ = peek_request_args(request, update_params)
+    _, body_params = peek_request_args(request, post_params=update_params)
     url = 'http://localhost:12346/problem/run/{}'.format(run_id)
     try:
-        resp = requests.put(url, params=params)
+        resp = requests.put(url, json=body_params)
         return resp.json()
-    except (requests.RequestException, ValueError) as e:
+    except Exception as e:
         print('Request to :12346 failed!')
         print(str(e))
         return {"result": "error", "message": str(e), "stack": traceback.format_exc()}
