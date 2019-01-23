@@ -68,12 +68,13 @@ def main(global_config, **settings):
     config.add_route('problem.ant.submit', '/problem-ant/{problem_id}/submit')
     config.add_route('problem.filter_runs', '/problem/{problem_id}/filter-runs')
     config.add_route('problem.runs.source', '/problem/run/{run_id}/source')
+    config.add_route('problem.runs.update', '/problem/run/{run_id}/update')
     
     config.add_route('contest.ejudge.reload', '/contest/ejudge/reload/{contest_id}')
     config.add_route('contest.ejudge.get_table', '/contest/ejudge/get_table')
     config.add_route('contest.ejudge.statistic', '/contest/ejudge/statistic')
     config.add_route('contest.ejudge.clone', '/contest/ejudge/clone/{contest_id}')
-    
+
     config.add_route('region.submit', '/region/res')
     config.add_route('region.submit_test', '/region/res_test')
     
