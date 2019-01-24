@@ -1,6 +1,8 @@
 from phpserialize import *
 import codecs
 
+from source_tree.models import DBSession
+
 
 def get_session_object(request, session_type, session_dir, object_name):
     fh = None
@@ -53,3 +55,9 @@ def update_moodle_session_object(request, object_name, obj):
     update_session_object(request, 'MoodleSession', '/var/moodledata/sessions', object_name, obj)
 
 
+def rollback_on_request_finished(_):
+    DBSession().rollback()
+
+
+def subscribe_rollback_on_request_finished(request):
+    request.request.add_finished_callback(rollback_on_request_finished)

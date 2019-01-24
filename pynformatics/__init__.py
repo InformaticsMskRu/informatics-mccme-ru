@@ -1,5 +1,7 @@
 from pyramid.config import Configurator
+from pyramid.events import NewRequest
 
+from pynformatics.utils.events import subscribe_rollback_on_request_finished
 from .models import DBSession
 from pynformatics.view.comment import *
 from sqlalchemy import engine_from_config
@@ -97,6 +99,8 @@ def main(global_config, **settings):
     config.add_route('recommendation.get_html', '/recommendation/get_html')
 
     config.add_route('submits.get', '/submits/get')
+
+    config.add_subscriber(subscribe_rollback_on_request_finished, NewRequest)
     
     config.scan()
     return config.make_wsgi_app()
