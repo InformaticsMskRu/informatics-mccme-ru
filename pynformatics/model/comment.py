@@ -27,6 +27,8 @@ class Comment(Base):
     lines = Column(Text)
     comment = Column(Unicode)
     is_read = Column(Boolean)
+    py_run_id = Column(Integer)
+
     def __init__(self,  run, author, lines = '', comment = '', date = datetime.datetime.now()):
         self.date = date
         self.run_id = run.run_id
