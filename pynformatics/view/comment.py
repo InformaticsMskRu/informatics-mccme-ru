@@ -18,16 +18,31 @@ def add(request):
     try:
         if (not RequestCheckUserCapability(request, 'moodle/ejudge_submits:comment')):
             raise Exception("Auth Error")
-        run = Run.get_by(run_id = request.params['run_id'], contest_id = request.params['contest_id'])
-        if not run:
-            raise Exception("Object not found")
-        user = DBSession.query(User).filter(User.id == RequestGetUserId(request)).first()
-        comment = Comment(run, user, html.escape(request.params['lines']), html.escape(request.params['comment']))
+
+        author_id = RequestGetUserId(request)
+
+        run_id = request.params['run_id']
+        user_id = request.params['user_id']
+
+        # Это XSS
+        lines = html.escape(request.params['lines'])
+        comment = html.escape(request.params['comment'])
+
+        date = datetime.datetime.now()
+
+        commentary = Comment(run_id=run_id,
+                             user_id=user_id,
+                             author_user_id=author_id,
+                             date=date,
+                             lines=lines,
+                             comment=comment,
+                             is_read=False)
+
         with transaction.manager:
-            DBSession.add(comment)
-        return {"result" : "ok"}
+            DBSession.add(commentary)
+        return {"result": "ok"}
     except Exception as e: 
-        return {"result" : "error", "message" : e.__str__(), "stack" : traceback.format_exc()}
+        return {"result": "error", "message" : e.__str__(), "stack" : traceback.format_exc()}
 
 class CommentRes:
     pass     
