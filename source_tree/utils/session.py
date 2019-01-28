@@ -56,7 +56,11 @@ def update_moodle_session_object(request, object_name, obj):
 
 
 def rollback_on_request_finished(_):
-    DBSession().rollback()
+    # We have to use local import because db_session is monkey patch
+    # of source_tree.models and this object is not exists when current file imported
+    from source_tree.models import db_session
+    if db_session.is_active:
+        db_session.rollback()
 
 
 def subscribe_rollback_on_request_finished(request):

@@ -1,9 +1,10 @@
-from pynformatics import DBSession
+from pynformatics.models import DBSession
 
 
 def rollback_on_request_finished(_):
     # не известно, работает ли это
-    DBSession().rollback()
+    if DBSession.is_active:
+        DBSession.rollback()
 
 
 def subscribe_rollback_on_request_finished(request):

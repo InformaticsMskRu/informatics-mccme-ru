@@ -446,7 +446,7 @@ def course_get_nodes(request):
     except Exception as e:
         return {'result': 'error', 'content': e.__str__()}
 
-        
+
 @view_config(route_name='course.get_by_author', renderer='json')
 def course_get_by_author(request):
     try:
