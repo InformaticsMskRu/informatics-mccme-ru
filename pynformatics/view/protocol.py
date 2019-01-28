@@ -1,24 +1,13 @@
-import sys, traceback
-import time
-import json
-import transaction
 import zipfile
 from io import BytesIO
-from xml.etree.ElementTree import ElementTree
-from collections import OrderedDict
 
-from pyramid.view import view_config
-from pyramid.response import Response
 import requests
-
-from pynformatics.model import User, EjudgeContest, Run, Comment, EjudgeProblem, Problem, Statement
-from pynformatics.contest.ejudge.serve_internal import EjudgeContestCfg
-from pynformatics.view.utils import *
 from phpserialize import *
-from pynformatics.view.utils import *
-from pynformatics.models import DBSession
-from pynformatics.models import DBSession
-from pynformatics.model.run import to32, get_lang_ext_by_id
+from pyramid.response import Response
+from pyramid.view import view_config
+
+from pynformatics.model import Run
+from pynformatics.model.run import get_lang_ext_by_id
 from pynformatics.utils.check_role import check_global_role
 
 signal_description = {
