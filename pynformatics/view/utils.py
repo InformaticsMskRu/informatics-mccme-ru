@@ -28,17 +28,17 @@ def RequestCheckUserCapability(request, capability):
         return int(user.capabilities[1][capability]) >= 1
     except:
        if fh != None:
-           fh.close() 
-#       raise       
+           fh.close()
+#       raise
        return False
-       
+
 def getContestStrId(id):
     res = str(id)
     while len(res) < 6:
         res = "0" + res
     return res
-        
-#def RequestGetUserCapability(request, capability):
+
+# def RequestGetUserCapability(request, capability):
 #    str = "+++"
 #    try:
 #        fh = open('/home/httpd/moodledata/sessions/sess_qim5co7v50o0bcmm203oludun3')
