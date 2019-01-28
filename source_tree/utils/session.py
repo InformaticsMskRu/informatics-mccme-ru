@@ -1,8 +1,6 @@
 from phpserialize import *
 import codecs
 
-from source_tree.models import DBSession
-
 
 def get_session_object(request, session_type, session_dir, object_name):
     fh = None
