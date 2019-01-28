@@ -82,6 +82,7 @@ def main(global_config, **settings):
     
     engine = engine_from_config(settings, 'sqlalchemy.')
     DBSession.configure(bind=engine)
+    # TODO: Remove monkey patching
     models.db_session = DBSession()
 
     config = Configurator(settings=settings, session_factory=UnencryptedCookieSessionFactoryConfig('source_tree_session'))
