@@ -42,7 +42,7 @@ def get_protocol(request):
     # [input, big_input, corr, big_corr, output,
     #  big_output, checker_output, error_output, extra]
     run_id = int(request.matchdict['run_id'])
-    url = 'localhost:12346/problem/run/{}/protocol'.format(run_id)
+    url = 'http://localhost:12346/problem/run/{}/protocol'.format(run_id)
     response = requests.get(url)
     content = response.json()
 
@@ -75,7 +75,7 @@ def protocol_get_full(request):
     #  big_output, checker_output, error_output, extra]
     run_id = int(request.matchdict['run_id'])
 
-    url = 'localhost:12346/problem/run/{}/protocol'.format(run_id)
+    url = 'http://localhost:12346/problem/run/{}/protocol'.format(run_id)
     response = requests.get(url)
     content = response.json()
 
