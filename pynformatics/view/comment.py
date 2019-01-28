@@ -9,6 +9,8 @@ import json
 import datetime
 from pynformatics.models import DBSession
 import html
+
+from sqlalchemy import or_
 from sqlalchemy.orm import noload, lazyload
 
 @view_config(route_name='comment.add', request_method='POST', renderer='json')
@@ -16,16 +18,31 @@ def add(request):
     try:
         if (not RequestCheckUserCapability(request, 'moodle/ejudge_submits:comment')):
             raise Exception("Auth Error")
-        run = Run.get_by(run_id = request.params['run_id'], contest_id = request.params['contest_id'])
-        if not run:
-            raise Exception("Object not found")
-        user = DBSession.query(User).filter(User.id == RequestGetUserId(request)).first()
-        comment = Comment(run, user, html.escape(request.params['lines']), html.escape(request.params['comment']));
+
+        author_id = RequestGetUserId(request)
+
+        run_id = request.params['run_id']
+        user_id = request.params['user_id']
+
+        # Это XSS
+        lines = html.escape(request.params['lines'])
+        comment = html.escape(request.params['comment'])
+
+        date = datetime.datetime.now()
+
+        commentary = Comment(run_id=run_id,
+                             user_id=user_id,
+                             author_user_id=author_id,
+                             date=date,
+                             lines=lines,
+                             comment=comment,
+                             is_read=False)
+
         with transaction.manager:
-            DBSession.add(comment);
-        return {"result" : "ok"}
+            DBSession.add(commentary)
+        return {"result": "ok"}
     except Exception as e: 
-        return {"result" : "error", "message" : e.__str__(), "stack" : traceback.format_exc()}
+        return {"result": "error", "message" : e.__str__(), "stack" : traceback.format_exc()}
 
 class CommentRes:
     pass     
@@ -91,27 +108,20 @@ def get_count_unread(request):
 @view_config(route_name='comment.get', renderer='string')
 def get(request):
     try:
+        run_id = int(request.matchdict['run_id'])
+        is_superuser = RequestCheckUserCapability(request, 'moodle/ejudge_submits:comment')
+        user_id = RequestGetUserId(request)
+
+        comment_q = DBSession.query(Comment).filter(Comment.py_run_id == run_id)
+        if not is_superuser:
+            comment_q.filter(or_(Comment.author_user_id == user_id,
+                                 Comment.user_id == user_id))
+        comments = comment_q.all()
+
         jsonpickle.set_preferred_backend('demjson')
         jsonpickle.set_encoder_options('json', cls=JSONDateTimeEncoder)
-        r_id = request.matchdict['run_id']
-        c_id = request.matchdict['contest_id']
-        run = Run.get_by(run_id = r_id, contest_id = c_id)
-        if (not RequestCheckUserCapability(request, 'moodle/ejudge_submits:comment')):
-            if ( int(run.user.id) != int(RequestGetUserId(request))):            
-                raise Exception("Auth Error")
-        comments =  run.comments
-        res = CommentRes()
-        res.comments = comments
-        res.run_id = request.matchdict['run_id']
-        res.contest_id = request.matchdict['contest_id']
-        if ( int(run.user.id) == int(RequestGetUserId(request))):            
-            with transaction.manager:
-                DBSession.query(Comment).filter(Comment.run_id == r_id, Comment.contest_id == c_id).update({'is_read': True})
-                transaction.commit()
-        return jsonpickle.encode(res, unpicklable = False, max_depth = 5)
-#        return json.dumps(res, skipkeys = True)
-    except Exception as e: 
+
+        return jsonpickle.encode(comments, unpicklable=False, max_depth=5)
+
+    except Exception as e:
         return json.dumps({"result" : "error", "message" : e.__str__(), "stack" : traceback.format_exc()})
-
-
-

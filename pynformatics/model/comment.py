@@ -27,16 +27,7 @@ class Comment(Base):
     lines = Column(Text)
     comment = Column(Unicode)
     is_read = Column(Boolean)
-    def __init__(self,  run, author, lines = '', comment = '', date = datetime.datetime.now()):
-        self.date = date
-        self.run_id = run.run_id
-        self.user_id = run.user.id
-        self.contest_id = run.contest_id
-        self.author_user_id = author.id
-        self.lines = lines    
-        self.comment = comment    
-        self.is_read = False
-        
+    py_run_id = Column(Integer)
 
     def __json__(self, request):
         return {

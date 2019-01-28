@@ -1,5 +1,7 @@
 from pyramid.config import Configurator
+from pyramid.events import NewRequest
 
+from pynformatics.utils.events import subscribe_rollback_on_request_finished
 from .models import DBSession
 from pynformatics.view.comment import *
 from sqlalchemy import engine_from_config
@@ -29,7 +31,6 @@ def main(global_config, **settings):
     config.add_route('ideal.suggested', '/ideal/suggested')
     config.add_route('ideal.suggested_html', '/ideal/suggested_html')
     
-    config.add_route('user_settings.add', '/user/settings/main/add')
     config.add_route('user_settings.get', '/user/settings/main/get/{user_id}')
     
     config.add_route('comment.add', '/comment/add')
@@ -67,12 +68,14 @@ def main(global_config, **settings):
     config.add_route('problem.tests.get_corr', '/problem/{problem_id}/tests/corr/{test_num}')
     config.add_route('problem.ant.submit', '/problem-ant/{problem_id}/submit')
     config.add_route('problem.filter_runs', '/problem/{problem_id}/filter-runs')
+    config.add_route('problem.runs.source', '/problem/run/{run_id}/source')
+    config.add_route('problem.runs.update', '/problem/run/{run_id}/update')
     
     config.add_route('contest.ejudge.reload', '/contest/ejudge/reload/{contest_id}')
     config.add_route('contest.ejudge.get_table', '/contest/ejudge/get_table')
     config.add_route('contest.ejudge.statistic', '/contest/ejudge/statistic')
     config.add_route('contest.ejudge.clone', '/contest/ejudge/clone/{contest_id}')
-    
+
     config.add_route('region.submit', '/region/res')
     config.add_route('region.submit_test', '/region/res_test')
     
@@ -95,6 +98,8 @@ def main(global_config, **settings):
     config.add_route('recommendation.get_html', '/recommendation/get_html')
 
     config.add_route('submits.get', '/submits/get')
+
+    config.add_subscriber(subscribe_rollback_on_request_finished, NewRequest)
     
     config.scan()
     return config.make_wsgi_app()
