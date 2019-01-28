@@ -52,7 +52,7 @@ def get_protocol(request):
     data = content['data']
     for field in PROTOCOL_EXCLUDED_FIELDS:
         data.pop(field, None)
-    tests: dict = data.get('tests')
+    tests = data.get('tests')
 
     if not tests:
         return data
