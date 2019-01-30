@@ -13,6 +13,7 @@ import html
 from sqlalchemy import or_
 from sqlalchemy.orm import noload, lazyload
 
+
 @view_config(route_name='comment.add', request_method='POST', renderer='json')
 def add(request):
     try:
@@ -44,17 +45,20 @@ def add(request):
     except Exception as e: 
         return {"result": "error", "message" : e.__str__(), "stack" : traceback.format_exc()}
 
+
 class CommentRes:
-    pass     
+    pass
 
 
-@view_config(route_name='comment.get_all_html', renderer='pynformatics:templates/comment.get_table.mak')   
+@view_config(route_name='comment.get_all_html',
+             renderer='pynformatics:templates/comment.get_table.mak')
 @view_config(route_name='comment.get_all', renderer='json')
 def get_all(request):
     return DBSession.query(Comment).options(noload('*')).filter(Comment.user_id == RequestGetUserId(request)).order_by(Comment.is_read).order_by(Comment.date.desc()).all()
     
 
-@view_config(route_name='comment.get_all_limit_html', renderer='pynformatics:templates/comment.get_table.mak')   
+@view_config(route_name='comment.get_all_limit_html',
+             renderer='pynformatics:templates/comment.get_table.mak')
 @view_config(route_name='comment.get_all_limit', renderer='json')
 def get_all_limit(request):
     start = int(request.matchdict['start'])
@@ -69,7 +73,8 @@ def get_all_limit(request):
     return res
 
 
-@view_config(route_name='comment.get_unread_limit_html', renderer='pynformatics:templates/comment.get_table.mak')   
+@view_config(route_name='comment.get_unread_limit_html',
+             renderer='pynformatics:templates/comment.get_table.mak')
 @view_config(route_name='comment.get_unread_limit', renderer='json')
 def get_unread_limit(request):
     start = int(request.matchdict['start'])
@@ -83,7 +88,7 @@ def get_unread_limit(request):
     res["user_id"] = RequestGetUserId(request)
     return res
 
-    
+
 @view_config(route_name='comment.get_count', renderer='json')
 def get_count(request):
     return DBSession.query(Comment).filter(Comment.user_id == RequestGetUserId(request)).count()
@@ -92,9 +97,9 @@ def get_count(request):
 class JSONDateTimeEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, datetime.datetime):
-           return obj.isoformat()
+            return obj.isoformat()
         else:
-           return super(DateTimeJSONEncoder, self).default(obj)
+            return super(DateTimeJSONEncoder, self).default(obj)
 
 
 @view_config(route_name='comment.get_count_unread', renderer='json')
