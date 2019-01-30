@@ -42,8 +42,8 @@ def add(request):
         with transaction.manager:
             DBSession.add(commentary)
         return {"result": "ok"}
-    except Exception as e: 
-        return {"result": "error", "message" : e.__str__(), "stack" : traceback.format_exc()}
+    except Exception as e:
+        return {"result": "error", "message": e.__str__(), "stack": traceback.format_exc()}
 
 
 class CommentRes:
@@ -54,8 +54,12 @@ class CommentRes:
              renderer='pynformatics:templates/comment.get_table.mak')
 @view_config(route_name='comment.get_all', renderer='json')
 def get_all(request):
-    return DBSession.query(Comment).options(noload('*')).filter(Comment.user_id == RequestGetUserId(request)).order_by(Comment.is_read).order_by(Comment.date.desc()).all()
-    
+    return DBSession.query(Comment).options(noload('*')) \
+        .filter(Comment.user_id == RequestGetUserId(request)) \
+        .order_by(Comment.is_read) \
+        .order_by(Comment.date.desc()) \
+        .all()
+
 
 @view_config(route_name='comment.get_all_limit_html',
              renderer='pynformatics:templates/comment.get_table.mak')
@@ -63,8 +67,12 @@ def get_all(request):
 def get_all_limit(request):
     start = int(request.matchdict['start'])
     stop = int(request.matchdict['stop'])
-    res = {"comment" : []}
-    q = DBSession.query(Comment).filter(Comment.user_id == RequestGetUserId(request)).order_by(Comment.is_read).order_by(Comment.date.desc()).slice(start, stop)
+    res = {"comment": []}
+    q = DBSession.query(Comment) \
+        .filter(Comment.user_id == RequestGetUserId(request)) \
+        .order_by(Comment.is_read) \
+        .order_by(Comment.date.desc()) \
+        .slice(start, stop)
     comments = q.all()
     for c in comments:
         res["comment"].append(c.__json__(request))
@@ -79,8 +87,12 @@ def get_all_limit(request):
 def get_unread_limit(request):
     start = int(request.matchdict['start'])
     stop = int(request.matchdict['stop'])
-    res = {"comment" : []}
-    q = DBSession.query(Comment).filter(Comment.user_id == RequestGetUserId(request)).filter(Comment.is_read == False).order_by(Comment.date.desc()).slice(start, stop)
+    res = {"comment": []}
+    q = DBSession.query(Comment) \
+        .filter(Comment.user_id == RequestGetUserId(request)) \
+        .filter(Comment.is_read == False) \
+        .order_by(Comment.date.desc()) \
+        .slice(start, stop)
     comments = q.all()
     for c in comments:
         res["comment"].append(c.__json__(request))
@@ -106,8 +118,11 @@ class JSONDateTimeEncoder(json.JSONEncoder):
 def get_count_unread(request):
     jsonpickle.set_preferred_backend('demjson')
     jsonpickle.set_encoder_options('json', cls=JSONDateTimeEncoder)
-    res = DBSession.query(Comment).filter(Comment.user_id == RequestGetUserId(request)).filter(Comment.is_read == False).count()
-    return jsonpickle.encode(res, unpicklable = False, max_depth = 5)
+    res = DBSession.query(Comment) \
+        .filter(Comment.user_id == RequestGetUserId(request)) \
+        .filter(Comment.is_read == False) \
+        .count()
+    return jsonpickle.encode(res, unpicklable=False, max_depth=5)
 
 
 @view_config(route_name='comment.get', renderer='string')
@@ -117,7 +132,8 @@ def get(request):
         is_superuser = RequestCheckUserCapability(request, 'moodle/ejudge_submits:comment')
         user_id = RequestGetUserId(request)
 
-        comment_q = DBSession.query(Comment).filter(Comment.py_run_id == run_id)
+        comment_q = DBSession.query(Comment) \
+            .filter(Comment.py_run_id == run_id)
         if not is_superuser:
             comment_q.filter(or_(Comment.author_user_id == user_id,
                                  Comment.user_id == user_id))
@@ -129,4 +145,5 @@ def get(request):
         return jsonpickle.encode(comments, unpicklable=False, max_depth=5)
 
     except Exception as e:
-        return json.dumps({"result" : "error", "message" : e.__str__(), "stack" : traceback.format_exc()})
+        return json.dumps(
+            {"result": "error", "message": e.__str__(), "stack": traceback.format_exc()})
