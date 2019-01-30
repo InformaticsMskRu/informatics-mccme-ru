@@ -31,13 +31,15 @@ def add(request):
 
         date = datetime.datetime.now()
 
-        commentary = Comment(run_id=run_id,
+        commentary = Comment(date=date,
+                             run_id=run_id,
+                             contest_id=0, # TODO: Теперь contest_id всегда 0.
                              user_id=user_id,
                              author_user_id=author_id,
-                             date=date,
                              lines=lines,
                              comment=comment,
                              is_read=False)
+
 
         with transaction.manager:
             DBSession.add(commentary)
