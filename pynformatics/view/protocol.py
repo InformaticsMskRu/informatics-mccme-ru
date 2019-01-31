@@ -132,8 +132,7 @@ def get_submit_archive(request):
     if not request_all_tests:
         require_test_numbers = request.params.get("tests", "")
         if require_test_numbers:
-            require_test_numbers = require_test_numbers.split(' ')
-            tests_numbers_set = set(map(int, require_test_numbers))
+            tests_numbers_set = set(map(int, require_test_numbers.split(' ')))
         else:
             tests_numbers_set = set()
     else:
