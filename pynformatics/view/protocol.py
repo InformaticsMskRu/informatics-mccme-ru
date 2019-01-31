@@ -155,7 +155,7 @@ def get_submit_archive(request):
             print('Request to :12346 failed!')
             print(str(e))
             return {"result": "error", "message": str(e), "stack": traceback.format_exc()}
-    
+
         content = resp.json()
         data = content['data']
         lang_id = data['language_id']

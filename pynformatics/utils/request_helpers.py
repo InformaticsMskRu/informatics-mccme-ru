@@ -3,11 +3,17 @@ import functools
 import requests
 
 
-def check_captcha(resp, secret):
-    return requests.get(
-        "https://www.google.com/recaptcha/api/siteverify?secret={}&response={}".format(
-            secret,
-            resp)).json().get("success", False)
+RECAPTCHA_URL = "https://www.google.com/recaptcha/api/siteverify"
+
+
+def check_captcha(secret, resp):
+    params = {
+       'secret': secret,
+       'response': resp
+    }
+
+    r = requests.get(RECAPTCHA_URL, params=params)
+    return r.json().get("success", False)
 
 
 def require_captcha(f):
