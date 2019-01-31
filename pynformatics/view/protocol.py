@@ -124,15 +124,16 @@ def protocol_get_outp(request):
 @check_global_role(("ejudge_teacher", "admin"))
 def get_submit_archive(request):
 
+    request_source = "sources" in request.params
     run_id = int(request.matchdict['run_id'])
     problem_id = int(request.params['problem_id'])
-    need_all_tests = "all_tests" in request.params
+    request_all_tests = "all_tests" in request.params
 
-    if not need_all_tests:
-        need_test_numbers = request.params.get("tests", "")
-        if need_test_numbers:
-            need_test_numbers = need_test_numbers.split(' ')
-            tests_numbers_set = set(map(int, need_test_numbers))
+    if not request_all_tests:
+        require_test_numbers = request.params.get("tests", "")
+        if require_test_numbers:
+            require_test_numbers = require_test_numbers.split(' ')
+            tests_numbers_set = set(map(int, require_test_numbers))
         else:
             tests_numbers_set = set()
     else:
@@ -145,27 +146,28 @@ def get_submit_archive(request):
     archive = BytesIO()
     zip_file = zipfile.ZipFile(archive, "w", zipfile.ZIP_DEFLATED)
 
-    # Download source and info about run
-    url = 'http://localhost:12346/problem/run/{}/source/'.format(run_id)
-    try:
-        resp = requests.get(url, {'is_admin': True})
-        resp.raise_for_status()
-    except (requests.RequestException, ValueError) as e:
-        print('Request to :12346 failed!')
-        print(str(e))
-        return {"result": "error", "message": str(e), "stack": traceback.format_exc()}
+    if request_source:
+        # Download source and info about run
+        url = 'http://localhost:12346/problem/run/{}/source/'.format(run_id)
+        try:
+            resp = requests.get(url, {'is_admin': True})
+            resp.raise_for_status()
+        except (requests.RequestException, ValueError) as e:
+            print('Request to :12346 failed!')
+            print(str(e))
+            return {"result": "error", "message": str(e), "stack": traceback.format_exc()}
+    
+        content = resp.json()
+        data = content['data']
+        lang_id = data['language_id']
+        request_source = data['source']
 
-    content = resp.json()
-    data = content['data']
-    lang_id = data['language_id']
-    source = data['source']
+        # Write source
+        source_name = "{0}{1}".format(run_id, get_lang_ext_by_id(lang_id))
+        zip_file.writestr(source_name, request_source)
 
     # TODO: Перенести логику выкачивания тестов проблем в rmatics/ejudge-core
     ejudge_problem = DBSession.query(EjudgeProblem).get(problem_id)
-
-    # Write source
-    source_name = "{0}{1}".format(run_id, get_lang_ext_by_id(lang_id))
-    zip_file.writestr(source_name, source)
 
     # Write tests
     for num in tests_numbers_set:
