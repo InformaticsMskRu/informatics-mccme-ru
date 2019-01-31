@@ -21,11 +21,11 @@ def rejudge_url(request):
         login = request.registry.settings['ejudge.master_login']
         password = request.registry.settings['ejudge.master_password']
         res = rejudge(contest_id, run_id, status_id, login, password, url)
-        if (res != "ok"):
-            return {"result" : "error", "message" : res}
-        return {"result" : "ok"}
+        if res != "ok":
+            return {"result": "error", "message": res}
+        return {"result": "ok"}
     except Exception as e:
-        return {"result" : "error", "message" : e.__str__(), "stack" : traceback.format_exc()}
+        return {"result": "error", "message": e.__str__(), "stack": traceback.format_exc()}
 
 
 @view_config(route_name='problem.runs.update', renderer='json')
