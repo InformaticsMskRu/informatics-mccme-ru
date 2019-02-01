@@ -132,9 +132,14 @@ def get_submit_archive(request):
     if not request_all_tests:
         require_test_numbers = request.params.get("tests", "")
         if require_test_numbers:
-            tests_numbers_set = set(map(int, require_test_numbers.split(' ')))
+            tests_numbers_set = list(
+                sorted(
+                    set(
+                        map(int, require_test_numbers.split(' ')))
+                )
+            )
         else:
-            tests_numbers_set = set()
+            tests_numbers_set = list()
     else:
         # TODO: Здесть не 100, а некое максимальное число тестов
         # TODO: Его можно было найти в EjudgeRun.tests_count,
