@@ -1,14 +1,17 @@
+import traceback
 import zipfile
 from io import BytesIO
 
 import requests
-from phpserialize import *
+from pynformatics import EjudgeProblem
 from pyramid.response import Response
 from pyramid.view import view_config
+from pynformatics.models import DBSession
 
 from pynformatics.model import Run
 from pynformatics.model.run import get_lang_ext_by_id
 from pynformatics.utils.check_role import check_global_role
+from pynformatics.utils.request_helpers import require_captcha
 
 signal_description = {
     1: "Hangup detected on controlling terminal or death of controlling process",
@@ -116,52 +119,81 @@ def protocol_get_outp(request):
     return run.get_output_file(int(request.matchdict['test_num']), tp='o')
 
 
-def check_captcha(resp, secret):
-    return requests.get(
-        "https://www.google.com/recaptcha/api/siteverify?secret={}&response={}".format(
-            secret,
-            resp)).json().get("success", False)
-
-
+@require_captcha
 @view_config(route_name="protocol.get_submit_archive", renderer="string")
 @check_global_role(("ejudge_teacher", "admin"))
 def get_submit_archive(request):
-    recaptha_resp = request.params['g-recaptcha-response']
-    if not check_captcha(recaptha_resp, request.registry.settings["recaptcha.secret"]):
-        return "Не получилось"
-    contest_id = int(request.matchdict['contest_id'])
+
+    request_source = "sources" in request.params
     run_id = int(request.matchdict['run_id'])
-    sources = "sources" in request.params
-    all_tests = "all_tests" in request.params
-    tests = request.params.get("tests", "")
-    tests_set = set()
-    for i in tests.split(" "):
-        try:
-            tests_set.add(int(i))
-        except ValueError:
-            pass
+    problem_id = int(request.params['problem_id'])
+    request_all_tests = "all_tests" in request.params
 
-    run = Run.get_by(run_id=run_id, contest_id=contest_id)
-    run.parsetests
-    prob = run.problem
+    if not request_all_tests:
+        require_test_numbers = request.params.get("tests", "")
+        if require_test_numbers:
+            tests_numbers_set = list(
+                sorted(
+                    set(
+                        map(int, require_test_numbers.split(' ')))
+                )
+            )
+        else:
+            tests_numbers_set = list()
+    else:
+        # TODO: Здесть не 100, а некое максимальное число тестов
+        # TODO: Его можно было найти в EjudgeRun.tests_count,
+        # TODO: который брался из протокола
+        # TODO: Но мы это пофиксили
+        tests_numbers_set = list(range(1, 100))
+
     archive = BytesIO()
-    zf = zipfile.ZipFile(archive, "w", zipfile.ZIP_DEFLATED)
+    zip_file = zipfile.ZipFile(archive, "w", zipfile.ZIP_DEFLATED)
 
-    run.tested_protocol
-    for i in range(1, run.tests_count + 1):
-        if all_tests or i in tests_set:
-            zf.writestr("tests/{0:02}".format(i), prob.get_test(i, prob.get_test_size(i)))
-            zf.writestr("tests/{0:02}.a".format(i), prob.get_corr(i, prob.get_corr_size(i)))
+    if request_source:
+        # Download source and info about run
+        url = 'http://localhost:12346/problem/run/{}/source/'.format(run_id)
+        try:
+            resp = requests.get(url, {'is_admin': True})
+            resp.raise_for_status()
+        except (requests.RequestException, ValueError) as e:
+            print('Request to :12346 failed!')
+            print(str(e))
+            return {"result": "error", "message": str(e), "stack": traceback.format_exc()}
 
-    if sources:
-        zf.writestr("{0}{1}".format(run_id, get_lang_ext_by_id(run.lang_id)), run.get_sources())
+        content = resp.json()
+        data = content['data']
+        lang_id = data['language_id']
+        request_source = data['source']
 
-    checker_src, checker_ext = prob.get_checker()
-    zf.writestr("checker{}".format(checker_ext), checker_src)
+        # Write source
+        source_name = "{0}{1}".format(run_id, get_lang_ext_by_id(lang_id))
+        zip_file.writestr(source_name, request_source)
 
-    zf.close()
+    # TODO: Перенести логику выкачивания тестов проблем в rmatics/ejudge-core
+    ejudge_problem = DBSession.query(EjudgeProblem).get(problem_id)
+
+    # Write tests
+    for num in tests_numbers_set:
+        try:
+            test_data = ejudge_problem.get_test(num, ejudge_problem.get_test_size(num))
+            answer_data = ejudge_problem.get_corr(num, ejudge_problem.get_corr_size(num))
+
+            zip_file.writestr("tests/{0:02}".format(num), test_data)
+            zip_file.writestr("tests/{0:02}.a".format(num), answer_data)
+        except FileNotFoundError:
+            break
+
+    # Write checkers
+    checker_src, checker_ext = ejudge_problem.get_checker()
+    zip_file.writestr("checker{}".format(checker_ext), checker_src)
+
+    zip_file.close()
     archive.seek(0)
+
     response = Response(content_type="application/zip",
-                        content_disposition='attachment; filename="archive_{0}_{1}.zip"'
-                        .format(contest_id, run_id), body=archive.read())
+                        content_disposition='attachment; filename="archive_{0}_{1}.zip"'.format(
+                            problem_id, run_id),
+                        body=archive.read())
     return response
+
