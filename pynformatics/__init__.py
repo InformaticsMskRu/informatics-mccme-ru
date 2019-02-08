@@ -54,6 +54,9 @@ def main(global_config, **settings):
     config.add_route('run.rejudge', '/run/rejudge/{contest_id}/{run_id}/{status_id}')
     
     config.add_route('team_monitor.get', '/team_monitor/get/{statement_id}')
+
+    config.add_route('monitor_create', '/monitor')
+    config.add_route('monitor', '/monitor/{link}')
     
     config.add_route('contest.ejudge.reload.problem', '/contest/ejudge/reload/{contest_id}/{problem_id}')
     
