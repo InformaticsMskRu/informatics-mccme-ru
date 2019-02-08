@@ -40,32 +40,30 @@ def problem_show_limits(request):
 
 @view_config(route_name='problem.submit', renderer='json')
 def problem_submits(request):
+    # TODO: Refactor it
     user_id = RequestGetUserId(request)
-    user = DBSession.query(SimpleUser).filter(SimpleUser.id == user_id).first()
     lang_id = request.params["lang_id"]
     problem_id = request.matchdict["problem_id"]
-    problem = DBSession.query(EjudgeProblem).filter(EjudgeProblem.id == problem_id).first()
     input_file = request.POST['file'].file
-    filename = request.POST['file'].filename
-    ejudge_url = request.registry.settings['ejudge.new_client_url']
 
-    res = submit(input_file, problem.ejudge_contest_id, problem.problem_id, lang_id, user.login, user.password, filename, ejudge_url, user_id)
     try:
         input_file.seek(0)
-        print('#######\nin try')
         _data = {
             'lang_id': lang_id,
             'user_id': user_id,
         }
         _prob_id = problem_id
         url = 'http://localhost:12346/problem/trusted/{}/submit_v2'.format(_prob_id)
-        import requests
         _resp = requests.post(url, files={'file': input_file}, data=_data)
         print('Response from :12346', _resp)
+        return _resp.json()
     except Exception as e:
         print(e)
-
-    return {'res': res}
+        return {
+            "result": "error",
+            "message": e.__str__(),
+            "stack": traceback.format_exc()
+        }
 
 
 @view_config(route_name='problem.ant.submit', renderer='json')
