@@ -1,18 +1,17 @@
-from pyramid.view import view_config
-from pynformatics.model import User, EjudgeContest, Run, Comment, EjudgeProblem, Problem, Statement
-from pynformatics.contest.ejudge.serve_internal import EjudgeContestCfg
-from pynformatics.view.utils import *
-import sys, traceback
-#import jsonpickle, demjson
-from phpserialize import *
-from pynformatics.view.utils import *
-from pynformatics.models import DBSession
+import random
+import string
+
+import requests
 import transaction
-#import jsonpickle, demjson
-import json
+from pyramid.encode import urlencode
+from pyramid.view import view_config, view_defaults
+from pynformatics.model import User
+import traceback
+
+from pynformatics.model.monitor import MonitorLink
+from pynformatics.view.utils import *
 from pynformatics.models import DBSession
-#from webhelpers.html import *
-from xml.etree.ElementTree import ElementTree
+
 
 @view_config(route_name='team_monitor.get', renderer='string')
 def get_team_monitor(request):
@@ -28,3 +27,75 @@ def get_team_monitor(request):
         return statement.name + " " + res
     except Exception as e: 
         return {"result" : "error", "message" : e.__str__(), "stack" : traceback.format_exc()}
+
+
+@view_defaults(route_name='monitor')
+class MonitorApi:
+    def __init__(self, request):
+        self.request = request
+        self.view_name = 'Monitor'
+
+    @view_config(route_name='monitor_create', request_method='POST')
+    def create(self):
+        if not RequestCheckUserCapability(self.request, 'moodle/ejudge_submits:comment'):
+            raise Exception("Auth Error")
+        author_id = RequestGetUserId(self.request)
+        random_string = ''.join(random.SystemRandom().choice(
+            string.ascii_lowercase + string.digits) for _ in range(20))
+
+        encoded_url = urlencode(self.request.matchdict)
+        monitor = MonitorLink(author_id=author_id,
+                              link=random_string, internal_link=encoded_url)
+
+        with transaction.manager:
+            DBSession.add(monitor)
+
+        response = {
+            'link': random_string
+        }
+
+        return response
+
+    @view_config(request_method='GET', renderer='json')
+    def read(self):
+        try:
+            return self._get_monitor().get('data')
+        except Exception as e:
+            return {"result": "error", "message": str(e), "stack": traceback.format_exc()}
+
+    def _get_monitor(self):
+        author_id = RequestGetUserId(self.request)
+        if author_id == -1:
+            return {"result": "error", "message": 'Unauthorised'}
+
+        link = self.request.matchdict['link']
+
+        monitor = DBSession.query(MonitorLink) \
+            .filter(MonitorLink.link == link)\
+            .one_or_none()
+
+        if monitor is None:
+            return {"result": "error", "message": 'Monitor is not found'}
+
+        query_params = monitor.internal_link
+
+        url = 'http://localhost:12346/monitor?{}'.format(query_params)
+
+        try:
+            resp = requests.get(url)
+            context = resp.json()
+        except Exception as e:
+            print('Request to :12346 failed!')
+            raise
+
+        return context
+
+    def render(self):
+        try:
+            data = self._get_monitor().get('data')
+        except Exception as e:
+            return {"result": "error", "message": str(e), "stack": traceback.format_exc()}
+
+        if data is None:
+            return {"result": "error", "message": 'Something was wrong'}
+
