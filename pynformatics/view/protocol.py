@@ -126,7 +126,7 @@ def get_submit_archive(request):
 
     request_source = "sources" in request.params
     run_id = int(request.matchdict['run_id'])
-    problem_id = int(request.params['problem_id'])
+    problem_id = int(request.matchdict['problem_id'])
     request_all_tests = "all_tests" in request.params
 
     if not request_all_tests:
