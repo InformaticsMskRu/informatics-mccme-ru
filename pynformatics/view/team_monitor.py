@@ -35,7 +35,7 @@ class MonitorApi:
         self.request = request
         self.view_name = 'Monitor'
 
-    @view_config(route_name='monitor_create', request_method='POST')
+    @view_config(route_name='monitor_create', request_method='POST', renderer='json')
     def create(self):
         if not RequestCheckUserCapability(self.request, 'moodle/ejudge_submits:comment'):
             raise Exception("Auth Error")
@@ -43,7 +43,7 @@ class MonitorApi:
         random_string = ''.join(random.SystemRandom().choice(
             string.ascii_lowercase + string.digits) for _ in range(20))
 
-        encoded_url = urlencode(self.request.matchdict)
+        encoded_url = urlencode(self.request.params)
         monitor = MonitorLink(author_id=author_id,
                               link=random_string, internal_link=encoded_url)
 
@@ -82,7 +82,7 @@ class MonitorApi:
         url = 'http://localhost:12346/monitor?{}'.format(query_params)
 
         try:
-            resp = requests.get(url)
+            resp = requests.get(url, timeout=30)
             context = resp.json()
         except Exception as e:
             print('Request to :12346 failed!')

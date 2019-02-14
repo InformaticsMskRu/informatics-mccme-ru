@@ -3,7 +3,7 @@ import zipfile
 from io import BytesIO
 
 import requests
-from pynformatics import EjudgeProblem
+from pynformatics import EjudgeProblem, RequestGetUserId
 from pyramid.response import Response
 from pyramid.view import view_config
 from pynformatics.models import DBSession
@@ -44,6 +44,9 @@ def get_protocol(request):
     # А в protocol[tests][i] лежат дополнительно:
     # [input, big_input, corr, big_corr, output,
     #  big_output, checker_output, error_output, extra]
+    user_id = RequestGetUserId(request)
+    if user_id == -1:
+        return 'Unauthorized'
     run_id = int(request.matchdict['run_id'])
     url = 'http://localhost:12346/problem/run/{}/protocol'.format(run_id)
     response = requests.get(url)
