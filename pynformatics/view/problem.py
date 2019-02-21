@@ -5,10 +5,9 @@ import xmlrpc.client
 
 import requests
 import transaction
-import pyramid.httpexceptions as exc
 from pyramid.view import view_config
 
-from pynformatics.contest.ejudge.ejudge_proxy import submit, status_repr
+from pynformatics.contest.ejudge.ejudge_proxy import submit
 from pynformatics.contest.ejudge.serve_internal import EjudgeContestCfg
 from pynformatics.model import SimpleUser, EjudgeProblem, Problem
 from pynformatics.models import DBSession
@@ -240,10 +239,10 @@ def problem_get_corr(request):
 
 @view_config(route_name='problem.filter_runs', renderer='json')
 def problem_runs_filter_proxy(request):
-    try:
-        checkCapability(request)
-    except Exception as e:
-        return {"result": "error", "message": str(e), "stack": traceback.format_exc()}
+    user_id = RequestGetUserId(request)  # Returns -1 if not authorised
+
+    if user_id == -1:
+        return {'result': 'error', 'message': 'Not authorized'}
 
     problem_id = request.matchdict.get('problem_id')
     if problem_id is None:
