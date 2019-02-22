@@ -9,6 +9,7 @@ from pynformatics.model import User
 import traceback
 
 from pynformatics.model.monitor import MonitorLink
+from pynformatics.view.monitor.monitor_renderer import MonitorRenderer
 from pynformatics.view.utils import *
 from pynformatics.models import DBSession
 
@@ -17,7 +18,7 @@ from pynformatics.models import DBSession
 def get_team_monitor(request):
     try:
         statement_id = int(request.matchdict['statement_id'])
-    
+
         user = DBSession.query(User).filter(User.id == RequestGetUserId(request)).first()
         statement = DBSession.query(Statement).filter(Statement.id == statement_id).first()
 #        checkCapability(request)
@@ -25,7 +26,7 @@ def get_team_monitor(request):
         for k, v in statement.problems.items():
             res = res + "[" + str(k) + "] " + v.name
         return statement.name + " " + res
-    except Exception as e: 
+    except Exception as e:
         return {"result" : "error", "message" : e.__str__(), "stack" : traceback.format_exc()}
 
 
@@ -90,12 +91,26 @@ class MonitorApi:
 
         return context
 
+    @view_config(route_name="monitor_table", renderer="pynformatics:templates/monitor.mak")
     def render(self):
         try:
             data = self._get_monitor().get('data')
+
         except Exception as e:
+            # TODO: как это будет рендерится? мы ведь рендерим шаблон.
+            #  Надо разграничить рендеринг шаблона и возвращение джейсона
             return {"result": "error", "message": str(e), "stack": traceback.format_exc()}
 
         if data is None:
             return {"result": "error", "message": 'Something was wrong'}
+
+        # TODO: переключение режима в зависимости от гет параметра,
+        #  сейчас всегда 'score'
+        r = MonitorRenderer(data, 'score')
+        problems, competitors, contests_table = r.render()
+        return {
+            'problems': problems,
+            'competitors': competitors,
+            'contests_table': contests_table,
+        }
 
