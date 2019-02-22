@@ -104,10 +104,10 @@ class MonitorApi:
             return {"result": "error", "message": 'Something was wrong'}
 
         partial_score = self.request.matchdict['partial_score']
-        if partial_score == 'off':
-            mode = 'partial_scores_off'
-        else:
+        if partial_score == 'on':
             mode = 'partial_scores_on'
+        else:
+            mode = 'partial_scores_off'
         r = MonitorRenderer(data, mode)
         problems, competitors, contests_table = r.render()
         return {
