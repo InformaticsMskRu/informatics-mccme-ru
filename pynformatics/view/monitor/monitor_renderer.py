@@ -11,7 +11,7 @@ Contest = namedtuple('Contest', 'id rank name')
 
 
 class MonitorRenderer:
-    STATS = {'partial_score': Score(), 'partial_score_off': Solved()}
+    STATS = {'partial_scores_on': Score(), 'partial_scores_off': Solved()}
 
     def __init__(self, data, stat='score'):
         if stat in self.STATS:

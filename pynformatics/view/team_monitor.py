@@ -95,7 +95,6 @@ class MonitorApi:
     def render(self):
         try:
             data = self._get_monitor().get('data')
-
         except Exception as e:
             # TODO: как это будет рендерится? мы ведь рендерим шаблон.
             #  Надо разграничить рендеринг шаблона и возвращение джейсона
@@ -104,9 +103,12 @@ class MonitorApi:
         if data is None:
             return {"result": "error", "message": 'Something was wrong'}
 
-        # TODO: переключение режима в зависимости от гет параметра,
-        #  сейчас всегда 'score'
-        r = MonitorRenderer(data, 'score')
+        partial_score = self.request.matchdict['partial_score']
+        if partial_score == 'off':
+            mode = 'partial_scores_off'
+        else:
+            mode = 'partial_scores_on'
+        r = MonitorRenderer(data, mode)
         problems, competitors, contests_table = r.render()
         return {
             'problems': problems,
