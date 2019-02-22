@@ -14,11 +14,10 @@ class MonitorRenderer:
     STATS = {'partial_scores_on': Score(), 'partial_scores_off': Solved()}
 
     def __init__(self, data, stat='score'):
-        if stat in self.STATS:
-            self.stat = self.STATS[stat]
-        else:
+        if stat not in self.STATS:
             msg = 'Invalid value for stat parameter: {0}, possible parameters: {1}.'
             raise ValueError(msg.format(stat, ', '.join(self.STATS.keys())))
+        self.stat = self.STATS[stat]
         self.problems = data['data']
 
     def render(self):
@@ -48,16 +47,13 @@ class MonitorRenderer:
 
     @staticmethod
     def _process_runs(problem, runs, comps):
-        def get_user_id(run: dict):
+        def get_user_id(run):
             return run['user']['id']
 
-        key = get_user_id
-        runs.sort(key=key)
-
+        runs.sort(key=get_user_id)
         comp_ids = []
         group_runs = []
-
-        for comp_id, comp_data in groupby(runs, key=key):
+        for comp_id, comp_data in groupby(runs, key=get_user_id):
             comp_ids.append(comp_id)
             group_runs.append(list(comp_data))
 

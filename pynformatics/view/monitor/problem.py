@@ -12,9 +12,7 @@ class Problem:
     """
 
     # 1 -> A, ..., 26 -> Z
-    RANK_TO_LETTER = {
-        i: letter for i, letter in enumerate(string.ascii_uppercase, start=1)
-    }
+    RANK_TO_LETTER = dict(enumerate(string.ascii_uppercase, start=1))
 
     def __init__(self, id, name, rank, contest, seen):
         self.id = id
