@@ -57,7 +57,8 @@ def main(global_config, **settings):
 
     config.add_route('monitor_create', '/monitor')
     config.add_route('monitor', '/monitor/{link}')
-    
+    config.add_route('monitor_table', '/monitor/{link}/render')
+
     config.add_route('contest.ejudge.reload.problem', '/contest/ejudge/reload/{contest_id}/{problem_id}')
     
     config.add_route('problem.submit', '/problem/{problem_id}/submit')
