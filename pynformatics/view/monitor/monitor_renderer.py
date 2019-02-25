@@ -18,7 +18,7 @@ class MonitorRenderer:
             msg = 'Invalid value for stat parameter: {0}, possible parameters: {1}.'
             raise ValueError(msg.format(stat, ', '.join(self.STATS.keys())))
         self.stat = self.STATS[stat]
-        self.problems = data['data']
+        self.problems = data
 
     def render(self):
         contests = []
