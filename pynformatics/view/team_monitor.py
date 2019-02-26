@@ -103,7 +103,7 @@ class MonitorApi:
         if data is None:
             return {"result": "error", "message": 'Something was wrong'}
 
-        partial_score = self.request.matchdict['partial_score']
+        partial_score = self.request.params.get('partial_score')
         if partial_score == 'on':
             mode = 'partial_scores_on'
         else:
