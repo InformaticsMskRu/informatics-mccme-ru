@@ -17,17 +17,17 @@ class Competitor:
     def sum(self):
         return self.stat.sum(self)
 
-    def full_stat_by_prob(self, problem_name):
+    def full_stat_by_prob(self, problem):
         return (
-            self.get_stat_by_problem(problem_name),
-            self.is_problem_solved(problem_name),
+            self.get_stat_by_problem(problem),
+            self.is_problem_solved(problem),
         )
 
-    def get_stat_by_problem(self, problem_name):
-        return self.stat.get_stat_by_problem(self, problem_name)
+    def get_stat_by_problem(self, problem):
+        return self.stat.get_stat_by_problem(self, problem)
 
-    def is_problem_solved(self, problem_name):
-        return self.stat.is_problem_solved(self, problem_name)
+    def is_problem_solved(self, problem):
+        return self.stat.is_problem_solved(self, problem)
 
     def add_problem_result(self, tag, problem_result):
         self.problem_results[tag] = problem_result

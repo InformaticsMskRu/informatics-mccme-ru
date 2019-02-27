@@ -14,14 +14,16 @@ class Problem:
     # 1 -> A, ..., 26 -> Z
     RANK_TO_LETTER = dict(enumerate(string.ascii_uppercase, start=1))
 
-    def __init__(self, id, name, rank, contest, seen):
-        self.id = id
-        self.name = name
+    def __init__(self, problem_meta, contest, seen_problems):
+        self.id = problem_meta['id']
+        self.name = problem_meta['name']
+        self.rank = problem_meta['rank']
         self.contest_id = contest.id
         self.contest_rank = contest.rank
-        self.rank = rank
-        self.was_seen = id in seen
-        # post init
+        self.was_seen = self.id in seen_problems
+
+    def __hash__(self):
+        return hash((self.id, self.contest_id))
 
     @property
     def tag(self):

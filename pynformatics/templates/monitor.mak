@@ -1,7 +1,8 @@
 <%
     TABLE_HEAD_PREFIX = ['N', 'Name', 'Sum']
     PREFIX_LEN = len(TABLE_HEAD_PREFIX)
-    PROBLEM_LINK_PREFIX = 'href=http://informatics.mccme.ru/mod/statements/view3.php?chapterid='
+    PROBLEM_LINK_PREFIX = 'href=http://informatics.mccme.ru/' \
+                          'mod/statements/view3.php?chapterid='
 %>
 
 
@@ -29,7 +30,7 @@
     % for i, c in enumerate(competitors, start=1):
         <%
             competitor_result = [i, c.full_name, c.sum()]
-            competitor_result.extend(c.full_stat_by_prob(p.name) for p in problems)
+            competitor_result.extend(c.full_stat_by_prob(p) for p in problems)
         %>
         ${makerow(competitor_result)}
     % endfor
