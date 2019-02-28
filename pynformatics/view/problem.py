@@ -1,22 +1,19 @@
-from pyramid.view import view_config
-from pynformatics.model import SimpleUser, User, EjudgeContest, Run, Comment, EjudgeProblem, Problem
-from pynformatics.contest.ejudge.serve_internal import EjudgeContestCfg
-from pynformatics.contest.ejudge.ejudge_proxy import submit
-from pynformatics.view.utils import *
-import sys, traceback
-#import jsonpickle, demjson
-from phpserialize import *
-from pynformatics.view.utils import *
-from pynformatics.models import DBSession
-import transaction
-#import jsonpickle, demjson
-import json
-import os
-from pynformatics.models import DBSession
-#from webhelpers.html import *
-from xml.etree.ElementTree import ElementTree
-import xmlrpc.client
 import io
+import os
+import traceback
+import xmlrpc.client
+
+import requests
+import transaction
+from pyramid.view import view_config
+
+from pynformatics.contest.ejudge.ejudge_proxy import submit
+from pynformatics.contest.ejudge.serve_internal import EjudgeContestCfg
+from pynformatics.model import SimpleUser, EjudgeProblem, Problem
+from pynformatics.models import DBSession
+from pynformatics.utils.proxied_request_helpers import peek_request_args
+from pynformatics.view.utils import *
+
 
 def checkCapability(request):
     if (not RequestCheckUserCapability(request, 'moodle/ejudge_contests:reload')):
@@ -42,32 +39,30 @@ def problem_show_limits(request):
 
 @view_config(route_name='problem.submit', renderer='json')
 def problem_submits(request):
+    # TODO: Refactor it
     user_id = RequestGetUserId(request)
-    user = DBSession.query(SimpleUser).filter(SimpleUser.id == user_id).first()
     lang_id = request.params["lang_id"]
     problem_id = request.matchdict["problem_id"]
-    problem = DBSession.query(EjudgeProblem).filter(EjudgeProblem.id == problem_id).first()
     input_file = request.POST['file'].file
-    filename = request.POST['file'].filename
-    ejudge_url = request.registry.settings['ejudge.new_client_url']
 
-    res = submit(input_file, problem.ejudge_contest_id, problem.problem_id, lang_id, user.login, user.password, filename, ejudge_url, user_id)
     try:
         input_file.seek(0)
-        print('#######\nin try')
         _data = {
             'lang_id': lang_id,
             'user_id': user_id,
         }
-        _prob_id = problem_id
-        # url = 'http://localhost:12346/problem/trusted/{}/submit_v2'.format(_prob_id)
-        # import requests
-        # _resp = requests.post(url, files={'file': input_file}, data=_data)
-        # print('Response from :12346', _resp)
+        url = 'http://localhost:12346/problem/trusted/{}/submit_v2'.format(problem_id)
+        _resp = requests.post(url, files={'file': input_file}, data=_data)
+        print('Response from :12346', _resp)
+        return _resp.json()
     except Exception as e:
         print(e)
+        return {
+            "result": "error",
+            "message": e.__str__(),
+            "stack": traceback.format_exc()
+        }
 
-    return {'res': res}
 
 @view_config(route_name='problem.ant.submit', renderer='json')
 def problem_ant_submits(request):
@@ -239,3 +234,63 @@ def problem_get_corr(request):
         return {"num" : int(test_num), "content" : problem.get_corr(test_num)}
     except Exception as e:
         return {"result" : "error", "num" : int(request.matchdict['test_num']), "content" : e.__str__(), "stack" : traceback.format_exc()}
+
+
+@view_config(route_name='problem.filter_runs', renderer='json')
+def problem_runs_filter_proxy(request):
+    user_id = RequestGetUserId(request)  # Returns -1 if not authorised
+
+    if user_id == -1:
+        return {'result': 'error', 'message': 'Not authorized'}
+
+    problem_id = request.matchdict.get('problem_id')
+    if problem_id is None:
+        return {"result": "error", "message": 'Problem id required'}
+
+    filter_params = ['user_id', 'group_id',
+                     'lang_id', 'status_id', 'statement_id',
+                     'count', 'page',
+                     'from_timestamp', 'to_timestamp']
+
+    params, _ = peek_request_args(request, filter_params)
+
+    try:
+        resp = requests.get('http://localhost:12346/problem/{}/submissions/'.format(problem_id), params=params)
+        return resp.json()
+    except (requests.RequestException, ValueError) as e:
+        print('Request to :12346 failed!')
+        print(str(e))
+        return {"result": "error", "message": str(e), "stack": traceback.format_exc()}
+
+
+@view_config(route_name='problem.runs.source', renderer='json')
+def problem_get_run_source(request):
+    run_id = request.matchdict.get('run_id')
+    if run_id is None:
+        return {"result": "error", "message": 'Run id required'}
+
+    user_id = RequestGetUserId(request)  # Returns -1 if not authorised
+
+    if user_id == -1:
+        return {'result': 'error', 'message': 'Not authorized'}
+
+    is_admin = False
+    try:
+        checkCapability(request)
+        is_admin = True
+    except Exception:
+        pass
+
+    params = {
+        'is_admin': is_admin,
+        'user_id': user_id,
+    }
+
+    try:
+        url = 'http://localhost:12346/problem/run/{}/source/'.format(run_id)
+        resp = requests.get(url, params=params)
+        return resp.json()
+    except (requests.RequestException, ValueError) as e:
+        print('Request to :12346 failed!')
+        print(str(e))
+        return {"result": "error", "message": str(e), "stack": traceback.format_exc()}

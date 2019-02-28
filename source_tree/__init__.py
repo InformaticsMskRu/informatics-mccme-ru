@@ -1,8 +1,10 @@
 from pyramid.config import Configurator
 from pyramid.session import UnencryptedCookieSessionFactoryConfig
+from pyramid.events import NewRequest
 from sqlalchemy import engine_from_config
 from source_tree.models import DBSession
 import source_tree.models
+from source_tree.utils.session import subscribe_rollback_on_request_finished
 
 from pyramid.events import NewRequest
 from source_tree.utils.session import subscribe_rollback_on_request_finished

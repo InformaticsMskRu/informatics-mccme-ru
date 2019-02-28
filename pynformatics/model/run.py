@@ -21,7 +21,6 @@ class Run(Base):
         {'schema':'ejudge'}
         )
 
-   
     run_id = Column(Integer, primary_key=True)
     size = Column(Integer)
     create_time = Column(DateTime)
