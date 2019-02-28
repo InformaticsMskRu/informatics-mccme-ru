@@ -60,10 +60,10 @@ def problem_submits(request):
             'user_id': user_id,
         }
         _prob_id = problem_id
-        url = 'http://localhost:12346/problem/trusted/{}/submit_v2'.format(_prob_id)
-        import requests
-        _resp = requests.post(url, files={'file': input_file}, data=_data)
-        print('Response from :12346', _resp)
+        # url = 'http://localhost:12346/problem/trusted/{}/submit_v2'.format(_prob_id)
+        # import requests
+        # _resp = requests.post(url, files={'file': input_file}, data=_data)
+        # print('Response from :12346', _resp)
     except Exception as e:
         print(e)
 

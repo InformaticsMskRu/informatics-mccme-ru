@@ -44,6 +44,8 @@ def get_protocol(request):
         contest_id = int(request.matchdict['contest_id'])
         run_id = int(request.matchdict['run_id'])
         run = Run.get_by(run_id = run_id, contest_id = contest_id)
+        #run.protocol
+        #return {"host": run.protocol}
         try:
             run.tested_protocol
             if (run.user.statement.filter(Statement.olympiad == 1).filter(Statement.timestop > time.time()).filter(Statement.timestart < time.time()).count() == 0):
