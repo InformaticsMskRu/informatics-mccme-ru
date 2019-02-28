@@ -60,21 +60,24 @@ def submit(run_file, contest_id, prob_id, lang_id, login, password, filename, ur
         'json' : 1,
     }
 
-    c = requests.post(url, data = submit_data, cookies = cookies, files = files)
+    req_submit = requests.post(url, data = submit_data, cookies = cookies, files = files)
 	
-    report_error(-1, login_data, submit_data, run_file, filename, user_id, c.text)
-    resp = json.loads(c.text)
+    report_error(-1, login_data, submit_data, run_file, filename, user_id, req_submit.text)
+    #return c.text
+    resp = json.loads(req_submit.text)
 
     if "run_id" in resp:
         return "ok"
-
+    if "error_code" not in resp:
+        report_error(0, login_data, submit_data, run_file, filename, user_id, req_submit.text)
+        return (resp, SID, contest_id)
     code = resp["error_code"]
     if code in status_repr:
         return status_repr[code]
     elif -code in status_repr:
         return status_repr[-code]
     else:
-        report_error(code, login_data, submit_data, run_file, filename, user_id, c.text)
+        report_error(code, login_data, submit_data, run_file, filename, user_id, req_submit.text)
         return default_error_str + " (" + str(code) + ")" 
 
 
