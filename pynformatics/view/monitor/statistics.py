@@ -6,17 +6,17 @@ class Statistics:
         """
         raise NotImplementedError
 
-    def get_stat_by_problem(self, competitor, problem_tag):
+    def get_stat_by_problem(self, competitor, problem):
         """
         :param competitor: участник.
-        :param problem_tag: таг задачи.
+        :param problem: таг задачи.
         :return: текстовое представление статистики для HTML результата задачи.
         """
         raise NotImplementedError
 
-    def is_problem_solved(self, competitor, problem_tag: str):
+    def is_problem_solved(self, competitor, problem):
         try:
-            return competitor.problem_results[problem_tag].is_solved
+            return competitor.problem_results[hash(problem)].is_solved
         except KeyError:
             return False
 
@@ -25,9 +25,9 @@ class Score(Statistics):
     def sum(self, competitor):
         return competitor.total_score
 
-    def get_stat_by_problem(self, competitor, problem_tag: str):
+    def get_stat_by_problem(self, competitor, problem):
         try:
-            return competitor.problem_results[problem_tag].str_score
+            return competitor.problem_results[hash(problem)].str_score
         except KeyError:
             return ''
 
@@ -36,8 +36,8 @@ class Solved(Statistics):
     def sum(self, competitor):
         return competitor.total_solved
 
-    def get_stat_by_problem(self, competitor, problem_tag: str):
+    def get_stat_by_problem(self, competitor, problem):
         try:
-            return competitor.problem_results[problem_tag].str_tries
+            return competitor.problem_results[hash(problem)].str_tries
         except KeyError:
             return ''

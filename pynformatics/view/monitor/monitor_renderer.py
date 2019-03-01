@@ -26,16 +26,14 @@ class MonitorRenderer:
         seen_problems = set()
         competitors = {}
 
-        keyfunc = itemgetter('contest_id')
-        self.problems.sort(key=keyfunc)
         for con_rank, (con_id, c_problems) in enumerate(
-            groupby(self.problems, key=keyfunc), start=1
+            groupby(self.problems, key=itemgetter('contest_id')), start=1
         ):
             contest = Contest(con_id, con_rank, con_id)
             contests.append(contest)
             for c_problem in sorted(c_problems, key=lambda x: x['problem']['rank']):
                 problem_meta = c_problem['problem']
-                p = Problem(**problem_meta, contest=contest, seen=seen_problems)
+                p = Problem(problem_meta, contest=contest, seen=seen_problems)
                 problems.append(p)
                 runs = c_problem['runs']
                 self._process_runs(p, runs, competitors)
@@ -67,7 +65,7 @@ class MonitorRenderer:
             runs_scores = list(filter(None, raw_runs_scores))
             if runs_scores:
                 comps[comp_id].add_problem_result(
-                    problem.name, ProblemResult(runs_scores, problem.was_seen)
+                    hash(problem), ProblemResult(runs_scores, problem.was_seen)
                 )
 
     def _process_competitors(self, competitors):
