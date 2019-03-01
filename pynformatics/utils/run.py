@@ -5,10 +5,10 @@ import gzip
 import codecs
 
 contest_path = '/home/judges/'
-protocols_path = 'var/archive/xmlreports'
-audit_path = 'var/archive/audit'
-sources_path = 'var/archive/runs'
-output_path = 'var/archive/output'
+protocols_path = 'archive/xmlreports'
+audit_path = 'archive/audit'
+sources_path = 'archive/runs'
+output_path = 'archive/output'
 
 def read_file_unknown_encoding(file_name, size=255):
     try:
@@ -44,7 +44,7 @@ def get_protocol_from_file(filename):
 def lazy(func):
         """ A decorator function designed to wrap attributes that need to be
         generated, but will not change. This is useful if the attribute is  
-        used a lot, but also often never used, as it gives us speed in both
+        sed a lot, but also often never used, as it gives us speed in both
         situations."""
         def cached(self, *args):
             name = "_"+func.__name__
@@ -169,9 +169,12 @@ def get_status_by_id(status_id):
         98:"Compiling..."
     }[status_id]
 
-def submit_path(tp, contest_id, submit_id): #path to archive file with path to archive directory = tp, look up audit_path etc constants 
-    return os.path.join(contest_path, '0' * (6 - len(str(contest_id))) + str(contest_id), tp, to32(submit_id // 32 // 32 // 32 % 32), 
-    to32(submit_id // 32 // 32 % 32), to32(submit_id // 32 % 32), '0' * (6 - len(str(submit_id))) + str(submit_id))
+def submit_path(tp, contest_id, submit_id): #path to archive file with path to archive directory = tp, look up audit_path etc constants
+    prefix = os.path.join(contest_path, "contests_var/{:06d}".format(contest_id))
+    if not os.path.isdir(prefix):
+        prefix = os.path.join(contest_path, "{:06d}/var".format(contest_id))
+    return os.path.join(prefix, tp, to32(submit_id // 32 // 32 // 32 % 32), 
+      to32(submit_id // 32 // 32 % 32), to32(submit_id // 32 % 32), '0' * (6 - len(str(submit_id))) + str(submit_id))
 
 def safe_open(path, tp):
     """ Funtion for open file with path is equal to parametr path. It tries to open as plain file,

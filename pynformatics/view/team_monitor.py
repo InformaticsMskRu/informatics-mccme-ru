@@ -37,16 +37,16 @@ class MonitorApi:
         self.view_name = 'Monitor'
 
     @view_config(route_name='monitor_create', request_method='POST', renderer='json')
-    def create(self):
+    def create_secret_link(self):
         if not RequestCheckUserCapability(self.request, 'moodle/ejudge_submits:comment'):
             raise Exception("Auth Error")
         author_id = RequestGetUserId(self.request)
         random_string = ''.join(random.SystemRandom().choice(
             string.ascii_lowercase + string.digits) for _ in range(20))
 
-        encoded_url = urlencode(self.request.params)
+        internal_link = urlencode(self.request.params)
         monitor = MonitorLink(author_id=author_id,
-                              link=random_string, internal_link=encoded_url)
+                              link=random_string, internal_link=internal_link)
 
         with transaction.manager:
             DBSession.add(monitor)
@@ -57,44 +57,15 @@ class MonitorApi:
 
         return response
 
-    @view_config(request_method='GET', renderer='json')
-    def read(self):
-        try:
-            return self._get_monitor().get('data')
-        except Exception as e:
-            return {"result": "error", "message": str(e), "stack": traceback.format_exc()}
-
-    def _get_monitor(self):
+    @view_config(route_name="monitor_table", renderer="pynformatics:templates/monitor.mak")
+    def render_as_html_by_secret_link(self):
         author_id = RequestGetUserId(self.request)
         if author_id == -1:
-            return {"result": "error", "message": 'Unauthorised'}
-
-        link = self.request.matchdict['link']
-
-        monitor = DBSession.query(MonitorLink) \
-            .filter(MonitorLink.link == link)\
-            .one_or_none()
-
-        if monitor is None:
-            return {"result": "error", "message": 'Monitor is not found'}
-
-        query_params = monitor.internal_link
-
-        url = 'http://localhost:12346/monitor?{}'.format(query_params)
-
+            raise Exception('Unauthorized')
+        link_arg = self.request.matchdict['link']
+        internal_link = self._get_saved_internal_link(link_arg)
         try:
-            resp = requests.get(url, timeout=30)
-            context = resp.json()
-        except Exception as e:
-            print('Request to :12346 failed!')
-            raise
-
-        return context
-
-    @view_config(route_name="monitor_table", renderer="pynformatics:templates/monitor.mak")
-    def render(self):
-        try:
-            data = self._get_monitor().get('data')
+            data = self._get_monitor(internal_link).get('data')
         except Exception as e:
             # TODO: как это будет рендерится? мы ведь рендерим шаблон.
             #  Надо разграничить рендеринг шаблона и возвращение джейсона
@@ -103,6 +74,36 @@ class MonitorApi:
         if data is None:
             return {"result": "error", "message": 'Something was wrong'}
 
+        return self._make_template_values(data)
+
+    @view_config(route_name='monitor_create', request_method='GET', renderer="pynformatics:templates/monitor.mak")
+    def render_as_html_by_public(self):
+        if not RequestCheckUserCapability(self.request, 'moodle/ejudge_submits:comment'):
+            raise Exception("Auth Error")
+        internal_link = urlencode(self.request.params)
+
+        try:
+            data = self._get_monitor(internal_link).get('data')
+        except Exception as e:
+            # TODO: как это будет рендерится? мы ведь рендерим шаблон.
+            #  Надо разграничить рендеринг шаблона и возвращение джейсона
+            return {"result": "error", "message": str(e), "stack": traceback.format_exc()}
+
+        if data is None:
+            return {"result": "error", "message": 'Something was wrong'}
+
+        return self._make_template_values(data)
+
+    @view_config(request_method='GET', renderer='json')
+    def get_raw_json(self):
+        link_arg = self.request.matchdict['link']
+        internal_link = self._get_saved_internal_link(link_arg)
+        try:
+            return self._get_monitor(internal_link).get('data')
+        except Exception as e:
+            return {"result": "error", "message": str(e), "stack": traceback.format_exc()}
+
+    def _make_template_values(self, data):
         partial_score = self.request.params.get('partial_score')
         if partial_score == 'on':
             mode = 'partial_scores_on'
@@ -116,3 +117,26 @@ class MonitorApi:
             'contests_table': contests_table,
         }
 
+    @classmethod
+    def _get_saved_internal_link(cls, link) -> str:
+        monitor = DBSession.query(MonitorLink) \
+            .filter(MonitorLink.link == link) \
+            .one_or_none()
+
+        if monitor is None:
+            raise Exception('Monitor is not found')
+
+        return monitor.internal_link
+
+    @classmethod
+    def _get_monitor(cls, internal_link) -> dict:
+        url = 'http://localhost:12346/monitor?{}'.format(internal_link)
+
+        try:
+            resp = requests.get(url, timeout=30)
+            context = resp.json()
+        except Exception as e:
+            print('Request to :12346 failed!')
+            raise
+
+        return context
