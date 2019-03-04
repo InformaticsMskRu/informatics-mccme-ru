@@ -35,16 +35,19 @@ class Problem:
 
 class ProblemResult:
     MAX_SCORE = 100
+    OK_STATUS = {0, 8}  # Статусы, которые отображаются зеленым цветом в мониторе.
 
-    def __init__(self, runs, seen):
+    def __init__(self, run_scores, run_statuses, seen):
         """
         Создать результат по задаче.
         Выбирается посылка с наибольшим баллом и количество посылок.
-        :param runs: все посылки.
+        :param run_scores: все посылки.
         """
-        self.score = max(runs)
-        self.tries = len(runs)
+        self.score = max(run_scores)
+        self.tries = len(run_scores)
+        self.is_ok = bool(self.OK_STATUS & run_statuses)
         self.was_seen = seen
+
 
     @property
     def str_score(self):

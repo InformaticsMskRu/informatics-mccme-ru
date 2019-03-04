@@ -52,9 +52,9 @@
             <td>${pre}</td>
             \
         % endfor
-        % for stat, issolved in competitor_result[PREFIX_LEN:]:
+        % for stat, is_ok in competitor_result[PREFIX_LEN:]:
             <td
-                % if issolved:
+                % if is_ok:
                     bgcolor="#e1f2e1"
                 % endif
             >

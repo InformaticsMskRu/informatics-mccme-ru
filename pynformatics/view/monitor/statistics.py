@@ -14,9 +14,9 @@ class Statistics:
         """
         raise NotImplementedError
 
-    def is_problem_solved(self, competitor, problem):
+    def is_ok_problem(self, competitor, problem):
         try:
-            return competitor.problem_results[hash(problem)].is_solved
+            return competitor.problem_results[hash(problem)].is_ok
         except KeyError:
             return False
 

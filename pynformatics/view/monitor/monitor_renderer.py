@@ -12,6 +12,7 @@ Contest = namedtuple('Contest', 'id rank name')
 
 class MonitorRenderer:
     STATS = {'partial_scores_on': Score(), 'partial_scores_off': Solved()}
+    NON_TERMINAL = {96, 98}
 
     def __init__(self, data, stat='score'):
         if stat not in self.STATS:
@@ -43,30 +44,50 @@ class MonitorRenderer:
         contests_table = self._process_contests(contests, problems)
         return problems, competitors, contests_table
 
-    @staticmethod
-    def _process_runs(problem, runs, comps):
+    def _process_runs(self, problem, runs, comps):
         def get_user_id(run):
             return run['user']['id']
 
         runs.sort(key=get_user_id)
         comp_ids = []
         group_runs = []
-        for comp_id, comp_data in groupby(runs, key=get_user_id):
+        for comp_id, comp_runs in groupby(runs, key=get_user_id):
             comp_ids.append(comp_id)
-            group_runs.append(list(comp_data))
+            group_runs.append(list(comp_runs))
 
-        for comp_id, comp_data in zip(comp_ids, group_runs):
+        for comp_id, comp_runs in zip(comp_ids, group_runs):
             if comp_id not in comps:
-                f_name = comp_data[0]['user']['firstname']
-                l_name = comp_data[0]['user']['lastname']
+                f_name = comp_runs[0]['user']['firstname']
+                l_name = comp_runs[0]['user']['lastname']
                 comps[comp_id] = Competitor(comp_id, f_name, l_name)
 
-            raw_runs_scores = (d['ejudge_score'] for d in comp_data)
-            runs_scores = list(filter(None, raw_runs_scores))
+            comp_runs = filter(self._is_correct_run, comp_runs)
+
+            runs_scores = []
+            runs_statuses = set()
+            for run in comp_runs:
+                runs_scores.append(run['ejudge_score'])
+                runs_statuses.add(run['ejudge_status'])
+
             if runs_scores:
+                print(runs_statuses)
+                assert runs_statuses
                 comps[comp_id].add_problem_result(
-                    hash(problem), ProblemResult(runs_scores, problem.was_seen)
+                    hash(problem),
+                    ProblemResult(runs_scores, runs_statuses, problem.was_seen),
                 )
+
+    def _is_correct_run(self, run):
+        """
+        Корректная ли посылка.
+        1. Не None
+        2. Не промежуточный статус (не тестирование, не компилирование).
+        :param run: Посылка.
+        """
+        return (
+            run['ejudge_score'] is not None
+            and run['ejudge_status'] not in self.NON_TERMINAL
+        )
 
     def _process_competitors(self, competitors):
         competitors = list(competitors.values())

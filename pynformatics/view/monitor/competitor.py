@@ -27,7 +27,7 @@ class Competitor:
         return self.stat.get_stat_by_problem(self, problem)
 
     def is_problem_solved(self, problem):
-        return self.stat.is_problem_solved(self, problem)
+        return self.stat.is_ok_problem(self, problem)
 
     def add_problem_result(self, tag, problem_result):
         self.problem_results[tag] = problem_result
