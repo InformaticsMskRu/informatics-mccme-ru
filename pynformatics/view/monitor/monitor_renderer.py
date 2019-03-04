@@ -33,7 +33,7 @@ class MonitorRenderer:
             contests.append(contest)
             for c_problem in sorted(c_problems, key=lambda x: x['problem']['rank']):
                 problem_meta = c_problem['problem']
-                p = Problem(problem_meta, contest=contest, seen=seen_problems)
+                p = Problem(problem_meta, contest, seen_problems)
                 problems.append(p)
                 runs = c_problem['runs']
                 self._process_runs(p, runs, competitors)
