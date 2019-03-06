@@ -6,24 +6,6 @@
 %>
 
 
-<!DOCTYPE html>
-<html lang="{{ '${request.locale_name}' }}">
-<head>
-    <meta charset="utf-8">
-    <link rel="shortcut icon"
-          href="${request.static_url('monitor_table:static/monitor-16x16.png')}">
-    <title>Monitor table</title>
-
-    <style>
-        table {
-            border: 1px solid #CCC;
-            font-family: Verdana, serif;
-            font-size: 11pt;
-        }
-    </style>
-    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
-</head>
-<body>
 <table cellspacing="0" cellpadding="2" border="1">
     ${makeheadrow(problems)}
 
@@ -43,8 +25,7 @@
         ${make_contest_row(row)}
     % endfor
 </table>
-</body>
-</html>
+
 
 <%def name="makerow(competitor_result)">
     <tr>
