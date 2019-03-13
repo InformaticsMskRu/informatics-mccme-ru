@@ -275,12 +275,7 @@ def problem_get_run_source(request):
     if user_id == -1:
         return {'result': 'error', 'message': 'Not authorized'}
 
-    is_admin = False
-    try:
-        checkCapability(request)
-        is_admin = True
-    except Exception:
-        pass
+    is_admin = RequestCheckUserCapability(request, 'moodle/ejudge_submits:comment')
 
     params = {
         'is_admin': is_admin,
