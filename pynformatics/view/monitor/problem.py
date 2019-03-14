@@ -1,4 +1,5 @@
 import string
+from enum import Enum
 
 
 class Problem:
@@ -33,9 +34,32 @@ class Problem:
         return '{}{}'.format(self.contest_rank, self.RANK_TO_LETTER[self.rank])
 
 
+# TODO: Добавить в репозиторий Enum со статусами, а не просто писать Magic number`ы
+class ProblemResultColor(Enum):
+    WHITE = ({99, 14, 1, 10, 7, 11, 2, 3, 4, 5, 6, 12, 13}, '#fff')
+    GREEN = ({0}, '#e1f2e1')
+    YELLOW = ({8}, ' #ffff66')
+    RED = ({9}, '#ff6666')
+
+    def __init__(self, statuses, html_color):
+        self.statuses = statuses
+        self.html_color = html_color
+
+    @classmethod
+    def get_by_status(cls, status):
+        def eq(color):
+            return status in color.statuses
+
+        try:
+            return next(filter(eq, cls))
+        except StopIteration:
+            raise ValueError('Such status does not exist')
+# TODO: Вывести более дружелюбное сообщение с перечислением возможных статусов.
+#  Но для этого нужно сделать to do выше :) и добавить метод по типу __str__ в enum.
+
+
 class ProblemResult:
     MAX_SCORE = 100
-    OK_STATUS = {0, 8}  # Статусы, которые отображаются зеленым цветом в мониторе.
 
     def __init__(self, run_scores, run_statuses, seen):
         """
@@ -45,7 +69,8 @@ class ProblemResult:
         """
         self.score = max(run_scores)
         self.tries = len(run_scores)
-        self.is_ok = bool(self.OK_STATUS & run_statuses)
+        last_status = run_statuses[-1]
+        self.color = ProblemResultColor.get_by_status(last_status)
         self.was_seen = seen
 
 
