@@ -68,9 +68,9 @@ class MonitorRenderer:
 
             runs_scores = []
             runs_statuses = []
-            for run in comp_runs:
-                runs_scores.append(run['ejudge_score'])
-                runs_statuses.append(run['ejudge_status'])
+            for comp_run in comp_runs:
+                runs_scores.append(comp_run['ejudge_score'])
+                runs_statuses.append(comp_run['ejudge_status'])
 
             if runs_scores:
                 comps[comp_id].add_problem_result(
@@ -80,11 +80,13 @@ class MonitorRenderer:
 
     def _parse_datetime(self, date_string: str):
         """Workaround: https://bugs.python.org/issue24954"""
+
         def remove_colon_from_tz(string):
             """
             '2018-03-24T17:51:24+00:00' -> '2018-03-24T17:51:24+0000'
             """
             return string[:-3] + string[-2:]
+
         fixed = remove_colon_from_tz(date_string)
         return datetime.strptime(fixed, self.DATETIME_FORMAT)
 
