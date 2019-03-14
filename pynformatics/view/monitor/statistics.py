@@ -1,3 +1,6 @@
+from pynformatics.view.monitor.problem import ProblemResultColor
+
+
 class Statistics:
     def sum(self, competitor):
         """
@@ -14,11 +17,11 @@ class Statistics:
         """
         raise NotImplementedError
 
-    def is_ok_problem(self, competitor, problem):
+    def problem_color(self, competitor, problem):
         try:
-            return competitor.problem_results[hash(problem)].is_ok
+            return competitor.problem_results[hash(problem)].color
         except KeyError:
-            return False
+            return ProblemResultColor.WHITE
 
 
 class Score(Statistics):

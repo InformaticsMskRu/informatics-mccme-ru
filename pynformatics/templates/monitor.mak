@@ -33,12 +33,11 @@
             <td>${pre}</td>
             \
         % endfor
-        % for stat, is_ok in competitor_result[PREFIX_LEN:]:
-            <td
-                % if is_ok:
-                    bgcolor="#e1f2e1"
-                % endif
-            >
+        % for stat, color in competitor_result[PREFIX_LEN:]:
+            <%
+                html_color = color.html_color
+            %>
+            <td bgcolor=${html_color}>
             ${stat}
             </td>
             \

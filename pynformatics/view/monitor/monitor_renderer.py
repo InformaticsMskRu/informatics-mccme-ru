@@ -1,4 +1,5 @@
 from collections import namedtuple
+from datetime import datetime
 from itertools import groupby
 from operator import itemgetter, attrgetter
 
@@ -13,6 +14,7 @@ Contest = namedtuple('Contest', 'id rank name')
 class MonitorRenderer:
     STATS = {'partial_scores_on': Score(), 'partial_scores_off': Solved()}
     NON_TERMINAL = {96, 98}
+    DATETIME_FORMAT = '%Y-%m-%dT%H:%M:%S%z'
 
     def __init__(self, data, stat='score'):
         if stat not in self.STATS:
@@ -61,21 +63,32 @@ class MonitorRenderer:
                 l_name = comp_runs[0]['user']['lastname']
                 comps[comp_id] = Competitor(comp_id, f_name, l_name)
 
-            comp_runs = filter(self._is_correct_run, comp_runs)
+            comp_runs = list(filter(self._is_correct_run, comp_runs))
+            comp_runs.sort(key=lambda r: self._parse_datetime(r['create_time']))
 
             runs_scores = []
-            runs_statuses = set()
-            for run in comp_runs:
-                runs_scores.append(run['ejudge_score'])
-                runs_statuses.add(run['ejudge_status'])
+            runs_statuses = []
+            for comp_run in comp_runs:
+                runs_scores.append(comp_run['ejudge_score'])
+                runs_statuses.append(comp_run['ejudge_status'])
 
             if runs_scores:
-                print(runs_statuses)
-                assert runs_statuses
                 comps[comp_id].add_problem_result(
                     hash(problem),
                     ProblemResult(runs_scores, runs_statuses, problem.was_seen),
                 )
+
+    def _parse_datetime(self, date_string: str):
+        """Workaround: https://bugs.python.org/issue24954"""
+
+        def remove_colon_from_tz(string):
+            """
+            '2018-03-24T17:51:24+00:00' -> '2018-03-24T17:51:24+0000'
+            """
+            return string[:-3] + string[-2:]
+
+        fixed = remove_colon_from_tz(date_string)
+        return datetime.strptime(fixed, self.DATETIME_FORMAT)
 
     def _is_correct_run(self, run):
         """
