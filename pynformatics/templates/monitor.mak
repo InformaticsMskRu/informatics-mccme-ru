@@ -6,7 +6,7 @@
 %>
 
 
-<table cellspacing="0" cellpadding="2" border="1">
+<table align="center" class="BlueTable" cellspacing="0" cellpadding="2">
     ${makeheadrow(problems)}
 
     % for i, c in enumerate(competitors, start=1):
@@ -20,7 +20,7 @@
     ${makeheadrow(problems)}
 </table>
 <br>
-<table cellspacing="0" cellpadding="2" border="1">
+<table align='center' cellspacing="0" cellpadding="2" border="1">
     % for row in contests_table:
         ${make_contest_row(row)}
     % endfor
@@ -54,10 +54,10 @@
         % for problem in problems:
         <%
             problem_id = problem.id
-            problem_tag = problem.tag
+            attr = problem_attr(problem)
         %>
             <td>
-                <a ${PROBLEM_LINK_PREFIX}${problem_id}>${problem_tag}</a>
+                <a ${PROBLEM_LINK_PREFIX}${problem_id}>${attr}</a>
             </td>
             \
         % endfor

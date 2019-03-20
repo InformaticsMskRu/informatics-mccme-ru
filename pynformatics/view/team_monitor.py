@@ -111,11 +111,12 @@ class MonitorApi:
         else:
             mode = 'partial_scores_off'
         r = MonitorRenderer(data, mode)
-        problems, competitors, contests_table = r.render()
+        problems, competitors, contests_table, problem_attr = r.render()
         return {
             'problems': problems,
             'competitors': competitors,
             'contests_table': contests_table,
+            'problem_attr': problem_attr,
         }
 
     @classmethod
