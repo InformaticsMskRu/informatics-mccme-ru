@@ -13,6 +13,7 @@ from pynformatics.model import SimpleUser, EjudgeProblem, Problem
 from pynformatics.models import DBSession
 from pynformatics.utils.proxied_request_helpers import peek_request_args
 from pynformatics.view.utils import *
+from pynformatics.view.utils import is_authorized_id
 
 
 def checkCapability(request):
@@ -241,7 +242,7 @@ def problem_get_corr(request):
 def problem_runs_filter_proxy(request):
     user_id = RequestGetUserId(request)  # Returns -1 if not authorised
 
-    if user_id == -1:
+    if not is_authorized_id(user_id):
         return {'result': 'error', 'message': 'Not authorized'}
 
     problem_id = request.matchdict.get('problem_id')
@@ -270,9 +271,9 @@ def problem_get_run_source(request):
     if run_id is None:
         return {"result": "error", "message": 'Run id required'}
 
-    user_id = RequestGetUserId(request)  # Returns -1 if not authorised
+    user_id = RequestGetUserId(request)
 
-    if user_id == -1:
+    if not is_authorized_id(user_id):
         return {'result': 'error', 'message': 'Not authorized'}
 
     is_admin = RequestCheckUserCapability(request, 'moodle/ejudge_submits:comment')

@@ -12,6 +12,7 @@ from pynformatics.model.monitor import MonitorLink
 from pynformatics.view.monitor.monitor_renderer import MonitorRenderer
 from pynformatics.view.utils import *
 from pynformatics.models import DBSession
+from pynformatics.view.utils import is_authorized_id
 
 
 @view_config(route_name='team_monitor.get', renderer='string')
@@ -60,7 +61,7 @@ class MonitorApi:
     @view_config(route_name="monitor_table", renderer="pynformatics:templates/monitor.mak")
     def render_as_html_by_secret_link(self):
         author_id = RequestGetUserId(self.request)
-        if author_id == -1:
+        if not is_authorized_id(author_id):
             raise Exception('Unauthorized')
         link_arg = self.request.matchdict['link']
         internal_link = self._get_saved_internal_link(link_arg)
