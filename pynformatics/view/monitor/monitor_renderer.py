@@ -29,22 +29,27 @@ class MonitorRenderer:
         seen_problems = set()
         competitors = {}
 
+        def get_rank(prob):
+            return prob['problem']['rank']
+
         for con_rank, (con_id, c_problems) in enumerate(
             groupby(self.problems, key=itemgetter('contest_id')), start=1
         ):
             contest = Contest(con_id, con_rank, con_id)
             contests.append(contest)
-            for c_problem in sorted(c_problems, key=lambda x: x['problem']['rank']):
+            for i, c_problem in enumerate(sorted(c_problems, key=get_rank), start=1):
                 problem_meta = c_problem['problem']
-                p = Problem(problem_meta, contest, seen_problems)
+                p = Problem(problem_meta, i, contest, seen_problems)
                 problems.append(p)
                 runs = c_problem['runs']
                 self._process_runs(p, runs, competitors)
                 seen_problems.add(p.id)
 
+        is_one_contest = len(contests) == 1
+        problem_attr = attrgetter('tag' if is_one_contest else 'full_tag')
         competitors = self._process_competitors(competitors)
-        contests_table = self._process_contests(contests, problems)
-        return problems, competitors, contests_table
+        contests_table = self._process_contests(contests, problems, problem_attr)
+        return problems, competitors, contests_table, problem_attr
 
     def _process_runs(self, problem, runs, comps):
         def get_user_id(run):
@@ -110,14 +115,14 @@ class MonitorRenderer:
         return competitors
 
     @staticmethod
-    def _process_contests(contests, problems):
+    def _process_contests(contests, problems, problem_attr):
         contests_table = [['Letter', 'Name']]
         keyfunc = attrgetter('contest_id')
         problems_by_contest = (g for _, g in groupby(problems, key=keyfunc))
         for contest, problem_g in zip(contests, problems_by_contest):
             contests_table.append(['Contest', contest.id])
             for problem in problem_g:
-                contests_table.append(
-                    [problem.tag, '{0} [{1}]'.format(problem.name, problem.id)]
-                )
+                attr = problem_attr(problem)
+                info = '{0} [{1}]'.format(problem.name, problem.id)
+                contests_table.append([attr, info])
         return contests_table

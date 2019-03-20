@@ -15,10 +15,11 @@ class Problem:
     # 1 -> A, ..., 26 -> Z
     RANK_TO_LETTER = dict(enumerate(string.ascii_uppercase, start=1))
 
-    def __init__(self, problem_meta, contest, seen_problems):
+    def __init__(self, problem_meta, number, contest, seen_problems):
         self.id = problem_meta['id']
         self.name = problem_meta['name']
         self.rank = problem_meta['rank']
+        self.number = number
         self.contest_id = contest.id
         self.contest_rank = contest.rank
         self.was_seen = self.id in seen_problems
@@ -27,11 +28,18 @@ class Problem:
         return hash((self.id, self.contest_id))
 
     @property
+    def full_tag(self):
+        """
+        :return: таг задачи в формате {номер контеста}{буквенный номер задачи}
+        """
+        return '{}{}'.format(self.contest_rank, self.RANK_TO_LETTER[self.number])
+
+    @property
     def tag(self):
         """
         :return: таг задачи в формате {номер контеста}{буквенный номер задачи}
         """
-        return '{}{}'.format(self.contest_rank, self.RANK_TO_LETTER[self.rank])
+        return str(self.RANK_TO_LETTER[self.number])
 
 
 # TODO: Добавить в репозиторий Enum со статусами, а не просто писать Magic number`ы
