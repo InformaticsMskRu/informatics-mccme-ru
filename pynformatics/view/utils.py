@@ -4,7 +4,9 @@ from phpserialize import *
 
 __all__ = ["RequestGetUserId", "RequestCheckUserCapability", "getContestStrId"]
 
+
 def RequestGetUserId(request):
+    """Returns <=2 if not authorised"""
     fh = None
     try:
         fh = codecs.open('/var/moodledata/sessions/sess_'+request.cookies['MoodleSession'], "r", "utf-8")
@@ -32,11 +34,16 @@ def RequestCheckUserCapability(request, capability):
 #       raise
        return False
 
+
 def getContestStrId(id):
     res = str(id)
     while len(res) < 6:
         res = "0" + res
     return res
+
+
+def is_authorized_id(user_id):
+    return user_id > 2
 
 # def RequestGetUserCapability(request, capability):
 #    str = "+++"
