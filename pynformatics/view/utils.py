@@ -43,7 +43,7 @@ def getContestStrId(id):
 
 
 def is_authorized_id(user_id):
-    return user_id > 2
+    return int(user_id) > 2
 
 # def RequestGetUserCapability(request, capability):
 #    str = "+++"
