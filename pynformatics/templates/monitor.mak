@@ -1,8 +1,7 @@
 <%
     TABLE_HEAD_PREFIX = ['N', 'Name', 'Sum']
     PREFIX_LEN = len(TABLE_HEAD_PREFIX)
-    PROBLEM_LINK_PREFIX = 'href=http://informatics.mccme.ru/' \
-                          'mod/statements/view3.php?chapterid='
+    PROBLEM_LINK_PREFIX = '/mod/statements/view3.php?chapterid='
 %>
 
 
