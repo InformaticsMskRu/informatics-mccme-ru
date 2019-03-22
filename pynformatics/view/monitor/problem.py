@@ -4,16 +4,12 @@ from enum import Enum
 
 class Problem:
     """
-    Задача в контексте соревнования(контеста). Задачи в таблице могут повторяться
-    так как в сводной таблице могут быть несколько соревнований
-    за разное время с повторяющимся задачами.
+    Задача в контексте соревнования(контеста).
 
-    Это означает что у одинаковых задач будут одинаковые идентификаторы,
-    но разные таги.
+    Задачи в таблице могут повторяться так как в сводной таблице могут
+    быть несколько соревнований за разное время с повторяющимся задачами.
+    Это означает что у одинаковых задач будут одинаковые идентификаторы, но разные таги.
     """
-
-    # 1 -> A, ..., 26 -> Z
-    RANK_TO_LETTER = dict(enumerate(string.ascii_uppercase, start=1))
 
     def __init__(self, problem_meta, number, contest, seen_problems):
         self.id = problem_meta['id']
@@ -32,14 +28,22 @@ class Problem:
         """
         :return: таг задачи в формате {номер контеста}{буквенный номер задачи}
         """
-        return '{}{}'.format(self.contest_rank, self.RANK_TO_LETTER[self.number])
+        return '{}{}'.format(self.contest_rank, self.number_to_tag(self.number))
 
     @property
     def tag(self):
         """
-        :return: таг задачи в формате {номер контеста}{буквенный номер задачи}
+        :return: таг задачи в формате {буквенный номер задачи}
         """
-        return str(self.RANK_TO_LETTER[self.number])
+        return self.number_to_tag(self.number)
+
+    def number_to_tag(self, number):
+        """1 -> A, ..., 26 -> Z, 27 -> AA"""
+        result = []
+        while number:
+            result.append(string.ascii_uppercase[(number - 1) % 26])
+            number = (number - 1) // 26
+        return ''.join(reversed(result))
 
 
 # TODO: Добавить в репозиторий Enum со статусами, а не просто писать Magic number`ы
@@ -62,6 +66,8 @@ class ProblemResultColor(Enum):
             return next(filter(eq, cls))
         except StopIteration:
             raise ValueError('Such status does not exist')
+
+
 # TODO: Вывести более дружелюбное сообщение с перечислением возможных статусов.
 #  Но для этого нужно сделать to do выше :) и добавить метод по типу __str__ в enum.
 
@@ -80,7 +86,6 @@ class ProblemResult:
         last_status = run_statuses[-1]
         self.color = ProblemResultColor.get_by_status(last_status)
         self.was_seen = seen
-
 
     @property
     def str_score(self):
