@@ -2,6 +2,7 @@
     TABLE_HEAD_PREFIX = ['N', 'Name', 'Sum']
     PREFIX_LEN = len(TABLE_HEAD_PREFIX)
     PROBLEM_LINK_PREFIX = '/mod/statements/view3.php?chapterid='
+    USER_SUBMITS_PREFIX = '/submits/view.php?user_id='
 %>
 
 
@@ -9,11 +10,20 @@
     ${makeheadrow(problems)}
 
     % for i, c in enumerate(competitors, start=1):
-        <%
-            competitor_result = [i, c.full_name, c.sum()]
-            competitor_result.extend(c.full_stat_by_prob(p) for p in problems)
-        %>
-        ${makerow(competitor_result)}
+    <%
+        full_name = c.full_name
+        c_id = c.id
+        c_sum = c.sum()
+        competitor_result = (c.full_stat_by_prob(p) for p in problems)
+    %>
+        <tr>
+            <td>${i}</td>
+            <td>
+                <a ${USER_SUBMITS_PREFIX}${c_id}>${full_name}</a>
+            </td>
+            <td>${c_sum}</td>
+            ${makerow(competitor_result)}
+        </tr>
     % endfor
 
     ${makeheadrow(problems)}
@@ -27,21 +37,15 @@
 
 
 <%def name="makerow(competitor_result)">
-    <tr>
-        % for pre in competitor_result[:PREFIX_LEN]:
-            <td>${pre}</td>
-            \
-        % endfor
-        % for stat, color in competitor_result[PREFIX_LEN:]:
-            <%
-                html_color = color.html_color
-            %>
-            <td bgcolor=${html_color}>
+    % for stat, color in competitor_result:
+        <%
+            html_color = color.html_color
+        %>
+        <td bgcolor=${html_color}>
             ${stat}
-            </td>
-            \
-        % endfor
-    </tr>
+        </td>
+        \
+    % endfor
 </%def>
 
 <%def name="makeheadrow(problems)">
@@ -65,8 +69,9 @@
 
 <%def name="make_contest_row(row)">
     <tr>
-    % for name in row:
-        <td>${name}</td>\
-    % endfor
+        % for name in row:
+            <td>${name}</td>
+            \
+        % endfor
     </tr>
 </%def>
