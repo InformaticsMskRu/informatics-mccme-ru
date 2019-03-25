@@ -44,6 +44,7 @@ def problem_submits(request):
     user_id = RequestGetUserId(request)
     lang_id = request.params["lang_id"]
     problem_id = request.matchdict["problem_id"]
+    statement_id = request.matchdict.get('statement_id')
     input_file = request.POST['file'].file
 
     try:
@@ -51,6 +52,7 @@ def problem_submits(request):
         _data = {
             'lang_id': lang_id,
             'user_id': user_id,
+            'statement_id': statement_id,
         }
         url = 'http://localhost:12346/problem/trusted/{}/submit_v2'.format(problem_id)
         _resp = requests.post(url, files={'file': input_file}, data=_data)
