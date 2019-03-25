@@ -129,8 +129,8 @@ def protocol_get_outp(request):
     return run.get_output_file(int(request.matchdict['test_num']), tp='o')
 
 
-@require_captcha
 @view_config(route_name="protocol.get_submit_archive", renderer="string")
+@require_captcha
 @check_global_role(("ejudge_teacher", "admin"))
 def get_submit_archive(request):
 

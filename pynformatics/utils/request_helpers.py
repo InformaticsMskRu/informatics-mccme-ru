@@ -6,7 +6,7 @@ import requests
 RECAPTCHA_URL = "https://www.google.com/recaptcha/api/siteverify"
 
 
-def check_captcha(secret, resp):
+def check_captcha(resp, secret):
     params = {
        'secret': secret,
        'response': resp

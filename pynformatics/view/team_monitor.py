@@ -39,8 +39,9 @@ class MonitorApi:
 
     @view_config(route_name='monitor_create', request_method='POST', renderer='json')
     def create_secret_link(self):
-        if not RequestCheckUserCapability(self.request, 'moodle/ejudge_submits:comment'):
-            raise Exception("Auth Error")
+        author_id = RequestGetUserId(self.request)
+        if not is_authorized_id(author_id):
+            raise Exception('Unauthorized')
         author_id = RequestGetUserId(self.request)
         random_string = ''.join(random.SystemRandom().choice(
             string.ascii_lowercase + string.digits) for _ in range(20))
