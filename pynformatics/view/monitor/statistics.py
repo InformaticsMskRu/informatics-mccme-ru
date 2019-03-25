@@ -19,7 +19,7 @@ class Statistics:
 
     def problem_color(self, competitor, problem):
         try:
-            return competitor.problem_results[hash(problem)].color
+            return competitor.problem_results[problem].color
         except KeyError:
             return ProblemResultColor.WHITE
 
@@ -30,7 +30,7 @@ class Score(Statistics):
 
     def get_stat_by_problem(self, competitor, problem):
         try:
-            return competitor.problem_results[hash(problem)].str_score
+            return competitor.problem_results[problem].str_score
         except KeyError:
             return ''
 
@@ -41,6 +41,6 @@ class Solved(Statistics):
 
     def get_stat_by_problem(self, competitor, problem):
         try:
-            return competitor.problem_results[hash(problem)].str_tries
+            return competitor.problem_results[problem].str_tries
         except KeyError:
             return ''

@@ -79,7 +79,7 @@ class MonitorRenderer:
 
             if runs_scores:
                 comps[comp_id].add_problem_result(
-                    hash(problem),
+                    problem,
                     ProblemResult(runs_scores, runs_statuses, problem.was_seen),
                 )
 
