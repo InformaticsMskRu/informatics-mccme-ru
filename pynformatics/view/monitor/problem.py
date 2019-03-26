@@ -1,5 +1,6 @@
 import string
 from enum import Enum
+from operator import itemgetter
 
 
 class Problem:
@@ -47,25 +48,32 @@ class Problem:
 
 
 # TODO: Добавить в репозиторий Enum со статусами, а не просто писать Magic number`ы
-class ProblemResultColor(Enum):
-    WHITE = ({99, 14, 1, 10, 7, 11, 2, 3, 4, 5, 6, 12, 13}, '#fff')
-    GREEN = ({0}, '#e1f2e1')
-    YELLOW = ({8}, ' #ffff66')
-    RED = ({9}, '#ff6666')
+class Status(Enum):
+    EJUDGE_OK = ({0}, '#e1f2e1')
+    JUDGE_OK = ({8}, ' #ffff66')
+    # TODO: Выяснить являются ли wrong статусами:
+    #  1 - Ошибка компиляции
+    #  12 - Превышение лимита памяти
+    #  13 - Security error
+    #  14 - Ошибка оформления кода
+    WRONG = ({2, 3, 4, 5, 6, 7}, '#fff')
+    JUDGE_WRONG = ({9}, '#ff6666')
+    # Статусы, которые никак не влияют на подсчеты, но должны быть белого цвета
+    OTHER = ({}, '#fff')
 
-    def __init__(self, statuses, html_color):
-        self.statuses = statuses
+    def __init__(self, codes, html_color):
+        self.codes = codes
         self.html_color = html_color
 
     @classmethod
-    def get_by_status(cls, status):
-        def eq(color):
-            return status in color.statuses
+    def by_code(cls, code):
+        def eq(status):
+            return code in status.codes
 
         try:
             return next(filter(eq, cls))
         except StopIteration:
-            raise ValueError('Such status does not exist')
+            return cls.OTHER
 
 
 # TODO: Вывести более дружелюбное сообщение с перечислением возможных статусов.
@@ -73,18 +81,17 @@ class ProblemResultColor(Enum):
 
 
 class ProblemResult:
-    MAX_SCORE = 100
-
-    def __init__(self, run_scores, run_statuses, seen):
+    def __init__(self, runs, seen):
         """
         Создать результат по задаче.
         Выбирается посылка с наибольшим баллом и количество посылок.
-        :param run_scores: все посылки.
+        :param runs: все посылки.
         """
-        self.score = max(run_scores)
-        self.tries = len(run_scores)
-        last_status = run_statuses[-1]
-        self.color = ProblemResultColor.get_by_status(last_status)
+        self.score = max(map(itemgetter('ejudge_score'), runs))
+        codes = map(itemgetter('ejudge_status'), runs)
+        self.tries = sum(Status.by_code(code) is Status.WRONG for code in codes)
+        last_status = runs[-1]['ejudge_status']
+        self.status = Status.by_code(last_status)
         self.was_seen = seen
 
     @property
@@ -103,7 +110,7 @@ class ProblemResult:
         """
         :return: текстовое представление количества попыток решения задачи для HTML.
         """
-        if self.score == 0:
+        if not self.tries:
             return ''
         if self.is_solved:
             res = '+{}'.format(self.tries - 1 or '')
@@ -118,4 +125,4 @@ class ProblemResult:
         """
         :return: решена ли задача на максимальный балл.
         """
-        return self.score == self.MAX_SCORE
+        return self.status is Status.JUDGE_OK or self.status is Status.EJUDGE_OK

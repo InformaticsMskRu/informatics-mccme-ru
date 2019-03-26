@@ -1,4 +1,4 @@
-from pynformatics.view.monitor.problem import ProblemResultColor
+from pynformatics.view.monitor.problem import Status
 
 
 class Statistics:
@@ -17,11 +17,11 @@ class Statistics:
         """
         raise NotImplementedError
 
-    def problem_color(self, competitor, problem):
+    def problem_status(self, competitor, problem):
         try:
-            return competitor.problem_results[problem].color
+            return competitor.problem_results[problem].status
         except KeyError:
-            return ProblemResultColor.WHITE
+            return Status.OTHER
 
 
 class Score(Statistics):

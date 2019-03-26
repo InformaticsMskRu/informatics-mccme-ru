@@ -71,17 +71,9 @@ class MonitorRenderer:
             comp_runs = list(filter(self._is_correct_run, comp_runs))
             comp_runs.sort(key=lambda r: self._parse_datetime(r['create_time']))
 
-            runs_scores = []
-            runs_statuses = []
-            for comp_run in comp_runs:
-                runs_scores.append(comp_run['ejudge_score'])
-                runs_statuses.append(comp_run['ejudge_status'])
-
-            if runs_scores:
-                comps[comp_id].add_problem_result(
-                    problem,
-                    ProblemResult(runs_scores, runs_statuses, problem.was_seen),
-                )
+            if comp_runs:
+                result = ProblemResult(comp_runs, problem.was_seen)
+                comps[comp_id].add_problem_result(problem, result)
 
     def _parse_datetime(self, date_string: str):
         """Workaround: https://bugs.python.org/issue24954"""
@@ -98,7 +90,7 @@ class MonitorRenderer:
     def _is_correct_run(self, run):
         """
         Корректная ли посылка.
-        1. Не None
+        1. Не None очков
         2. Не промежуточный статус (не тестирование, не компилирование).
         :param run: Посылка.
         """

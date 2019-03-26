@@ -37,9 +37,9 @@
 
 
 <%def name="makerow(competitor_result)">
-    % for stat, color in competitor_result:
+    % for stat, status in competitor_result:
         <%
-            html_color = color.html_color
+            html_color = status.html_color
         %>
         <td bgcolor=${html_color}>
             ${stat}
