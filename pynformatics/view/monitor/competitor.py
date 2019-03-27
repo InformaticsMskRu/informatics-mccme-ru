@@ -20,16 +20,16 @@ class Competitor:
     def full_stat_by_prob(self, problem):
         return (
             self.get_stat_by_problem(problem),
-            self.problem_color(problem),
+            self.problem_status(problem),
         )
 
     def get_stat_by_problem(self, problem):
         return self.stat.get_stat_by_problem(self, problem)
 
-    def problem_color(self, problem):
-        return self.stat.problem_color(self, problem)
+    def problem_status(self, problem):
+        return self.stat.problem_status(self, problem)
 
-    def add_problem_result(self, tag, problem_result):
-        self.problem_results[tag] = problem_result
+    def add_problem_result(self, problem, problem_result):
+        self.problem_results[problem] = problem_result
         self.total_score += problem_result.score
         self.total_solved += problem_result.is_solved
