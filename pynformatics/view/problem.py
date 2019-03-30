@@ -13,6 +13,7 @@ from pynformatics.model import SimpleUser, EjudgeProblem, Problem
 from pynformatics.models import DBSession
 from pynformatics.utils.proxied_request_helpers import peek_request_args
 from pynformatics.view.utils import *
+from pynformatics.view.utils import is_authorized_id
 
 
 def checkCapability(request):
@@ -43,6 +44,7 @@ def problem_submits(request):
     user_id = RequestGetUserId(request)
     lang_id = request.params["lang_id"]
     problem_id = request.matchdict["problem_id"]
+    statement_id = request.matchdict.get('statement_id')
     input_file = request.POST['file'].file
 
     try:
@@ -50,6 +52,7 @@ def problem_submits(request):
         _data = {
             'lang_id': lang_id,
             'user_id': user_id,
+            'statement_id': statement_id,
         }
         url = 'http://localhost:12346/problem/trusted/{}/submit_v2'.format(problem_id)
         _resp = requests.post(url, files={'file': input_file}, data=_data)
@@ -240,7 +243,7 @@ def problem_get_corr(request):
 def problem_runs_filter_proxy(request):
     user_id = RequestGetUserId(request)  # Returns -1 if not authorised
 
-    if user_id == -1:
+    if not is_authorized_id(user_id):
         return {'result': 'error', 'message': 'Not authorized'}
 
     problem_id = request.matchdict.get('problem_id')
@@ -269,17 +272,12 @@ def problem_get_run_source(request):
     if run_id is None:
         return {"result": "error", "message": 'Run id required'}
 
-    user_id = RequestGetUserId(request)  # Returns -1 if not authorised
+    user_id = RequestGetUserId(request)
 
-    if user_id == -1:
+    if not is_authorized_id(user_id):
         return {'result': 'error', 'message': 'Not authorized'}
 
-    is_admin = False
-    try:
-        checkCapability(request)
-        is_admin = True
-    except Exception:
-        pass
+    is_admin = RequestCheckUserCapability(request, 'moodle/ejudge_submits:comment')
 
     params = {
         'is_admin': is_admin,

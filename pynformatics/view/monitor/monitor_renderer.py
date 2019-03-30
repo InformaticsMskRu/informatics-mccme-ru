@@ -1,4 +1,5 @@
 from collections import namedtuple
+from datetime import datetime
 from itertools import groupby
 from operator import itemgetter, attrgetter
 
@@ -12,6 +13,8 @@ Contest = namedtuple('Contest', 'id rank name')
 
 class MonitorRenderer:
     STATS = {'partial_scores_on': Score(), 'partial_scores_off': Solved()}
+    NON_TERMINAL = {96, 98}
+    DATETIME_FORMAT = '%Y-%m-%dT%H:%M:%S%z'
 
     def __init__(self, data, stat='score'):
         if stat not in self.STATS:
@@ -26,49 +29,75 @@ class MonitorRenderer:
         seen_problems = set()
         competitors = {}
 
-        keyfunc = itemgetter('contest_id')
-        self.problems.sort(key=keyfunc)
+        def get_rank(prob):
+            return prob['problem']['rank']
+
         for con_rank, (con_id, c_problems) in enumerate(
-            groupby(self.problems, key=keyfunc), start=1
+            groupby(self.problems, key=itemgetter('contest_id')), start=1
         ):
             contest = Contest(con_id, con_rank, con_id)
             contests.append(contest)
-            for c_problem in sorted(c_problems, key=lambda x: x['problem']['rank']):
+            for i, c_problem in enumerate(sorted(c_problems, key=get_rank), start=1):
                 problem_meta = c_problem['problem']
-                p = Problem(**problem_meta, contest=contest, seen=seen_problems)
+                p = Problem(problem_meta, i, contest, seen_problems)
                 problems.append(p)
                 runs = c_problem['runs']
                 self._process_runs(p, runs, competitors)
                 seen_problems.add(p.id)
 
+        is_one_contest = len(contests) == 1
+        problem_attr = attrgetter('tag' if is_one_contest else 'full_tag')
         competitors = self._process_competitors(competitors)
-        contests_table = self._process_contests(contests, problems)
-        return problems, competitors, contests_table
+        contests_table = self._process_contests(contests, problems, problem_attr)
+        return problems, competitors, contests_table, problem_attr
 
-    @staticmethod
-    def _process_runs(problem, runs, comps):
+    def _process_runs(self, problem, runs, comps):
         def get_user_id(run):
             return run['user']['id']
 
         runs.sort(key=get_user_id)
         comp_ids = []
         group_runs = []
-        for comp_id, comp_data in groupby(runs, key=get_user_id):
+        for comp_id, comp_runs in groupby(runs, key=get_user_id):
             comp_ids.append(comp_id)
-            group_runs.append(list(comp_data))
+            group_runs.append(list(comp_runs))
 
-        for comp_id, comp_data in zip(comp_ids, group_runs):
+        for comp_id, comp_runs in zip(comp_ids, group_runs):
             if comp_id not in comps:
-                f_name = comp_data[0]['user']['firstname']
-                l_name = comp_data[0]['user']['lastname']
+                f_name = comp_runs[0]['user']['firstname']
+                l_name = comp_runs[0]['user']['lastname']
                 comps[comp_id] = Competitor(comp_id, f_name, l_name)
 
-            raw_runs_scores = (d['ejudge_score'] for d in comp_data)
-            runs_scores = list(filter(None, raw_runs_scores))
-            if runs_scores:
-                comps[comp_id].add_problem_result(
-                    problem.name, ProblemResult(runs_scores, problem.was_seen)
-                )
+            comp_runs = list(filter(self._is_correct_run, comp_runs))
+            comp_runs.sort(key=lambda r: self._parse_datetime(r['create_time']))
+
+            if comp_runs:
+                result = ProblemResult(comp_runs, problem.was_seen)
+                comps[comp_id].add_problem_result(problem, result)
+
+    def _parse_datetime(self, date_string: str):
+        """Workaround: https://bugs.python.org/issue24954"""
+
+        def remove_colon_from_tz(string):
+            """
+            '2018-03-24T17:51:24+00:00' -> '2018-03-24T17:51:24+0000'
+            """
+            return string[:-3] + string[-2:]
+
+        fixed = remove_colon_from_tz(date_string)
+        return datetime.strptime(fixed, self.DATETIME_FORMAT)
+
+    def _is_correct_run(self, run):
+        """
+        Корректная ли посылка.
+        1. Не None очков
+        2. Не промежуточный статус (не тестирование, не компилирование).
+        :param run: Посылка.
+        """
+        return (
+            run['ejudge_score'] is not None
+            and run['ejudge_status'] not in self.NON_TERMINAL
+        )
 
     def _process_competitors(self, competitors):
         competitors = list(competitors.values())
@@ -78,14 +107,14 @@ class MonitorRenderer:
         return competitors
 
     @staticmethod
-    def _process_contests(contests, problems):
+    def _process_contests(contests, problems, problem_attr):
         contests_table = [['Letter', 'Name']]
         keyfunc = attrgetter('contest_id')
         problems_by_contest = (g for _, g in groupby(problems, key=keyfunc))
         for contest, problem_g in zip(contests, problems_by_contest):
             contests_table.append(['Contest', contest.id])
             for problem in problem_g:
-                contests_table.append(
-                    [problem.tag, '{0} [{1}]'.format(problem.name, problem.id)]
-                )
+                attr = problem_attr(problem)
+                info = '{0} [{1}]'.format(problem.name, problem.id)
+                contests_table.append([attr, info])
         return contests_table
