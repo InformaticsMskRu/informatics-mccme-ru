@@ -39,9 +39,8 @@ class MonitorApi:
 
     @view_config(route_name='monitor_create', request_method='POST', renderer='json')
     def create_secret_link(self):
-        author_id = RequestGetUserId(self.request)
-        if not is_authorized_id(author_id):
-            raise Exception('Unauthorized')
+        if not RequestCheckUserCapability(self.request, 'moodle/ejudge_submits:comment'):
+            raise Exception("Auth Error")
         author_id = RequestGetUserId(self.request)
         random_string = ''.join(random.SystemRandom().choice(
             string.ascii_lowercase + string.digits) for _ in range(20))
@@ -80,8 +79,9 @@ class MonitorApi:
 
     @view_config(route_name='monitor_create', request_method='GET', renderer="pynformatics:templates/monitor.mak")
     def render_as_html_by_public(self):
-        if not RequestCheckUserCapability(self.request, 'moodle/ejudge_submits:comment'):
-            raise Exception("Auth Error")
+        author_id = RequestGetUserId(self.request)
+        if not is_authorized_id(author_id):
+            raise Exception('Unauthorized')
         internal_link = urlencode(self.request.params)
 
         try:
