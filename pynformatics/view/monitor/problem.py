@@ -117,7 +117,7 @@ class ProblemResult:
             res = '-{}'.format(self.tries)
         else:
             res = ''
-        if self.was_seen:
+        if res and self.was_seen:
             return '({})'.format(res)
         return res
 
