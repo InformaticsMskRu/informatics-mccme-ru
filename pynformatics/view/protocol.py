@@ -87,9 +87,11 @@ def protocol_get_full(request):
     # [input, big_input, corr, big_corr, output,
     #  big_output, checker_output, error_output, extra]
     run_id = int(request.matchdict['run_id'])
-
+    params = {
+        'is_admin': True,
+    }
     url = 'http://localhost:12346/problem/run/{}/protocol'.format(run_id)
-    response = requests.get(url)
+    response = requests.get(url, params=params)
     content = response.json()
 
     if content['status'] != 'success':
