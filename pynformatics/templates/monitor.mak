@@ -19,7 +19,7 @@
         <tr>
             <td>${i}</td>
             <td>
-                <a ${USER_SUBMITS_PREFIX}${c_id}>${full_name}</a>
+                <a href="${USER_SUBMITS_PREFIX}${c_id}">${full_name}</a>
             </td>
             <td>${c_sum}</td>
             ${makerow(competitor_result)}
@@ -60,7 +60,7 @@
             attr = problem_attr(problem)
         %>
             <td>
-                <a ${PROBLEM_LINK_PREFIX}${problem_id}>${attr}</a>
+                <a href="${PROBLEM_LINK_PREFIX}${problem_id}">${attr}</a>
             </td>
             \
         % endfor
