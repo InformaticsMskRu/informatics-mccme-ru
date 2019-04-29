@@ -100,6 +100,8 @@ class ProblemResult:
                 self.status = Status.by_code(judge_ok[0])
             elif ejudge_ok:
                 self.status = Status.by_code(ejudge_ok[0])
+            else:
+                self.status = Status.by_code(last_status_code)
         self.was_seen = seen
 
     @property
