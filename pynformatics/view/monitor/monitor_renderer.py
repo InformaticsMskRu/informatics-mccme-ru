@@ -33,7 +33,7 @@ class MonitorRenderer:
             return prob['problem']['rank']
 
         for con_rank, (con_id, c_problems) in enumerate(
-            groupby(self.problems, key=itemgetter('contest_id')), start=1
+                groupby(self.problems, key=itemgetter('contest_id')), start=1
         ):
             contest = Contest(con_id, con_rank, con_id)
             contests.append(contest)
@@ -69,23 +69,19 @@ class MonitorRenderer:
                 comps[comp_id] = Competitor(comp_id, f_name, l_name)
 
             comp_runs = list(filter(self._is_correct_run, comp_runs))
-            comp_runs.sort(key=lambda r: self._parse_datetime(r['create_time']))
+            comp_runs.sort(key=self._parse_datetime)
 
             if comp_runs:
                 result = ProblemResult(comp_runs, problem.was_seen)
                 comps[comp_id].add_problem_result(problem, result)
 
-    def _parse_datetime(self, date_string: str):
-        """Workaround: https://bugs.python.org/issue24954"""
+    def _parse_datetime(self, run: dict) -> datetime:
+        """Parse run 'create_time' in appropriate format
 
-        def remove_colon_from_tz(string):
-            """
-            '2018-03-24T17:51:24+00:00' -> '2018-03-24T17:51:24+0000'
-            """
-            return string[:-3] + string[-2:]
-
-        fixed = remove_colon_from_tz(date_string)
-        return datetime.strptime(fixed, self.DATETIME_FORMAT)
+        :param run: Run dict with create_time field
+        :return: parsed datetime
+        """
+        return datetime.strptime(run.get('create_time'), self.DATETIME_FORMAT)
 
     def _is_correct_run(self, run):
         """
@@ -95,8 +91,8 @@ class MonitorRenderer:
         :param run: Посылка.
         """
         return (
-            run['ejudge_score'] is not None
-            and run['ejudge_status'] not in self.NON_TERMINAL
+                run['ejudge_score'] is not None
+                and run['ejudge_status'] not in self.NON_TERMINAL
         )
 
     def _process_competitors(self, competitors):
