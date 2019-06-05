@@ -7,7 +7,6 @@ from pynformatics.view.monitor.competitor import Competitor
 from pynformatics.view.monitor.problem import ProblemResult, Problem
 from pynformatics.view.monitor.statistics import Solved, Score
 
-# TODO: пока нет name в json, вставляю тоже con_id
 Contest = namedtuple('Contest', 'id rank name')
 
 
