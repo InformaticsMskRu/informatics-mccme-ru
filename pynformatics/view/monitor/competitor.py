@@ -31,5 +31,6 @@ class Competitor:
 
     def add_problem_result(self, problem, problem_result):
         self.problem_results[problem] = problem_result
-        self.total_score += problem_result.score
+        if not problem_result.was_seen:
+            self.total_score += problem_result.score
         self.total_solved += problem_result.is_solved
