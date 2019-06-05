@@ -70,14 +70,14 @@ class MonitorRenderer:
                 comps[comp_id] = Competitor(comp_id, f_name, l_name)
 
             comp_runs = list(filter(self._is_correct_run, comp_runs))
-            comp_runs.sort(key=self._parse_datetime)
+            comp_runs.sort(key=self._extract_datetime)
 
             if comp_runs:
                 result = ProblemResult(comp_runs, problem.was_seen)
                 comps[comp_id].add_problem_result(problem, result)
 
-    def _parse_datetime(self, run: dict) -> datetime:
-        """Parse run 'create_time' in appropriate format
+    def _extract_datetime(self, run: dict) -> datetime:
+        """Extract run 'create_time' using appropriate format
 
         :param run: Run dict with create_time field
         :return: parsed datetime
