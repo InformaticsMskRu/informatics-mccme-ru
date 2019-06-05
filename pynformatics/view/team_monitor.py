@@ -87,10 +87,6 @@ class MonitorApi:
 
         try:
             problems = self._get_monitor(internal_link).get('data')
-
-            # Get extra info for problems' contests
-            # Used for template rendering
-            contests_info = self._get_contests_info(problems)
         except Exception as e:
             # TODO: как это будет рендерится? мы ведь рендерим шаблон.
             #  Надо разграничить рендеринг шаблона и возвращение джейсона
@@ -99,7 +95,12 @@ class MonitorApi:
         if problems is None:
             return {"result": "error", "message": 'Something was wrong'}
 
-        return self._make_template_values(problems, contests_info)
+        data = {}
+        data['problems'] = problems
+        # Get extra info for problems' contests
+        data['contests'] = self._get_contests_info(problems)
+
+        return self._make_template_values(data)
 
     @view_config(request_method='GET', renderer='json')
     def get_raw_json(self):
@@ -110,13 +111,13 @@ class MonitorApi:
         except Exception as e:
             return {"result": "error", "message": str(e), "stack": traceback.format_exc()}
 
-    def _make_template_values(self, data, contests_info):
+    def _make_template_values(self, data):
         partial_score = self.request.params.get('partial_score')
         if partial_score == 'on':
             mode = 'partial_scores_on'
         else:
             mode = 'partial_scores_off'
-        r = MonitorRenderer(data, contests_info, mode)
+        r = MonitorRenderer(data, mode)
         problems, competitors, contests_table, problem_attr = r.render()
         return {
             'problems': problems,

@@ -16,17 +16,14 @@ class MonitorRenderer:
     NON_TERMINAL = {96, 98}
     DATETIME_FORMAT = '%Y-%m-%dT%H:%M:%S%z'
 
-    def __init__(self, data, contests_info=None, stat='score'):
+    def __init__(self, data, stat='score'):
         if stat not in self.STATS:
             msg = 'Invalid value for stat parameter: {0}, possible parameters: {1}.'
             raise ValueError(msg.format(stat, ', '.join(self.STATS.keys())))
 
-        if contests_info is None:
-            contests_info = {}
-
         self.stat = self.STATS[stat]
-        self.problems = data
-        self.contests_info = contests_info
+        self.problems = data.get('problems')
+        self.contests = data.get('contests')
 
     def render(self):
         contests = []
@@ -53,7 +50,7 @@ class MonitorRenderer:
         is_one_contest = len(contests) == 1
         problem_attr = attrgetter('tag' if is_one_contest else 'full_tag')
         competitors = self._process_competitors(competitors)
-        contests_table = self._process_contests(contests, problems, problem_attr, self.contests_info)
+        contests_table = self._process_contests(contests, problems, problem_attr, self.contests)
         return problems, competitors, contests_table, problem_attr
 
     def _process_runs(self, problem, runs, comps):
