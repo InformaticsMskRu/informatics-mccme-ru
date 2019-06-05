@@ -7,6 +7,7 @@ import requests
 import transaction
 from pyramid.encode import urlencode
 from pyramid.view import view_config, view_defaults
+from sqlalchemy.orm import load_only
 
 from pynformatics.model import User, Statement
 from pynformatics.model.monitor import MonitorLink
@@ -150,7 +151,10 @@ class MonitorApi:
         """
         # Gather unique contests ids to fetch additional info for rendering
         contests_ids = {problem.get('contest_id') for problem in problems}
-        statements = DBSession.query(Statement).filter(Statement.id.in_(contests_ids)).all()
+        statements = DBSession.query(Statement) \
+            .filter(Statement.id.in_(contests_ids)) \
+            .options(load_only('id', 'name')) \
+            .all()
 
         return {s.id: s.name for s in statements}
 
