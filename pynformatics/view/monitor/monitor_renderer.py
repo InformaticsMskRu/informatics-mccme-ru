@@ -7,7 +7,6 @@ from pynformatics.view.monitor.competitor import Competitor
 from pynformatics.view.monitor.problem import ProblemResult, Problem
 from pynformatics.view.monitor.statistics import Solved, Score
 
-# TODO: пока нет name в json, вставляю тоже con_id
 Contest = namedtuple('Contest', 'id rank name')
 
 
@@ -20,8 +19,10 @@ class MonitorRenderer:
         if stat not in self.STATS:
             msg = 'Invalid value for stat parameter: {0}, possible parameters: {1}.'
             raise ValueError(msg.format(stat, ', '.join(self.STATS.keys())))
+
         self.stat = self.STATS[stat]
-        self.problems = data
+        self.problems = data.get('problems')
+        self.contests = data.get('contests')
 
     def render(self):
         contests = []
@@ -33,9 +34,9 @@ class MonitorRenderer:
             return prob['problem']['rank']
 
         for con_rank, (con_id, c_problems) in enumerate(
-            groupby(self.problems, key=itemgetter('contest_id')), start=1
+                groupby(self.problems, key=itemgetter('contest_id')), start=1
         ):
-            contest = Contest(con_id, con_rank, con_id)
+            contest = Contest(con_id, con_rank, self.contests.get(con_id, con_id))
             contests.append(contest)
             for i, c_problem in enumerate(sorted(c_problems, key=get_rank), start=1):
                 problem_meta = c_problem['problem']
@@ -69,23 +70,19 @@ class MonitorRenderer:
                 comps[comp_id] = Competitor(comp_id, f_name, l_name)
 
             comp_runs = list(filter(self._is_correct_run, comp_runs))
-            comp_runs.sort(key=lambda r: self._parse_datetime(r['create_time']))
+            comp_runs.sort(key=self._extract_datetime)
 
             if comp_runs:
                 result = ProblemResult(comp_runs, problem.was_seen)
                 comps[comp_id].add_problem_result(problem, result)
 
-    def _parse_datetime(self, date_string: str):
-        """Workaround: https://bugs.python.org/issue24954"""
+    def _extract_datetime(self, run: dict) -> datetime:
+        """Extract run 'create_time' using appropriate format
 
-        def remove_colon_from_tz(string):
-            """
-            '2018-03-24T17:51:24+00:00' -> '2018-03-24T17:51:24+0000'
-            """
-            return string[:-3] + string[-2:]
-
-        fixed = remove_colon_from_tz(date_string)
-        return datetime.strptime(fixed, self.DATETIME_FORMAT)
+        :param run: Run dict with create_time field
+        :return: parsed datetime
+        """
+        return datetime.strptime(run.get('create_time'), self.DATETIME_FORMAT)
 
     def _is_correct_run(self, run):
         """
@@ -95,8 +92,8 @@ class MonitorRenderer:
         :param run: Посылка.
         """
         return (
-            run['ejudge_score'] is not None
-            and run['ejudge_status'] not in self.NON_TERMINAL
+                run['ejudge_score'] is not None
+                and run['ejudge_status'] not in self.NON_TERMINAL
         )
 
     def _process_competitors(self, competitors):
@@ -112,7 +109,7 @@ class MonitorRenderer:
         keyfunc = attrgetter('contest_id')
         problems_by_contest = (g for _, g in groupby(problems, key=keyfunc))
         for contest, problem_g in zip(contests, problems_by_contest):
-            contests_table.append(['Contest', contest.id])
+            contests_table.append(['Контест', contest.name])
             for problem in problem_g:
                 attr = problem_attr(problem)
                 info = '{0} [{1}]'.format(problem.name, problem.id)

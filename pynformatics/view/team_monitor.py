@@ -1,17 +1,19 @@
 import random
 import string
+import traceback
+from typing import List, Dict
 
 import requests
 import transaction
 from pyramid.encode import urlencode
 from pyramid.view import view_config, view_defaults
-from pynformatics.model import User
-import traceback
+from sqlalchemy.orm import load_only
 
+from pynformatics.model import User, Statement
 from pynformatics.model.monitor import MonitorLink
+from pynformatics.models import DBSession
 from pynformatics.view.monitor.monitor_renderer import MonitorRenderer
 from pynformatics.view.utils import *
-from pynformatics.models import DBSession
 from pynformatics.view.utils import is_authorized_id
 
 
@@ -22,13 +24,13 @@ def get_team_monitor(request):
 
         user = DBSession.query(User).filter(User.id == RequestGetUserId(request)).first()
         statement = DBSession.query(Statement).filter(Statement.id == statement_id).first()
-#        checkCapability(request)
+        #        checkCapability(request)
         res = ""
         for k, v in statement.problems.items():
             res = res + "[" + str(k) + "] " + v.name
         return statement.name + " " + res
     except Exception as e:
-        return {"result" : "error", "message" : e.__str__(), "stack" : traceback.format_exc()}
+        return {"result": "error", "message": e.__str__(), "stack": traceback.format_exc()}
 
 
 @view_defaults(route_name='monitor')
@@ -85,14 +87,19 @@ class MonitorApi:
         internal_link = urlencode(self.request.params)
 
         try:
-            data = self._get_monitor(internal_link).get('data')
+            problems = self._get_monitor(internal_link).get('data')
         except Exception as e:
             # TODO: как это будет рендерится? мы ведь рендерим шаблон.
             #  Надо разграничить рендеринг шаблона и возвращение джейсона
             return {"result": "error", "message": str(e), "stack": traceback.format_exc()}
 
-        if data is None:
+        if problems is None:
             return {"result": "error", "message": 'Something was wrong'}
+
+        data = {}
+        data['problems'] = problems
+        # Get extra info for problems' contests
+        data['contests'] = self._get_contests_info(problems)
 
         return self._make_template_values(data)
 
@@ -130,6 +137,26 @@ class MonitorApi:
             raise Exception('Monitor is not found')
 
         return monitor.internal_link
+
+    @classmethod
+    def _get_contests_info(cls, problems: List[Dict]) -> Dict:
+        """Get names for problems' contests.
+
+        Returns:
+
+            { contest_id: 'contest_name', ... }
+
+        :param problems: A list of problems with its' contest ids
+        :return: dict with contests names, where key is contest id
+        """
+        # Gather unique contests ids to fetch additional info for rendering
+        contests_ids = {problem.get('contest_id') for problem in problems}
+        statements = DBSession.query(Statement) \
+            .filter(Statement.id.in_(contests_ids)) \
+            .options(load_only('id', 'name')) \
+            .all()
+
+        return {s.id: s.name for s in statements}
 
     @classmethod
     def _get_monitor(cls, internal_link) -> dict:
