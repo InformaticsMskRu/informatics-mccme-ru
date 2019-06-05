@@ -16,12 +16,17 @@ class MonitorRenderer:
     NON_TERMINAL = {96, 98}
     DATETIME_FORMAT = '%Y-%m-%dT%H:%M:%S%z'
 
-    def __init__(self, data, stat='score'):
+    def __init__(self, data, contests_info=None, stat='score'):
         if stat not in self.STATS:
             msg = 'Invalid value for stat parameter: {0}, possible parameters: {1}.'
             raise ValueError(msg.format(stat, ', '.join(self.STATS.keys())))
+
+        if contests_info is None:
+            contests_info = {}
+
         self.stat = self.STATS[stat]
         self.problems = data
+        self.contests_info = contests_info
 
     def render(self):
         contests = []
@@ -48,7 +53,7 @@ class MonitorRenderer:
         is_one_contest = len(contests) == 1
         problem_attr = attrgetter('tag' if is_one_contest else 'full_tag')
         competitors = self._process_competitors(competitors)
-        contests_table = self._process_contests(contests, problems, problem_attr)
+        contests_table = self._process_contests(contests, problems, problem_attr, self.contests_info)
         return problems, competitors, contests_table, problem_attr
 
     def _process_runs(self, problem, runs, comps):
@@ -103,12 +108,12 @@ class MonitorRenderer:
         return competitors
 
     @staticmethod
-    def _process_contests(contests, problems, problem_attr):
+    def _process_contests(contests, problems, problem_attr, contests_info):
         contests_table = [['Letter', 'Name']]
         keyfunc = attrgetter('contest_id')
         problems_by_contest = (g for _, g in groupby(problems, key=keyfunc))
         for contest, problem_g in zip(contests, problems_by_contest):
-            contests_table.append(['Contest', contest.id])
+            contests_table.append(['Контест', contests_info.get(contest.id, contest.id)])
             for problem in problem_g:
                 attr = problem_attr(problem)
                 info = '{0} [{1}]'.format(problem.name, problem.id)
