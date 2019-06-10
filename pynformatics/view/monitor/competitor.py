@@ -33,4 +33,4 @@ class Competitor:
         self.problem_results[problem] = problem_result
         if not problem_result.was_seen:
             self.total_score += problem_result.score
-        self.total_solved += problem_result.is_solved
+            self.total_solved += problem_result.is_solved
