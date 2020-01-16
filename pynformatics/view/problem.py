@@ -258,6 +258,12 @@ def problem_runs_filter_proxy(request):
     params, _ = peek_request_args(request, filter_params)
 
     try:
+        checkCapability(request)
+        params['show_hidden'] = True
+    except Exception as exc:
+        pass
+
+    try:
         resp = requests.get('http://localhost:12346/problem/{}/submissions/'.format(problem_id), params=params)
         return resp.json()
     except (requests.RequestException, ValueError) as e:
