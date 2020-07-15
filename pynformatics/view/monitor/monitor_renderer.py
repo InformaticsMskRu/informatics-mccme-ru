@@ -1,4 +1,6 @@
 from collections import namedtuple
+import datetime
+
 from datetime import datetime
 from itertools import groupby
 from operator import itemgetter, attrgetter
@@ -66,7 +68,9 @@ class MonitorRenderer:
             if comp_id not in comps:
                 f_name = comp_runs[0]['user']['firstname']
                 l_name = comp_runs[0]['user']['lastname']
-                comps[comp_id] = Competitor(comp_id, f_name, l_name)
+                login = comp_runs[0]['user']['username']
+                email = comp_runs[0]['user']['email']
+                comps[comp_id] = Competitor(comp_id, f_name, l_name, login, email)
 
             comp_runs = list(filter(self._is_correct_run, comp_runs))
             comp_runs.sort(key=lambda r: self._parse_datetime(r['create_time']))
@@ -82,7 +86,8 @@ class MonitorRenderer:
             """
             '2018-03-24T17:51:24+00:00' -> '2018-03-24T17:51:24+0000'
             """
-            return string[:-3] + string[-2:]
+            # return string[:-3] + string[-2:]
+            return string
 
         fixed = remove_colon_from_tz(date_string)
         return datetime.strptime(fixed, self.DATETIME_FORMAT)

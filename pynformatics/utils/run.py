@@ -122,7 +122,7 @@ def get_lag_exts():
 
 def get_lang_name_by_id(lang_id):
     lang_names = { 
-        1: "Free Pascal 2.6.2", 
+        1: "Free Pascal 3.0.4", 
         2: "GNU C 4.9", 
         3: "GNU C++ 4.9", 
         7: "Turbo Pascal", 

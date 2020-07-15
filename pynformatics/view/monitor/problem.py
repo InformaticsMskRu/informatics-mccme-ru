@@ -87,8 +87,8 @@ class ProblemResult:
         Выбирается посылка с наибольшим баллом и количество посылок.
         :param runs: все посылки.
         """
-        self.score = max(map(itemgetter('ejudge_score'), runs))
-        codes = map(itemgetter('ejudge_status'), runs)
+        self.score = max(0, max(map(itemgetter('ejudge_score'), runs)))
+        codes = list(map(itemgetter('ejudge_status'), runs))
         self.tries = sum(Status.by_code(code) is Status.WRONG for code in codes)
         ejudge_ok = [code for code in codes if Status.by_code(code) is Status.EJUDGE_OK]
         judge_ok = [code for code in codes if Status.by_code(code) is Status.JUDGE_OK]
@@ -100,6 +100,8 @@ class ProblemResult:
                 self.status = Status.by_code(judge_ok[0])
             elif ejudge_ok:
                 self.status = Status.by_code(ejudge_ok[0])
+            else:
+                self.status = Status.by_code(last_status_code)
         self.was_seen = seen
 
     @property

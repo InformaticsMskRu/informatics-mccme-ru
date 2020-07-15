@@ -260,6 +260,8 @@ def problem_runs_filter_proxy(request):
     try:
         checkCapability(request)
         params['show_hidden'] = True
+        if request.params.get('include_source'):
+            params['include_source'] = True
     except Exception as exc:
         pass
 

@@ -13,6 +13,7 @@ from pynformatics.view.monitor.monitor_renderer import MonitorRenderer
 from pynformatics.view.utils import *
 from pynformatics.models import DBSession
 from pynformatics.view.utils import is_authorized_id
+from pynformatics.utils.check_role import is_admin
 
 
 @view_config(route_name='team_monitor.get', renderer='string')
@@ -83,7 +84,6 @@ class MonitorApi:
         if not is_authorized_id(author_id):
             raise Exception('Unauthorized')
         internal_link = urlencode(self.request.params)
-
         try:
             data = self._get_monitor(internal_link).get('data')
         except Exception as e:
@@ -94,7 +94,12 @@ class MonitorApi:
         if data is None:
             return {"result": "error", "message": 'Something was wrong'}
 
-        return self._make_template_values(data)
+        isAdmin = is_admin(self.request)
+        view_settings = dict()
+        view_settings["show_email"] = bool(self.request.params.get('show_email')) and isAdmin
+        view_settings["show_login"] = bool(self.request.params.get('show_login')) and isAdmin
+ 
+        return self._make_template_values(data, view_settings)
 
     @view_config(request_method='GET', renderer='json')
     def get_raw_json(self):
@@ -105,7 +110,7 @@ class MonitorApi:
         except Exception as e:
             return {"result": "error", "message": str(e), "stack": traceback.format_exc()}
 
-    def _make_template_values(self, data):
+    def _make_template_values(self, data, view_settings = None):
         partial_score = self.request.params.get('partial_score')
         if partial_score == 'on':
             mode = 'partial_scores_on'
@@ -118,6 +123,7 @@ class MonitorApi:
             'competitors': competitors,
             'contests_table': contests_table,
             'problem_attr': problem_attr,
+            'view_settings': view_settings
         }
 
     @classmethod
