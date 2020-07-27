@@ -6,12 +6,16 @@
 %>
 
 <p><% 
-   show_login = view_settings["show_login"]
-   if show_login:
-       TABLE_HEAD_PREFIX.append("login")
-   show_email = view_settings["show_email"]
-   if show_email:
-       TABLE_HEAD_PREFIX.append("email")
+   if view_settings:
+      show_login = view_settings["show_login"]
+      if show_login:
+          TABLE_HEAD_PREFIX.append("login")
+      show_email = view_settings["show_email"]
+      if show_email:
+          TABLE_HEAD_PREFIX.append("email")
+   else:
+      show_login = False
+      show_email = False 
 %>
 </p>
 
