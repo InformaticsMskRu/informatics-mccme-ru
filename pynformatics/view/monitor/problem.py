@@ -87,11 +87,21 @@ class ProblemResult:
         Выбирается посылка с наибольшим баллом и количество посылок.
         :param runs: все посылки.
         """
-        self.score = max(map(itemgetter('ejudge_score'), runs))
-        codes = map(itemgetter('ejudge_status'), runs)
+        self.score = max(0, max(map(itemgetter('ejudge_score'), runs)))
+        codes = list(map(itemgetter('ejudge_status'), runs))
         self.tries = sum(Status.by_code(code) is Status.WRONG for code in codes)
-        last_status = runs[-1]['ejudge_status']
-        self.status = Status.by_code(last_status)
+        ejudge_ok = [code for code in codes if Status.by_code(code) is Status.EJUDGE_OK]
+        judge_ok = [code for code in codes if Status.by_code(code) is Status.JUDGE_OK]
+        last_status_code = runs[-1]['ejudge_status']
+        if last_status_code == 9:
+            self.status = Status.by_code(last_status_code)
+        else:
+            if judge_ok:
+                self.status = Status.by_code(judge_ok[0])
+            elif ejudge_ok:
+                self.status = Status.by_code(ejudge_ok[0])
+            else:
+                self.status = Status.by_code(last_status_code)
         self.was_seen = seen
 
     @property
@@ -110,13 +120,13 @@ class ProblemResult:
         """
         :return: текстовое представление количества попыток решения задачи для HTML.
         """
-        if not self.tries:
-            return ''
         if self.is_solved:
-            res = '+{}'.format(self.tries - 1 or '')
-        else:
+            res = '+{}'.format(self.tries or '')
+        elif self.tries:
             res = '-{}'.format(self.tries)
-        if self.was_seen:
+        else:
+            res = ''
+        if res and self.was_seen:
             return '({})'.format(res)
         return res
 

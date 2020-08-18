@@ -158,7 +158,8 @@ class EjudgeProblem(Problem):
         # DEBUG END
         
         if find_res:
-            check_src = open(find_res[0], "r").read()
+            print(find_res)
+            check_src = open(find_res[0], "rb").read()
             checker_ext = os.path.splitext(find_res[0])[1]
         
         #if checker not found then try polygon package

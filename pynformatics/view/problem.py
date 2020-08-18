@@ -54,12 +54,9 @@ def problem_submits(request):
             'user_id': user_id,
             'statement_id': statement_id,
         }
-        print(_data)
-        print(problem_id)
         url = 'http://localhost:12346/problem/trusted/{}/submit_v2'.format(problem_id)
         _resp = requests.post(url, files={'file': input_file}, data=_data)
         print('Response from :12346', _resp)
-        print(_resp.headers)
         return _resp.json()
     except Exception as e:
         print(e)
@@ -261,15 +258,25 @@ def problem_runs_filter_proxy(request):
     params, _ = peek_request_args(request, filter_params)
 
     try:
+<<<<<<< HEAD
         checkCapability(request, 'show_hidden_submits')
         params['show_hidden'] = True
+=======
+        checkCapability(request)
+        params['show_hidden'] = True
+        if request.params.get('include_source'):
+            params['include_source'] = True
+>>>>>>> b4ea01e184dd59fff4cb9305c2691098fe93622b
     except Exception as exc:
         pass
 
     try:
         resp = requests.get('http://localhost:12346/problem/{}/submissions/'.format(problem_id), params=params)
+<<<<<<< HEAD
         print(problem_id)
         print(params)
+=======
+>>>>>>> b4ea01e184dd59fff4cb9305c2691098fe93622b
         return resp.json()
     except (requests.RequestException, ValueError) as e:
         print('Request to :12346 failed!')

@@ -71,6 +71,8 @@ def get_protocol(request):
         return data
 
     for test in tests.values():
+        if "Game id: " in test["checker_output"]:
+            test["game_id"] = test["checker_output"][9:]
         for field in PROTOCOL_EXCLUDED_TEST_FIELDS:
             test.pop(field, None)
 

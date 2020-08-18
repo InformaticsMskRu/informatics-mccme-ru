@@ -1,10 +1,12 @@
 class Competitor:
     """Участник соревнования"""
 
-    def __init__(self, competitor_id, first_name, last_name, stat=None):
+    def __init__(self, competitor_id, first_name, last_name, username, email, stat=None):
         self.id = competitor_id
         self.first_name = first_name
         self.last_name = last_name
+        self.username = username
+        self.email = email
         self.problem_results = {}
         self.total_score = 0
         self.total_solved = 0
@@ -31,5 +33,6 @@ class Competitor:
 
     def add_problem_result(self, problem, problem_result):
         self.problem_results[problem] = problem_result
-        self.total_score += problem_result.score
-        self.total_solved += problem_result.is_solved
+        if not problem_result.was_seen:
+            self.total_score += problem_result.score
+            self.total_solved += problem_result.is_solved

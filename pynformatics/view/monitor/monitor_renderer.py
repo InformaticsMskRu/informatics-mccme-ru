@@ -1,4 +1,6 @@
 from collections import namedtuple
+import datetime
+
 from datetime import datetime
 from itertools import groupby
 from operator import itemgetter, attrgetter
@@ -7,6 +9,7 @@ from pynformatics.view.monitor.competitor import Competitor
 from pynformatics.view.monitor.problem import ProblemResult, Problem
 from pynformatics.view.monitor.statistics import Solved, Score
 
+# TODO: пока нет name в json, вставляю тоже con_id
 Contest = namedtuple('Contest', 'id rank name')
 
 
@@ -34,7 +37,7 @@ class MonitorRenderer:
             return prob['problem']['rank']
 
         for con_rank, (con_id, c_problems) in enumerate(
-                groupby(self.problems, key=itemgetter('contest_id')), start=1
+            groupby(self.problems, key=itemgetter('contest_id')), start=1
         ):
             contest = Contest(con_id, con_rank, self.contests.get(con_id, con_id))
             contests.append(contest)
@@ -67,10 +70,12 @@ class MonitorRenderer:
             if comp_id not in comps:
                 f_name = comp_runs[0]['user']['firstname']
                 l_name = comp_runs[0]['user']['lastname']
-                comps[comp_id] = Competitor(comp_id, f_name, l_name)
+                login = comp_runs[0]['user']['username']
+                email = comp_runs[0]['user']['email']
+                comps[comp_id] = Competitor(comp_id, f_name, l_name, login, email)
 
             comp_runs = list(filter(self._is_correct_run, comp_runs))
-            comp_runs.sort(key=self._extract_datetime)
+            comp_runs.sort(key=lambda r: self._parse_datetime(r['create_time']))
 
             if comp_runs:
                 result = ProblemResult(comp_runs, problem.was_seen)
@@ -84,6 +89,19 @@ class MonitorRenderer:
         """
         return datetime.strptime(run.get('create_time'), self.DATETIME_FORMAT)
 
+    def _parse_datetime(self, date_string: str):
+        """Workaround: https://bugs.python.org/issue24954"""
+
+        def remove_colon_from_tz(string):
+            """
+            '2018-03-24T17:51:24+00:00' -> '2018-03-24T17:51:24+0000'
+            """
+            # return string[:-3] + string[-2:]
+            return string
+
+        fixed = remove_colon_from_tz(date_string)
+        return datetime.strptime(fixed, self.DATETIME_FORMAT)
+
     def _is_correct_run(self, run):
         """
         Корректная ли посылка.
@@ -92,8 +110,8 @@ class MonitorRenderer:
         :param run: Посылка.
         """
         return (
-                run['ejudge_score'] is not None
-                and run['ejudge_status'] not in self.NON_TERMINAL
+            run['ejudge_score'] is not None
+            and run['ejudge_status'] not in self.NON_TERMINAL
         )
 
     def _process_competitors(self, competitors):
@@ -109,7 +127,7 @@ class MonitorRenderer:
         keyfunc = attrgetter('contest_id')
         problems_by_contest = (g for _, g in groupby(problems, key=keyfunc))
         for contest, problem_g in zip(contests, problems_by_contest):
-            contests_table.append(['Контест', contest.name])
+            contests_table.append(['Контест', str(contest.id) + " " + contest.name])
             for problem in problem_g:
                 attr = problem_attr(problem)
                 info = '{0} [{1}]'.format(problem.name, problem.id)

@@ -5,6 +5,19 @@
     USER_SUBMITS_PREFIX = '/submits/view.php?user_id='
 %>
 
+<p><% 
+   if view_settings:
+      show_login = view_settings["show_login"]
+      if show_login:
+          TABLE_HEAD_PREFIX.append("login")
+      show_email = view_settings["show_email"]
+      if show_email:
+          TABLE_HEAD_PREFIX.append("email")
+   else:
+      show_login = False
+      show_email = False 
+%>
+</p>
 
 <table align="center" class="BlueTable" cellspacing="0" cellpadding="2">
     ${makeheadrow(problems)}
@@ -15,6 +28,10 @@
         c_id = c.id
         c_sum = c.sum()
         competitor_result = (c.full_stat_by_prob(p) for p in problems)
+        if show_login:
+            c_login = c.username
+        if show_email:
+            c_email = c.email
     %>
         <tr>
             <td>${i}</td>
@@ -22,6 +39,12 @@
                 <a href="${USER_SUBMITS_PREFIX}${c_id}">${full_name}</a>
             </td>
             <td>${c_sum}</td>
+            %if show_login:
+            <td>${c_login}</td>
+            %endif
+            %if show_email:
+            <td>${c_email}</td>
+            %endif
             ${makerow(competitor_result)}
         </tr>
     % endfor
