@@ -1,8 +1,13 @@
 from pyramid.config import Configurator
 from pyramid.session import UnencryptedCookieSessionFactoryConfig
+from pyramid.events import NewRequest
 from sqlalchemy import engine_from_config
 from source_tree.models import DBSession
 import source_tree.models
+from source_tree.utils.session import subscribe_rollback_on_request_finished
+
+from pyramid.events import NewRequest
+from source_tree.utils.session import subscribe_rollback_on_request_finished
 
 
 def course_include(config):
@@ -79,12 +84,12 @@ def main(global_config, **settings):
     """
     
     engine = engine_from_config(settings, 'sqlalchemy.')
-    DBSession.configure(bind=engine)
+    DBSession.configure(bind=engine, expire_on_commit=False)
     models.db_session = DBSession()
 
     config = Configurator(settings=settings, session_factory=UnencryptedCookieSessionFactoryConfig('source_tree_session'))
     config.include('pyramid_mako')
     config.include(py_source_include, route_prefix=settings['source_tree.route_prefix'])
-
+    config.add_subscriber(subscribe_rollback_on_request_finished, NewRequest)
     config.scan()
     return config.make_wsgi_app()

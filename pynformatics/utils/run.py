@@ -170,7 +170,7 @@ def get_status_by_id(status_id):
     }[status_id]
 
 def submit_path(tp, contest_id, submit_id): #path to archive file with path to archive directory = tp, look up audit_path etc constants
-    prefix = os.path.join(contest_path, "contests_var/{:06d}".format(contest_id))
+    prefix = os.path.join("/home/judges_var/{:06d}/var".format(contest_id))
     if not os.path.isdir(prefix):
         prefix = os.path.join(contest_path, "{:06d}/var".format(contest_id))
     return os.path.join(prefix, tp, to32(submit_id // 32 // 32 // 32 % 32), 

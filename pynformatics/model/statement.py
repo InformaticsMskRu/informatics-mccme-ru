@@ -27,8 +27,6 @@ class Statement(Base):
     olympiad = Column(Integer)
 #    analysis = Column(Unicode)
 #    pr_id = Column(Integer, ForeignKey('moodle.mdl_ejudge_problem.id'))
-#    ejudge_users = relation('EjudgeUser', backref="moodle.mdl_user", uselist=False)
-#    ejudge_user = relation('EjudgeUser', backref = backref('moodle.mdl_user'), uselist=False, primaryjoin = "EjudgeUser.user_id == User.id")
     
     problems = association_proxy("StatementProblems", 'problem')
     user = association_proxy("StatementUsers1", 'user')
@@ -52,7 +50,6 @@ class StatementUser(Base):
     user_id = Column(Integer, ForeignKey('moodle.mdl_user.id'))
 
 #    statement = relationship("Statement", backref=backref("StatementUsers1", lazy="dynamic"), lazy="dynamic")
-#    user = relationship("EjudgeUser", backref=backref("StatementUsers2", lazy="dynamic"), lazy="dynamic")             
         
 class StatementProblem(Base):
     __tablename__ = 'mdl_statements_problems_correlation'

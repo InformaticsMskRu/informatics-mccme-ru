@@ -17,16 +17,15 @@ class Run(Base):
     __tablename__ = "runs"
     __table_args__ = (
         ForeignKeyConstraint(['contest_id', 'prob_id'], ['moodle.mdl_ejudge_problem.ejudge_contest_id', 'moodle.mdl_ejudge_problem.problem_id']),
-        ForeignKeyConstraint(['user_id'], ['moodle.mdl_user.ej_id']),
+        # ForeignKeyConstraint(['user_id'], ['moodle.mdl_user.ej_id']),
         {'schema':'ejudge'}
         )
 
-   
     run_id = Column(Integer, primary_key=True)
     size = Column(Integer)
     create_time = Column(DateTime)
-    user_id = Column(Integer)
-    user = relationship('SimpleUser', backref = backref('simpleuser'), uselist=False)
+    # user_id = Column(Integer)
+    # user = relationship('SimpleUser', backref = backref('simpleuser'), uselist=False)
     comments = relation('Comment', backref = backref('comments'))
     contest_id = Column(Integer, primary_key=True)
     prob_id = Column(Integer)
@@ -41,7 +40,7 @@ class Run(Base):
         self.contest_id = contest_id
         self.size = size
         self.create_time = create_time
-        self.user_id = user_id
+        # self.user_id = user_id
         self.prob_id = prob_id
         self.lang_id = lang_id
         self.status = status
@@ -180,6 +179,8 @@ class Run(Base):
     @lazy      
     def _get_protocol(self): 
         filename = submit_path(protocols_path, self.contest_id, self.run_id)
+        #filename = str((filename, protocols_path, self.contest_id, self.run_id))
+        #return "<a>" + filename + "</a>"
         if filename != '':
             return get_protocol_from_file(filename)
         else:

@@ -1,25 +1,23 @@
-from pyramid.view import view_config
-from pynformatics.model import SimpleUser, User, EjudgeContest, Run, Comment, EjudgeProblem, Problem
-from pynformatics.contest.ejudge.serve_internal import EjudgeContestCfg
-from pynformatics.contest.ejudge.ejudge_proxy import submit
-from pynformatics.view.utils import *
-import sys, traceback
-#import jsonpickle, demjson
-from phpserialize import *
-from pynformatics.view.utils import *
-from pynformatics.models import DBSession
-import transaction
-#import jsonpickle, demjson
-import json
-import os
-from pynformatics.models import DBSession
-#from webhelpers.html import *
-from xml.etree.ElementTree import ElementTree
-import xmlrpc.client
 import io
+import os
+import traceback
+import xmlrpc.client
 
-def checkCapability(request):
-    if (not RequestCheckUserCapability(request, 'moodle/ejudge_contests:reload')):
+import requests
+import transaction
+from pyramid.view import view_config
+
+from pynformatics.contest.ejudge.ejudge_proxy import submit
+from pynformatics.contest.ejudge.serve_internal import EjudgeContestCfg
+from pynformatics.model import SimpleUser, EjudgeProblem, Problem
+from pynformatics.models import DBSession
+from pynformatics.utils.proxied_request_helpers import peek_request_args
+from pynformatics.view.utils import *
+from pynformatics.view.utils import is_authorized_id
+
+
+def checkCapability(request, capability):
+    if (not RequestCheckUserCapability(request, 'local/pynformatics:' + capability)):
         raise Exception("Auth Error")
 
 def setShowLimits(problem_id, show_limits):
@@ -34,7 +32,7 @@ def setShowLimits(problem_id, show_limits):
 @view_config(route_name='problem.limits.show', renderer='string')
 def problem_show_limits(request):
     try:
-        checkCapability(request)
+        checkCapability(request, 'problem_edit')
         return setShowLimits(request.matchdict['problem_id'], 1)
     except Exception as e:
         return {"result" : "error", "message" : e.__str__(), "stack" : traceback.format_exc()}
@@ -42,32 +40,35 @@ def problem_show_limits(request):
 
 @view_config(route_name='problem.submit', renderer='json')
 def problem_submits(request):
+    # TODO: Refactor it
     user_id = RequestGetUserId(request)
-    user = DBSession.query(SimpleUser).filter(SimpleUser.id == user_id).first()
     lang_id = request.params["lang_id"]
     problem_id = request.matchdict["problem_id"]
-    problem = DBSession.query(EjudgeProblem).filter(EjudgeProblem.id == problem_id).first()
+    statement_id = request.matchdict.get('statement_id')
     input_file = request.POST['file'].file
-    filename = request.POST['file'].filename
-    ejudge_url = request.registry.settings['ejudge.new_client_url']
 
-    res = submit(input_file, problem.ejudge_contest_id, problem.problem_id, lang_id, user.login, user.password, filename, ejudge_url, user_id)
     try:
         input_file.seek(0)
-        print('#######\nin try')
         _data = {
             'lang_id': lang_id,
             'user_id': user_id,
+            'statement_id': statement_id,
         }
-        _prob_id = problem_id
-        url = 'http://localhost:12346/problem/trusted/{}/submit_v2'.format(_prob_id)
-        import requests
+        print(_data)
+        print(problem_id)
+        url = 'http://localhost:12346/problem/trusted/{}/submit_v2'.format(problem_id)
         _resp = requests.post(url, files={'file': input_file}, data=_data)
         print('Response from :12346', _resp)
+        print(_resp.headers)
+        return _resp.json()
     except Exception as e:
         print(e)
+        return {
+            "result": "error",
+            "message": e.__str__(),
+            "stack": traceback.format_exc()
+        }
 
-    return {'res': res}
 
 @view_config(route_name='problem.ant.submit', renderer='json')
 def problem_ant_submits(request):
@@ -97,7 +98,7 @@ def problem_ant_submits(request):
 @view_config(route_name='problem.tests.set_preliminary', renderer='json')
 def problem_set_preliminary(request):
     try:
-        checkCapability(request)
+        checkCapability(request, 'problem_edit')
         problem = DBSession.query(Problem).filter(Problem.id == request.matchdict['problem_id']).first()
 
         problem.sample_tests = request.params['sample_tests']
@@ -111,7 +112,7 @@ def problem_set_preliminary(request):
 @view_config(route_name='problem.generate_samples', renderer='json')
 def problem_generate_samples(request):
     try:
-        checkCapability(request)
+        checkCapability(request, 'problem_edit')
         problem = DBSession.query(EjudgeProblem).filter(EjudgeProblem.id == request.matchdict['problem_id']).first()
         problem.generateSamples()
 #        res = ""
@@ -139,7 +140,7 @@ def problem_generate_samples(request):
 @view_config(route_name='problem.limits.hide', renderer='string')
 def problem_hide_limits(request):
     try:
-        checkCapability(request)
+        checkCapability(request, 'problem_edit')
         return setShowLimits(request.matchdict['problem_id'], 0)
     except Exception as e:
         return {"result" : "error", "message" : e.__str__(), "stack" : traceback.format_exc()}
@@ -147,7 +148,7 @@ def problem_hide_limits(request):
 @view_config(route_name='problem.tests.count', renderer='string')
 def problem_get_tests_count(request):
     try:
-        checkCapability(request)
+        checkCapability(request, 'problem_teacher_view')
         problem = DBSession.query(EjudgeProblem).filter(EjudgeProblem.id == request.matchdict['problem_id']).first()
         conf = EjudgeContestCfg(number = problem.ejudge_contest_id)
         prob = conf.getProblem(problem.problem_id)
@@ -192,7 +193,7 @@ def problem_get_tests_count(request):
 @view_config(route_name='problem.tests.get_test', renderer='json')
 def problem_get_test(request):
     try:
-        checkCapability(request)
+        checkCapability(request, 'problem_teacher_view')
         problem = DBSession.query(EjudgeProblem).filter(EjudgeProblem.id == request.matchdict['problem_id']).first()
 
         test_num = request.matchdict['test_num']
@@ -204,7 +205,7 @@ def problem_get_test(request):
 @view_config(route_name='problem.tests.add', renderer='json')
 def problem_add_test(request):
     try:
-        checkCapability(request)
+        checkCapability(request, 'problem_edit')
         s = xmlrpc.client.ServerProxy('http://localhost:7080/')
 
         problem = DBSession.query(EjudgeProblem).filter(EjudgeProblem.id == request.matchdict['problem_id']).first()
@@ -232,10 +233,73 @@ def problem_add_test(request):
 @view_config(route_name='problem.tests.get_corr', renderer='json')
 def problem_get_corr(request):
     try:
-        checkCapability(request)
+        checkCapability(request, 'problem_teacher_view')
         problem = DBSession.query(EjudgeProblem).filter(EjudgeProblem.id == request.matchdict['problem_id']).first()
 
         test_num = request.matchdict['test_num']
         return {"num" : int(test_num), "content" : problem.get_corr(test_num)}
     except Exception as e:
         return {"result" : "error", "num" : int(request.matchdict['test_num']), "content" : e.__str__(), "stack" : traceback.format_exc()}
+
+
+@view_config(route_name='problem.filter_runs', renderer='json')
+def problem_runs_filter_proxy(request):
+    user_id = RequestGetUserId(request)  # Returns -1 if not authorised
+
+    if not is_authorized_id(user_id):
+        return {'result': 'error', 'message': 'Not authorized'}
+
+    problem_id = request.matchdict.get('problem_id')
+    if problem_id is None:
+        return {"result": "error", "message": 'Problem id required'}
+
+    filter_params = ['user_id', 'group_id',
+                     'lang_id', 'status_id', 'statement_id',
+                     'count', 'page',
+                     'from_timestamp', 'to_timestamp']
+
+    params, _ = peek_request_args(request, filter_params)
+
+    try:
+        checkCapability(request, 'show_hidden_submits')
+        params['show_hidden'] = True
+    except Exception as exc:
+        pass
+
+    try:
+        resp = requests.get('http://localhost:12346/problem/{}/submissions/'.format(problem_id), params=params)
+        print(problem_id)
+        print(params)
+        return resp.json()
+    except (requests.RequestException, ValueError) as e:
+        print('Request to :12346 failed!')
+        print(str(e))
+        return {"result": "error", "message": str(e), "stack": traceback.format_exc()}
+
+
+@view_config(route_name='problem.runs.source', renderer='json')
+def problem_get_run_source(request):
+    run_id = request.matchdict.get('run_id')
+    if run_id is None:
+        return {"result": "error", "message": 'Run id required'}
+
+    user_id = RequestGetUserId(request)
+
+    if not is_authorized_id(user_id):
+        return {'result': 'error', 'message': 'Not authorized'}
+
+    is_admin = RequestCheckUserCapability(request, 'moodle/ejudge_submits:comment')
+
+    params = {
+        'is_admin': is_admin,
+        'user_id': user_id,
+    }
+
+    try:
+        url = 'http://localhost:12346/problem/run/{}/source/'.format(run_id)
+        resp = requests.get(url, params=params)
+        return resp.json()
+    except (requests.RequestException, ValueError) as e:
+        print('Request to :12346 failed!')
+        print(str(e))
+        return {"result": "error", "message": str(e), "stack": traceback.format_exc()}

@@ -32,11 +32,11 @@ class SimpleUser(Base):
     id = Column(Integer, primary_key=True)
     firstname = Column(Unicode)
     lastname = Column(Unicode)
-    login = Column('ej_login', Unicode)
-    password = Column('ej_password', Unicode)
+    # login = Column('ej_login', Unicode)
+    # password = Column('ej_password', Unicode)
     deleted  = Column('deleted', Boolean)
-    ejudge_id = Column('ej_id', Integer)
-    problems_solved = Column(Integer)
+    # ejudge_id = Column('ej_id', Integer)
+    # problems_solved = Column(Integer)
     statement = relationship("Statement", secondary=StatementUser.__table__, backref=backref("StatementUsers1"), lazy="dynamic")
     statements = association_proxy("StatementUsers2", 'statement')    
 
@@ -47,9 +47,7 @@ class User(SimpleUser):
     email = Column(Unicode)
     city = Column(Unicode)
     school = Column(Unicode)
-    problems_week_solved = Column(Unicode)
-#    ejudge_users = relation('EjudgeUser', backref="moodle.mdl_user", uselist=False)
-#    ejudge_user = relation('EjudgeUser', backref = backref('moodle.mdl_user'), uselist=False, primaryjoin = "EjudgeUser.user_id == User.id")
+    # problems_week_solved = Column(Unicode)
     
     def __init__(self, id, username='', firstname='', lastname='', email='', city=''):
         self.id = id
@@ -75,16 +73,16 @@ class PynformaticsUser(User):
 #        return "<Person(%s, '%s', '%s', '%s', '%s')" % (self.id, self.username, self.firstname, self.lastname, self.email, self.city)
 
 
-class EjudgeUser(User):
-    __tablename__ = "mdl_user_ejudge"
-    __table_args__ = {'schema':'moodle'}
-    __mapper_args__ = {'polymorphic_identity': 'ejudgeuser'}
-
-    id = Column(Integer, ForeignKey('moodle.mdl_user.id'), primary_key=True)
-    login = Column(Unicode)
-    password = Column(Unicode)
-    ejudge_id = Column(Integer)
-    problems_solved = Column(Integer)
+# class EjudgeUser(User):
+#    __tablename__ = "mdl_user_ejudge"
+#    __table_args__ = {'schema':'moodle'}
+#    __mapper_args__ = {'polymorphic_identity': 'ejudgeuser'}
+#
+#    id = Column(Integer, ForeignKey('moodle.mdl_user.id'), primary_key=True)
+#    # login = Column(Unicode)
+#    # password = Column(Unicode)
+#    # ejudge_id = Column(Integer)
+#    # problems_solved = Column(Integer)
 #    statement = relationship("Statement", secondary=StatementUser.__table__, backref=backref("StatementUsers1"), lazy="dynamic")
 #    statements = association_proxy("StatementUsers2", 'statement')    
         
