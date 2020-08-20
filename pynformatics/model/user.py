@@ -48,11 +48,6 @@ class User(SimpleUser):
     city = Column(Unicode)
     school = Column(Unicode)
     # problems_week_solved = Column(Unicode)
-<<<<<<< HEAD
-#    ejudge_users = relation('EjudgeUser', backref="moodle.mdl_user", uselist=False)
-#    ejudge_user = relation('EjudgeUser', backref = backref('moodle.mdl_user'), uselist=False, primaryjoin = "EjudgeUser.user_id == User.id")
-=======
->>>>>>> 3e6288353d820a4ce6abd9b81fffcda99a192b27
     
     def __init__(self, id, username='', firstname='', lastname='', email='', city=''):
         self.id = id
