@@ -1,7 +1,7 @@
 from pynformatics.utils.check_role import check_global_role, is_admin 
 from pyramid.view import view_config
 from pynformatics.view.utils import *
-from pynformatics.model import User, Ideal, Problem, EjudgeProblem, Run
+from pynformatics.model import User, Ideal, Problem, EjudgeProblem
 import sys, traceback
 from phpserialize import *
 import transaction

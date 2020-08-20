@@ -6,7 +6,7 @@ from sqlalchemy.types import Integer, String, DateTime, Text, Unicode, Boolean
 from sqlalchemy.orm import relationship, backref, relation
 from sqlalchemy.schema import ForeignKeyConstraint
 from pynformatics.model.meta import Base
-from pynformatics.model import Run, User
+from pynformatics.model import User
 from pynformatics.models import DBSession
 
 

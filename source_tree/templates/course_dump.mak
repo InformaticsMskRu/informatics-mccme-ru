@@ -29,9 +29,9 @@
                     ${course.name if course.name else course.course.fullname}
                     ${"(не подтв.)" if not course.verified else ""}
                 </a>
-				%if course.course.password:
-					<span style="position:relative; float:right;"><i class="icon-key"></i></span>
-				%endif
+				##%if course.course.password:
+				##	<span style="position:relative; float:right;"><i class="icon-key"></i></span>
+				##%endif
 				%if not course.course.visible:
 					<span style="position:relative; float:right;"><i class="icon-eye-close"></i></span>
 				%endif

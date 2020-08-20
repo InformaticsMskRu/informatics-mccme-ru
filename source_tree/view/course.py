@@ -461,7 +461,7 @@ def course_get_by_author(request):
                 'name': course.fullname,
                 'paths': paths,
                 'visible': course.visible,
-                'has_password': course.password != '',
+                # 'has_password': course.password != '',
             })
         return {
             'result': 'ok',

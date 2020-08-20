@@ -15,7 +15,7 @@ from pyramid.view import view_config
 
 from pynformatics.models import DBSession
 from pynformatics.view.utils import *
-from pynformatics.model import User, Run, PynformaticsUser, Group, UserGroup
+from pynformatics.model import User, PynformaticsUser, Group, UserGroup
 
 
 class RatingRequestParams:
@@ -124,12 +124,12 @@ def generate_current_user_data(current_selection, current_count_selection, filte
     user_data = None
     if current_user_id != -1 and current_count_selection.filter(User.id == current_user_id).scalar():
         user = current_selection.filter(User.id == current_user_id).first()
-        user_column = {"solved": user.problems_solved, "solved_week": user.problems_week_solved}[params.sort_by]
+        user_column = {"solved": 0, "solved_week": 0}[params.sort_by]
         start_place = current_count_selection.filter(get_cmp_operation(params)(get_sort_by_column(params), user_column)).scalar() + 1
         last_place = start_place + current_count_selection.filter(get_sort_by_column(params) == user_column).scalar() - 1
         user_data = { 
-                        'id':current_user_id, 'name':user.firstname + " " + user.lastname, 'solved':user.problems_solved, 
-                        'place': None, 'school':user.school, 'city':user.city, 'solved_week':user.problems_week_solved
+                        'id':current_user_id, 'name':user.firstname + " " + user.lastname, 'solved':0, 
+                        'place': None, 'school':user.school, 'city':user.city, 'solved_week':0
                     }
         if start_place != last_place:
             user_data['place'] = "{0}-{1}".format(start_place, last_place)
@@ -161,13 +161,13 @@ def get_queries_by_params(params):
         current_selection = current_selection.filter(User.school.like('%' + params.school + '%'))
         current_count_selection = current_count_selection.filter(User.school.like('%' + params.school + '%'))
 
-    if None not in (params.solved_from_filter, params.solved_to_filter):
-        current_selection = current_selection.filter(User.problems_solved.between(params.solved_from_filter, params.solved_to_filter))
-        current_count_selection = current_count_selection.filter(User.problems_solved.between(params.solved_from_filter, params.solved_to_filter))
+    #if None not in (params.solved_from_filter, params.solved_to_filter):
+    #    # current_selection = current_selection.filter(User.problems_solved.between(params.solved_from_filter, params.solved_to_filter))
+    #    # current_count_selection = current_count_selection.filter(User.problems_solved.between(params.solved_from_filter, params.solved_to_filter))
 
-    if None not in (params.week_solved_from_filter, params.week_solved_to_filter):
-        current_selection = current_selection.filter(User.problems_week_solved.between(params.week_solved_from_filter, params.week_solved_to_filter))
-        current_count_selection = current_count_selection.filter(User.problems_week_solved.between(params.week_solved_from_filter, params.week_solved_to_filter))
+    #if None not in (params.week_solved_from_filter, params.week_solved_to_filter):
+    #    current_selection = current_selection.filter(User.problems_week_solved.between(params.week_solved_from_filter, params.week_solved_to_filter))
+    #    current_count_selection = current_count_selection.filter(User.problems_week_solved.between(params.week_solved_from_filter, params.week_solved_to_filter))
 
     if params.name is not None:
         current_selection = current_selection.filter(User.lastname.like('%' + params.name + '%'))

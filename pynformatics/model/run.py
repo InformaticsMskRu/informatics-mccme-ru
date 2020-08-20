@@ -7,6 +7,7 @@ from pynformatics.model.meta import Base
 from pynformatics.models import DBSession
 from pynformatics.utils.run import *
 from pynformatics.utils.ejudge_archive import EjudgeArchiveReader
+from pynformatics.model.user import SimpleUser
 
 import os
 import xml.dom.minidom

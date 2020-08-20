@@ -1,6 +1,6 @@
 from pyramid.view import view_config
 from pynformatics.view.utils import *
-from pynformatics.model import User, Run, PynformaticsUser, EjudgeUser
+from pynformatics.model import User, PynformaticsUser
 import sys, traceback
 import transaction
 import jsonpickle, demjson

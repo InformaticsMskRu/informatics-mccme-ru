@@ -15,7 +15,7 @@ from pyramid.view import view_config
 from phpserialize import *
 from bs4 import BeautifulSoup
 
-from pynformatics.model import User, EjudgeContest, Run, Comment, EjudgeProblem, Problem, ContestsStatistic, EjudgeProblemDummy
+from pynformatics.model import User, EjudgeContest, Comment, EjudgeProblem, Problem, ContestsStatistic, EjudgeProblemDummy
 from pynformatics.contest.ejudge.serve_internal import *
 from pynformatics.contest.ejudge.configparser import ConfigParser
 from pynformatics.view.utils import *

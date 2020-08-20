@@ -8,7 +8,7 @@ from pyramid.response import Response
 from pyramid.view import view_config
 from pynformatics.models import DBSession
 
-from pynformatics.model import Run
+# from pynformatics.model import Run
 from pynformatics.model.run import get_lang_ext_by_id
 from pynformatics.utils.check_role import check_global_role
 from pynformatics.utils.request_helpers import require_captcha

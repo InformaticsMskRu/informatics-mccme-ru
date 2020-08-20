@@ -5,7 +5,7 @@ from pyramid.view import view_config
 from sqlalchemy import desc, asc
 
 from pynformatics.models import DBSession
-from pynformatics.model import SimpleUser, Run, Group, UserGroup, EjudgeProblem, UserGroup
+from pynformatics.model import SimpleUser, Group, UserGroup, EjudgeProblem, UserGroup
 from pynformatics.view.utils import RequestGetUserId
 from pynformatics.utils.run import get_status_by_id, get_lang_name_by_id
 

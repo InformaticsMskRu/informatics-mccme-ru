@@ -13,7 +13,7 @@ class CourseRaw(Base):
     id = Column(Integer, primary_key=True)
     fullname = Column(Unicode)
     shortname = Column(Unicode)
-    password = Column(Unicode)
+    # password = Column(Unicode)
     visible = Column(Boolean)
     category = Column(Integer)
 
