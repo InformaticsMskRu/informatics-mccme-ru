@@ -22,8 +22,10 @@ class MonitorRenderer:
         if stat not in self.STATS:
             msg = 'Invalid value for stat parameter: {0}, possible parameters: {1}.'
             raise ValueError(msg.format(stat, ', '.join(self.STATS.keys())))
+
         self.stat = self.STATS[stat]
-        self.problems = data
+        self.problems = data.get('problems')
+        self.contests = data.get('contests')
 
     def render(self):
         contests = []
@@ -37,7 +39,7 @@ class MonitorRenderer:
         for con_rank, (con_id, c_problems) in enumerate(
             groupby(self.problems, key=itemgetter('contest_id')), start=1
         ):
-            contest = Contest(con_id, con_rank, con_id)
+            contest = Contest(con_id, con_rank, self.contests.get(con_id, con_id))
             contests.append(contest)
             for i, c_problem in enumerate(sorted(c_problems, key=get_rank), start=1):
                 problem_meta = c_problem['problem']
@@ -79,6 +81,14 @@ class MonitorRenderer:
                 result = ProblemResult(comp_runs, problem.was_seen)
                 comps[comp_id].add_problem_result(problem, result)
 
+    def _extract_datetime(self, run: dict) -> datetime:
+        """Extract run 'create_time' using appropriate format
+
+        :param run: Run dict with create_time field
+        :return: parsed datetime
+        """
+        return datetime.strptime(run.get('create_time'), self.DATETIME_FORMAT)
+
     def _parse_datetime(self, date_string: str):
         """Workaround: https://bugs.python.org/issue24954"""
 
@@ -117,7 +127,7 @@ class MonitorRenderer:
         keyfunc = attrgetter('contest_id')
         problems_by_contest = (g for _, g in groupby(problems, key=keyfunc))
         for contest, problem_g in zip(contests, problems_by_contest):
-            contests_table.append(['Contest', contest.id])
+            contests_table.append(['Контест', str(contest.id) + " " + contest.name])
             for problem in problem_g:
                 attr = problem_attr(problem)
                 info = '{0} [{1}]'.format(problem.name, problem.id)

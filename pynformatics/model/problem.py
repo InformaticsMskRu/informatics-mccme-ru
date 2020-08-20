@@ -30,8 +30,6 @@ class Problem(Base):
     show_limits = Column(Boolean)
     output_only = Column(Boolean)
     pr_id = Column(Integer, ForeignKey('moodle.mdl_ejudge_problem.id'))
-#    ejudge_users = relation('EjudgeUser', backref="moodle.mdl_user", uselist=False)
-#    ejudge_user = relation('EjudgeUser', backref = backref('moodle.mdl_user'), uselist=False, primaryjoin = "EjudgeUser.user_id == User.id")
     def __init__(self, name, timelimit, memorylimit, output_only, content='', review='', description='', analysis='', sample_tests='', sample_tests_html='', pr_id=None):
         self.name = name
         self.content = content
@@ -154,6 +152,11 @@ class EjudgeProblem(Problem):
         find_res = glob.glob(os.path.join(checker_dir, "check_{0}.*".format(prob.internal_name)))
         check_src = None
         checker_ext = None
+        
+        # DEBUG
+        print(find_res)
+        # DEBUG END
+        
         if find_res:
             print(find_res)
             check_src = open(find_res[0], "rb").read()

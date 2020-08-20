@@ -120,7 +120,6 @@ class ProblemResult:
         """
         :return: текстовое представление количества попыток решения задачи для HTML.
         """
-
         if self.is_solved:
             res = '+{}'.format(self.tries or '')
         elif self.tries:

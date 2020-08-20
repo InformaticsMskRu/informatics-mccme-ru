@@ -1,0 +1,37 @@
+from pynformatics.utils.check_role import check_global_role, is_admin
+from pyramid.view import view_config
+from pynformatics.view.utils import *
+from pynformatics.model import User, Ideal, Problem, EjudgeProblem, Run
+import sys, traceback
+from phpserialize import *
+import transaction
+import jsonpickle, demjson
+import json
+import datetime
+from pynformatics.models import DBSession
+import html
+from sqlalchemy.orm import noload, lazyload
+from sqlalchemy import func, desc
+from pyramid.security import authenticated_userid
+from pyramid.httpexceptions import HTTPFound
+
+@view_config(route_name='lamp.color', request_method='GET', renderer='json')
+@view_config(route_name='lamp.color_html', request_method='GET', renderer='pynformatics:templates/lamp_color.mak')
+def lamp_color(request):
+    user = DBSession.query(User).filter_by(id=RequestGetUserId(request)).one()
+    problem = DBSession.query(EjudgeProblem).filter_by(id=request.params['problem_id']).one()
+    user_ejudge_id = user.ejudge_id
+    prob_id = problem.problem_id
+    contest_id = problem.ejudge_contest_id
+    runs_query = DBSession.query(Run).filter_by(user_id=user_ejudge_id).filter_by(contest_id=contest_id).filter_by(prob_id=prob_id)
+    if runs_query.all():
+        # TODO: AC status
+        if runs_query.filter(Run.status == 0).all():
+            return {'color': 'green'}
+        else:
+            return {'color': 'yellow'}
+    else:
+        return {'color': 'red'}
+
+
+
