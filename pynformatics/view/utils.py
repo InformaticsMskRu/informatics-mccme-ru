@@ -8,6 +8,10 @@ __all__ = ["RequestGetUserId", "RequestCheckUserCapability", "getContestStrId"]
 
 def RequestGetUserId(request):
     """Returns <=2 if not authorised"""
+
+    if 'MoodleSession' not in request.cookies:
+        return -1
+
     fh = None
     try:
         fh = codecs.open('/var/moodledata/sessions/sess_'+request.cookies['MoodleSession'], "r", "utf-8")
@@ -28,6 +32,8 @@ def RequestGetUserId(request):
     }
     headers = {'Host': request.registry.settings['moodle.host']}
     r = requests.post(request.registry.settings['moodle.url'], params=params, headers=headers)
+    if "user_id" not in r.json():
+        return -1
     user_id = int(r.json()["user_id"])
     if user_id <= 0:
         user_id = -1
@@ -35,6 +41,9 @@ def RequestGetUserId(request):
 
 def RequestCheckUserCapability(request, capability):
     fh = None
+    if 'MoodleSession' not in request.cookies:
+        return False
+
     try:
         fh = codecs.open('/var/moodledata/sessions/sess_'+request.cookies['MoodleSession'], "r", "utf-8")
         str = fh.read(512000)
@@ -55,6 +64,8 @@ def RequestCheckUserCapability(request, capability):
     headers = {'Host': request.registry.settings['moodle.host']}
     r = requests.post(request.registry.settings['moodle.url'], params=params, headers=headers)
     result = r.json()
+    if "user_id" not in result:
+        return False
     user_id = int(result["user_id"])
     if user_id <= 0:
         return False

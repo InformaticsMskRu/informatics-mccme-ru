@@ -80,7 +80,7 @@ def get_protocol(request):
 
 
 @view_config(route_name="protocol.get_full", renderer="json")
-@check_global_role(("ejudge_teacher", "admin"))
+@check_global_role(("ejudge_teacher", "manager", "admin"))
 def protocol_get_full(request):
     # Короче в чём разница protocol и full protocol
     # В full_protocol есть audit
@@ -101,7 +101,7 @@ def protocol_get_full(request):
 
 
 @view_config(route_name="protocol.get_test", renderer="string")
-@check_global_role(("ejudge_teacher", "admin"))
+@check_global_role(("ejudge_teacher", "manager", "admin"))
 def protocol_get_test(request):
     contest_id = int(request.matchdict['contest_id'])
     run_id = int(request.matchdict['run_id'])
@@ -112,7 +112,7 @@ def protocol_get_test(request):
 
 
 @view_config(route_name="protocol.get_corr", renderer="string")
-@check_global_role(("ejudge_teacher", "admin"))
+@check_global_role(("ejudge_teacher", "manager", "admin"))
 def protocol_get_corr(request):
     contest_id = int(request.matchdict['contest_id'])
     run_id = int(request.matchdict['run_id'])
@@ -123,7 +123,7 @@ def protocol_get_corr(request):
 
 
 @view_config(route_name="protocol.get_outp", renderer="string")
-@check_global_role(("ejudge_teacher", "admin"))
+@check_global_role(("ejudge_teacher", "manager", "admin"))
 def protocol_get_outp(request):
     contest_id = int(request.matchdict['contest_id'])
     run_id = int(request.matchdict['run_id'])
@@ -133,7 +133,7 @@ def protocol_get_outp(request):
 
 @view_config(route_name="protocol.get_submit_archive", renderer="string")
 @require_captcha
-@check_global_role(("ejudge_teacher", "admin"))
+@check_global_role(("ejudge_teacher", "manager", "admin"))
 def get_submit_archive(request):
 
     request_source = "sources" in request.params

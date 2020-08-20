@@ -27,14 +27,18 @@ def check_global_role(roles):
                 return {'result': 'autherror', 'message': 'You do not have permissions for this operation'}
             
             req = DBSession.query(RoleAssignment).filter_by(userid=userid)
-    
+            additional_message = ""
             for role in roles_list:
-                roleid = DBSession.query(Role).filter_by(shortname=role).one().id
+                try:
+                    roleid = DBSession.query(Role).filter_by(shortname=role).one().id
+                    additional_message += role + "+ "
+                except:
+                    additional_message += role + "- "
                 if req.filter_by(roleid=roleid).all():
                     result = func(request, *args, **kwargs)
                     return result    
 
-            result = {'result': 'autherror', 'message': 'You do not have permissions for this operation'}
+            result = {'result': 'autherror', 'message': 'You do not have permissions for this operation', "role": additional_message, "userid": userid}
             return result
 
         return tmp
@@ -43,6 +47,9 @@ def check_global_role(roles):
 def is_admin(request):
     userid = RequestGetUserId(request)
     req = DBSession.query(RoleAssignment).filter_by(userid=userid)
-    role_admin_id = DBSession.query(Role).filter_by(shortname='admin').one().id
+    try:
+        role_admin_id = DBSession.query(Role).filter(or_(Role.shortname=='admin', Role.shortname=='manager')).one().id
+    except:
+        return False
     return bool(req.filter_by(roleid=role_admin_id).all())
 

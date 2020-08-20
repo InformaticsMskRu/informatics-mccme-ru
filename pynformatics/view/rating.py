@@ -187,7 +187,8 @@ def get_cmp_operation(params):
     return {"asc": operator.lt, "desc": operator.gt}[params.sort_type]
 
 def get_sort_by_column(params):
-    column = {'solved': User.problems_solved, 'solved_week': User.problems_week_solved}[params.sort_by]
+    # column = {'solved': User.problems_solved, 'solved_week': User.problems_week_solved}[params.sort_by]
+    column = {'solved': 0, 'solved_week': 0}[params.sort_by]
     return column
 
 def get_sort_type(params):
