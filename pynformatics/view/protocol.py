@@ -49,7 +49,7 @@ def get_protocol(request):
     if not is_authorized_id(user_id):
         return 'Unauthorized'
 
-    is_admin = RequestCheckUserCapability(request, 'moodle/ejudge_submits:comment')
+    is_admin = RequestCheckUserCapability(request, 'moodle/ejudge_submits:admin')
     params = {
         'is_admin': is_admin,
         'user_id': user_id,
@@ -89,9 +89,10 @@ def protocol_get_full(request):
     # [input, big_input, corr, big_corr, output,
     #  big_output, checker_output, error_output, extra]
     run_id = int(request.matchdict['run_id'])
-
+    user_id = RequestGetUserId(request)
+ 
     url = 'http://localhost:12346/problem/run/{}/protocol'.format(run_id)
-    response = requests.get(url)
+    response = requests.get(url, params={'user_id':user_id, 'is_admin': True})
     content = response.json()
 
     if content['status'] != 'success':
