@@ -78,7 +78,6 @@ def RequestCheckUserCapability(request, capability):
     headers = {'Host': request.registry.settings['moodle.host']}
     r = requests.post(request.registry.settings['moodle.url'], params=params, headers=headers)
     result = r.json()
-    print(result)
     if "user_id" not in result:
         return False
     user_id = int(result["user_id"])
