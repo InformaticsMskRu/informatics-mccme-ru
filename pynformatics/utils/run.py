@@ -110,19 +110,21 @@ def get_lang_ext_by_id(lang_id):
         28: ".hs",
         30: ".pas",
         29: ".bas",
-        31: ".1c"
+        71: ".kt",
+        89: ".scala",
+        53: ".go",
     }
     return langs.get(lang_id, str())
 
 def get_lag_exts(): 
     return [".pas", ".c", ".cpp", ".dpr", ".py", ".pl", ".java", 
-            ".cs", ".rb", ".php", ".py", ".hs", ".pas", ".bas", ".1c"]
+            ".cs", ".rb", ".php", ".py", ".hs", ".pas", ".bas", ".kt", ".scala", ".go"]
 
 
 
 def get_lang_name_by_id(lang_id):
     lang_names = { 
-        1: "Free Pascal 3.0.4", 
+        1: "Free Pascal 3.0", 
         2: "GNU C 4.9", 
         3: "GNU C++ 4.9", 
         7: "Turbo Pascal", 
@@ -139,7 +141,9 @@ def get_lang_name_by_id(lang_id):
         28: "Haskell GHC 7.4.2", 
         29: "FreeBASIC 1.00.0", 
         30: "PascalABC 1.8.0.496", 
-        31: "1C 8.3"    
+        71: 'Kotlin 1.4',
+        89: 'Scala 2.13',
+        53: 'GNU Go 8.3' 
     }
     return lang_names.get(lang_id, str())
 

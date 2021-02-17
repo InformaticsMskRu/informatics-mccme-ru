@@ -30,7 +30,9 @@ def main(global_config, **settings):
     config.add_route('ideal.get_by_problem_html', '/ideal/get_by_problem_html')
     config.add_route('ideal.suggested', '/ideal/suggested')
     config.add_route('ideal.suggested_html', '/ideal/suggested_html')
-    
+
+    config.add_route('group.get_enrolled', '/group/enrolled/{cmid}/{group_id}')
+
     config.add_route('user_settings.get', '/user/settings/main/get/{user_id}')
     
     config.add_route('comment.add', '/comment/add')
@@ -56,6 +58,7 @@ def main(global_config, **settings):
     config.add_route('team_monitor.get', '/team_monitor/get/{statement_id}')
 
     config.add_route('monitor_create', '/monitor')
+    config.add_route('monitor_create_json', '/monitor_json')
     config.add_route('monitor', '/monitor/{link}')
     config.add_route('monitor_table', '/monitor/{link}/render')
 

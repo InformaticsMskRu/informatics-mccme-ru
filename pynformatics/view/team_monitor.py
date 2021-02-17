@@ -8,6 +8,7 @@ import transaction
 from pyramid.encode import urlencode
 from pyramid.view import view_config, view_defaults
 from sqlalchemy.orm import load_only
+import pyramid.httpexceptions as ex
 
 from pynformatics.model import User, Statement
 from pynformatics.model.monitor import MonitorLink
@@ -42,7 +43,7 @@ class MonitorApi:
     @view_config(route_name='monitor_create', request_method='POST', renderer='json')
     def create_secret_link(self):
         if not RequestCheckUserCapability(self.request, 'moodle/ejudge_submits:admin'):
-            raise Exception("Auth Error")
+            raise ex.HTTPForbidden()
         author_id = RequestGetUserId(self.request)
         random_string = ''.join(random.SystemRandom().choice(
             string.ascii_lowercase + string.digits) for _ in range(20))
@@ -64,7 +65,7 @@ class MonitorApi:
     def render_as_html_by_secret_link(self):
         author_id = RequestGetUserId(self.request)
         if not is_authorized_id(author_id):
-            raise Exception('Unauthorized')
+            raise ex.HTTPUnauthorized()
         link_arg = self.request.matchdict['link']
         internal_link = self._get_saved_internal_link(link_arg)
         try:
@@ -80,14 +81,32 @@ class MonitorApi:
         return self._make_template_values(data)
 
     @view_config(route_name='monitor_create', request_method='GET', renderer="pynformatics:templates/monitor.mak")
+    @view_config(route_name='monitor_create_json', request_method='GET', renderer="json")
     def render_as_html_by_public(self):
         author_id = RequestGetUserId(self.request)
         if not is_authorized_id(author_id):
-            raise Exception('Unauthorized')
-        internal_link = urlencode(self.request.params)
+            raise ex.HTTPUnauthorized()
 
         try:
-            problems = self._get_monitor(internal_link).get('data')
+            cmid = int(self.request.params['contest_id'])
+        except:
+            return {"result": "error", "message": "wrong course id"}
+        if 'group_id' in self.request.params:
+            group_id = int(self.request.params['group_id'])
+        else:
+            group_id = None
+
+        internal_link = urlencode(self.request.params)
+
+        result = {}
+
+        try:
+            if group_id is None:
+                result = self._get_monitor_by_user_ids(cmid, 0, internal_link, self.request)
+                problems = result.get('data')
+                # return {'p': problems, 'r': result}
+            else:
+                problems = self._get_monitor(internal_link).get('data')
         except Exception as e:
             # TODO: как это будет рендерится? мы ведь рендерим шаблон.
             #  Надо разграничить рендеринг шаблона и возвращение джейсона
@@ -100,7 +119,8 @@ class MonitorApi:
         data['problems'] = problems
         # Get extra info for problems' contests
         data['contests'] = self._get_contests_info(problems)
-
+        if "user_ids" in result:
+            data['user_ids'] = result["user_ids"]
         isAdmin = is_admin(self.request)
         view_settings = dict()
         view_settings["show_email"] = bool(self.request.params.get('show_email')) and isAdmin
@@ -129,8 +149,9 @@ class MonitorApi:
             'problems': problems,
             'competitors': competitors,
             'contests_table': contests_table,
-            'problem_attr': problem_attr,
-            'view_settings': view_settings
+            'problem_attr': problem_attr if self.request.params.get('json') is None else None,
+            'view_settings': view_settings,
+            'user_ids': data["user_ids"] if "user_ids" in data else None,
         }
 
     @classmethod
@@ -171,6 +192,21 @@ class MonitorApi:
         try:
             resp = requests.get(url, timeout=30)
             context = resp.json()
+        except Exception as e:
+            print('Request to :12346 failed!')
+            raise
+
+        return context
+
+    @classmethod
+    def _get_monitor_by_user_ids(cls, cmid, moodle_group_id, internal_link, request) -> dict:
+        url = 'http://localhost:12346/monitor?{}'.format(internal_link)
+
+        try:
+            user_ids = GetUserIds(request, cmid, moodle_group_id)
+            resp = requests.post(url, json={"user_ids": user_ids}, timeout=30)
+            context = resp.json()
+            context['user_ids'] = user_ids
         except Exception as e:
             print('Request to :12346 failed!')
             raise

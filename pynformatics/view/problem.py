@@ -257,8 +257,13 @@ def problem_runs_filter_proxy(request):
 
     params, _ = peek_request_args(request, filter_params)
 
+    if "group_id" not in params and "statement_id" in params:
+        user_ids = GetUserIds(request, params["statement_id"], 0)
+    else:
+        user_ids = None
+
     try:
-        checkCapability(request)
+        checkCapability(request, 'show_hidden_submits')
         params['show_hidden'] = True
         if request.params.get('include_source'):
             params['include_source'] = True
@@ -266,7 +271,10 @@ def problem_runs_filter_proxy(request):
         pass
 
     try:
-        resp = requests.get('http://localhost:12346/problem/{}/submissions/'.format(problem_id), params=params)
+        if user_ids:
+            resp = requests.post('http://localhost:12346/problem/{}/submissions/'.format(problem_id), json={"user_ids": user_ids}, params=params)
+        else:
+            resp = requests.get('http://localhost:12346/problem/{}/submissions/'.format(problem_id), params=params)
         return resp.json()
     except (requests.RequestException, ValueError) as e:
         print('Request to :12346 failed!')

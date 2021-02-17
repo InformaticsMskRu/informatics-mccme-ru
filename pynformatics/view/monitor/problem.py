@@ -1,7 +1,7 @@
 import string
 from enum import Enum
 from operator import itemgetter
-
+import json
 
 class Problem:
     """
@@ -23,6 +23,14 @@ class Problem:
 
     def __hash__(self):
         return hash((self.id, self.contest_id))
+
+    def __json__(self, _):
+        return {
+             "id": self.id,
+             # "name": self.name,
+             "rank": self.rank,
+             "self.contest_id": self.contest_id
+        }
 
     @property
     def full_tag(self):

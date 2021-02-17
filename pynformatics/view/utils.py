@@ -3,8 +3,22 @@ import codecs
 import requests
 from phpserialize import *
 
-__all__ = ["RequestGetUserId", "RequestCheckUserCapability", "getContestStrId"]
+__all__ = ["RequestGetUserId", "RequestCheckUserCapability", "getContestStrId", "GetUserIds"]
 
+def GetUserIds(request, cmid, moodle_group_id = 0):
+    params = {
+        'wstoken': request.registry.settings['moodle.master_token'],
+        'wsfunction': 'core_course_get_enrolled_users_by_cmid',
+        'cmid': cmid,
+        'groupid': moodle_group_id,
+        'moodlewsrestformat': 'json',
+    }
+    headers = {'Host': request.registry.settings['moodle.host']}
+    r = requests.post(request.registry.settings['moodle.url'], params=params, headers=headers)
+    result = r.json()
+    if "users" not in result:
+        return []
+    return [e["id"] for e in result["users"]]
 
 def RequestGetUserId(request):
     """Returns <=2 if not authorised"""
@@ -64,6 +78,7 @@ def RequestCheckUserCapability(request, capability):
     headers = {'Host': request.registry.settings['moodle.host']}
     r = requests.post(request.registry.settings['moodle.url'], params=params, headers=headers)
     result = r.json()
+    print(result)
     if "user_id" not in result:
         return False
     user_id = int(result["user_id"])

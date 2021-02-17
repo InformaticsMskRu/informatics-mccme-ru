@@ -48,7 +48,7 @@ def makehash():
     return collections.defaultdict(makehash)
 
 def checkCapability(request):
-    if (not RequestCheckUserCapability(request, 'moodle/ejudge_contests:reload')):
+    if (not RequestCheckUserCapability(request, 'local/pynformatics:contest_reload')):
         raise Exception("Auth Error")
 
 def getOrCreateContest(request, ejudge_contest_id):

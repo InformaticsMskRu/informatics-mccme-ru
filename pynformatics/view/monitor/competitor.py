@@ -1,3 +1,5 @@
+import json
+
 class Competitor:
     """Участник соревнования"""
 
@@ -11,6 +13,13 @@ class Competitor:
         self.total_score = 0
         self.total_solved = 0
         self.stat = stat
+
+    def __json__(self, _):
+        return {
+             "id": self.id,
+             "username": self.username,
+             # "name": "{} {}".format(self.first_name, self.last_name)
+        }
 
     @property
     def full_name(self):
