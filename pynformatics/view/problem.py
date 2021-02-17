@@ -56,7 +56,6 @@ def problem_submits(request):
         }
         url = 'http://localhost:12346/problem/trusted/{}/submit_v2'.format(problem_id)
         _resp = requests.post(url, files={'file': input_file}, data=_data)
-        print('Response from :12346', _resp)
         return _resp.json()
     except Exception as e:
         print(e)
