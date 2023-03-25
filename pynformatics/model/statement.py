@@ -26,7 +26,6 @@ class Statement(Base):
     timestop = Column(Integer)
     olympiad = Column(Integer)
 #    analysis = Column(Unicode)
-#    pr_id = Column(Integer, ForeignKey('moodle.mdl_ejudge_problem.id'))
     
     problems = association_proxy("StatementProblems", 'problem')
     user = association_proxy("StatementUsers1", 'user')

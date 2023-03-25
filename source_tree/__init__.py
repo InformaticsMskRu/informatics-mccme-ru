@@ -1,6 +1,9 @@
 from pyramid.config import Configurator
 from pyramid.session import UnencryptedCookieSessionFactoryConfig
 from pyramid.events import NewRequest
+
+from pyramid.paster import setup_logging
+
 from sqlalchemy import engine_from_config
 from source_tree.models import DBSession
 import source_tree.models
@@ -86,6 +89,8 @@ def main(global_config, **settings):
     engine = engine_from_config(settings, 'sqlalchemy.')
     DBSession.configure(bind=engine, expire_on_commit=False)
     models.db_session = DBSession()
+
+    setup_logging("/var/pynformatics3/dev/dev-source.ini")
 
     config = Configurator(settings=settings, session_factory=UnencryptedCookieSessionFactoryConfig('source_tree_session'))
     config.include('pyramid_mako')

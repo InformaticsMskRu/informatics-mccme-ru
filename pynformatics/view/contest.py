@@ -144,7 +144,7 @@ def updateStatement(problem, p, contest, conf):
                                 try:
                                     with open("/var/www/moodle_probpics/" + str(problem.id) + "/" + file_name, "wb") as f:
                                         f.write(arch.read("statements/.html/russian/" + file_name))
-                                    img.attrib["src"] = "http://informatics.mccme.ru/moodle_probpics/" + str(problem.id)+ "/" + file_name
+                                    img.attrib["src"] = "/moodle_probpics/" + str(problem.id)+ "/" + file_name
                                 except:
                                     pass
                                     
@@ -153,11 +153,15 @@ def updateStatement(problem, p, contest, conf):
                                 try:
                                     with open("/var/www/moodle_probpics/" + str(problem.id) + "/" + file_name, "wb") as f:
                                         f.write(arch.read("statements/.html/russian/" + file_name))
-                                    img.attrib["src"] = "http://informatics.mccme.ru/moodle_probpics/" + str(problem.id)+ "/" + file_name
+                                    img.attrib["src"] = "/moodle_probpics/" + str(problem.id)+ "/" + file_name
                                 except:
                                     pass
-
-                            problem.content = ET.tostring(statement_node, encoding = 'utf-8').decode("utf-8")
+                            parts = ET.tostring(statement_node, encoding = 'utf-8').decode("utf-8").split('$$$')
+                            content = parts[0]
+                            br = ['\\)', '\\(']
+                            for i in range(1, len(parts)):
+                                 content += br[i % 2] + parts[i]
+                            problem.content = content
                         problem.sample_tests = use_in_statement
                 except KeyError:
                     pass   
