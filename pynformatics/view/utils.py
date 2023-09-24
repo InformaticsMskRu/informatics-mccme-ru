@@ -3,7 +3,9 @@ import codecs
 import requests
 from phpserialize import *
 
-__all__ = ["RequestGetUserId", "RequestCheckUserCapability", "getContestStrId", "GetUserIds"]
+CONTEXT_SHIFT = 100000
+
+__all__ = ["RequestGetUserId", "RequestCheckUserCapability", "getContestStrId", "GetUserIds", "GetUserCourseContextParams", "CONTEXT_SHIFT"]
 
 def GetUserIds(request, cmid, moodle_group_id = 0):
     params = {
@@ -53,27 +55,28 @@ def RequestGetUserId(request):
         user_id = -1
     return user_id
 
-def RequestCheckUserCapability(request, capability):
+def RequestCheckUserCapability(request, capability, courseid = 0):
     fh = None
     if 'MoodleSession' not in request.cookies:
         return False
 
-    try:
-        fh = codecs.open('/var/moodledata/sessions/sess_'+request.cookies['MoodleSession'], "r", "utf-8")
-        str = fh.read(512000)
-        user = loads(bytes(str[str.find('USER|') + 5:], 'UTF-8'), object_hook=phpobject, decode_strings=True)
-        fh.close()
-        return int(user.capabilities[1][capability]) >= 1
-    except:
-       if fh != None:
-           fh.close()
+    #try:
+    #    fh = codecs.open('/var/moodledata/sessions/sess_'+request.cookies['MoodleSession'], "r", "utf-8")
+    #    str = fh.read(512000)
+    #    user = loads(bytes(str[str.find('USER|') + 5:], 'UTF-8'), object_hook=phpobject, decode_strings=True)
+    #    fh.close()
+    #    return int(user.capabilities[1][capability]) >= 1
+    #except:
+    #   if fh != None:
+    #       fh.close()
 
     params = {
         'wstoken': request.registry.settings['moodle.token'],
         'wsfunction': 'local_pynformatics_has_capability',
         'moodlesid': request.cookies['MoodleSession'],
         'moodlewsrestformat': 'json',
-        'capability': capability
+        'capability': capability,
+        'courseid': courseid,
     }
     headers = {'Host': request.registry.settings['moodle.host']}
     r = requests.post(request.registry.settings['moodle.url'], params=params, headers=headers)
@@ -96,3 +99,28 @@ def getContestStrId(id):
 def is_authorized_id(user_id):
     return int(user_id) > 2
 
+def GetUserCourseContextParams(request, course_role, admin_role):
+
+    user_id = RequestGetUserId(request)
+    if not is_authorized_id(user_id):
+        return None
+
+    is_admin = RequestCheckUserCapability(request, admin_role)
+
+    is_teacher = False
+    course_id = 0
+    if "course_id" in request.params and len(request.params["course_id"]) > 0:
+        course_id = int(request.params["course_id"])
+
+    if course_id > 0:
+        is_teacher = RequestCheckUserCapability(request, course_role, course_id)
+
+    params = {
+        'is_admin': is_admin,
+        'user_id': user_id,
+    }
+
+    if is_teacher > 0:
+        params['context_source'] = course_id + CONTEXT_SHIFT
+
+    return params

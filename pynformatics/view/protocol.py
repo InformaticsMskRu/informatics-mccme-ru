@@ -12,7 +12,7 @@ from pynformatics.models import DBSession
 from pynformatics.model.run import get_lang_ext_by_id
 from pynformatics.utils.check_role import check_global_role
 from pynformatics.utils.request_helpers import require_captcha
-from pynformatics.view.utils import is_authorized_id, RequestCheckUserCapability
+from pynformatics.view.utils import *
 
 signal_description = {
     1: "Hangup detected on controlling terminal or death of controlling process",
@@ -45,15 +45,13 @@ def get_protocol(request):
     # А в protocol[tests][i] лежат дополнительно:
     # [input, big_input, corr, big_corr, output,
     #  big_output, checker_output, error_output, extra]
-    user_id = RequestGetUserId(request)
-    if not is_authorized_id(user_id):
-        return 'Unauthorized'
+    
 
-    is_admin = RequestCheckUserCapability(request, 'moodle/ejudge_submits:admin')
-    params = {
-        'is_admin': is_admin,
-        'user_id': user_id,
-    }
+    params = GetUserCourseContextParams(request, "mod/statement:view_protocol", "moodle/ejudge_submits:admin")
+
+    if not params:
+        return {'result': 'error', 'message': 'Not authorized'}
+
     run_id = int(request.matchdict['run_id'])
     url = 'http://localhost:12346/problem/run/{}/protocol'.format(run_id)
     response = requests.get(url, params=params)

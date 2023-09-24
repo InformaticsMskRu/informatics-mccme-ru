@@ -15,7 +15,6 @@ from pynformatics.utils.proxied_request_helpers import peek_request_args
 from pynformatics.view.utils import *
 from pynformatics.view.utils import is_authorized_id
 
-
 def checkCapability(request, capability):
     if (not RequestCheckUserCapability(request, 'local/pynformatics:' + capability)):
         raise Exception("Auth Error")
@@ -54,6 +53,12 @@ def problem_submits(request):
             'user_id': user_id,
             'statement_id': statement_id,
         }
+
+        if "course_id" in request.params and len(request.params["course_id"]) > 0:
+            course_id = int(request.params["course_id"])
+            if course_id > 0:
+                _data["context_source"] = CONTEXT_SHIFT + course_id
+
         url = 'http://localhost:12346/problem/trusted/{}/submit_v2'.format(problem_id)
         _resp = requests.post(url, files={'file': input_file}, data=_data)
         return _resp.json()
@@ -274,7 +279,16 @@ def problem_runs_filter_proxy(request):
             resp = requests.post('http://localhost:12346/problem/{}/submissions/'.format(problem_id), json={"user_ids": user_ids}, params=params)
         else:
             resp = requests.get('http://localhost:12346/problem/{}/submissions/'.format(problem_id), params=params)
-        return resp.json()
+        res = resp.json()
+  
+        course_id = 0
+        if "course_id" in request.params:
+            course_id = int(request.params["course_id"]) + CONTEXT_SHIFT
+        for run in res["data"]:
+            if "context_source" in run and run["context_source"]:
+                run["current"] = int(run["context_source"]) == course_id
+                del run["context_source"]
+        return res
     except (requests.RequestException, ValueError) as e:
         print('Request to :12346 failed!')
         print(str(e))
@@ -287,17 +301,10 @@ def problem_get_run_source(request):
     if run_id is None:
         return {"result": "error", "message": 'Run id required'}
 
-    user_id = RequestGetUserId(request)
+    params = GetUserCourseContextParams(request, "mod/statement:view_source", "moodle/ejudge_submits:admin")
 
-    if not is_authorized_id(user_id):
+    if not params:
         return {'result': 'error', 'message': 'Not authorized'}
-
-    is_admin = RequestCheckUserCapability(request, 'moodle/ejudge_submits:admin')
-
-    params = {
-        'is_admin': is_admin,
-        'user_id': user_id,
-    }
 
     try:
         url = 'http://localhost:12346/problem/run/{}/source/'.format(run_id)
