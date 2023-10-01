@@ -1,14 +1,15 @@
 import traceback
 import zipfile
+import requests
+import boto3
 from io import BytesIO
 
-import requests
-from pynformatics import EjudgeProblem, RequestGetUserId
+from pyramid.httpexceptions import HTTPFound
 from pyramid.response import Response
 from pyramid.view import view_config
-from pynformatics.models import DBSession
 
-# from pynformatics.model import Run
+from pynformatics import EjudgeProblem, RequestGetUserId
+from pynformatics.models import DBSession
 from pynformatics.model.run import get_lang_ext_by_id
 from pynformatics.utils.check_role import check_global_role
 from pynformatics.utils.request_helpers import require_captcha
@@ -109,6 +110,25 @@ def protocol_get_test(request):
     return prob.get_test(int(request.matchdict['test_num']),
                          prob.get_test_size(int(request.matchdict['test_num'])))
 
+@view_config(route_name="protocol.get_test_from_s3")
+@check_global_role(("ejudge_teacher", "manager", "admin"))
+def protocol_get_test_from_s3(request):
+    contest_id = int(request.matchdict['contest_id'])
+    run_id = int(request.matchdict['run_id'])
+    run = Run.get_by(run_id=run_id, contest_id=contest_id)
+    prob = run.problem
+
+    s3Client = request.find_service(name='boto3.client.judge_1')
+
+    url = s3Client.generate_presigned_url(
+        ClientMethod='get_object',
+        Params={
+            'Bucket': 'informatics-judges-1',
+            'Key': 'judges/000001/conf/serve.cfg'
+        }
+    )
+
+    return HTTPFound(location=url)
 
 @view_config(route_name="protocol.get_corr", renderer="string")
 @check_global_role(("ejudge_teacher", "manager", "admin"))

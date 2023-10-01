@@ -17,10 +17,23 @@ from sqlalchemy.orm import noload, lazyload
 @view_config(route_name='comment.add', request_method='POST', renderer='json')
 def add(request):
     try:
-        if (not RequestCheckUserCapability(request, 'moodle/ejudge_submits:comment')):
-            raise Exception("Auth Error")
+        run_id = request.matchdict.get('run_id')
+        if run_id is None:
+            return {"result": "error", "message": 'Run id required'}
 
-        author_id = RequestGetUserId(request)
+        params = GetUserCourseContextParams(request, "mod/statement:add_comment", "moodle/ejudge_submits:comment")
+
+        if not params:
+            return {'result': 'error', 'message': 'Not authorized'}
+        run = DBSession.query(Run).filter(Run.run_id == int(run_id)).one()
+
+        if not run:
+            return {'result': 'error', 'message': 'Not found'}
+
+        if not (params["is_admin"] or params["user_id"] == run.user_id or ("context_source" in params and run.context_source == params["context_source"])):
+            return {'result': 'error', 'message': 'Not found'}
+
+        author_id = params["user_id"]
 
         run_id = request.params['run_id']
         user_id = request.params['user_id']
@@ -34,7 +47,7 @@ def add(request):
         commentary = Comment(date=date,
                              run_id=0,  # TODO: 0 - заглушка. Новые run_id теперь кладуться в py_run_id.
                              contest_id=0,  # TODO: Теперь contest_id всегда 0.
-                             user_id=user_id,
+                             user_id=run.user_id,
                              author_user_id=author_id,
                              lines=lines,
                              comment=comment,

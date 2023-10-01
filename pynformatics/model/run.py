@@ -25,7 +25,7 @@ class Run(Base):
     run_id = Column(Integer, primary_key=True)
     size = Column(Integer)
     create_time = Column(DateTime)
-    # user_id = Column(Integer)
+    user_id = Column(Integer)
     # user = relationship('SimpleUser', backref = backref('simpleuser'), uselist=False)
     comments = relation('Comment', backref = backref('comments'))
     contest_id = Column(Integer, primary_key=True)
@@ -35,13 +35,14 @@ class Run(Base):
     status = Column(Integer)
     score = Column(Integer)
     test_num = Column(Integer)
+    context_source = Column(Integer, nullable=True)
     
     def __init__(self, run_id, contest_id, size, create_time, user_id, prob_id, lang_id, status, score, test_num):
         self.run_id = run_id
         self.contest_id = contest_id
         self.size = size
         self.create_time = create_time
-        # self.user_id = user_id
+        self.user_id = user_id
         self.prob_id = prob_id
         self.lang_id = lang_id
         self.status = status

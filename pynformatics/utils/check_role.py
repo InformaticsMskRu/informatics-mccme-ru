@@ -6,7 +6,7 @@ import sys
 def check_global_role(roles):
     ''' decorator for view function
         roles = string or iterable of strings - shorttitle from mdl_roles 
-        (admin, teascher, ejudge_teacher etc)
+        (admin, teacher, ejudge_teacher etc)
 
         If auth is ok, view function will not change. Otherwise it returns 
         dict {'result': 'autherror', message:'You do not have permissions for this operation'}
