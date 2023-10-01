@@ -30,6 +30,9 @@ class Problem(Base):
     show_limits = Column(Boolean)
     output_only = Column(Boolean)
     pr_id = Column(Integer, ForeignKey('moodle.mdl_ejudge_problem.id'))
+    s3_test_pat = Column(String)
+    s3_corr_pat = Column(String)
+    s3
     def __init__(self, name, timelimit, memorylimit, output_only, content='', review='', description='', analysis='', sample_tests='', sample_tests_html='', pr_id=None):
         self.name = name
         self.content = content
@@ -44,8 +47,6 @@ class Problem(Base):
         self.sample_tests = sample_tests
         self.sample_tests_html = sample_tests_html
         self.pr_id = pr_id
-#    def __repr__(self):
-#        return "<spam(%d, '%s')" % (self.id, self.name)
 
 class EjudgeProblemDummy(Base):
     __tablename__ = "mdl_ejudge_problem"
@@ -58,7 +59,6 @@ class EjudgeProblemDummy(Base):
     problem_id = Column(Integer, primary_key=True, nullable=False, autoincrement=False) #id in contest
     short_id = Column(String(100))
     ejudgeName = Column('name', String(100))
-#    runs = relation('Run', backref='runs', uselist=True)
  
     def __init__(self, name, contest_id, problem_id, short_id, ejudge_contest_id):
         self.contest_id = contest_id
@@ -112,7 +112,7 @@ class EjudgeProblem(Problem):
         return res
 
     def get_test_size(self, test_num):
-        conf = EjudgeContestCfg(number=self.ejudge_contest_id)
+        conf = EjudgeContestCfg(number = self.ejudge_contest_id)
         prob = conf.getProblem(self.problem_id)
 
         test_file_name = (prob.tests_dir + prob.test_pat) % int(test_num)
@@ -152,10 +152,6 @@ class EjudgeProblem(Problem):
         find_res = glob.glob(os.path.join(checker_dir, "check_{0}.*".format(prob.internal_name)))
         check_src = None
         checker_ext = None
-        
-        # DEBUG
-        print(find_res)
-        # DEBUG END
         
         if find_res:
             print(find_res)
@@ -210,4 +206,3 @@ class EjudgeProblem(Problem):
             res += "</div></div>"
 
         self.sample_tests_html = res    
-        return self.sample_tests

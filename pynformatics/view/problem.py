@@ -116,21 +116,7 @@ def problem_generate_samples(request):
         checkCapability(request, 'problem_edit')
         problem = DBSession.query(EjudgeProblem).filter(EjudgeProblem.id == request.matchdict['problem_id']).first()
         problem.generateSamples()
-#        res = ""
-#        if problem.sample_tests != '':
-#            res = "<div class='problem-statement'><div class='sample-tests'><div class='section-title'>Примеры</div>"
-#        
-#            for i in problem.sample_tests.split(","):
-#                res += "<div class='sample-test'>"
-#                res += "<div class='input'><div class='title'>Входные данные</div><pre class='content'>"
-#                res += get_test(problem, i)
-#                res += "</pre></div><div class='output'><div class='title'>Выходные данные</div><pre class='content'>"
-#                res += get_corr(problem, i)
-#                res += "</pre></div></div>"
-#        
-#            res += "</div></div>"
-#
-#        problem.sample_tests_html = res
+
         with transaction.manager:
            DBSession.merge(problem)
         return {"result" : "ok", "content" : problem.sample_tests}
@@ -165,31 +151,6 @@ def problem_get_tests_count(request):
         return cnt - 1
     except Exception as e:
         return {"result" : "error", "message" : e.__str__(), "stack" : traceback.format_exc()}
-
-#def get_test(problem, test_num):
-#    conf = EjudgeContestCfg(number = problem.ejudge_contest_id)
-#    prob = conf.getProblem(problem.problem_id)
-#
-#    test_file_name = (prob.tests_dir + prob.test_pat) % int(test_num)
-#    if os.path.exists(test_file_name):
-#        f = open(test_file_name)
-#        res = f.read(255)
-#    else:
-#        res = test_file_name
-#    return res
-
-#def get_corr(problem, test_num):
-#    conf = EjudgeContestCfg(number = problem.ejudge_contest_id)
-#    prob = conf.getProblem(problem.problem_id)
-#
-#    corr_file_name = (prob.tests_dir + prob.corr_pat) % int(test_num)
-#    if os.path.exists(corr_file_name):
-#        f = open(corr_file_name)
-#        res = f.read(255)
-#    else:
-#        res = corr_file_name
-#    return res
-
 
 @view_config(route_name='problem.tests.get_test', renderer='json')
 def problem_get_test(request):
