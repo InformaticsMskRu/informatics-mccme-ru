@@ -100,7 +100,7 @@ def protocol_get_full(request):
     return content['data']
 
 
-@view_config(route_name="protocol.get_test", renderer="string")
+#@view_config(route_name="protocol.get_test", renderer="string")
 @check_global_role(("ejudge_teacher", "manager", "admin"))
 def protocol_get_test(request):
     contest_id = int(request.matchdict['contest_id'])
@@ -113,19 +113,18 @@ def protocol_get_test(request):
 @view_config(route_name="protocol.get_test_from_s3")
 @check_global_role(("ejudge_teacher", "manager", "admin"))
 def protocol_get_test_from_s3(request):
-    contest_id = int(request.matchdict['contest_id'])
-    run_id = int(request.matchdict['run_id'])
-    run = Run.get_by(run_id=run_id, contest_id=contest_id)
-    prob = run.problem
+    #run_id = int(request.matchdict['run_id'])
+    #run = Run.get_by(run_id=run_id, contest_id=contest_id)
+    #prob = run.problem
 
     s3Client = request.find_service(name='boto3.client.judge_1')
-
     url = s3Client.generate_presigned_url(
         ClientMethod='get_object',
         Params={
             'Bucket': 'informatics-judges-1',
             'Key': 'judges/000001/conf/serve.cfg'
-        }
+        },
+        ExpiresIn=10,
     )
 
     return HTTPFound(location=url)

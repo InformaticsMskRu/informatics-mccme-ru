@@ -30,9 +30,7 @@ class Problem(Base):
     show_limits = Column(Boolean)
     output_only = Column(Boolean)
     pr_id = Column(Integer, ForeignKey('moodle.mdl_ejudge_problem.id'))
-    s3_test_pat = Column(String)
-    s3_corr_pat = Column(String)
-    s3
+
     def __init__(self, name, timelimit, memorylimit, output_only, content='', review='', description='', analysis='', sample_tests='', sample_tests_html='', pr_id=None):
         self.name = name
         self.content = content
