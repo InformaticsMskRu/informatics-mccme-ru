@@ -54,7 +54,7 @@ def get_protocol(request):
         return {'result': 'error', 'message': 'Not authorized'}
 
     run_id = int(request.matchdict['run_id'])
-    url = 'http://localhost:12346/problem/run/{}/protocol'.format(run_id)
+    url = '{}/problem/run/{}/protocol'.format(request.registry.settings['rmatics.endpoint'], run_id)
     response = requests.get(url, params=params)
     content = response.json()
 
@@ -90,7 +90,7 @@ def protocol_get_full(request):
     run_id = int(request.matchdict['run_id'])
     user_id = RequestGetUserId(request)
  
-    url = 'http://localhost:12346/problem/run/{}/protocol'.format(run_id)
+    url = '{}/problem/run/{}/protocol'.format(request.registry.settings['rmatics.endpoint'], run_id)
     response = requests.get(url, params={'user_id':user_id, 'is_admin': True})
     content = response.json()
 
@@ -182,7 +182,7 @@ def get_submit_archive(request):
 
     if request_source:
         # Download source and info about run
-        url = 'http://localhost:12346/problem/run/{}/source/'.format(run_id)
+        url = '{}/problem/run/{}/source/'.format(request.registry.settings['rmatics.endpoint'], run_id)
         try:
             resp = requests.get(url, {'is_admin': True})
             resp.raise_for_status()

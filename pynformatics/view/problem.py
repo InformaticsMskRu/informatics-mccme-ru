@@ -59,7 +59,7 @@ def problem_submits(request):
             if course_id > 0:
                 _data["context_source"] = CONTEXT_SHIFT + course_id
 
-        url = 'http://localhost:12346/problem/trusted/{}/submit_v2'.format(problem_id)
+        url = '{}/problem/trusted/{}/submit_v2'.format(request.registry.settings['rmatics.endpoint'], problem_id)
         _resp = requests.post(url, files={'file': input_file}, data=_data)
         return _resp.json()
     except Exception as e:
@@ -235,11 +235,12 @@ def problem_runs_filter_proxy(request):
     except Exception as exc:
         pass
 
+    url = '{}/problem/{}/submissions/'.format(request.registry.settings['rmatics.endpoint'], problem_id)
     try:
         if user_ids:
-            resp = requests.post('http://localhost:12346/problem/{}/submissions/'.format(problem_id), json={"user_ids": user_ids}, params=params)
+            resp = requests.post(url, json={"user_ids": user_ids}, params=params)
         else:
-            resp = requests.get('http://localhost:12346/problem/{}/submissions/'.format(problem_id), params=params)
+            resp = requests.get(url, params=params)
         res = resp.json()
   
         course_id = 0
@@ -268,7 +269,7 @@ def problem_get_run_source(request):
         return {'result': 'error', 'message': 'Not authorized'}
 
     try:
-        url = 'http://localhost:12346/problem/run/{}/source/'.format(run_id)
+        url = '{}/problem/run/{}/source/'.format(request.registry.settings['rmatics.endpoint'], run_id)
         resp = requests.get(url, params=params)
         return resp.json()
     except (requests.RequestException, ValueError) as e:
