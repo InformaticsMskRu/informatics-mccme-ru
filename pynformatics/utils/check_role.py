@@ -1,4 +1,4 @@
-from source_tree.model.role import Role, Context, RoleAssignment
+from pynformatics.model.role import Role, Context, RoleAssignment
 from pynformatics.models import DBSession
 from pynformatics.view.utils import RequestGetUserId
 import sys
