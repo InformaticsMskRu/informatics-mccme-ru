@@ -1,20 +1,13 @@
-from pynformatics.utils.check_role import check_global_role, is_admin 
+import traceback
+
 from pyramid.view import view_config
-from pynformatics.view.utils import *
-from pynformatics.model import User, Ideal, Problem, EjudgeProblem, Hint, Recommendation, SimpleUser
-import sys, traceback
-from phpserialize import *
-import transaction
-import jsonpickle, demjson
-import json
-import datetime
-from pynformatics.models import DBSession
-import html
-from sqlalchemy.orm import noload, lazyload
+
 from sqlalchemy import desc
-from pyramid.httpexceptions import HTTPFound
 import sqlalchemy.orm.exc
 
+from pynformatics.view.utils import *
+from pynformatics.model import Problem, EjudgeProblem, Recommendation, SimpleUser
+from pynformatics.models import DBSession
 
 @view_config(route_name='recommendation.get', request_method='GET', renderer='json')
 @view_config(route_name='recommendation.get_html', request_method='GET', renderer='pynformatics:templates/recommendation.mak')

@@ -1,17 +1,13 @@
-from pynformatics.utils.check_role import check_global_role, is_admin 
-from pyramid.view import view_config
-from pynformatics.view.utils import *
-from pynformatics.model import User, Ideal, Problem, EjudgeProblem, Hint
-import sys, traceback
-from phpserialize import *
-import transaction
-import jsonpickle, demjson
-import json
-import datetime
-from pynformatics.models import DBSession
 import html
-from sqlalchemy.orm import noload, lazyload
-from pyramid.httpexceptions import HTTPFound
+import traceback
+import transaction
+
+from pyramid.view import view_config
+
+from pynformatics.utils.check_role import check_global_role 
+from pynformatics.view.utils import *
+from pynformatics.model import Problem, EjudgeProblem, Hint
+from pynformatics.models import DBSession
 
 
 def get_test_signature(run):

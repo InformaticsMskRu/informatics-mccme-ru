@@ -1,16 +1,10 @@
+import traceback
+
 from pyramid.view import view_config
+
 from pynformatics.view.utils import *
-from pynformatics.model import User, PynformaticsUser
-import sys, traceback
-import transaction
-import jsonpickle, demjson
-import json
-import datetime
+from pynformatics.model import User
 from pynformatics.models import DBSession
-import html
-from sqlalchemy.orm import noload, lazyload
-from sqlalchemy import desc
-from sqlalchemy.ext.serializer import dumps, loads
 
 @view_config(route_name='user.query', request_method='GET', renderer='string')
 def query_user(request):

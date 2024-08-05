@@ -7,7 +7,6 @@ import requests
 import transaction
 from pyramid.view import view_config
 
-from pynformatics.contest.ejudge.ejudge_proxy import submit
 from pynformatics.contest.ejudge.serve_internal import EjudgeContestCfg
 from pynformatics.model import SimpleUser, EjudgeProblem, Problem
 from pynformatics.models import DBSession
@@ -92,7 +91,7 @@ def problem_ant_submits(request):
     #filename = request.POST['file'].filename
     filename = "input_file.txt"
     input_file = io.StringIO("{4}${5}\n{0}\n{1}\n{2}\n{3}".format(run_id1, run_id2, run_id3, run_id4, json_names, map_index))
-    ejudge_url = request.registry.settings['ejudge.new_client_url']
+    ejudge_url = ""
     return {'res' : submit(input_file, problem.ejudge_contest_id, problem.problem_id, lang_id, user.login, user.password, filename, ejudge_url, user_id)}
     
 
