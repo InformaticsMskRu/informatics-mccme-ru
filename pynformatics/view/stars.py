@@ -1,15 +1,12 @@
+import html
+import traceback
+import transaction
+
 from pyramid.view import view_config
+
 from pynformatics.view.utils import *
 from pynformatics.model import User, Stars
-import sys, traceback
-from phpserialize import *
-import transaction
-import jsonpickle, demjson
-import json
-import datetime
 from pynformatics.models import DBSession
-import html
-from sqlalchemy.orm import noload, lazyload
 
 @view_config(route_name='stars.add', request_method='GET', renderer='json')
 def add(request):

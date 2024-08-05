@@ -1,6 +1,6 @@
 from pyramid.view import view_config
 from pynformatics.view.utils import *
-from pynformatics.model import User, Comment, EjudgeProblem
+from pynformatics.model import Comment
 import sys, traceback
 from phpserialize import *
 import transaction
@@ -11,7 +11,7 @@ from pynformatics.models import DBSession
 import html
 
 from sqlalchemy import or_
-from sqlalchemy.orm import noload, lazyload
+from sqlalchemy.orm import noload
 
 
 @view_config(route_name='comment.add', request_method='POST', renderer='json')

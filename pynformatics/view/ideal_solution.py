@@ -1,16 +1,13 @@
-from pynformatics.utils.check_role import check_global_role, is_admin 
-from pyramid.view import view_config
-from pynformatics.view.utils import *
-from pynformatics.model import User, Ideal, Problem, EjudgeProblem
-import sys, traceback
-from phpserialize import *
-import transaction
-import jsonpickle, demjson
-import json
-import datetime
-from pynformatics.models import DBSession
 import html
-from sqlalchemy.orm import noload, lazyload
+import traceback
+import transaction
+
+from pyramid.view import view_config
+
+from pynformatics.utils.check_role import check_global_role, is_admin 
+from pynformatics.view.utils import *
+from pynformatics.model import User, Ideal, EjudgeProblem
+from pynformatics.models import DBSession
 from pyramid.httpexceptions import HTTPFound
 
 def get_ok_runs(user_id, problem_id):

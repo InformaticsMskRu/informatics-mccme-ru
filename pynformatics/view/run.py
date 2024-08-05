@@ -3,7 +3,6 @@ import traceback
 import requests
 from pyramid.view import view_config
 
-from pynformatics.contest.ejudge.ejudge_proxy import rejudge
 from pynformatics.utils.proxied_request_helpers import peek_request_args
 
 from pynformatics.view.utils import *

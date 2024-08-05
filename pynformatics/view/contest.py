@@ -1,10 +1,8 @@
-import sys
 import traceback
 import collections
 import json
 import transaction
 import zipfile
-import re
 import os
 import xml.etree.ElementTree as ET
 import shutil
@@ -15,7 +13,7 @@ from pyramid.view import view_config
 from phpserialize import *
 from bs4 import BeautifulSoup
 
-from pynformatics.model import User, EjudgeContest, Comment, EjudgeProblem, Problem, ContestsStatistic, EjudgeProblemDummy
+from pynformatics.model import EjudgeContest, EjudgeProblem, Problem, ContestsStatistic, EjudgeProblemDummy
 from pynformatics.contest.ejudge.serve_internal import *
 from pynformatics.contest.ejudge.configparser import ConfigParser
 from pynformatics.view.utils import *
@@ -216,7 +214,6 @@ def reload_problem(request):
         
         problem, problemCfg, action, content = updateOrAddProblem(request.matchdict['problem_id'], contest, ejudgeCfg, True)
 
-#        jsonpickle.set_preferred_backend('demjson')   
         res = {"action": action, "a1": problem.ejudge_prid , "problem": problem, "contest_id" : request.matchdict['contest_id'], "problemCount" : ejudgeCfg.getProblemsCount(), "abstractProblemCount" : ejudgeCfg.getAbstractProblemsCount(), "problem" : ejudgeCfg.getProblem(request.matchdict['problem_id']).getInfo()}
         return json.dumps(res)
     except Exception as e: 
@@ -236,7 +233,6 @@ def reload_contest(request):
                 actions.append([content, action, problem.name, pr_id, problem.short_id, problem.problem_id, problem.id, problem.ejudge_prid])
             except Exception as e:
                return {"pr_id": pr_id, "result" : "error", "message" : e.__str__(), "stack" : traceback.format_exc()}
-#        jsonpickle.set_preferred_backend('demjson')   
         res = {"action": actions, "name": contest.name, "contest_id" : request.matchdict['contest_id'], "problemCount" : ejudgeCfg.getProblemsCount(), "abstractProblemCount" : ejudgeCfg.getAbstractProblemsCount()}
         return res
     except Exception as e: 
