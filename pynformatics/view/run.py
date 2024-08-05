@@ -26,11 +26,11 @@ def update_run(request):
 
     # 99 is Перетестировать
     if new_status and int(new_status) == 99:
-        url = 'http://localhost:12346/problem/run/{}/action/rejudge'.format(run_id)
+        url = '{}/problem/run/{}/action/rejudge'.format(request.registry.settings['rmatics.endpoint'], run_id)
         request_func = requests.post
         request_kwargs = {}
     else:
-        url = 'http://localhost:12346/problem/run/{}'.format(run_id)
+        url = '{}/problem/run/{}'.format(request.registry.settings['rmatics.endpoint'], run_id)
         request_func = requests.put
         request_kwargs = {'json': body_params}
 

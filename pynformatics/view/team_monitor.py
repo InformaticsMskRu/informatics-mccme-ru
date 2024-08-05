@@ -187,7 +187,7 @@ class MonitorApi:
 
     @classmethod
     def _get_monitor(cls, internal_link) -> dict:
-        url = 'http://localhost:12346/monitor?{}'.format(internal_link)
+        url = '{}/monitor?{}'.format(request.registry.settings['rmatics.endpoint'], internal_link)
 
         try:
             resp = requests.get(url, timeout=30)
@@ -200,7 +200,7 @@ class MonitorApi:
 
     @classmethod
     def _get_monitor_by_user_ids(cls, cmid, moodle_group_id, internal_link, request) -> dict:
-        url = 'http://localhost:12346/monitor?{}'.format(internal_link)
+        url = '{}/monitor?{}'.format(request.registry.settings['rmatics.endpoint'], internal_link)
 
         try:
             user_ids = GetUserIds(request, cmid, moodle_group_id)
