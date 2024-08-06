@@ -9,6 +9,7 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 RUN apt update && \
  apt install -y vim && \
+ apt-get install -y curl iproute2 && \
  apt-get install -y python3-pip uwsgi-core uwsgi-plugin-python3 && \
  apt-get install -y python3-dev default-libmysqlclient-dev build-essential pkg-config
 

@@ -185,9 +185,8 @@ class MonitorApi:
 
         return {s.id: s.name for s in statements}
 
-    @classmethod
-    def _get_monitor(cls, internal_link) -> dict:
-        url = '{}/monitor?{}'.format(request.registry.settings['rmatics.endpoint'], internal_link)
+    def _get_monitor(self, internal_link) -> dict:
+        url = '{}/monitor?{}'.format(self.request.registry.settings['rmatics.endpoint'], internal_link)
 
         try:
             resp = requests.get(url, timeout=30)
@@ -198,9 +197,8 @@ class MonitorApi:
 
         return context
 
-    @classmethod
-    def _get_monitor_by_user_ids(cls, cmid, moodle_group_id, internal_link, request) -> dict:
-        url = '{}/monitor?{}'.format(request.registry.settings['rmatics.endpoint'], internal_link)
+    def _get_monitor_by_user_ids(self, cmid, moodle_group_id, internal_link, request) -> dict:
+        url = '{}/monitor?{}'.format(self.request.registry.settings['rmatics.endpoint'], internal_link)
 
         try:
             user_ids = GetUserIds(request, cmid, moodle_group_id)
