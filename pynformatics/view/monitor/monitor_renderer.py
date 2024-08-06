@@ -127,7 +127,7 @@ class MonitorRenderer:
         keyfunc = attrgetter('contest_id')
         problems_by_contest = (g for _, g in groupby(problems, key=keyfunc))
         for contest, problem_g in zip(contests, problems_by_contest):
-            contests_table.append(['Контест', str(contest.id) + " " + contest.name])
+            contests_table.append(['Контест', "{} {}".format(contest.id, contest.name)])
             for problem in problem_g:
                 attr = problem_attr(problem)
                 info = '{0} [{1}]'.format(problem.name, problem.id)
