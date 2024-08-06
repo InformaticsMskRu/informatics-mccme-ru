@@ -8,7 +8,8 @@ from pyramid.httpexceptions import HTTPFound
 from pyramid.response import Response
 from pyramid.view import view_config
 
-from pynformatics import EjudgeProblem, RequestGetUserId
+from pynformatics import RequestGetUserId
+from pynformatics.model import EjudgeProblem
 from pynformatics.models import DBSession
 from pynformatics.model.run import get_lang_ext_by_id
 from pynformatics.utils.check_role import check_global_role
