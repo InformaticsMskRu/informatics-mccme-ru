@@ -6,11 +6,21 @@ from .models import DBSession
 from pynformatics.view.comment import *
 from sqlalchemy import engine_from_config
 
+def load_config_map(filename, settings):
+    if filename and os.path.exists(filename):
+        with open(filename, 'r') as json_file:
+            json_data = json.load(json_file)
+        settings.update(json_data)
+
 def main(global_config, **settings):
     """ This function returns a Pyramid WSGI application.
     """
     engine = engine_from_config(settings, 'sqlalchemy.')
     DBSession.configure(bind=engine, expire_on_commit=False)
+
+    load_config_map(settings.get("config.map"), settings)
+    load_config_map(settings.get("config.secret"), settings)
+
     config = Configurator(settings=settings)
     config.include('pyramid_mako')
     config.include('pyramid_boto3')

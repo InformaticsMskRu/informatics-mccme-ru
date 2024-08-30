@@ -17,7 +17,6 @@ COPY requirements.txt requirements.txt
 
 RUN pip3 install --no-cache-dir -r requirements.txt
 
-COPY prod-container.ini uwsgi.ini
 COPY pynformatics/ pynformatics/
 
 COPY setup.py setup.py
@@ -27,6 +26,8 @@ COPY CHANGES.txt CHANGES.txt
 RUN pip3 install -e .
 
 RUN useradd -ms /bin/bash uwsgi
+
+COPY prod-container.ini uwsgi.ini
 
 CMD [ "uwsgi", "--uid", "uwsgi", \
                "--protocol", "uwsgi", \

@@ -1,7 +1,5 @@
 import sys, traceback
-import codecs
 import requests
-from phpserialize import *
 
 CONTEXT_SHIFT = 100000
 
@@ -27,17 +25,6 @@ def RequestGetUserId(request):
 
     if 'MoodleSession' not in request.cookies:
         return -1
-
-    fh = None
-    try:
-        fh = codecs.open('/var/moodledata/sessions/sess_'+request.cookies['MoodleSession'], "r", "utf-8")
-        str = fh.read(512000)
-        user = loads(bytes(str[str.find('USER|') + 5:], 'UTF-8'), object_hook = phpobject, decode_strings = True)
-        fh.close()
-        return user.id
-    except:
-        if fh != None:
-            fh.close()
         
     params = {
         'wstoken': request.registry.settings['moodle.token'],
@@ -59,16 +46,6 @@ def RequestCheckUserCapability(request, capability, courseid = 0):
     fh = None
     if 'MoodleSession' not in request.cookies:
         return False
-
-    #try:
-    #    fh = codecs.open('/var/moodledata/sessions/sess_'+request.cookies['MoodleSession'], "r", "utf-8")
-    #    str = fh.read(512000)
-    #    user = loads(bytes(str[str.find('USER|') + 5:], 'UTF-8'), object_hook=phpobject, decode_strings=True)
-    #    fh.close()
-    #    return int(user.capabilities[1][capability]) >= 1
-    #except:
-    #   if fh != None:
-    #       fh.close()
 
     params = {
         'wstoken': request.registry.settings['moodle.token'],
