@@ -14,14 +14,6 @@ from source_tree.utils.session import subscribe_rollback_on_request_finished
 
 
 def course_include(config):
-    config.add_route('course.get', 'get/{course_id}')
-    config.add_route('course.get.children', 'get/{course_id}/children')
-    config.add_route('course.add', 'add')
-    config.add_route('course.update', 'update/{course_id}')
-config.add_route('course.add.window', 'add_course_window/{course_id}')
-    config.add_route('course.get.nodes', 'get/{course_id}/nodes')
-    config.add_route('course.get_for_select', 'get_for_select')
-    config.add_route('course.get_not_in_list', 'get_not_in_list')
     config.add_route('course.get_by_author', 'get_by_author/{author_id}')
 
 
