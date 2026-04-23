@@ -24,7 +24,6 @@ def course_include(config):
     config.add_route('course.verify.cancel', 'verify/{course_id}/cancel')
     config.add_route('course.get.all.to_verify', 'get/all/to_verify')
     config.add_route('course.adm', 'adm')
-    config.add_route('course.dump', 'dump/{course_id}')
     config.add_route('course.add.window', 'add_course_window/{course_id}')
     config.add_route('course.get.nodes', 'get/{course_id}/nodes')
     config.add_route('course.get_for_select', 'get_for_select')

@@ -3,7 +3,6 @@ from pyramid.view import view_config
 from pyramid.renderers import render_to_response
 import pyramid.httpexceptions as exc
 from sqlalchemy import not_
-from mako.template import Template
 from json import loads
 import json
 
@@ -21,23 +20,6 @@ from source_tree.utils.capability import (
     RequestGetUserId,
 )
 from source_tree.utils.course import *
-
-
-def course_make_dump(request):
-    class Req:
-        def __init__(self, request, params, matchdict):
-            self.registry = request.registry
-            self.params = params
-            self.matchdict = matchdict
-    for i in [0, 1]:
-        params = {
-            'show_hidden': i,
-            'dump': 1,
-        }
-        matchdict = {
-            'course_id': 1,
-        }
-        course_dump(Req(request, params, matchdict))
 
 
 @view_config(route_name='course.get', renderer='json')
@@ -75,7 +57,6 @@ def course_update(request):
                 course.__setattr__(field, request.params[field])
         course.author = RequestGetUserId(request)
         db_session.commit()
-        course_make_dump(request)
         return {'result': 'ok'}
     except Exception as e:
         return {'result': 'error', 'content': e.__str__()}
@@ -94,7 +75,6 @@ def course_erase(request):
             check_capability_course(request, 'admin')
         db_session.delete(course)
         db_session.commit()
-        course_make_dump(request)
         return {'result': 'ok'}
     except Exception as e:
         return {'result': 'error', 'content': e.__str__()}
@@ -120,7 +100,6 @@ def course_erase_all(request):
         check_capability_course(request, 'teacher' if teacher else 'admin')
         erase_tree(course)
         db_session.commit()
-        course_make_dump(request)
         return {'result': 'ok'}
     except Exception as e:
         return {'result': 'error', 'content': e.__str__()}
@@ -139,7 +118,6 @@ def course_verify(request):
                 user_id=course.author,
             ))
         db_session.commit()
-        course_make_dump(request)
         return {'result': 'ok'}
     except Exception as e:
         return {'result': 'error', 'content': e.__str__()}
@@ -154,7 +132,6 @@ def course_verify_cancel(request):
             raise Exception("Source mustn't be canceled")
         db_session.delete(course)
         db_session.commit()
-        course_make_dump(request)
         return {'result': 'ok'}
     except Exception as e:
         return {'result': 'error', 'content': e.__str__()}
@@ -243,7 +220,6 @@ def course_add(request):
             node_id = course_add_by_dict(add_dict)
             ids.append(node_id)
         db_session.commit()
-        course_make_dump(request)
         return {"result": "ok", "content": {
             "new_id": ids,
         }}
@@ -267,68 +243,6 @@ def get_children_by_map(childrenMap, id):
     if not id in childrenMap:
         return []
     return childrenMap[id]
-
-@view_config(route_name='course.dump', renderer='course_dump.mak')
-def course_dump(request):
-    try:
-        def course_update_count(course, course_count, show_hidden, childrenMap):
-            course_count[course] = 1 if course.course and (show_hidden or course.course.visible) else 0
-            children = get_children_by_map(childrenMap, course.id)
-            for child in children:
-                if not show_hidden and not child.visible:
-                    continue
-                course_count[course] += course_update_count(child, course_count, show_hidden, childrenMap)
-            return course_count[course]
-
-        dump = request.params['dump'] if 'dump' in request.params else 0
-        show_hidden = request.params['show_hidden'] if 'show_hidden' in request.params else 0
-        course_root = db_session.query(Course).filter(Course.id == request.matchdict['course_id']).one()
-        displayed_courses = db_session.query(Course).filter(Course.displayed == 1).all()
-        course_count = {}
-        courses = db_session.query(Course).order_by(
-            Course.parent_id,
-            Course.order,
-        ).all()
-        childrenMap = {}
-        for course in courses:
-            if not course.parent_id in childrenMap:
-                childrenMap[course.parent_id] = []
-            childrenMap[course.parent_id].append(course)
-        course_update_count(course_root, course_count, show_hidden, childrenMap)
-        default_storage = json.dumps({
-            "#region{0}".format(course_root.id): int(course_root.displayed) \
-                for course_root in displayed_courses 
-        })
-        
-        if dump:
-            filename = "course_dump" + ("_show_hidden" if show_hidden else "") + ".php"
-            filepath = request.registry.settings['source_tree.course.dump_path'] + filename
-            dump_file = open(filepath, "w", encoding="utf-8")
-            dump_file.write(Template(filename=request.registry.settings["source_tree.project_path"] \
-                    + "/source_tree/templates/course_dump.mak", input_encoding="utf-8").render_unicode(
-                course_root=course_root,
-                show_hidden=show_hidden,
-                dump=dump,
-                course_count=course_count,
-                default_storage=default_storage,
-                childrenMap=childrenMap,
-                get_children_by_map=get_children_by_map,
-            ))
-            dump_file.close()
-
-            return Response("ok. dumped to {0}".format(filepath))
-        else:
-            return {
-                'course_root': course_root,
-                'show_hidden': show_hidden,
-                'dump': dump,
-                'course_count': course_count,
-                'default_storage': default_storage,
-                'childrenMap': childrenMap,
-                'get_children_by_map': get_children_by_map,
-            }
-    except Exception as e:
-        return Response("Error: " + e.__str__())
 
 
 @view_config(route_name='course.add.window', renderer='course/add_course_window.mak')
