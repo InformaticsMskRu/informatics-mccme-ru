@@ -17,21 +17,12 @@ def course_include(config):
     config.add_route('course.get', 'get/{course_id}')
     config.add_route('course.get.children', 'get/{course_id}/children')
     config.add_route('course.add', 'add')
-    config.add_route('course.erase', 'erase/{course_id}')
-    config.add_route('course.erase.all', 'erase/{course_id}/all')
     config.add_route('course.update', 'update/{course_id}')
-    config.add_route('course.verify', 'verify/{course_id}')
-    config.add_route('course.verify.cancel', 'verify/{course_id}/cancel')
-    config.add_route('course.get.all.to_verify', 'get/all/to_verify')
-    config.add_route('course.adm', 'adm')
-    config.add_route('course.add.window', 'add_course_window/{course_id}')
+config.add_route('course.add.window', 'add_course_window/{course_id}')
     config.add_route('course.get.nodes', 'get/{course_id}/nodes')
     config.add_route('course.get_for_select', 'get_for_select')
-    config.add_route('course.my_categories', 'my_categories')
     config.add_route('course.get_not_in_list', 'get_not_in_list')
     config.add_route('course.get_by_author', 'get_by_author/{author_id}')
-    config.add_route('course.verify_list', 'verify_list')
-    config.add_route('course.all', 'all')
 
 
 def py_source_include(config):
@@ -74,9 +65,7 @@ def py_source_include(config):
     config.add_route('contest.add.source', 'contest/add/{contest_id}/source/{source_id}')
     config.add_route('contest.set.source', 'contest/set/{contest_id}/source')
     
-    config.add_route('access', 'access')
 
-    config.add_route('protocol', 'protocol')
 
     config.add_route('home', '/')
     config.include(course_include, 'course')

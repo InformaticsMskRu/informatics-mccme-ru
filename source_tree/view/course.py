@@ -1,16 +1,12 @@
 from pyramid.response import Response
 from pyramid.view import view_config
-from pyramid.renderers import render_to_response
-import pyramid.httpexceptions as exc
 from sqlalchemy import not_
-from json import loads
 import json
 
 from source_tree.models import (
     db_session, 
     Course, 
     CourseRaw,
-    CourseTreeCap,
 )
 
 from pynformatics.view.utils import RequestGetUserId
@@ -60,116 +56,6 @@ def course_update(request):
         return {'result': 'ok'}
     except Exception as e:
         return {'result': 'error', 'content': e.__str__()}
-
-
-@view_config(route_name='course.erase', renderer='json')
-def course_erase(request):
-    return course_erase_all(request)
-    try:
-        raise Exception("DEPRECATED")
-        course = course_get_by_id(request.matchdict['course_id'])
-        if course_check_owner(course.course_id, int(RequestGetUserId(request))) \
-            or course_tree_check_owner(course.id, RequestGetUserId(request)):
-            check_capability_course(request, 'teacher')
-        else:
-            check_capability_course(request, 'admin')
-        db_session.delete(course)
-        db_session.commit()
-        return {'result': 'ok'}
-    except Exception as e:
-        return {'result': 'error', 'content': e.__str__()}
-
-
-def erase_tree(course):
-    for child in course.children:
-        erase_tree(child)
-    db_session.delete(course)
-
-
-@view_config(route_name='course.erase.all', renderer='json')
-def course_erase_all(request):
-    try:
-        course = course_get_by_id(request.matchdict['course_id'])
-        teacher = False
-        teacher = teacher or (not course.verified \
-                              and course.author == int(RequestGetUserId(request)))
-        teacher = teacher or course_check_owner(course.course_id, 
-                                                int(RequestGetUserId(request)))
-        teacher = teacher or course_tree_check_owner(course.id, 
-                                                     RequestGetUserId(request))
-        check_capability_course(request, 'teacher' if teacher else 'admin')
-        erase_tree(course)
-        db_session.commit()
-        return {'result': 'ok'}
-    except Exception as e:
-        return {'result': 'error', 'content': e.__str__()}
-
-
-@view_config(route_name='course.verify', renderer='json')
-def course_verify(request):
-    try:
-        check_capability_course(request, 'admin')
-        full_access = int(request.params.get('full_access', 0))
-        course = course_get_by_id(request.matchdict['course_id'])
-        course.verified = True
-        if full_access:
-            db_session.add(CourseTreeCap(
-                node_id=course.id,
-                user_id=course.author,
-            ))
-        db_session.commit()
-        return {'result': 'ok'}
-    except Exception as e:
-        return {'result': 'error', 'content': e.__str__()}
-
-
-@view_config(route_name='course.verify.cancel', renderer='json')
-def course_verify_cancel(request):
-    try:
-        check_capability_course(request, 'admin')
-        course = course_get_by_id(request.matchdict['course_id'])
-        if course.verified:
-            raise Exception("Source mustn't be canceled")
-        db_session.delete(course)
-        db_session.commit()
-        return {'result': 'ok'}
-    except Exception as e:
-        return {'result': 'error', 'content': e.__str__()}
-
-        
-@view_config(route_name='course.get.all.to_verify', renderer='json')
-def course_get_all_to_verify(request):
-    categories = int(request.params.get('categories', 0))
-    nodes_filter = db_session.query(Course).filter(Course.verified == False)
-    if categories:
-        nodes_filter = nodes_filter.filter(Course.course_id == 0)
-    else:
-        nodes_filter = nodes_filter.filter(Course.course_id > 0)
-    nodes = nodes_filter.order_by(Course.time).all()    
-    result = []
-    for node in nodes:
-        res_item = {
-            'node': node,
-            'parent': node.parent,
-        }
-        if node.course:
-            res_item.update({
-                'course': {
-                    'id': node.course.id,
-                    'name': node.course.fullname
-                },
-            })
-        if node.user:
-            res_item.update({
-                'user': {
-                    'id': node.user.id,
-                    'firstname': node.user.firstname,
-                    'lastname': node.user.lastname
-                }
-            })
-
-        result.append(res_item)
-    return result
 
 
 @view_config(route_name='course.add', renderer='json')
@@ -226,18 +112,6 @@ def course_add(request):
     except Exception as e:
         return {"result": "error", "content": e.__str__()}
 
-
-@view_config(route_name='course.adm', renderer='course/adm.mak')
-def course_adm(request):
-    try:   
-        course_id = request.params['course_id'] if 'course_id' in request.params else None
-        course = db_session.query(CourseRaw).filter(CourseRaw.id == course_id).one() \
-            if course_id else None
-        return {
-            'course': course,
-        }
-    except Exception as e:
-        return Response("Error: " + e.__str__())
 
 def get_children_by_map(childrenMap, id):
     if not id in childrenMap:
@@ -299,38 +173,6 @@ def course_get_for_select(request):
         return Response("Error: " + e.__str__())
 
 
-@view_config(route_name='course.my_categories', renderer='course/my_categories.mak')
-def course_my_categories(request):
-    try:
-        frame = int(request.params.get('frame', 1))
-        course_root = db_session.query(Course).filter(Course.id == 1).one() 
-        course_list = []
-        make_course_list(course_root, course_list, 0)
-        my_nodes = db_session.query(Course).filter(
-            Course.id != 1,
-            Course.course_id == 0,
-            Course.author == RequestGetUserId(request),
-        ).order_by(Course.verified).all()
-        my_verified_nodes = [node for node in my_nodes if node.verified]
-        my_unverified_nodes = [node for node in my_nodes if not node.verified]
-        root_nodes = course_tree_get_root_nodes(RequestGetUserId(request))
-        '''
-        my_nodes = [node for node in my_nodes if node in root_nodes] + \
-                    [node for node in my_nodes if node not in root_nodes]
-        '''
-        return {
-            'frame': frame,
-            'course_list': course_list,
-            'my_nodes': my_nodes,
-            'my_unverified_nodes': my_unverified_nodes,
-            'root_nodes': root_nodes,
-            'default_storage': json.dumps({}),
-            'GetNodeUsers': GetNodeUsers,
-        }
-    except Exception as e:
-        return Response("Error: " + e.__str__())
-
-
 @view_config(route_name='course.get_not_in_list', renderer='course/get_not_in_list.mak')
 def course_get_not_in_list(request):
     try:
@@ -387,33 +229,3 @@ def course_get_by_author(request):
             'content': e.__str__(),
         }
 
-
-@view_config(route_name='course.all', renderer='course/all.mak')
-def course_all(request):
-    try:
-        check_capability_course(request, 'admin')
-        courses_res = []
-        courses = db_session.query(CourseRaw).\
-            filter(CourseRaw.category.in_([24, 34])).all()
-        for course in courses:
-            nodes = db_session.query(Course).filter(Course.course_id == course.id).all()
-            paths = [node.parent.full_name() + ("" if node.verified else " (не разобрано)") \
-                for node in nodes]
-            courses_res.append({
-                'course': course,
-                'paths': paths,
-                'authors': course_get_users(course.id),
-            })  
-        return {
-            'courses': courses_res,
-        }
-    except Exception as e:
-        return Response("Error: " + e.__str__())
-
-        
-@view_config(route_name='course.verify_list', renderer='course/verify_list.mak')
-def course_verify_list(request):
-    categories = request.params.get('categories', 0)
-    return {
-        'categories': categories,
-    }
