@@ -2,17 +2,15 @@
 <head>
     
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <script src="/moodle/lib/jsMath/easy/load.js"></script>
+    <script id="MathJax-script" async 
+            src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+    </script>
     <script type="text/javascript" src="/py-source/js/jquery-1.9.1.min.js"></script>
     <script type="text/javascript" src="/py-source/js/jsrender.js"></script>
     <script type="text/javascript" src="/py-source/js/source/dir/contest.js"></script>
     <script type="text/javascript" src="/py-source/js/source/dir/func.js"></script>
 
-    <link rel="stylesheet" href="/moodle/mod/statements/polygon.css" type="text/css" charset="utf-8" />
-    <!--<link rel="stylesheet" href="/moodle/mod/statements/statements_theme.css" type="text/css" charset="utf-8" />
-    <link rel="stylesheet" href="/moodle/theme/standard/styles.php" type="text/css" charset="utf-8" />
-    <link rel="stylesheet" href="/moodle/theme/formal_white/styles.php" type="text/css" media="screen" charset="utf-8" />
-    -->
+    <link rel="stylesheet" href="/mod/statements/styles.css" type="text/css" charset="utf-8" />
     <link rel="stylesheet" href="/py-source/css/source_dir/main.css" type="text/css" media="screen" charset="utf-8" />
 </head>
 

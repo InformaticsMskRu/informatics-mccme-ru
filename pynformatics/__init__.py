@@ -1,5 +1,7 @@
 import os
 import json
+import time
+
 from pyramid.config import Configurator
 from pyramid.events import NewRequest
 
@@ -17,15 +19,15 @@ def load_config_map(filename, settings):
 def main(global_config, **settings):
     """ This function returns a Pyramid WSGI application.
     """
-    engine = engine_from_config(settings, 'sqlalchemy.')
-    DBSession.configure(bind=engine, expire_on_commit=False)
-
     load_config_map(settings.get("config.map"), settings)
     load_config_map(settings.get("config.secret"), settings)
 
     config = Configurator(settings=settings)
     config.include('pyramid_mako')
     config.include('pyramid_boto3')
+
+    engine = engine_from_config(settings, 'sqlalchemy.')
+    DBSession.configure(bind=engine, expire_on_commit=False)
 
     config.add_static_view('static', 'static', cache_max_age=3600)
     config.add_route('stars.add', '/stars/add')
