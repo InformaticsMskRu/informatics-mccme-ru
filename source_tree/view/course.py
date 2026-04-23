@@ -15,7 +15,10 @@ from source_tree.utils.course import *
 @view_config(route_name='course.get_by_author', renderer='json')
 def course_get_by_author(request):
     try:
-        courses = course_get_by_user(request.matchdict['author_id'])
+        author_id = int(request.matchdict['author_id'])
+        if author_id != int(RequestGetUserId(request)):
+            return {'result': 'error', 'content': 'Access denied'}
+        courses = course_get_by_user(author_id)
         result = []
         for course in courses:
             nodes = db_session.query(Course).filter(Course.course_id == course.id).all()
