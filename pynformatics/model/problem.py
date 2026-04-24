@@ -57,6 +57,7 @@ class EjudgeProblemDummy(Base):
     problem_id = Column(Integer, primary_key=True, nullable=False, autoincrement=False) #id in contest
     short_id = Column(String(100))
     ejudgeName = Column('name', String(100))
+    judges_settings = Column(Text, nullable=True)
  
     def __init__(self, name, contest_id, problem_id, short_id, ejudge_contest_id):
         self.contest_id = contest_id
@@ -79,6 +80,7 @@ class EjudgeProblem(Problem):
     problem_id = Column(Integer, primary_key=True, nullable=False, autoincrement=False) #id in contest
     short_id = Column(String(100))
     ejudgeName = Column('name', String(100))
+    judges_settings = Column(Text, nullable=True)
     runs = relation('Run', backref='runs', uselist=True)
  
     def __init__(self, name, timelimit, memorylimit, output_only, contest_id, problem_id, short_id, ejudge_contest_id, content='', review='', description='', analysis='', sample_tests='', sample_tests_html=''):
