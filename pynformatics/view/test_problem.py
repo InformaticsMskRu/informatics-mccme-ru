@@ -1,4 +1,5 @@
 import unittest
+from types import SimpleNamespace
 from unittest import mock
 
 from pynformatics.view import problem as problem_view
@@ -30,7 +31,9 @@ def make_problem(**overrides):
         analysis='problem analysis',
     )
     attrs.update(overrides)
-    return mock.Mock(**attrs)
+    # SimpleNamespace, а не Mock: у Mock ключ name зарезервирован под имя мока,
+    # поэтому problem.name вернул бы дочерний мок вместо значения.
+    return SimpleNamespace(**attrs)
 
 
 class ProblemGetTests(unittest.TestCase):
