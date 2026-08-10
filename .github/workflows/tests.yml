@@ -6,12 +6,12 @@ on:
 
 jobs:
   pynformatics-unit:
-    # push делают только люди с write-доступом; PR — лишь от владельца/членов орг/коллабораторов.
-    # Условие вычисляется до отправки job на self-hosted раннер, поэтому чужой форк-код не исполнится.
+    # Разрешаем только push (ветки пушат лишь люди с write-доступом) и PR из веток
+    # этого же репозитория. PR из форков пропускаем — их код не должен исполняться
+    # на self-hosted раннере. Условие вычисляется до отправки job на раннер.
     if: >-
       github.event_name != 'pull_request' ||
-      contains(fromJson('["OWNER","MEMBER","COLLABORATOR"]'),
-               github.event.pull_request.author_association)
+      github.event.pull_request.head.repo.full_name == github.repository
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v4
