@@ -36,6 +36,51 @@ def problem_show_limits(request):
         return {"result" : "error", "message" : e.__str__(), "stack" : traceback.format_exc()}
 
 
+@view_config(route_name='problem.get', renderer='json')
+def problem_get(request):
+    try:
+        problem_id = request.matchdict['problem_id']
+        problem = DBSession.query(Problem).filter(Problem.id == problem_id).first()
+        if problem is None:
+            request.response.status = 404
+            return {"error": "Problem not found"}
+
+        can_view_admin = RequestCheckUserCapability(request, 'local/pynformatics:problem_admin')
+        can_view_analysis = RequestCheckUserCapability(request, 'local/pynformatics:problem_view_analysis')
+
+        result = {
+            "id": problem.id,
+            "name": problem.name,
+            "content": problem.content,
+            "sample_tests_html": problem.sample_tests_html,
+            "output_only": problem.output_only,
+        }
+        if problem.show_limits:
+            result["timelimit"] = problem.timelimit
+            result["memorylimit"] = problem.memorylimit
+
+        # show_limits и sample_tests — под пермиссией problem_admin
+        if can_view_admin:
+            result["show_limits"] = problem.show_limits
+            result["sample_tests"] = problem.sample_tests
+
+        # description и analysis — под отдельной пермиссией
+        if can_view_analysis:
+            result["description"] = problem.description
+            result["analysis"] = problem.analysis
+
+        return result
+    except Exception as e:
+        request.response.status = 500
+        response = {"error": str(e)}
+        try:
+            if RequestCheckUserCapability(request, 'moodle/ejudge_submits:admin'):
+                response["stack"] = traceback.format_exc()
+        except Exception:
+            pass
+        return response
+
+
 @view_config(route_name='problem.submit', renderer='json')
 def problem_submits(request):
     # TODO: Refactor it

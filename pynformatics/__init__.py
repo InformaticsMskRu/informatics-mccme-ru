@@ -81,6 +81,7 @@ def main(global_config, **settings):
 
     config.add_route('contest.ejudge.reload.problem', '/contest/ejudge/reload/{contest_id}/{problem_id}')
     
+    config.add_route('problem.get', '/problem/{problem_id}/json')
     config.add_route('problem.submit', '/problem/{problem_id}/submit')
     config.add_route('problem.limits.show', '/problem/{problem_id}/limits/show')
     config.add_route('problem.limits.hide', '/problem/{problem_id}/limits/hide')
