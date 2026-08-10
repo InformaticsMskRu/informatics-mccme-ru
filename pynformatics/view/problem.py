@@ -22,14 +22,14 @@ log = logging.getLogger(__name__)
 _judges_config_cache = {}
 
 
-def _load_judges_config():
-    """Load judges.json from JUDGES_CONFIG_PATH as {judge_id: config_dict}.
+def _load_judges_config(path):
+    """Load judges.json from the given path as {judge_id: config_dict}.
 
     Mirrors rmatics' judges config: the file maps a judge id to a dict with a
-    "name" (and url/token/...). Returns an empty map when the env var is unset
-    or the file cannot be read.
+    "name" (and url/token/...). Returns an empty map when the path is empty or
+    the file cannot be read. The path comes from the 'judges.config_path'
+    setting in the ini file.
     """
-    path = os.getenv('JUDGES_CONFIG_PATH')
     if not path:
         return {}
     if path in _judges_config_cache:
@@ -46,12 +46,12 @@ def _load_judges_config():
     return judges
 
 
-def _judge_name(judge_id):
+def _judge_name(judge_id, path):
     """Return the human-readable judge name for a judges_settings entry."""
     if judge_id is None:
         return None
     try:
-        config = _load_judges_config().get(int(judge_id))
+        config = _load_judges_config(path).get(int(judge_id))
     except (TypeError, ValueError):
         return None
     if not config:
@@ -59,7 +59,7 @@ def _judge_name(judge_id):
     return config.get('name') or None
 
 
-def _build_judges_settings(raw):
+def _build_judges_settings(raw, path):
     """Parse the mdl_ejudge_problem.judges_settings JSON and enrich each entry
     with the resolved judge name used as the link prefix in the UI."""
     if not raw:
@@ -79,7 +79,7 @@ def _build_judges_settings(raw):
             continue
         result.append({
             "judge_id": entry.get("judge_id"),
-            "judge_name": _judge_name(entry.get("judge_id")),
+            "judge_name": _judge_name(entry.get("judge_id"), path),
             "contest_id": entry.get("contest_id"),
             "problem_id": entry.get("problem_id"),
             "lang_ids": entry.get("lang_ids"),
@@ -147,10 +147,11 @@ def problem_get(request):
             ejudge_problem = DBSession.query(EjudgeProblem).filter(
                 EjudgeProblem.id == problem_id).first()
             if ejudge_problem is not None:
+                judges_config_path = request.registry.settings.get('judges.config_path')
                 result["ejudge_contest_id"] = ejudge_problem.ejudge_contest_id
                 result["short_id"] = ejudge_problem.short_id
                 result["judges_settings"] = _build_judges_settings(
-                    ejudge_problem.judges_settings)
+                    ejudge_problem.judges_settings, judges_config_path)
 
         # description and analysis require a separate capability
         if can_view_analysis:
