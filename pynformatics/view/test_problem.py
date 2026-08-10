@@ -1,3 +1,6 @@
+import json
+import os
+import tempfile
 import unittest
 from types import SimpleNamespace
 from unittest import mock
@@ -11,9 +14,10 @@ class FakeResponse:
 
 
 class FakeRequest:
-    def __init__(self, problem_id):
+    def __init__(self, problem_id, settings=None):
         self.matchdict = {'problem_id': problem_id}
         self.response = FakeResponse()
+        self.registry = SimpleNamespace(settings=settings or {})
 
 
 def make_problem(**overrides):
@@ -29,6 +33,9 @@ def make_problem(**overrides):
         sample_tests='1,2',
         description='problem description',
         analysis='problem analysis',
+        ejudge_contest_id=100,
+        short_id='A',
+        judges_settings=None,
     )
     attrs.update(overrides)
     # SimpleNamespace rather than Mock: Mock reserves the name kwarg for the
@@ -93,9 +100,57 @@ class ProblemGetTests(unittest.TestCase):
 
         self.assertEqual(result['show_limits'], True)
         self.assertEqual(result['sample_tests'], '1,2')
+        # ejudge service fields are admin-only too
+        self.assertEqual(result['ejudge_contest_id'], 100)
+        self.assertEqual(result['short_id'], 'A')
+        self.assertEqual(result['judges_settings'], [])
         # analysis capability was not granted
         self.assertNotIn('description', result)
         self.assertNotIn('analysis', result)
+
+    def test_ejudge_service_fields_hidden_without_admin(self):
+        request = FakeRequest('42')
+        result = self._call(request, problem=make_problem())
+
+        for hidden in ('ejudge_contest_id', 'short_id', 'judges_settings'):
+            self.assertNotIn(hidden, result)
+
+    def test_judges_settings_parsed_and_enriched(self):
+        request = FakeRequest('42')
+        raw = ('[{"judge_id": 2, "contest_id": 500, "problem_id": 6, '
+               '"lang_ids": [27], "user_ids": null}]')
+        result = self._call(
+            request,
+            problem=make_problem(judges_settings=raw),
+            caps={'local/pynformatics:problem_admin': True},
+        )
+
+        self.assertEqual(result['judges_settings'], [{
+            'judge_id': 2,
+            # no judges.config_path in settings, so the name resolves to None
+            'judge_name': None,
+            'contest_id': 500,
+            'problem_id': 6,
+            'lang_ids': [27],
+            'user_ids': None,
+        }])
+
+    def test_judge_name_resolved_from_config_path_setting(self):
+        with tempfile.NamedTemporaryFile('w', suffix='.json', delete=False) as config_file:
+            json.dump({'2': {'url': 'http://j2', 'name': 'Judge-2'}}, config_file)
+            config_path = config_file.name
+        self.addCleanup(os.unlink, config_path)
+        # avoid a stale cache entry for this path between runs
+        problem_view._judges_config_cache.pop(config_path, None)
+
+        request = FakeRequest('42', settings={'judges.config_path': config_path})
+        result = self._call(
+            request,
+            problem=make_problem(judges_settings='[{"judge_id": 2, "contest_id": 500, "problem_id": 6}]'),
+            caps={'local/pynformatics:problem_admin': True},
+        )
+
+        self.assertEqual(result['judges_settings'][0]['judge_name'], 'Judge-2')
 
     def test_analysis_fields_with_view_analysis_capability(self):
         request = FakeRequest('42')
