@@ -1,4 +1,5 @@
 import io
+import logging
 import os
 import traceback
 import xmlrpc.client
@@ -13,6 +14,8 @@ from pynformatics.models import DBSession
 from pynformatics.utils.proxied_request_helpers import peek_request_args
 from pynformatics.view.utils import *
 from pynformatics.view.utils import is_authorized_id
+
+log = logging.getLogger(__name__)
 
 def checkCapability(request, capability):
     if (not RequestCheckUserCapability(request, 'local/pynformatics:' + capability)):
@@ -70,15 +73,11 @@ def problem_get(request):
             result["analysis"] = problem.analysis
 
         return result
-    except Exception as e:
+    except Exception:
+        # Логируем детали на сервере, наружу не отдаём (утечка информации через исключение)
+        log.exception("problem_get failed for problem_id=%s", request.matchdict.get('problem_id'))
         request.response.status = 500
-        response = {"error": str(e)}
-        try:
-            if RequestCheckUserCapability(request, 'moodle/ejudge_submits:admin'):
-                response["stack"] = traceback.format_exc()
-        except Exception:
-            pass
-        return response
+        return {"error": "Internal server error"}
 
 
 @view_config(route_name='problem.submit', renderer='json')
