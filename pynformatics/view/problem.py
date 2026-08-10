@@ -74,7 +74,6 @@ def problem_get(request):
 
         return result
     except Exception:
-        # Логируем детали на сервере, наружу не отдаём (утечка информации через исключение)
         log.exception("problem_get failed for problem_id=%s", request.matchdict.get('problem_id'))
         request.response.status = 500
         return {"error": "Internal server error"}
