@@ -1,8 +1,16 @@
 name: tests
 
 on:
+  # push только в master (мерджи): ветки с открытым PR валидируются через pull_request,
+  # так что дублей push+pull_request на одном коммите не будет.
   push:
+    branches: [master]
   pull_request:
+
+# Новый коммит отменяет предыдущий незавершённый прогон того же ref (один self-hosted раннер).
+concurrency:
+  group: tests-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   pynformatics-unit:
