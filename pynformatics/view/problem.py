@@ -67,12 +67,12 @@ def problem_get(request):
             result["timelimit"] = problem.timelimit
             result["memorylimit"] = problem.memorylimit
 
-        # show_limits и sample_tests — под пермиссией problem_admin
+        # show_limits and sample_tests require the problem_admin capability
         if can_view_admin:
             result["show_limits"] = problem.show_limits
             result["sample_tests"] = problem.sample_tests
 
-        # description и analysis — под отдельной пермиссией
+        # description and analysis require a separate capability
         if can_view_analysis:
             result["description"] = problem.description
             result["analysis"] = problem.analysis

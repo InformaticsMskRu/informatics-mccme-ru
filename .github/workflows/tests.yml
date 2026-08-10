@@ -1,28 +1,28 @@
 name: tests
 
 on:
-  # push только в master (мерджи): ветки с открытым PR валидируются через pull_request,
-  # так что дублей push+pull_request на одном коммите не будет.
+  # Only push to master (merges): branches with an open PR are validated via
+  # pull_request, so a single commit never runs twice (push + pull_request).
   push:
     branches: [master]
   pull_request:
 
-# Новый коммит отменяет предыдущий незавершённый прогон того же ref (один self-hosted раннер).
+# A newer commit cancels the previous unfinished run on the same ref (single self-hosted runner).
 concurrency:
   group: tests-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
   pynformatics-unit:
-    # Разрешаем только push (ветки пушат лишь люди с write-доступом) и PR из веток
-    # этого же репозитория. PR из форков пропускаем — их код не должен исполняться
-    # на self-hosted раннере. Условие вычисляется до отправки job на раннер.
+    # Allow only pushes (branch pushes require write access) and PRs from
+    # branches in this repository. Skip fork PRs so their code never runs on
+    # the self-hosted runner. Evaluated before the job is dispatched.
     if: >-
       github.event_name != 'pull_request' ||
       github.event.pull_request.head.repo.full_name == github.repository
     runs-on: self-hosted
-    # Гоняем в контейнере с Python 3.8 (как в проде, Dockerfile = ubuntu:focal),
-    # не завися от версии Python на хосте раннера. Требует Docker на раннере.
+    # Run in a Python 3.8 container (matches production, Dockerfile = ubuntu:focal),
+    # independent of the host runner's Python version. Requires Docker on the runner.
     container:
       image: python:3.8-slim
     steps:
@@ -40,5 +40,5 @@ jobs:
           pip install -e .
 
       - name: Run pynformatics unit tests
-        # Точечно: legacy pynformatics/tests.py читает захардкоженный путь и не годится для CI
+        # Targeted: legacy pynformatics/tests.py reads a hardcoded path and is not CI-safe
         run: python -m unittest pynformatics.view.test_problem -v

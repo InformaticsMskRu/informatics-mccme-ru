@@ -31,8 +31,8 @@ def make_problem(**overrides):
         analysis='problem analysis',
     )
     attrs.update(overrides)
-    # SimpleNamespace, а не Mock: у Mock ключ name зарезервирован под имя мока,
-    # поэтому problem.name вернул бы дочерний мок вместо значения.
+    # SimpleNamespace rather than Mock: Mock reserves the name kwarg for the
+    # mock's own label, so problem.name would return a child mock, not the value.
     return SimpleNamespace(**attrs)
 
 
