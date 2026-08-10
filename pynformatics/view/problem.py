@@ -1,4 +1,5 @@
 import io
+import json
 import logging
 import os
 import traceback
@@ -16,6 +17,76 @@ from pynformatics.view.utils import *
 from pynformatics.view.utils import is_authorized_id
 
 log = logging.getLogger(__name__)
+
+# Cache of loaded judges.json contents, keyed by file path.
+_judges_config_cache = {}
+
+
+def _load_judges_config():
+    """Load judges.json from JUDGES_CONFIG_PATH as {judge_id: config_dict}.
+
+    Mirrors rmatics' judges config: the file maps a judge id to a dict with a
+    "name" (and url/token/...). Returns an empty map when the env var is unset
+    or the file cannot be read.
+    """
+    path = os.getenv('JUDGES_CONFIG_PATH')
+    if not path:
+        return {}
+    if path in _judges_config_cache:
+        return _judges_config_cache[path]
+
+    judges = {}
+    try:
+        with open(path) as config_file:
+            data = json.load(config_file)
+        judges = {int(judge_id): config for judge_id, config in data.items()}
+    except Exception:
+        log.exception("Failed to load judges config from %s", path)
+    _judges_config_cache[path] = judges
+    return judges
+
+
+def _judge_name(judge_id):
+    """Return the human-readable judge name for a judges_settings entry."""
+    if judge_id is None:
+        return None
+    try:
+        config = _load_judges_config().get(int(judge_id))
+    except (TypeError, ValueError):
+        return None
+    if not config:
+        return None
+    return config.get('name') or None
+
+
+def _build_judges_settings(raw):
+    """Parse the mdl_ejudge_problem.judges_settings JSON and enrich each entry
+    with the resolved judge name used as the link prefix in the UI."""
+    if not raw:
+        return []
+    entries = raw
+    if isinstance(raw, str):
+        try:
+            entries = json.loads(raw)
+        except ValueError:
+            return []
+    if not isinstance(entries, list):
+        return []
+
+    result = []
+    for entry in entries:
+        if not isinstance(entry, dict):
+            continue
+        result.append({
+            "judge_id": entry.get("judge_id"),
+            "judge_name": _judge_name(entry.get("judge_id")),
+            "contest_id": entry.get("contest_id"),
+            "problem_id": entry.get("problem_id"),
+            "lang_ids": entry.get("lang_ids"),
+            "user_ids": entry.get("user_ids"),
+        })
+    return result
+
 
 def checkCapability(request, capability):
     if (not RequestCheckUserCapability(request, 'local/pynformatics:' + capability)):
@@ -67,10 +138,19 @@ def problem_get(request):
             result["timelimit"] = problem.timelimit
             result["memorylimit"] = problem.memorylimit
 
-        # show_limits and sample_tests require the problem_admin capability
+        # show_limits, sample_tests and the ejudge service fields require the
+        # problem_admin capability
         if can_view_admin:
             result["show_limits"] = problem.show_limits
             result["sample_tests"] = problem.sample_tests
+
+            ejudge_problem = DBSession.query(EjudgeProblem).filter(
+                EjudgeProblem.id == problem_id).first()
+            if ejudge_problem is not None:
+                result["ejudge_contest_id"] = ejudge_problem.ejudge_contest_id
+                result["short_id"] = ejudge_problem.short_id
+                result["judges_settings"] = _build_judges_settings(
+                    ejudge_problem.judges_settings)
 
         # description and analysis require a separate capability
         if can_view_analysis:
