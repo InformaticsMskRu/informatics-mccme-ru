@@ -1,0 +1,44 @@
+name: tests
+
+on:
+  # Only push to master (merges): branches with an open PR are validated via
+  # pull_request, so a single commit never runs twice (push + pull_request).
+  push:
+    branches: [master]
+  pull_request:
+
+# A newer commit cancels the previous unfinished run on the same ref (single self-hosted runner).
+concurrency:
+  group: tests-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  pynformatics-unit:
+    # Allow only pushes (branch pushes require write access) and PRs from
+    # branches in this repository. Skip fork PRs so their code never runs on
+    # the self-hosted runner. Evaluated before the job is dispatched.
+    if: >-
+      github.event_name != 'pull_request' ||
+      github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: self-hosted
+    # Run in a Python 3.8 container (matches production, Dockerfile = ubuntu:focal),
+    # independent of the host runner's Python version. Requires Docker on the runner.
+    container:
+      image: python:3.8-slim
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install system build deps
+        run: |
+          apt-get update
+          apt-get install -y --no-install-recommends gcc default-libmysqlclient-dev pkg-config
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install -e .
+
+      - name: Run pynformatics unit tests
+        # Targeted: legacy pynformatics/tests.py reads a hardcoded path and is not CI-safe
+        run: python -m unittest pynformatics.view.test_problem -v

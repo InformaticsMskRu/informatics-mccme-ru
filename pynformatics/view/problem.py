@@ -1,4 +1,5 @@
 import io
+import logging
 import os
 import traceback
 import xmlrpc.client
@@ -13,6 +14,8 @@ from pynformatics.models import DBSession
 from pynformatics.utils.proxied_request_helpers import peek_request_args
 from pynformatics.view.utils import *
 from pynformatics.view.utils import is_authorized_id
+
+log = logging.getLogger(__name__)
 
 def checkCapability(request, capability):
     if (not RequestCheckUserCapability(request, 'local/pynformatics:' + capability)):
@@ -34,6 +37,51 @@ def problem_show_limits(request):
         return setShowLimits(request.matchdict['problem_id'], 1)
     except Exception as e:
         return {"result" : "error", "message" : e.__str__(), "stack" : traceback.format_exc()}
+
+
+@view_config(route_name='problem.get', renderer='json')
+def problem_get(request):
+    try:
+        try:
+            problem_id = int(request.matchdict['problem_id'])
+        except (TypeError, ValueError):
+            request.response.status = 400
+            return {"error": "Invalid problem id"}
+
+        problem = DBSession.query(Problem).filter(Problem.id == problem_id).first()
+        if problem is None:
+            request.response.status = 404
+            return {"error": "Problem not found"}
+
+        can_view_admin = RequestCheckUserCapability(request, 'local/pynformatics:problem_admin')
+        can_view_analysis = RequestCheckUserCapability(request, 'local/pynformatics:problem_view_analysis')
+
+        result = {
+            "id": problem.id,
+            "name": problem.name,
+            "content": problem.content,
+            "sample_tests_html": problem.sample_tests_html,
+            "output_only": problem.output_only,
+        }
+        if problem.show_limits:
+            result["timelimit"] = problem.timelimit
+            result["memorylimit"] = problem.memorylimit
+
+        # show_limits and sample_tests require the problem_admin capability
+        if can_view_admin:
+            result["show_limits"] = problem.show_limits
+            result["sample_tests"] = problem.sample_tests
+
+        # description and analysis require a separate capability
+        if can_view_analysis:
+            result["description"] = problem.description
+            result["analysis"] = problem.analysis
+
+        return result
+    except Exception:
+        log.exception("problem_get failed for problem_id=%s", request.matchdict.get('problem_id'))
+        request.response.status = 500
+        return {"error": "Internal server error"}
 
 
 @view_config(route_name='problem.submit', renderer='json')
