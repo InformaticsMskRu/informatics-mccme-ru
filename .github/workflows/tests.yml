@@ -13,12 +13,17 @@ jobs:
       github.event_name != 'pull_request' ||
       github.event.pull_request.head.repo.full_name == github.repository
     runs-on: self-hosted
+    # Гоняем в контейнере с Python 3.8 (как в проде, Dockerfile = ubuntu:focal),
+    # не завися от версии Python на хосте раннера. Требует Docker на раннере.
+    container:
+      image: python:3.8-slim
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.8'
+      - name: Install system build deps
+        run: |
+          apt-get update
+          apt-get install -y --no-install-recommends gcc default-libmysqlclient-dev pkg-config
 
       - name: Install dependencies
         run: |
