@@ -42,7 +42,12 @@ def problem_show_limits(request):
 @view_config(route_name='problem.get', renderer='json')
 def problem_get(request):
     try:
-        problem_id = request.matchdict['problem_id']
+        try:
+            problem_id = int(request.matchdict['problem_id'])
+        except (TypeError, ValueError):
+            request.response.status = 400
+            return {"error": "Invalid problem id"}
+
         problem = DBSession.query(Problem).filter(Problem.id == problem_id).first()
         if problem is None:
             request.response.status = 404
