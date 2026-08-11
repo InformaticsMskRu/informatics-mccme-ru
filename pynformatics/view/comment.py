@@ -150,8 +150,8 @@ def get(request):
         comment_q = DBSession.query(Comment) \
             .filter(Comment.py_run_id == run_id)
         if not is_superuser:
-            comment_q.filter(or_(Comment.author_user_id == user_id,
-                                 Comment.user_id == user_id))
+            comment_q = comment_q.filter(or_(Comment.author_user_id == user_id,
+                                             Comment.user_id == user_id))
         comments = comment_q.all()
 
         jsonpickle.set_preferred_backend('demjson')

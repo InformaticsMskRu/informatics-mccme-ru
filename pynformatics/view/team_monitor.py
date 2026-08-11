@@ -178,6 +178,8 @@ class MonitorApi:
         """
         # Gather unique contests ids to fetch additional info for rendering
         contests_ids = {problem.get('contest_id') for problem in problems}
+        if not contests_ids:
+            return {}
         statements = DBSession.query(Statement) \
             .filter(Statement.id.in_(contests_ids)) \
             .options(load_only('id', 'name')) \
