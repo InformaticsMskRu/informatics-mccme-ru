@@ -177,13 +177,16 @@ class ProblemGetTests(unittest.TestCase):
 
         self.assertEqual(result['judges_settings'], [{
             'judge_id': 2,
-            # no judges.config_path in settings, so the name resolves to None
+            # no judges.config_path in settings, so name/url resolve to None
             'judge_name': None,
+            'url': None,
             'contest_id': 500,
             'problem_id': 6,
             'lang_ids': [27],
             'user_ids': None,
         }])
+        # with per-judge routing the default ejudge_contest_id is omitted
+        self.assertNotIn('ejudge_contest_id', result)
 
     def test_judge_name_resolved_from_config_path_setting(self):
         with tempfile.NamedTemporaryFile('w', suffix='.json', delete=False) as config_file:
@@ -202,6 +205,11 @@ class ProblemGetTests(unittest.TestCase):
         )
 
         self.assertEqual(result['judges_settings'][0]['judge_name'], 'Judge-2')
+        # url is a ready-to-use ejudge master link built on the server
+        self.assertEqual(result['judges_settings'][0]['url'],
+                         'http://j2?contest_id=500&prob_id=6')
+        # judges_settings present -> default ejudge_contest_id is not exposed
+        self.assertNotIn('ejudge_contest_id', result)
 
     def test_analysis_fields_with_view_analysis_capability(self):
         request = FakeRequest('42')
