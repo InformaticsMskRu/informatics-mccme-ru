@@ -34,6 +34,7 @@ def check_global_role(roles):
                     additional_message += role + "+ "
                 except:
                     additional_message += role + "- "
+                    continue
                 if req.filter_by(roleid=roleid).all():
                     result = func(request, *args, **kwargs)
                     return result    
@@ -44,12 +45,32 @@ def check_global_role(roles):
         return tmp
     return wrapper
 
+# Cached ids of the 'admin'/'manager' roles: role rows are seeded once and
+# then static, so there is no need to hit mdl_role on every is_admin() call.
+_admin_role_ids = None
+
+
+def _get_admin_role_ids():
+    global _admin_role_ids
+    # Re-query while empty (roles may not be seeded yet); cache once populated.
+    if not _admin_role_ids:
+        _admin_role_ids = [
+            r.id for r in DBSession.query(Role)
+            .filter(Role.shortname.in_(('admin', 'manager')))
+            .all()
+        ]
+    return _admin_role_ids
+
+
 def is_admin(request):
     userid = RequestGetUserId(request)
-    req = DBSession.query(RoleAssignment).filter_by(userid=userid)
-    try:
-        role_admin_id = DBSession.query(Role).filter(or_(Role.shortname=='admin', Role.shortname=='manager')).one().id
-    except:
+    admin_role_ids = _get_admin_role_ids()
+    if not admin_role_ids:
         return False
-    return bool(req.filter_by(roleid=role_admin_id).all())
+    return bool(
+        DBSession.query(RoleAssignment)
+        .filter(RoleAssignment.userid == userid)
+        .filter(RoleAssignment.roleid.in_(admin_role_ids))
+        .first()
+    )
 
