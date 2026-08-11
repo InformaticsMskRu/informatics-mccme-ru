@@ -130,8 +130,8 @@ def _build_judges_settings(raw, endpoint):
         problem_id = entry.get("problem_id")
         result.append({
             "judge_id": judge_id,
-            "judge_name": _judge_name(judge_id, path),
-            "url": _judge_master_url(judge_id, contest_id, problem_id, path),
+            "judge_name": _judge_name(judge_id, endpoint),
+            "url": _judge_master_url(judge_id, contest_id, problem_id, endpoint),
             "contest_id": contest_id,
             "problem_id": problem_id,
             "lang_ids": entry.get("lang_ids"),
