@@ -4,6 +4,7 @@ import logging
 import os
 import traceback
 import xmlrpc.client
+from urllib.parse import urlencode, urlsplit, urlunsplit
 
 import requests
 import transaction
@@ -46,22 +47,57 @@ def _load_judges_config(path):
     return judges
 
 
-def _judge_name(judge_id, path):
-    """Return the human-readable judge name for a judges_settings entry."""
+def _judge_config(judge_id, path):
+    """Return the judges.json config dict for a judge id, or None."""
     if judge_id is None:
         return None
     try:
-        config = _load_judges_config(path).get(int(judge_id))
+        return _load_judges_config(path).get(int(judge_id))
     except (TypeError, ValueError):
         return None
+
+
+def _judge_name(judge_id, path):
+    """Return the human-readable judge name for a judges_settings entry."""
+    config = _judge_config(judge_id, path)
     if not config:
         return None
     return config.get('name') or None
 
 
+def _judge_base_url(judge_id, path):
+    """Return the raw ejudge base url for a judge from judges.json."""
+    config = _judge_config(judge_id, path)
+    if not config:
+        return None
+    return config.get('url') or None
+
+
+def _judge_master_url(judge_id, contest_id, problem_id, path):
+    """Build a ready-to-use ejudge master link for a judges_settings entry.
+
+    The client should render this url as-is, so the contest/problem query
+    params are assembled here rather than on the client. Returns None when the
+    judge has no url configured in judges.json.
+    """
+    base = _judge_base_url(judge_id, path)
+    if not base:
+        return None
+    params = {}
+    if contest_id is not None:
+        params['contest_id'] = contest_id
+    if problem_id is not None:
+        params['prob_id'] = problem_id
+    if not params:
+        return base
+    scheme, netloc, path_part, query, fragment = urlsplit(base)
+    query = '&'.join(filter(None, [query, urlencode(params)]))
+    return urlunsplit((scheme, netloc, path_part, query, fragment))
+
+
 def _build_judges_settings(raw, path):
     """Parse the mdl_ejudge_problem.judges_settings JSON and enrich each entry
-    with the resolved judge name used as the link prefix in the UI."""
+    with the resolved judge name and a ready-to-use ejudge master url."""
     if not raw:
         return []
     entries = raw
@@ -77,11 +113,15 @@ def _build_judges_settings(raw, path):
     for entry in entries:
         if not isinstance(entry, dict):
             continue
+        judge_id = entry.get("judge_id")
+        contest_id = entry.get("contest_id")
+        problem_id = entry.get("problem_id")
         result.append({
-            "judge_id": entry.get("judge_id"),
-            "judge_name": _judge_name(entry.get("judge_id"), path),
-            "contest_id": entry.get("contest_id"),
-            "problem_id": entry.get("problem_id"),
+            "judge_id": judge_id,
+            "judge_name": _judge_name(judge_id, path),
+            "url": _judge_master_url(judge_id, contest_id, problem_id, path),
+            "contest_id": contest_id,
+            "problem_id": problem_id,
             "lang_ids": entry.get("lang_ids"),
             "user_ids": entry.get("user_ids"),
         })
@@ -153,10 +193,15 @@ def problem_get(request):
                     EjudgeProblemDummy.ejudge_prid == problem.pr_id).first()
             if ejudge_problem is not None:
                 judges_config_path = request.registry.settings.get('judges.config_path')
-                result["ejudge_contest_id"] = ejudge_problem.ejudge_contest_id
-                result["short_id"] = ejudge_problem.short_id
-                result["judges_settings"] = _build_judges_settings(
+                judges_settings = _build_judges_settings(
                     ejudge_problem.judges_settings, judges_config_path)
+                result["short_id"] = ejudge_problem.short_id
+                result["judges_settings"] = judges_settings
+                # judges_settings reroutes the problem to explicit judges, so the
+                # default ejudge_contest_id no longer points at the real judge —
+                # expose it only when there is no per-judge routing.
+                if not judges_settings:
+                    result["ejudge_contest_id"] = ejudge_problem.ejudge_contest_id
 
         # description and analysis require a separate capability
         if can_view_analysis:
