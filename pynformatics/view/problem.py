@@ -20,8 +20,6 @@ from pynformatics.view.utils import is_authorized_id
 
 log = logging.getLogger(__name__)
 
-# One hour: judges routing metadata changes rarely, so we avoid hitting the
-# rmatics service on every problem_get.
 _JUDGES_CACHE_TTL_SECONDS = 60 * 60
 
 # Cache of judges config fetched from the rmatics service, keyed by endpoint.
