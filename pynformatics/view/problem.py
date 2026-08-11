@@ -10,7 +10,7 @@ import transaction
 from pyramid.view import view_config
 
 from pynformatics.contest.ejudge.serve_internal import EjudgeContestCfg
-from pynformatics.model import SimpleUser, EjudgeProblem, Problem
+from pynformatics.model import SimpleUser, EjudgeProblem, EjudgeProblemDummy, Problem
 from pynformatics.models import DBSession
 from pynformatics.utils.proxied_request_helpers import peek_request_args
 from pynformatics.view.utils import *
@@ -144,8 +144,13 @@ def problem_get(request):
             result["show_limits"] = problem.show_limits
             result["sample_tests"] = problem.sample_tests
 
-            ejudge_problem = DBSession.query(EjudgeProblem).filter(
-                EjudgeProblem.id == problem_id).first()
+            # Query the ejudge row directly via pr_id. Querying EjudgeProblem
+            # (a polymorphic subclass of Problem) by id is unreliable — it can
+            # return a plain Problem without the ejudge columns.
+            ejudge_problem = None
+            if problem.pr_id is not None:
+                ejudge_problem = DBSession.query(EjudgeProblemDummy).filter(
+                    EjudgeProblemDummy.ejudge_prid == problem.pr_id).first()
             if ejudge_problem is not None:
                 judges_config_path = request.registry.settings.get('judges.config_path')
                 result["ejudge_contest_id"] = ejudge_problem.ejudge_contest_id
