@@ -2,6 +2,7 @@ import io
 import json
 import logging
 import os
+import time
 import traceback
 import xmlrpc.client
 from urllib.parse import urlencode, urlsplit, urlunsplit
@@ -19,68 +20,81 @@ from pynformatics.view.utils import is_authorized_id
 
 log = logging.getLogger(__name__)
 
-# Cache of loaded judges.json contents, keyed by file path.
+# One hour: judges routing metadata changes rarely, so we avoid hitting the
+# rmatics service on every problem_get.
+_JUDGES_CACHE_TTL_SECONDS = 60 * 60
+
+# Cache of judges config fetched from the rmatics service, keyed by endpoint.
+# Each entry is (fetched_at_monotonic, {judge_id: config_dict}).
 _judges_config_cache = {}
 
 
-def _load_judges_config(path):
-    """Load judges.json from the given path as {judge_id: config_dict}.
+def _load_judges_config(endpoint):
+    """Fetch the judges config from the rmatics service as {judge_id: config}.
 
-    Mirrors rmatics' judges config: the file maps a judge id to a dict with a
-    "name" (and url/token/...). Returns an empty map when the path is empty or
-    the file cannot be read. The path comes from the 'judges.config_path'
-    setting in the ini file.
+    The rmatics '/judges' endpoint returns judge routing metadata
+    (name, url, lang_map) without the secret token/sender_user_id fields.
+    Results are cached per endpoint for an hour; on a fetch error the last
+    cached value is reused when available, otherwise an empty map is returned.
+    The endpoint comes from the 'rmatics.endpoint' setting in the ini file.
     """
-    if not path:
+    if not endpoint:
         return {}
-    if path in _judges_config_cache:
-        return _judges_config_cache[path]
 
-    judges = {}
+    now = time.monotonic()
+    cached = _judges_config_cache.get(endpoint)
+    if cached is not None and now - cached[0] < _JUDGES_CACHE_TTL_SECONDS:
+        return cached[1]
+
     try:
-        with open(path) as config_file:
-            data = json.load(config_file)
+        resp = requests.get('{}/judges'.format(endpoint), timeout=5)
+        resp.raise_for_status()
+        data = resp.json().get('data') or {}
         judges = {int(judge_id): config for judge_id, config in data.items()}
     except Exception:
-        log.exception("Failed to load judges config from %s", path)
-    _judges_config_cache[path] = judges
+        log.exception("Failed to load judges config from %s", endpoint)
+        # Serve the last good value on a transient failure, but don't cache the
+        # failure — the next request retries rather than waiting out the TTL.
+        return cached[1] if cached is not None else {}
+
+    _judges_config_cache[endpoint] = (now, judges)
     return judges
 
 
-def _judge_config(judge_id, path):
-    """Return the judges.json config dict for a judge id, or None."""
+def _judge_config(judge_id, endpoint):
+    """Return the judges config dict for a judge id, or None."""
     if judge_id is None:
         return None
     try:
-        return _load_judges_config(path).get(int(judge_id))
+        return _load_judges_config(endpoint).get(int(judge_id))
     except (TypeError, ValueError):
         return None
 
 
-def _judge_name(judge_id, path):
+def _judge_name(judge_id, endpoint):
     """Return the human-readable judge name for a judges_settings entry."""
-    config = _judge_config(judge_id, path)
+    config = _judge_config(judge_id, endpoint)
     if not config:
         return None
     return config.get('name') or None
 
 
-def _judge_base_url(judge_id, path):
-    """Return the raw ejudge base url for a judge from judges.json."""
-    config = _judge_config(judge_id, path)
+def _judge_base_url(judge_id, endpoint):
+    """Return the raw ejudge base url for a judge from the judges config."""
+    config = _judge_config(judge_id, endpoint)
     if not config:
         return None
     return config.get('url') or None
 
 
-def _judge_master_url(judge_id, contest_id, problem_id, path):
+def _judge_master_url(judge_id, contest_id, problem_id, endpoint):
     """Build a ready-to-use ejudge master link for a judges_settings entry.
 
     The client should render this url as-is, so the contest/problem query
     params are assembled here rather than on the client. Returns None when the
-    judge has no url configured in judges.json.
+    judge has no url configured.
     """
-    base = _judge_base_url(judge_id, path)
+    base = _judge_base_url(judge_id, endpoint)
     if not base:
         return None
     params = {}
@@ -95,7 +109,7 @@ def _judge_master_url(judge_id, contest_id, problem_id, path):
     return urlunsplit((scheme, netloc, path_part, query, fragment))
 
 
-def _build_judges_settings(raw, path):
+def _build_judges_settings(raw, endpoint):
     """Parse the mdl_ejudge_problem.judges_settings JSON and enrich each entry
     with the resolved judge name and a ready-to-use ejudge master url."""
     if not raw:
@@ -192,9 +206,9 @@ def problem_get(request):
                 ejudge_problem = DBSession.query(EjudgeProblemDummy).filter(
                     EjudgeProblemDummy.ejudge_prid == problem.pr_id).first()
             if ejudge_problem is not None:
-                judges_config_path = request.registry.settings.get('judges.config_path')
+                rmatics_endpoint = request.registry.settings.get('rmatics.endpoint')
                 judges_settings = _build_judges_settings(
-                    ejudge_problem.judges_settings, judges_config_path)
+                    ejudge_problem.judges_settings, rmatics_endpoint)
                 result["short_id"] = ejudge_problem.short_id
                 result["judges_settings"] = judges_settings
                 # judges_settings reroutes the problem to explicit judges, so the

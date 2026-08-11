@@ -1,6 +1,3 @@
-import json
-import os
-import tempfile
 import unittest
 from types import SimpleNamespace
 from unittest import mock
@@ -177,7 +174,7 @@ class ProblemGetTests(unittest.TestCase):
 
         self.assertEqual(result['judges_settings'], [{
             'judge_id': 2,
-            # no judges.config_path in settings, so name/url resolve to None
+            # no rmatics.endpoint in settings, so name/url resolve to None
             'judge_name': None,
             'url': None,
             'contest_id': 500,
@@ -188,28 +185,54 @@ class ProblemGetTests(unittest.TestCase):
         # with per-judge routing the default ejudge_contest_id is omitted
         self.assertNotIn('ejudge_contest_id', result)
 
-    def test_judge_name_resolved_from_config_path_setting(self):
-        with tempfile.NamedTemporaryFile('w', suffix='.json', delete=False) as config_file:
-            json.dump({'2': {'url': 'http://j2', 'name': 'Judge-2'}}, config_file)
-            config_path = config_file.name
-        self.addCleanup(os.unlink, config_path)
-        # avoid a stale cache entry for this path between runs
-        problem_view._judges_config_cache.pop(config_path, None)
+    def test_judge_name_resolved_from_rmatics_endpoint(self):
+        endpoint = 'http://rmatics.test'
+        # avoid a stale cache entry for this endpoint between runs
+        problem_view._judges_config_cache.pop(endpoint, None)
 
-        request = FakeRequest('42', settings={'judges.config_path': config_path})
-        result = self._call(
-            request,
-            problem=make_problem(),
-            ejudge=make_ejudge(judges_settings='[{"judge_id": 2, "contest_id": 500, "problem_id": 6}]'),
-            caps={'local/pynformatics:problem_admin': True},
-        )
+        fake_resp = mock.Mock()
+        fake_resp.raise_for_status.return_value = None
+        fake_resp.json.return_value = {
+            'data': {'2': {'url': 'http://j2', 'name': 'Judge-2'}}
+        }
 
+        request = FakeRequest('42', settings={'rmatics.endpoint': endpoint})
+        with mock.patch.object(problem_view.requests, 'get',
+                               return_value=fake_resp) as get:
+            result = self._call(
+                request,
+                problem=make_problem(),
+                ejudge=make_ejudge(judges_settings='[{"judge_id": 2, "contest_id": 500, "problem_id": 6}]'),
+                caps={'local/pynformatics:problem_admin': True},
+            )
+        self.addCleanup(problem_view._judges_config_cache.pop, endpoint, None)
+
+        get.assert_called_once_with('{}/judges'.format(endpoint), timeout=5)
         self.assertEqual(result['judges_settings'][0]['judge_name'], 'Judge-2')
         # url is a ready-to-use ejudge master link built on the server
         self.assertEqual(result['judges_settings'][0]['url'],
                          'http://j2?contest_id=500&prob_id=6')
         # judges_settings present -> default ejudge_contest_id is not exposed
         self.assertNotIn('ejudge_contest_id', result)
+
+    def test_judges_config_cached_for_an_hour(self):
+        endpoint = 'http://rmatics.cache-test'
+        problem_view._judges_config_cache.pop(endpoint, None)
+        self.addCleanup(problem_view._judges_config_cache.pop, endpoint, None)
+
+        fake_resp = mock.Mock()
+        fake_resp.raise_for_status.return_value = None
+        fake_resp.json.return_value = {
+            'data': {'2': {'url': 'http://j2', 'name': 'Judge-2'}}
+        }
+
+        with mock.patch.object(problem_view.requests, 'get',
+                               return_value=fake_resp) as get:
+            problem_view._load_judges_config(endpoint)
+            problem_view._load_judges_config(endpoint)
+
+        # second call within the TTL is served from cache, not re-fetched
+        get.assert_called_once()
 
     def test_analysis_fields_with_view_analysis_capability(self):
         request = FakeRequest('42')
