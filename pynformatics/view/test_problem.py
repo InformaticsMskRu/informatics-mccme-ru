@@ -21,6 +21,8 @@ class FakeRequest:
 
 
 def make_problem(**overrides):
+    # A plain Problem row: it deliberately does NOT carry the ejudge columns —
+    # those live on mdl_ejudge_problem (EjudgeProblemDummy), fetched separately.
     attrs = dict(
         id=42,
         name='A+B',
@@ -33,9 +35,7 @@ def make_problem(**overrides):
         sample_tests='1,2',
         description='problem description',
         analysis='problem analysis',
-        ejudge_contest_id=100,
-        short_id='A',
-        judges_settings=None,
+        pr_id=555,
     )
     attrs.update(overrides)
     # SimpleNamespace rather than Mock: Mock reserves the name kwarg for the
@@ -43,15 +43,35 @@ def make_problem(**overrides):
     return SimpleNamespace(**attrs)
 
 
+def make_ejudge(**overrides):
+    # The mdl_ejudge_problem row (EjudgeProblemDummy) with the ejudge columns.
+    attrs = dict(
+        ejudge_prid=555,
+        ejudge_contest_id=100,
+        short_id='A',
+        judges_settings=None,
+    )
+    attrs.update(overrides)
+    return SimpleNamespace(**attrs)
+
+
 class ProblemGetTests(unittest.TestCase):
-    def _call(self, request, problem=None, caps=None, query_raises=None):
+    def _call(self, request, problem=None, ejudge=None, caps=None, query_raises=None):
         """Invoke problem_get with DBSession and capability checks mocked.
 
-        caps maps a capability string -> bool; anything not listed is denied.
+        The base Problem query returns `problem`; the EjudgeProblemDummy query
+        returns `ejudge`. caps maps a capability string -> bool; anything not
+        listed is denied.
         """
         caps = caps or {}
-        query = mock.Mock()
-        query.filter.return_value.first.return_value = problem
+
+        def query_for(model):
+            query = mock.Mock()
+            if model is problem_view.EjudgeProblemDummy:
+                query.filter.return_value.first.return_value = ejudge
+            else:
+                query.filter.return_value.first.return_value = problem
+            return query
 
         def cap_check(_request, capability, *args, **kwargs):
             return caps.get(capability, False)
@@ -62,7 +82,7 @@ class ProblemGetTests(unittest.TestCase):
             if query_raises is not None:
                 db.query.side_effect = query_raises
             else:
-                db.query.return_value = query
+                db.query.side_effect = query_for
             result = problem_view.problem_get(request)
         return result
 
@@ -95,12 +115,13 @@ class ProblemGetTests(unittest.TestCase):
         result = self._call(
             request,
             problem=make_problem(),
+            ejudge=make_ejudge(),
             caps={'local/pynformatics:problem_admin': True},
         )
 
         self.assertEqual(result['show_limits'], True)
         self.assertEqual(result['sample_tests'], '1,2')
-        # ejudge service fields are admin-only too
+        # ejudge service fields come from the EjudgeProblemDummy row
         self.assertEqual(result['ejudge_contest_id'], 100)
         self.assertEqual(result['short_id'], 'A')
         self.assertEqual(result['judges_settings'], [])
@@ -110,7 +131,35 @@ class ProblemGetTests(unittest.TestCase):
 
     def test_ejudge_service_fields_hidden_without_admin(self):
         request = FakeRequest('42')
-        result = self._call(request, problem=make_problem())
+        result = self._call(request, problem=make_problem(), ejudge=make_ejudge())
+
+        for hidden in ('ejudge_contest_id', 'short_id', 'judges_settings'):
+            self.assertNotIn(hidden, result)
+
+    def test_ejudge_fields_absent_for_non_ejudge_problem(self):
+        # A problem with no linked ejudge row (pr_id is None): no ejudge lookup,
+        # no error, ejudge fields simply omitted.
+        request = FakeRequest('42')
+        result = self._call(
+            request,
+            problem=make_problem(pr_id=None),
+            ejudge=None,
+            caps={'local/pynformatics:problem_admin': True},
+        )
+
+        self.assertEqual(result['show_limits'], True)
+        for hidden in ('ejudge_contest_id', 'short_id', 'judges_settings'):
+            self.assertNotIn(hidden, result)
+
+    def test_ejudge_fields_absent_when_ejudge_row_missing(self):
+        # pr_id set but the ejudge row is not found.
+        request = FakeRequest('42')
+        result = self._call(
+            request,
+            problem=make_problem(),
+            ejudge=None,
+            caps={'local/pynformatics:problem_admin': True},
+        )
 
         for hidden in ('ejudge_contest_id', 'short_id', 'judges_settings'):
             self.assertNotIn(hidden, result)
@@ -121,7 +170,8 @@ class ProblemGetTests(unittest.TestCase):
                '"lang_ids": [27], "user_ids": null}]')
         result = self._call(
             request,
-            problem=make_problem(judges_settings=raw),
+            problem=make_problem(),
+            ejudge=make_ejudge(judges_settings=raw),
             caps={'local/pynformatics:problem_admin': True},
         )
 
@@ -146,7 +196,8 @@ class ProblemGetTests(unittest.TestCase):
         request = FakeRequest('42', settings={'judges.config_path': config_path})
         result = self._call(
             request,
-            problem=make_problem(judges_settings='[{"judge_id": 2, "contest_id": 500, "problem_id": 6}]'),
+            problem=make_problem(),
+            ejudge=make_ejudge(judges_settings='[{"judge_id": 2, "contest_id": 500, "problem_id": 6}]'),
             caps={'local/pynformatics:problem_admin': True},
         )
 
