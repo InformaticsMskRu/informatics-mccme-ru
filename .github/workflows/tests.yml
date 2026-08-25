@@ -41,4 +41,4 @@ jobs:
 
       - name: Run pynformatics unit tests
         # Targeted: legacy pynformatics/tests.py reads a hardcoded path and is not CI-safe
-        run: python -m unittest pynformatics.view.test_problem -v
+        run: python -m unittest pynformatics.view.test_problem pynformatics.view.test_run -v
