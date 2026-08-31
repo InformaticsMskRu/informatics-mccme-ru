@@ -1,3 +1,4 @@
+import logging
 import traceback
 
 import requests
@@ -6,6 +7,10 @@ from pyramid.view import view_config
 from pynformatics.utils.proxied_request_helpers import peek_request_args
 
 from pynformatics.view.utils import *
+
+log = logging.getLogger(__name__)
+
+REQUEST_TIMEOUT = 5  # seconds
 
 
 @view_config(route_name='problem.runs.update', renderer='json')
@@ -40,3 +45,34 @@ def update_run(request):
         print('Request to :12346 failed!')
         print(str(e))
         return {"result": "error", "message": str(e), "stack": traceback.format_exc()}
+
+
+@view_config(route_name='problem.runs.status', renderer='json')
+def get_run_status(request):
+    """ Proxy View for core::problem/run/<run_id>/status
+    {"ejudge_status": <int>, "ejudge_score": <int|null>}
+    ejudge_score = null, пока посылка не оттестирована.
+    """
+    params = GetUserCourseContextParams(request,
+                                        "mod/statement:view_protocol",
+                                        "moodle/ejudge_submits:admin")
+
+    if not params:
+        return {'result': 'error', 'message': 'Not authorized'}
+
+    run_id = int(request.matchdict['run_id'])
+    url = '{}/problem/run/{}/status'.format(
+        request.registry.settings['rmatics.endpoint'], run_id)
+
+    try:
+        resp = requests.get(url, params=params, timeout=REQUEST_TIMEOUT)
+        content = resp.json()
+    except Exception:
+        log.exception("Failed to get run status from rmatics for run_id=%s", run_id)
+        request.response.status = 500
+        return {'result': 'error', 'message': 'Internal server error'}
+    
+    if content.get('status') != 'success':
+        return content
+
+    return content['data']
