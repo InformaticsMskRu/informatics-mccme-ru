@@ -34,13 +34,15 @@ class GetRunStatusTests(unittest.TestCase):
                                   side_effect=rmatics_get) as get:
             return run_view.get_run_status(request), caps, get
 
-    def test_returns_two_numbers(self):
+    def test_returns_verdict_score_and_test_num(self):
         request = FakeRequest()
         result, _, get = self._call(
             request, {'user_id': 1, 'is_admin': False},
-            lambda *a, **kw: rmatics_response({'ejudge_status': 7, 'ejudge_score': 40}))
+            lambda *a, **kw: rmatics_response({'ejudge_status': 7, 'ejudge_score': 40,
+                                              'ejudge_test_num': 3}))
 
-        self.assertEqual(result, {'ejudge_status': 7, 'ejudge_score': 40})
+        self.assertEqual(result, {'ejudge_status': 7, 'ejudge_score': 40,
+                                  'ejudge_test_num': 3})
         url, = get.call_args[0]
         self.assertEqual(url, '{}/problem/run/7/status'.format(RMATICS))
         # права, посчитанные moodle-стороной, уезжают в rmatics
@@ -49,9 +51,11 @@ class GetRunStatusTests(unittest.TestCase):
     def test_null_score_is_preserved(self):
         result, _, _ = self._call(
             FakeRequest(), {'user_id': 1},
-            lambda *a, **kw: rmatics_response({'ejudge_status': 377, 'ejudge_score': None}))
+            lambda *a, **kw: rmatics_response({'ejudge_status': 377, 'ejudge_score': None,
+                                              'ejudge_test_num': None}))
 
         self.assertIsNone(result['ejudge_score'])
+        self.assertIsNone(result['ejudge_test_num'])
 
     def test_not_authorized(self):
         result, _, get = self._call(FakeRequest(), None, lambda *a, **kw: None)

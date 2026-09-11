@@ -50,8 +50,9 @@ def update_run(request):
 @view_config(route_name='problem.runs.status', renderer='json')
 def get_run_status(request):
     """ Proxy View for core::problem/run/<run_id>/status
-    {"ejudge_status": <int>, "ejudge_score": <int|null>}
-    ejudge_score = null, пока посылка не оттестирована.
+    {"ejudge_status": <int>, "ejudge_score": <int|null>,
+     "ejudge_test_num": <int|null>}
+    ejudge_score/ejudge_test_num = null, пока посылка не оттестирована.
     """
     params = GetUserCourseContextParams(request,
                                         "mod/statement:view_protocol",
