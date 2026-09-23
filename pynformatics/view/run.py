@@ -2,6 +2,7 @@ import logging
 import traceback
 
 import requests
+from pyramid.response import Response
 from pyramid.view import view_config
 
 from pynformatics.utils.proxied_request_helpers import peek_request_args
@@ -77,3 +78,36 @@ def get_run_status(request):
         return content
 
     return content['data']
+
+
+@view_config(route_name='problem.runs.update_from_ejudge_v2', request_method='POST')
+def update_run_from_ejudge_v2(request):
+    """ Proxy View for core::problem/run/action/update_from_ejudge_v2
+
+    Called by notify-worker on judge nodes. Authorization is the judge's
+    Bearer token, checked by rmatics, so the header and body are forwarded
+    as is and the rmatics status code is returned unchanged: notify-worker
+    relies on it to detect a rejected notification.
+    """
+    url = '{}/problem/run/action/update_from_ejudge_v2'.format(
+        request.registry.settings['rmatics.endpoint'])
+
+    if request.content_type != 'application/json':
+        return Response(status=400)
+    if 'Authorization' not in request.headers:
+        return Response(status=403)
+
+    headers = {'Content-Type': request.content_type,
+               'Authorization': request.headers['Authorization']}
+
+    try:
+        resp = requests.post(url, data=request.body, headers=headers,
+                             timeout=REQUEST_TIMEOUT)
+    except Exception:
+        log.exception("Failed to forward ejudge notification to rmatics")
+        return Response(json_body={'result': 'error', 'message': 'rmatics is unavailable'},
+                        status=502)
+
+    response = Response(body=resp.content, status=resp.status_code)
+    response.headers['Content-Type'] = resp.headers.get('Content-Type', 'application/json')
+    return response

@@ -2,6 +2,8 @@ import unittest
 from types import SimpleNamespace
 from unittest import mock
 
+from pyramid import testing
+
 from pynformatics.view import run as run_view
 
 RMATICS = 'http://rmatics:12346'
@@ -85,6 +87,80 @@ class GetRunStatusTests(unittest.TestCase):
 
         self.assertEqual(result['result'], 'error')
         self.assertEqual(request.response.status, 500)
+
+
+class UpdateRunFromEjudgeV2Tests(unittest.TestCase):
+    BODY = b'{"run_id": 7, "run_uuid": "u", "contest_id": 3, "status": 0, "judge_id": 1}'
+
+    def _request(self, content_type='application/json', **headers):
+        request = testing.DummyRequest(method='POST', headers=headers)
+        request.body = self.BODY
+        request.content_type = content_type
+        request.registry.settings = {'rmatics.endpoint': RMATICS}
+        return request
+
+    def _call(self, request, rmatics_post):
+        with mock.patch.object(run_view.requests, 'post',
+                               side_effect=rmatics_post) as post:
+            return run_view.update_run_from_ejudge_v2(request), post
+
+    @staticmethod
+    def _rmatics(status_code, body=b'{}', content_type='application/json'):
+        resp = mock.Mock()
+        resp.status_code = status_code
+        resp.content = body
+        resp.headers = {'Content-Type': content_type}
+        return lambda *a, **kw: resp
+
+    def test_forwards_body_and_token(self):
+        request = self._request(Authorization='Bearer judge-1-token')
+        response, post = self._call(request, self._rmatics(200, b'[{}, 200]'))
+
+        url, = post.call_args[0]
+        self.assertEqual(url, '{}/problem/run/action/update_from_ejudge_v2'.format(RMATICS))
+        self.assertEqual(post.call_args[1]['data'], self.BODY)
+        self.assertEqual(post.call_args[1]['headers']['Authorization'], 'Bearer judge-1-token')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.body, b'[{}, 200]')
+
+    def test_rmatics_rejection_keeps_status_code(self):
+        # notify-worker treats non-2xx as a failed notification
+        response, _ = self._call(
+            self._request(Authorization='Bearer wrong-token'),
+            self._rmatics(401, b'{"message": "Bearer token is required"}',
+                          'application/json; charset=utf-8'))
+
+        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.headers['Content-Type'], 'application/json; charset=utf-8')
+
+    def test_no_authorization_header(self):
+        response, post = self._call(self._request(), self._rmatics(200))
+
+        self.assertEqual(response.status_code, 403)
+        post.assert_not_called()
+
+    def test_no_content_type(self):
+        response, post = self._call(
+            self._request(content_type='', Authorization='Bearer t'), self._rmatics(200))
+
+        self.assertEqual(response.status_code, 400)
+        post.assert_not_called()
+
+    def test_non_json_content_type(self):
+        response, post = self._call(
+            self._request(content_type='text/plain', Authorization='Bearer t'), self._rmatics(200))
+
+        self.assertEqual(response.status_code, 400)
+        post.assert_not_called()
+
+    def test_rmatics_unavailable(self):
+        def boom(*a, **kw):
+            raise Exception('connection refused')
+
+        response, _ = self._call(self._request(Authorization='Bearer t'), boom)
+
+        self.assertEqual(response.status_code, 502)
+        self.assertEqual(response.json_body['result'], 'error')
 
 
 if __name__ == '__main__':
