@@ -92,12 +92,10 @@ def update_run_from_ejudge_v2(request):
     url = '{}/problem/run/action/update_from_ejudge_v2'.format(
         request.registry.settings['rmatics.endpoint'])
 
-    if not request.content_type:
-        return Response(json_body={'result': 'error', 'message': 'Content-Type is required'},
-                        status=400)
+    if request.content_type != 'application/json':
+        return Response(status=400)
     if 'Authorization' not in request.headers:
-        return Response(json_body={'result': 'error', 'message': 'Authorization is required'},
-                        status=403)
+        return Response(status=403)
 
     headers = {'Content-Type': request.content_type,
                'Authorization': request.headers['Authorization']}

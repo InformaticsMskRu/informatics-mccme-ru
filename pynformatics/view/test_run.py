@@ -146,6 +146,13 @@ class UpdateRunFromEjudgeV2Tests(unittest.TestCase):
         self.assertEqual(response.status_code, 400)
         post.assert_not_called()
 
+    def test_non_json_content_type(self):
+        response, post = self._call(
+            self._request(content_type='text/plain', Authorization='Bearer t'), self._rmatics(200))
+
+        self.assertEqual(response.status_code, 400)
+        post.assert_not_called()
+
     def test_rmatics_unavailable(self):
         def boom(*a, **kw):
             raise Exception('connection refused')
