@@ -92,10 +92,10 @@ class GetRunStatusTests(unittest.TestCase):
 class UpdateRunFromEjudgeV2Tests(unittest.TestCase):
     BODY = b'{"run_id": 7, "run_uuid": "u", "contest_id": 3, "status": 0, "judge_id": 1}'
 
-    def _request(self, **headers):
+    def _request(self, content_type='application/json', **headers):
         request = testing.DummyRequest(method='POST', headers=headers)
         request.body = self.BODY
-        request.content_type = 'application/json'
+        request.content_type = content_type
         request.registry.settings = {'rmatics.endpoint': RMATICS}
         return request
 
@@ -126,17 +126,25 @@ class UpdateRunFromEjudgeV2Tests(unittest.TestCase):
     def test_rmatics_rejection_keeps_status_code(self):
         # notify-worker treats non-2xx as a failed notification
         response, _ = self._call(
-            self._request(),
+            self._request(Authorization='Bearer wrong-token'),
             self._rmatics(401, b'{"message": "Bearer token is required"}',
                           'application/json; charset=utf-8'))
 
         self.assertEqual(response.status_code, 401)
         self.assertEqual(response.headers['Content-Type'], 'application/json; charset=utf-8')
 
-    def test_no_authorization_header_is_not_invented(self):
-        _, post = self._call(self._request(), self._rmatics(401))
+    def test_no_authorization_header(self):
+        response, post = self._call(self._request(), self._rmatics(200))
 
-        self.assertNotIn('Authorization', post.call_args[1]['headers'])
+        self.assertEqual(response.status_code, 403)
+        post.assert_not_called()
+
+    def test_no_content_type(self):
+        response, post = self._call(
+            self._request(content_type='', Authorization='Bearer t'), self._rmatics(200))
+
+        self.assertEqual(response.status_code, 400)
+        post.assert_not_called()
 
     def test_rmatics_unavailable(self):
         def boom(*a, **kw):
