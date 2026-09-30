@@ -109,6 +109,14 @@ class StoreStatementImagesTests(unittest.TestCase):
         with open(os.path.join(self.dir, *path), 'rb') as f:
             return f.read()
 
+    def test_rmatics_log_is_extended(self):
+        resp = self._call({'action': 'create', 'log': ['0.01s info: done'], 'problems': [
+            {'id': 42, 'name': 'Sum', 'images': {'a.png': b64(b'A')}}]})
+
+        log_lines = resp.json_body['data']['log']
+        self.assertEqual(log_lines[0], '0.01s info: done')
+        self.assertTrue(log_lines[1].startswith('pynformatics info: stored 1 statement image(s)'))
+
     def test_problem_reload_images(self):
         resp = self._call({'action': 'create', 'statement': 'imported', 'problems': [
             {'id': 42, 'name': 'Sum', 'images': {'a.png': b64(b'A'), 'b.png': b64(b'B')}}]})
@@ -118,6 +126,9 @@ class StoreStatementImagesTests(unittest.TestCase):
         self.assertEqual(self.read('42', 'b.png'), b'B')
         # the reply lists the stored files instead of their content
         self.assertEqual(resp.json_body['data']['problems'][0]['images'], ['a.png', 'b.png'])
+        self.assertEqual(resp.json_body['data']['log'][-1],
+                         'pynformatics info: stored 2 statement image(s) of problem 42 in '
+                         '{}: a.png, b.png'.format(os.path.join(self.dir, '42')))
 
     def test_contest_reload_images(self):
         resp = self._call({'problems': [
@@ -138,6 +149,8 @@ class StoreStatementImagesTests(unittest.TestCase):
         self.assertEqual(os.listdir(self.dir), ['42'])
         self.assertEqual(os.listdir(os.path.join(self.dir, '42')), ['x.png'])
         self.assertEqual(resp.json_body['data']['problems'][0]['images'], ['x.png'])
+        self.assertIn("pynformatics warning: skipped statement image '.htaccess' of problem 42",
+                      resp.json_body['data']['log'])
 
     def test_error_reply_is_not_processed(self):
         resp = self._call({'action': 'create', 'problems': [

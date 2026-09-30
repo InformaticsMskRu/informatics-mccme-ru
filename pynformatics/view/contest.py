@@ -281,7 +281,7 @@ def reload_from_judge(request):
         results = [data] if 'action' in data else data.get('problems', [])
         probpics_dir = request.registry.settings.get('moodle.probpics_dir', PROBPICS_DIR)
         try:
-            _store_statement_images(results, probpics_dir)
+            _store_statement_images(results, probpics_dir, data.setdefault('log', []))
         except Exception:
             log.exception("Failed to store statement images in %s", probpics_dir)
             return Response(json_body={'result': 'error',
@@ -291,10 +291,11 @@ def reload_from_judge(request):
     # re-encoded, so only JSON ever reaches the browser
     return Response(json_body=body, status=resp.status_code)
 
-def _store_statement_images(results, probpics_dir):
+def _store_statement_images(results, probpics_dir, log_lines):
     """ Write the statement images of the reload results to
     <probpics_dir>/<problem_id>/, where the statements link them, and
     replace them in the results with the names of the written files.
+    The steps are added to the reload log.
     """
     for result in results:
         for problem in result.get('problems', []):
@@ -308,6 +309,8 @@ def _store_statement_images(results, probpics_dir):
                 name = os.path.basename(name)
                 if not name or name.startswith('.'):
                     log.warning("Skipped statement image %r of problem %s", name, problem['id'])
+                    log_lines.append('pynformatics warning: skipped statement image {!r} of problem {}'
+                                     .format(name, problem['id']))
                     continue
                 with open(os.path.join(problem_dir, name), 'wb') as f:
                     f.write(base64.b64decode(data))
@@ -315,6 +318,9 @@ def _store_statement_images(results, probpics_dir):
             problem['images'] = sorted(written)
             log.info("Stored %d statement image(s) of problem %s in %s",
                      len(written), problem['id'], problem_dir)
+            log_lines.append('pynformatics info: stored {} statement image(s) of problem {} in {}: {}'
+                             .format(len(written), problem['id'], problem_dir,
+                                     ', '.join(sorted(written))))
 
 @view_config(route_name='contest.ejudge.get_table', renderer='pynformatics:templates/language_table.mak')
 def get_table(request):
