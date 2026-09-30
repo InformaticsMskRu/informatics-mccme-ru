@@ -246,8 +246,9 @@ def reload_contest(request):
     except Exception as e:
         return {"result" : "error", "message" : e.__str__(), "stack" : traceback.format_exc()}
 
-@view_config(route_name='contest.ejudge.judge.reload', request_method='POST')
-@view_config(route_name='contest.ejudge.judge.reload.problem', request_method='POST')
+# GET as well: admins reload by opening the url, like the filesystem reload
+@view_config(route_name='contest.ejudge.judge.reload', request_method=('GET', 'POST'))
+@view_config(route_name='contest.ejudge.judge.reload.problem', request_method=('GET', 'POST'))
 def reload_from_judge(request):
     """ Proxy View for core::contest/ejudge/<judge_id>/reload/<contest_id>[/<problem_id>]
 
