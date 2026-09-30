@@ -253,25 +253,26 @@ def reload_from_judge(request):
 
     rmatics imports the problem, or every problem of the contest, through
     the ejudge API of the judge and routes it there with judges_settings;
-    its status code and body are returned unchanged.
+    its status code and JSON body are returned.
     """
     if not RequestCheckUserCapability(request, 'local/pynformatics:contest_reload'):
         return Response(json_body={'result': 'error', 'message': 'Access denied'}, status=403)
 
-    url = '{}/contest/ejudge/{judge_id}/reload/{contest_id}'.format(
-        request.registry.settings['rmatics.endpoint'], **request.matchdict)
+    url = '{}/contest/ejudge/{}/reload/{}'.format(
+        request.registry.settings['rmatics.endpoint'],
+        int(request.matchdict['judge_id']), int(request.matchdict['contest_id']))
     if 'problem_id' in request.matchdict:
-        url += '/{}'.format(request.matchdict['problem_id'])
+        url += '/{}'.format(int(request.matchdict['problem_id']))
     try:
         resp = requests.post(url, timeout=RELOAD_FROM_JUDGE_TIMEOUT)
+        body = resp.json()
     except Exception:
         log.exception("Failed to reload through rmatics: %s", url)
         return Response(json_body={'result': 'error', 'message': 'rmatics is unavailable'},
                         status=502)
 
-    response = Response(body=resp.content, status=resp.status_code)
-    response.headers['Content-Type'] = resp.headers.get('Content-Type', 'application/json')
-    return response
+    # re-encoded, so only JSON ever reaches the browser
+    return Response(json_body=body, status=resp.status_code)
 
 @view_config(route_name='contest.ejudge.get_table', renderer='pynformatics:templates/language_table.mak')
 def get_table(request):
