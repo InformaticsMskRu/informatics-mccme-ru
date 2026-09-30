@@ -1,3 +1,4 @@
+import base64
 import logging
 import traceback
 import collections
@@ -29,8 +30,9 @@ log = logging.getLogger(__name__)
 
 HOME_JUDGES = '/home/judges/'
 
-# rmatics makes up to two ejudge API calls of 10 seconds each
-RELOAD_FROM_JUDGE_TIMEOUT = 30  # seconds
+# rmatics fetches every statement and its images from ejudge
+RELOAD_FROM_JUDGE_TIMEOUT = 120  # seconds
+PROBPICS_DIR = '/var/www/moodle_probpics'
 
 def get_contest_xml_config_path(number):
     return "/home/judges/data/contests/{:06}.xml".format(number)
@@ -254,7 +256,8 @@ def reload_from_judge(request):
 
     rmatics imports the problem, or every problem of the contest, through
     the ejudge API of the judge and routes it there with judges_settings;
-    its status code and JSON body are returned.
+    its status code and JSON body are returned, the statement images it
+    returns stored in /moodle_probpics (see _store_statement_images).
     """
     if not RequestCheckUserCapability(request, 'local/pynformatics:contest_reload'):
         return Response(json_body={'result': 'error', 'message': 'Access denied'}, status=403)
@@ -272,8 +275,46 @@ def reload_from_judge(request):
         return Response(json_body={'result': 'error', 'message': 'rmatics is unavailable'},
                         status=502)
 
+    data = body.get('data') if resp.status_code == 200 and isinstance(body, dict) else None
+    if isinstance(data, dict):
+        # a problem reload returns its result, a contest reload a result per problem
+        results = [data] if 'action' in data else data.get('problems', [])
+        probpics_dir = request.registry.settings.get('moodle.probpics_dir', PROBPICS_DIR)
+        try:
+            _store_statement_images(results, probpics_dir)
+        except Exception:
+            log.exception("Failed to store statement images in %s", probpics_dir)
+            return Response(json_body={'result': 'error',
+                                       'message': 'Failed to store statement images'},
+                            status=500)
+
     # re-encoded, so only JSON ever reaches the browser
     return Response(json_body=body, status=resp.status_code)
+
+def _store_statement_images(results, probpics_dir):
+    """ Write the statement images of the reload results to
+    <probpics_dir>/<problem_id>/, where the statements link them, and
+    replace them in the results with the names of the written files.
+    """
+    for result in results:
+        for problem in result.get('problems', []):
+            images = problem.pop('images', None)
+            if not images:
+                continue
+            problem_dir = os.path.join(probpics_dir, str(int(problem['id'])))
+            os.makedirs(problem_dir, exist_ok=True)
+            written = []
+            for name, data in images.items():
+                name = os.path.basename(name)
+                if not name or name.startswith('.'):
+                    log.warning("Skipped statement image %r of problem %s", name, problem['id'])
+                    continue
+                with open(os.path.join(problem_dir, name), 'wb') as f:
+                    f.write(base64.b64decode(data))
+                written.append(name)
+            problem['images'] = sorted(written)
+            log.info("Stored %d statement image(s) of problem %s in %s",
+                     len(written), problem['id'], problem_dir)
 
 @view_config(route_name='contest.ejudge.get_table', renderer='pynformatics:templates/language_table.mak')
 def get_table(request):
