@@ -99,6 +99,8 @@ def main(global_config, **settings):
     config.add_route('problem.runs.update_from_ejudge_v2', '/problem/run/action/update_from_ejudge_v2')
     
     config.add_route('contest.ejudge.reload', '/contest/ejudge/reload/{contest_id}')
+    config.add_route('contest.ejudge.judge.reload.problem',
+                     r'/contest/ejudge/{judge_id:\d+}/reload/{contest_id:\d+}/{problem_id:\d+}')
     config.add_route('contest.ejudge.get_table', '/contest/ejudge/get_table')
     config.add_route('contest.ejudge.statistic', '/contest/ejudge/statistic')
     config.add_route('contest.ejudge.clone', '/contest/ejudge/clone/{contest_id}')

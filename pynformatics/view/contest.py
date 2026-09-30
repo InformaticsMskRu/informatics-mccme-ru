@@ -1,6 +1,8 @@
+import logging
 import traceback
 import collections
 import json
+import requests
 import transaction
 import zipfile
 import os
@@ -9,6 +11,7 @@ import shutil
 
 from xml.etree.ElementTree import ElementTree
 
+from pyramid.response import Response
 from pyramid.view import view_config
 from phpserialize import *
 from bs4 import BeautifulSoup
@@ -22,7 +25,12 @@ from pynformatics.models import DBSession
 from pynformatics.utils.check_role import check_global_role
 
 
+log = logging.getLogger(__name__)
+
 HOME_JUDGES = '/home/judges/'
+
+# rmatics makes up to two ejudge API calls of 10 seconds each
+RELOAD_FROM_JUDGE_TIMEOUT = 30  # seconds
 
 def get_contest_xml_config_path(number):
     return "/home/judges/data/contests/{:06}.xml".format(number)
@@ -235,10 +243,34 @@ def reload_contest(request):
                return {"pr_id": pr_id, "result" : "error", "message" : e.__str__(), "stack" : traceback.format_exc()}
         res = {"action": actions, "name": contest.name, "contest_id" : request.matchdict['contest_id'], "problemCount" : ejudgeCfg.getProblemsCount(), "abstractProblemCount" : ejudgeCfg.getAbstractProblemsCount()}
         return res
-    except Exception as e: 
+    except Exception as e:
         return {"result" : "error", "message" : e.__str__(), "stack" : traceback.format_exc()}
 
-@view_config(route_name='contest.ejudge.get_table', renderer='pynformatics:templates/language_table.mak')    
+@view_config(route_name='contest.ejudge.judge.reload.problem', request_method='POST')
+def reload_problem_from_judge(request):
+    """ Proxy View for core::contest/ejudge/<judge_id>/reload/<contest_id>/<problem_id>
+
+    rmatics imports the problem through the ejudge API of the judge and
+    routes it there with judges_settings; its status code and body are
+    returned unchanged.
+    """
+    if not RequestCheckUserCapability(request, 'local/pynformatics:contest_reload'):
+        return Response(json_body={'result': 'error', 'message': 'Access denied'}, status=403)
+
+    url = '{}/contest/ejudge/{judge_id}/reload/{contest_id}/{problem_id}'.format(
+        request.registry.settings['rmatics.endpoint'], **request.matchdict)
+    try:
+        resp = requests.post(url, timeout=RELOAD_FROM_JUDGE_TIMEOUT)
+    except Exception:
+        log.exception("Failed to reload a problem through rmatics: %s", url)
+        return Response(json_body={'result': 'error', 'message': 'rmatics is unavailable'},
+                        status=502)
+
+    response = Response(body=resp.content, status=resp.status_code)
+    response.headers['Content-Type'] = resp.headers.get('Content-Type', 'application/json')
+    return response
+
+@view_config(route_name='contest.ejudge.get_table', renderer='pynformatics:templates/language_table.mak')
 def get_table(request):
     try:
         checkCapability(request)
