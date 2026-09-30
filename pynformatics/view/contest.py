@@ -246,23 +246,26 @@ def reload_contest(request):
     except Exception as e:
         return {"result" : "error", "message" : e.__str__(), "stack" : traceback.format_exc()}
 
+@view_config(route_name='contest.ejudge.judge.reload', request_method='POST')
 @view_config(route_name='contest.ejudge.judge.reload.problem', request_method='POST')
-def reload_problem_from_judge(request):
-    """ Proxy View for core::contest/ejudge/<judge_id>/reload/<contest_id>/<problem_id>
+def reload_from_judge(request):
+    """ Proxy View for core::contest/ejudge/<judge_id>/reload/<contest_id>[/<problem_id>]
 
-    rmatics imports the problem through the ejudge API of the judge and
-    routes it there with judges_settings; its status code and body are
-    returned unchanged.
+    rmatics imports the problem, or every problem of the contest, through
+    the ejudge API of the judge and routes it there with judges_settings;
+    its status code and body are returned unchanged.
     """
     if not RequestCheckUserCapability(request, 'local/pynformatics:contest_reload'):
         return Response(json_body={'result': 'error', 'message': 'Access denied'}, status=403)
 
-    url = '{}/contest/ejudge/{judge_id}/reload/{contest_id}/{problem_id}'.format(
+    url = '{}/contest/ejudge/{judge_id}/reload/{contest_id}'.format(
         request.registry.settings['rmatics.endpoint'], **request.matchdict)
+    if 'problem_id' in request.matchdict:
+        url += '/{}'.format(request.matchdict['problem_id'])
     try:
         resp = requests.post(url, timeout=RELOAD_FROM_JUDGE_TIMEOUT)
     except Exception:
-        log.exception("Failed to reload a problem through rmatics: %s", url)
+        log.exception("Failed to reload through rmatics: %s", url)
         return Response(json_body={'result': 'error', 'message': 'rmatics is unavailable'},
                         status=502)
 

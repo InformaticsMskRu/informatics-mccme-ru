@@ -10,8 +10,8 @@ RMATICS = 'http://rmatics:12346'
 
 
 class FakeRequest:
-    def __init__(self):
-        self.matchdict = {'judge_id': '2', 'contest_id': '2395', 'problem_id': '3'}
+    def __init__(self, **matchdict):
+        self.matchdict = matchdict or {'judge_id': '2', 'contest_id': '2395', 'problem_id': '3'}
         self.registry = SimpleNamespace(settings={'rmatics.endpoint': RMATICS})
 
 
@@ -21,13 +21,13 @@ def rmatics_response(body, status_code=200):
     return resp
 
 
-class ReloadProblemFromJudgeTests(unittest.TestCase):
-    def _call(self, allowed=True, rmatics_post=None):
+class ReloadFromJudgeTests(unittest.TestCase):
+    def _call(self, allowed=True, rmatics_post=None, request=None):
         with mock.patch.object(contest_view, 'RequestCheckUserCapability',
                                return_value=allowed) as caps, \
                 mock.patch.object(contest_view.requests, 'post',
                                   side_effect=rmatics_post) as post:
-            return contest_view.reload_problem_from_judge(FakeRequest()), caps, post
+            return contest_view.reload_from_judge(request or FakeRequest()), caps, post
 
     def test_forwards_to_rmatics(self):
         body = b'{"status": "success", "data": {"action": "create"}}'
@@ -40,6 +40,14 @@ class ReloadProblemFromJudgeTests(unittest.TestCase):
         url, = post.call_args[0]
         self.assertEqual(url, '{}/contest/ejudge/2/reload/2395/3'.format(RMATICS))
         self.assertEqual(caps.call_args[0][1], 'local/pynformatics:contest_reload')
+
+    def test_forwards_contest_reload(self):
+        request = FakeRequest(judge_id='2', contest_id='2395')
+        _, _, post = self._call(
+            rmatics_post=lambda *a, **kw: rmatics_response(b'{}'), request=request)
+
+        url, = post.call_args[0]
+        self.assertEqual(url, '{}/contest/ejudge/2/reload/2395'.format(RMATICS))
 
     def test_rmatics_error_status_is_kept(self):
         body = b'{"status": "error", "code": 502, "error": "ejudge is down"}'
