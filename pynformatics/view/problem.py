@@ -59,8 +59,8 @@ def _load_judges_config(endpoint):
     return judges
 
 
-# Languages offered when rmatics can't be asked. A static snapshot of what
-# Moodle's langs.php used to offer everybody; rmatics' answer replaces it.
+# Languages offered when rmatics can't be asked: exactly what Moodle's
+# langs.php offered everybody, in its order. rmatics' answer replaces it.
 OUTPUT_ONLY_LANG_ID = 0
 OUTPUT_ONLY_LANG_NAME = 'Текстовый файл'
 _OUTPUT_ONLY_LANGUAGES = [{"id": OUTPUT_ONLY_LANG_ID, "name": OUTPUT_ONLY_LANG_NAME}]
@@ -78,9 +78,9 @@ _FALLBACK_LANGUAGES = [
     {"id": 28, "name": "Haskell GHC 8.2.2"},
     {"id": 29, "name": "FreeBASIC 1.05.0"},
     {"id": 30, "name": "PascalABC 3.7"},
-    {"id": 53, "name": "GNU Go 11.2"},
     {"id": 71, "name": "Kotlin 1.4"},
     {"id": 89, "name": "Scala 2.13"},
+    {"id": 53, "name": "GNU Go 11.2"},
 ]
 
 
