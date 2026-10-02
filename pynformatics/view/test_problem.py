@@ -267,6 +267,15 @@ class ProblemGetTests(unittest.TestCase):
                                     params={'user_id': 7, 'statement_id': 5}, timeout=5)
         self.assertEqual(languages, [{'id': 27, 'name': 'Python 3.9'}])
 
+    def test_output_only_language_is_named_here(self):
+        fake_resp = mock.Mock()
+        fake_resp.json.return_value = {'data': [{'id': 0, 'name': None}]}
+        request = FakeRequest('42', settings={'rmatics.endpoint': 'http://rmatics.test'})
+        with mock.patch.object(problem_view.requests, 'get', return_value=fake_resp):
+            languages = self._languages(request, problem=make_problem(output_only=True))
+
+        self.assertEqual(languages, [{'id': 0, 'name': 'Текстовый файл'}])
+
     def test_languages_invalid_statement_id_is_ignored(self):
         fake_resp = mock.Mock()
         fake_resp.json.return_value = {'data': []}

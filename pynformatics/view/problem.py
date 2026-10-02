@@ -61,7 +61,9 @@ def _load_judges_config(endpoint):
 
 # Languages offered when rmatics can't be asked. A static snapshot of what
 # Moodle's langs.php used to offer everybody; rmatics' answer replaces it.
-_OUTPUT_ONLY_LANGUAGES = [{"id": 0, "name": "Текстовый файл"}]
+OUTPUT_ONLY_LANG_ID = 0
+OUTPUT_ONLY_LANG_NAME = 'Текстовый файл'
+_OUTPUT_ONLY_LANGUAGES = [{"id": OUTPUT_ONLY_LANG_ID, "name": OUTPUT_ONLY_LANG_NAME}]
 _FALLBACK_LANGUAGES = [
     {"id": 1, "name": "Free Pascal 3.0"},
     {"id": 2, "name": "GNU C 11.2"},
@@ -104,10 +106,16 @@ def _problem_languages(request, problem, user_id):
         resp = requests.get('{}/problem/{}/languages'.format(endpoint, problem.id),
                             params=params, timeout=5)
         resp.raise_for_status()
-        return resp.json()['data']
+        languages = resp.json()['data']
     except Exception:
         log.exception("Failed to load languages of problem %s from %s", problem.id, endpoint)
         return fallback
+
+    # rmatics leaves the name of the output-only "language" unset
+    return [
+        dict(lang, name=OUTPUT_ONLY_LANG_NAME) if lang['name'] is None else lang
+        for lang in languages
+    ]
 
 
 def _judge_config(judge_id, endpoint):
