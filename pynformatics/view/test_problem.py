@@ -11,10 +11,12 @@ class FakeResponse:
 
 
 class FakeRequest:
-    def __init__(self, problem_id, settings=None):
+    def __init__(self, problem_id, settings=None, params=None):
         self.matchdict = {'problem_id': problem_id}
         self.response = FakeResponse()
         self.registry = SimpleNamespace(settings=settings or {})
+        self.params = params or {}
+        self.cookies = {}
 
 
 def make_problem(**overrides):
@@ -248,6 +250,60 @@ class ProblemGetTests(unittest.TestCase):
         self.assertNotIn('show_limits', result)
         self.assertNotIn('sample_tests', result)
 
+    def _languages(self, request, problem=None, user_id=7):
+        with mock.patch.object(problem_view, 'RequestGetUserId', return_value=user_id):
+            return self._call(request, problem=problem or make_problem())['languages']
+
+    def test_languages_from_rmatics(self):
+        endpoint = 'http://rmatics.test'
+        fake_resp = mock.Mock()
+        fake_resp.json.return_value = {'data': [{'id': 27, 'name': 'Python 3.9'}]}
+        request = FakeRequest('42', settings={'rmatics.endpoint': endpoint},
+                              params={'statement_id': '5'})
+        with mock.patch.object(problem_view.requests, 'get', return_value=fake_resp) as get:
+            languages = self._languages(request)
+
+        get.assert_called_once_with('http://rmatics.test/problem/42/languages',
+                                    params={'user_id': 7, 'statement_id': 5}, timeout=5)
+        self.assertEqual(languages, [{'id': 27, 'name': 'Python 3.9'}])
+
+    def test_languages_invalid_statement_id_is_ignored(self):
+        fake_resp = mock.Mock()
+        fake_resp.json.return_value = {'data': []}
+        request = FakeRequest('42', settings={'rmatics.endpoint': 'http://rmatics.test'},
+                              params={'statement_id': 'abc'})
+        with mock.patch.object(problem_view.requests, 'get', return_value=fake_resp) as get:
+            self._languages(request, user_id=-1)
+
+        self.assertEqual(get.call_args[1]['params'], {'user_id': -1})
+
+    def test_languages_fall_back_when_rmatics_is_unreachable(self):
+        request = FakeRequest('42', settings={'rmatics.endpoint': 'http://rmatics.test'})
+        with mock.patch.object(problem_view.requests, 'get', side_effect=OSError('down')):
+            languages = self._languages(request)
+
+        self.assertEqual(languages, problem_view._FALLBACK_LANGUAGES)
+        self.assertIn({'id': 27, 'name': 'Python 3.9'}, languages)
+
+    def test_languages_fall_back_on_error_status(self):
+        fake_resp = mock.Mock()
+        fake_resp.raise_for_status.side_effect = OSError('500')
+        request = FakeRequest('42', settings={'rmatics.endpoint': 'http://rmatics.test'})
+        with mock.patch.object(problem_view.requests, 'get', return_value=fake_resp):
+            languages = self._languages(request)
+
+        self.assertEqual(languages, problem_view._FALLBACK_LANGUAGES)
+
+    def test_languages_fallback_for_output_only(self):
+        request = FakeRequest('42', settings={'rmatics.endpoint': 'http://rmatics.test'})
+        with mock.patch.object(problem_view.requests, 'get', side_effect=OSError('down')):
+            languages = self._languages(request, problem=make_problem(output_only=True))
+
+        self.assertEqual(languages, [{'id': 0, 'name': 'Текстовый файл'}])
+
+    def test_languages_fall_back_without_endpoint(self):
+        self.assertEqual(self._languages(FakeRequest('42')), problem_view._FALLBACK_LANGUAGES)
+
     def test_not_found(self):
         request = FakeRequest('42')
         result = self._call(request, problem=None)
@@ -277,3 +333,27 @@ class ProblemGetTests(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+class ProblemSubmitsTests(unittest.TestCase):
+    def _submit(self, params):
+        request = FakeRequest('42', settings={'rmatics.endpoint': 'http://rmatics.test'},
+                              params={'lang_id': '27', **params})
+        request.POST = {'file': SimpleNamespace(file=mock.Mock())}
+        resp = mock.Mock()
+        resp.json.return_value = {'status': 'success'}
+        with mock.patch.object(problem_view, 'RequestGetUserId', return_value=7), \
+                mock.patch.object(problem_view.requests, 'post', return_value=resp) as post:
+            result = problem_view.problem_submits(request)
+        self.assertEqual(result, {'status': 'success'})
+        return post.call_args[1]['data']
+
+    def test_statement_id_is_passed_to_rmatics(self):
+        data = self._submit({'statement_id': '5'})
+        self.assertEqual(data['statement_id'], 5)
+        self.assertEqual(data['lang_id'], '27')
+        self.assertEqual(data['user_id'], 7)
+
+    def test_missing_or_invalid_statement_id_is_none(self):
+        self.assertIsNone(self._submit({})['statement_id'])
+        self.assertIsNone(self._submit({'statement_id': 'abc'})['statement_id'])

@@ -59,6 +59,57 @@ def _load_judges_config(endpoint):
     return judges
 
 
+# Languages offered when rmatics can't be asked. A static snapshot of what
+# Moodle's langs.php used to offer everybody; rmatics' answer replaces it.
+_OUTPUT_ONLY_LANGUAGES = [{"id": 0, "name": "Текстовый файл"}]
+_FALLBACK_LANGUAGES = [
+    {"id": 1, "name": "Free Pascal 3.0"},
+    {"id": 2, "name": "GNU C 11.2"},
+    {"id": 3, "name": "GNU C++ 11.2"},
+    {"id": 18, "name": "Java JDK 15"},
+    {"id": 22, "name": "PHP 7.2"},
+    {"id": 23, "name": "Python 2.7"},
+    {"id": 24, "name": "Perl 5.28"},
+    {"id": 25, "name": "Mono C# 6.12"},
+    {"id": 26, "name": "Ruby 2.5.3"},
+    {"id": 27, "name": "Python 3.9"},
+    {"id": 28, "name": "Haskell GHC 8.2.2"},
+    {"id": 29, "name": "FreeBASIC 1.05.0"},
+    {"id": 30, "name": "PascalABC 3.7"},
+    {"id": 53, "name": "GNU Go 11.2"},
+    {"id": 71, "name": "Kotlin 1.4"},
+    {"id": 89, "name": "Scala 2.13"},
+]
+
+
+def _problem_languages(request, problem, user_id):
+    """Languages the user can submit the problem in: [{'id', 'name'}, ...].
+
+    Asked from rmatics, which knows the routing and the statement's
+    allowed_languages. When it can't answer, the static fallback list is
+    returned instead (it can't honour per-problem routing or statements).
+    """
+    fallback = _OUTPUT_ONLY_LANGUAGES if problem.output_only else _FALLBACK_LANGUAGES
+    endpoint = request.registry.settings.get('rmatics.endpoint')
+    if not endpoint:
+        return fallback
+
+    params = {'user_id': user_id}
+    try:
+        params['statement_id'] = int(request.params['statement_id'])
+    except (KeyError, TypeError, ValueError):
+        pass
+
+    try:
+        resp = requests.get('{}/problem/{}/languages'.format(endpoint, problem.id),
+                            params=params, timeout=5)
+        resp.raise_for_status()
+        return resp.json()['data']
+    except Exception:
+        log.exception("Failed to load languages of problem %s from %s", problem.id, endpoint)
+        return fallback
+
+
 def _judge_config(judge_id, endpoint):
     """Return the judges config dict for a judge id, or None."""
     if judge_id is None:
@@ -186,6 +237,7 @@ def problem_get(request):
             "sample_tests_html": problem.sample_tests_html,
             "output_only": problem.output_only,
         }
+        result["languages"] = _problem_languages(request, problem, RequestGetUserId(request))
         if problem.show_limits:
             result["timelimit"] = problem.timelimit
             result["memorylimit"] = problem.memorylimit
@@ -233,7 +285,11 @@ def problem_submits(request):
     user_id = RequestGetUserId(request)
     lang_id = request.params["lang_id"]
     problem_id = request.matchdict["problem_id"]
-    statement_id = request.matchdict.get('statement_id')
+    # the route has no statement part: the widget sends it as a form field
+    try:
+        statement_id = int(request.params['statement_id'])
+    except (KeyError, TypeError, ValueError):
+        statement_id = None
     input_file = request.POST['file'].file
 
     try:
