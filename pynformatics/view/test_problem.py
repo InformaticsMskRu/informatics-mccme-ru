@@ -395,24 +395,71 @@ if __name__ == '__main__':
 
 
 class ProblemSubmitsTests(unittest.TestCase):
-    def _submit(self, params):
+    def _submit(self, params, statement=None, problem=None):
         request = FakeRequest('42', settings={'rmatics.endpoint': 'http://rmatics.test'},
                               params={'lang_id': '27', **params})
         request.POST = {'file': SimpleNamespace(file=mock.Mock())}
+
+        def query_for(model):
+            query = mock.Mock()
+            found = statement if model is problem_view.Statement else (problem or make_problem())
+            query.filter.return_value.first.return_value = found
+            return query
+
         resp = mock.Mock()
         resp.json.return_value = {'status': 'success'}
         with mock.patch.object(problem_view, 'RequestGetUserId', return_value=7), \
+                mock.patch.object(problem_view, 'DBSession') as db, \
                 mock.patch.object(problem_view.requests, 'post', return_value=resp) as post:
+            db.query.side_effect = query_for
             result = problem_view.problem_submits(request)
-        self.assertEqual(result, {'status': 'success'})
-        return post.call_args[1]['data']
+        return result, post
+
+    def _restricted(self, allowed=(3, 71)):
+        return SimpleNamespace(settings='{"allowed_languages": %s}' % list(allowed))
 
     def test_statement_id_is_passed_to_rmatics(self):
-        data = self._submit({'statement_id': '5'})
+        result, post = self._submit({'statement_id': '5'})
+        data = post.call_args[1]['data']
+        self.assertEqual(result, {'status': 'success'})
         self.assertEqual(data['statement_id'], 5)
         self.assertEqual(data['lang_id'], '27')
         self.assertEqual(data['user_id'], 7)
 
     def test_missing_or_invalid_statement_id_is_none(self):
-        self.assertIsNone(self._submit({})['statement_id'])
-        self.assertIsNone(self._submit({'statement_id': 'abc'})['statement_id'])
+        for params in ({}, {'statement_id': 'abc'}):
+            _, post = self._submit(params)
+            self.assertIsNone(post.call_args[1]['data']['statement_id'])
+
+    def test_language_not_allowed_in_statement_is_rejected(self):
+        result, post = self._submit({'statement_id': '5'}, statement=self._restricted())
+
+        post.assert_not_called()
+        self.assertEqual(result['status'], 'error')
+        self.assertEqual(result['error_code'], 'language_not_allowed')
+        self.assertEqual(result['error'], 'Language 27 is not allowed in statement 5')
+
+    def test_allowed_language_is_sent(self):
+        result, post = self._submit({'statement_id': '5'},
+                                    statement=self._restricted((3, 27)))
+
+        post.assert_called_once()
+        self.assertEqual(result, {'status': 'success'})
+
+    def test_statement_without_restriction_is_sent(self):
+        for settings in (None, '{}', '{"allowed_languages": []}'):
+            _, post = self._submit({'statement_id': '5'},
+                                   statement=SimpleNamespace(settings=settings))
+            post.assert_called_once()
+
+    def test_output_only_is_not_restricted(self):
+        _, post = self._submit({'statement_id': '5', 'lang_id': '0'},
+                               statement=self._restricted(),
+                               problem=make_problem(output_only=True))
+
+        post.assert_called_once()
+
+    def test_without_statement_id_nothing_is_restricted(self):
+        _, post = self._submit({}, statement=self._restricted())
+
+        post.assert_called_once()

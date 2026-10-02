@@ -103,6 +103,40 @@ def _statement_allowed_languages(statement_id):
     return allowed
 
 
+def _parse_statement_id(request):
+    """?statement_id= / form field statement_id as an int, or None."""
+    try:
+        return int(request.params['statement_id'])
+    except (KeyError, TypeError, ValueError):
+        return None
+
+
+def _check_language_allowed(problem_id, lang_id, statement_id):
+    """The error reply when the statement doesn't allow the language, else None.
+
+    Output-only problems take a text file, not a language, so they are never
+    restricted. Values this can't make sense of are left to rmatics to reject.
+    """
+    if not statement_id:
+        return None
+    try:
+        lang_id = int(lang_id)
+        problem = DBSession.query(Problem).filter(Problem.id == int(problem_id)).first()
+    except (TypeError, ValueError):
+        return None
+    if problem is None or problem.output_only:
+        return None
+    allowed = _statement_allowed_languages(statement_id)
+    if allowed is None or lang_id in allowed:
+        return None
+    return {
+        'status': 'error',
+        'status_code': 400,
+        'error_code': 'language_not_allowed',
+        'error': 'Language {} is not allowed in statement {}'.format(lang_id, statement_id),
+    }
+
+
 def _problem_languages(request, problem, user_id):
     """Languages the user can submit the problem in: [{'id', 'name'}, ...].
 
@@ -134,10 +168,7 @@ def _problem_languages(request, problem, user_id):
 
     # answers are plain text for output-only problems, not a language
     if not problem.output_only:
-        try:
-            statement_id = int(request.params['statement_id'])
-        except (KeyError, TypeError, ValueError):
-            statement_id = None
+        statement_id = _parse_statement_id(request)
         allowed = _statement_allowed_languages(statement_id) if statement_id else None
         if allowed is not None:
             languages = [lang for lang in languages if lang['id'] in allowed]
@@ -320,13 +351,15 @@ def problem_submits(request):
     lang_id = request.params["lang_id"]
     problem_id = request.matchdict["problem_id"]
     # the route has no statement part: the widget sends it as a form field
-    try:
-        statement_id = int(request.params['statement_id'])
-    except (KeyError, TypeError, ValueError):
-        statement_id = None
+    statement_id = _parse_statement_id(request)
     input_file = request.POST['file'].file
 
     try:
+        # rmatics doesn't know allowed_languages: it is checked here
+        error = _check_language_allowed(problem_id, lang_id, statement_id)
+        if error is not None:
+            return error
+
         input_file.seek(0)
         _data = {
             'lang_id': lang_id,
