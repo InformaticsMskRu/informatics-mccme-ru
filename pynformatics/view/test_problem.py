@@ -267,7 +267,8 @@ class ProblemGetTests(unittest.TestCase):
             languages = self._languages(request)
 
         get.assert_called_once_with('http://rmatics.test/problem/42',
-                                    params={'user_id': 7}, timeout=5)
+                                    params={'user_id': 7, 'exclude': 'sample_tests_json'},
+                                    timeout=5)
         self.assertEqual(languages, [{'id': 27, 'name': 'Python 3.9'}])
 
     def test_output_only_language_is_named_here(self):

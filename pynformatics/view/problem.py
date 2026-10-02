@@ -153,7 +153,9 @@ def _problem_languages(request, problem, user_id):
         if endpoint:
             try:
                 resp = requests.get('{}/problem/{}'.format(endpoint, problem.id),
-                                    params={'user_id': user_id}, timeout=5)
+                                    params={'user_id': user_id,
+                                            'exclude': 'sample_tests_json'},
+                                    timeout=5)
                 resp.raise_for_status()
                 languages = resp.json()['data']['languages']
             except Exception:
