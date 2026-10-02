@@ -261,18 +261,18 @@ class ProblemGetTests(unittest.TestCase):
     def test_languages_from_rmatics(self):
         endpoint = 'http://rmatics.test'
         fake_resp = mock.Mock()
-        fake_resp.json.return_value = {'data': [{'id': 27, 'name': 'Python 3.9'}]}
+        fake_resp.json.return_value = {'data': {'languages': [{'id': 27, 'name': 'Python 3.9'}]}}
         request = FakeRequest('42', settings={'rmatics.endpoint': endpoint})
         with mock.patch.object(problem_view.requests, 'get', return_value=fake_resp) as get:
             languages = self._languages(request)
 
-        get.assert_called_once_with('http://rmatics.test/problem/42/languages',
+        get.assert_called_once_with('http://rmatics.test/problem/42',
                                     params={'user_id': 7}, timeout=5)
         self.assertEqual(languages, [{'id': 27, 'name': 'Python 3.9'}])
 
     def test_output_only_language_is_named_here(self):
         fake_resp = mock.Mock()
-        fake_resp.json.return_value = {'data': [{'id': 0, 'name': None}]}
+        fake_resp.json.return_value = {'data': {'languages': [{'id': 0, 'name': None}]}}
         request = FakeRequest('42', settings={'rmatics.endpoint': 'http://rmatics.test'})
         with mock.patch.object(problem_view.requests, 'get', return_value=fake_resp):
             languages = self._languages(request, problem=make_problem(output_only=True))
@@ -282,11 +282,11 @@ class ProblemGetTests(unittest.TestCase):
     def _restricted(self, settings, params=None, **kwargs):
         """Languages 1, 3 and 27 from rmatics, narrowed by a statement."""
         fake_resp = mock.Mock()
-        fake_resp.json.return_value = {'data': [
+        fake_resp.json.return_value = {'data': {'languages': [
             {'id': 1, 'name': 'Free Pascal 3.0'},
             {'id': 3, 'name': 'GNU C++ 11.2'},
             {'id': 27, 'name': 'Python 3.9'},
-        ]}
+        ]}}
         request = FakeRequest('42', settings={'rmatics.endpoint': 'http://rmatics.test'},
                               params=params or {'statement_id': '5'})
         statement = SimpleNamespace(settings=settings)
@@ -329,7 +329,7 @@ class ProblemGetTests(unittest.TestCase):
                               params={'statement_id': '5'})
         statement = SimpleNamespace(settings='{"allowed_languages": [27]}')
         fake_resp = mock.Mock()
-        fake_resp.json.return_value = {'data': [{'id': 0, 'name': None}]}
+        fake_resp.json.return_value = {'data': {'languages': [{'id': 0, 'name': None}]}}
         with mock.patch.object(problem_view.requests, 'get', return_value=fake_resp):
             languages = self._languages(request, problem=make_problem(output_only=True),
                                         statement=statement)

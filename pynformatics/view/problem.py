@@ -140,7 +140,7 @@ def _check_language_allowed(problem_id, lang_id, statement_id):
 def _problem_languages(request, problem, user_id):
     """Languages the user can submit the problem in: [{'id', 'name'}, ...].
 
-    Asked from rmatics, which knows the judges routing, then narrowed by the
+    Asked from rmatics (the languages field of its problem), which knows the judges routing, then narrowed by the
     allowed_languages of the statement given as ?statement_id= (rmatics
     enforces that on submit). When rmatics can't answer, the static fallback
     list is used instead (it can't honour per-problem routing).
@@ -152,10 +152,10 @@ def _problem_languages(request, problem, user_id):
         endpoint = request.registry.settings.get('rmatics.endpoint')
         if endpoint:
             try:
-                resp = requests.get('{}/problem/{}/languages'.format(endpoint, problem.id),
+                resp = requests.get('{}/problem/{}'.format(endpoint, problem.id),
                                     params={'user_id': user_id}, timeout=5)
                 resp.raise_for_status()
-                languages = resp.json()['data']
+                languages = resp.json()['data']['languages']
             except Exception:
                 log.exception("Failed to load languages of problem %s from %s",
                               problem.id, endpoint)
