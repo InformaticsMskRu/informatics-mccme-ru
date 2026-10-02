@@ -212,7 +212,8 @@ class ProblemGetTests(unittest.TestCase):
             )
         self.addCleanup(problem_view._judges_config_cache.pop, endpoint, None)
 
-        get.assert_called_once_with('{}/judges'.format(endpoint), timeout=5)
+        # the problem's languages are asked from the same endpoint
+        get.assert_any_call('{}/judges'.format(endpoint), timeout=5)
         self.assertEqual(result['judges_settings'][0]['judge_name'], 'Judge-2')
         # url is a ready-to-use ejudge master link built on the server
         self.assertEqual(result['judges_settings'][0]['url'],
@@ -289,7 +290,7 @@ class ProblemGetTests(unittest.TestCase):
             {'id': 27, 'name': 'Python 3.9'},
         ]}}
         request = FakeRequest('42', settings={'rmatics.endpoint': 'http://rmatics.test'},
-                              params=params or {'statement_id': '5'})
+                              params={'statement_id': '5'} if params is None else params)
         statement = SimpleNamespace(settings=settings)
         with mock.patch.object(problem_view.requests, 'get', return_value=fake_resp):
             languages = self._languages(request, statement=statement, **kwargs)
