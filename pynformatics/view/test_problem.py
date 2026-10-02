@@ -55,11 +55,12 @@ def make_ejudge(**overrides):
 
 
 class ProblemGetTests(unittest.TestCase):
-    def _call(self, request, problem=None, ejudge=None, caps=None, query_raises=None):
+    def _call(self, request, problem=None, ejudge=None, caps=None, query_raises=None,
+              statement=None):
         """Invoke problem_get with DBSession and capability checks mocked.
 
         The base Problem query returns `problem`; the EjudgeProblemDummy query
-        returns `ejudge`. caps maps a capability string -> bool; anything not
+        returns `ejudge` and the Statement query `statement`. caps maps a capability string -> bool; anything not
         listed is denied.
         """
         caps = caps or {}
@@ -68,6 +69,8 @@ class ProblemGetTests(unittest.TestCase):
             query = mock.Mock()
             if model is problem_view.EjudgeProblemDummy:
                 query.filter.return_value.first.return_value = ejudge
+            elif model is problem_view.Statement:
+                query.filter.return_value.first.return_value = statement
             else:
                 query.filter.return_value.first.return_value = problem
             return query
@@ -250,21 +253,21 @@ class ProblemGetTests(unittest.TestCase):
         self.assertNotIn('show_limits', result)
         self.assertNotIn('sample_tests', result)
 
-    def _languages(self, request, problem=None, user_id=7):
+    def _languages(self, request, problem=None, user_id=7, statement=None):
         with mock.patch.object(problem_view, 'RequestGetUserId', return_value=user_id):
-            return self._call(request, problem=problem or make_problem())['languages']
+            return self._call(request, problem=problem or make_problem(),
+                              statement=statement)['languages']
 
     def test_languages_from_rmatics(self):
         endpoint = 'http://rmatics.test'
         fake_resp = mock.Mock()
         fake_resp.json.return_value = {'data': [{'id': 27, 'name': 'Python 3.9'}]}
-        request = FakeRequest('42', settings={'rmatics.endpoint': endpoint},
-                              params={'statement_id': '5'})
+        request = FakeRequest('42', settings={'rmatics.endpoint': endpoint})
         with mock.patch.object(problem_view.requests, 'get', return_value=fake_resp) as get:
             languages = self._languages(request)
 
         get.assert_called_once_with('http://rmatics.test/problem/42/languages',
-                                    params={'user_id': 7, 'statement_id': 5}, timeout=5)
+                                    params={'user_id': 7}, timeout=5)
         self.assertEqual(languages, [{'id': 27, 'name': 'Python 3.9'}])
 
     def test_output_only_language_is_named_here(self):
@@ -276,15 +279,62 @@ class ProblemGetTests(unittest.TestCase):
 
         self.assertEqual(languages, [{'id': 0, 'name': 'Текстовый файл'}])
 
-    def test_languages_invalid_statement_id_is_ignored(self):
+    def _restricted(self, settings, params=None, **kwargs):
+        """Languages 1, 3 and 27 from rmatics, narrowed by a statement."""
         fake_resp = mock.Mock()
-        fake_resp.json.return_value = {'data': []}
+        fake_resp.json.return_value = {'data': [
+            {'id': 1, 'name': 'Free Pascal 3.0'},
+            {'id': 3, 'name': 'GNU C++ 11.2'},
+            {'id': 27, 'name': 'Python 3.9'},
+        ]}
         request = FakeRequest('42', settings={'rmatics.endpoint': 'http://rmatics.test'},
-                              params={'statement_id': 'abc'})
-        with mock.patch.object(problem_view.requests, 'get', return_value=fake_resp) as get:
-            self._languages(request, user_id=-1)
+                              params=params or {'statement_id': '5'})
+        statement = SimpleNamespace(settings=settings)
+        with mock.patch.object(problem_view.requests, 'get', return_value=fake_resp):
+            languages = self._languages(request, statement=statement, **kwargs)
+        return [lang['id'] for lang in languages]
 
-        self.assertEqual(get.call_args[1]['params'], {'user_id': -1})
+    def test_statement_allowed_languages_narrow_the_list(self):
+        self.assertEqual(self._restricted('{"allowed_languages": [3, 71]}'), [3])
+
+    def test_statement_without_allowed_languages_keeps_all(self):
+        for settings in (None, '', '{}', '{"allowed_languages": []}',
+                         '{"allowed_languages": null}'):
+            self.assertEqual(self._restricted(settings), [1, 3, 27], settings)
+
+    def test_statement_with_unreadable_settings_keeps_all(self):
+        for settings in ('not json', '[1, 2]', '{"allowed_languages": 3}'):
+            self.assertEqual(self._restricted(settings), [1, 3, 27], settings)
+
+    def test_unknown_statement_keeps_all(self):
+        self.assertEqual(self._restricted(None), [1, 3, 27])
+
+    def test_missing_or_invalid_statement_id_is_ignored(self):
+        settings = '{"allowed_languages": [3]}'
+        self.assertEqual(self._restricted(settings, params={}), [1, 3, 27])
+        self.assertEqual(self._restricted(settings, params={'statement_id': 'abc'}),
+                         [1, 3, 27])
+
+    def test_statement_narrows_the_fallback_list(self):
+        request = FakeRequest('42', settings={'rmatics.endpoint': 'http://rmatics.test'},
+                              params={'statement_id': '5'})
+        statement = SimpleNamespace(settings='{"allowed_languages": [27]}')
+        with mock.patch.object(problem_view.requests, 'get', side_effect=OSError('down')):
+            languages = self._languages(request, statement=statement)
+
+        self.assertEqual(languages, [{'id': 27, 'name': 'Python 3.9'}])
+
+    def test_statement_does_not_restrict_output_only(self):
+        request = FakeRequest('42', settings={'rmatics.endpoint': 'http://rmatics.test'},
+                              params={'statement_id': '5'})
+        statement = SimpleNamespace(settings='{"allowed_languages": [27]}')
+        fake_resp = mock.Mock()
+        fake_resp.json.return_value = {'data': [{'id': 0, 'name': None}]}
+        with mock.patch.object(problem_view.requests, 'get', return_value=fake_resp):
+            languages = self._languages(request, problem=make_problem(output_only=True),
+                                        statement=statement)
+
+        self.assertEqual(languages, [{'id': 0, 'name': 'Текстовый файл'}])
 
     def test_languages_fall_back_when_rmatics_is_unreachable(self):
         request = FakeRequest('42', settings={'rmatics.endpoint': 'http://rmatics.test'})

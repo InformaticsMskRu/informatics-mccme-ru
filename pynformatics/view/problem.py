@@ -12,7 +12,7 @@ import transaction
 from pyramid.view import view_config
 
 from pynformatics.contest.ejudge.serve_internal import EjudgeContestCfg
-from pynformatics.model import SimpleUser, EjudgeProblem, EjudgeProblemDummy, Problem
+from pynformatics.model import SimpleUser, EjudgeProblem, EjudgeProblemDummy, Problem, Statement
 from pynformatics.models import DBSession
 from pynformatics.utils.proxied_request_helpers import peek_request_args
 from pynformatics.view.utils import *
@@ -84,38 +84,64 @@ _FALLBACK_LANGUAGES = [
 ]
 
 
+def _statement_allowed_languages(statement_id):
+    """allowed_languages of the statement, or None when it doesn't restrict them.
+
+    Mirrors rmatics' Statement.is_language_allowed: a missing or empty list
+    means "not set", not "nothing allowed". Unreadable settings restrict nothing.
+    """
+    statement = DBSession.query(Statement).filter(Statement.id == statement_id).first()
+    if statement is None or not statement.settings:
+        return None
+    try:
+        allowed = json.loads(statement.settings).get('allowed_languages')
+    except (ValueError, AttributeError):
+        log.warning("Statement %s has unreadable settings", statement_id)
+        return None
+    if not isinstance(allowed, list) or not allowed:
+        return None
+    return allowed
+
+
 def _problem_languages(request, problem, user_id):
     """Languages the user can submit the problem in: [{'id', 'name'}, ...].
 
-    Asked from rmatics, which knows the routing and the statement's
-    allowed_languages. When it can't answer, the static fallback list is
-    returned instead (it can't honour per-problem routing or statements).
+    Asked from rmatics, which knows the judges routing, then narrowed by the
+    allowed_languages of the statement given as ?statement_id= (rmatics
+    enforces that on submit). When rmatics can't answer, the static fallback
+    list is used instead (it can't honour per-problem routing).
     """
-    fallback = _OUTPUT_ONLY_LANGUAGES if problem.output_only else _FALLBACK_LANGUAGES
-    endpoint = request.registry.settings.get('rmatics.endpoint')
-    if not endpoint:
-        return fallback
-
-    params = {'user_id': user_id}
-    try:
-        params['statement_id'] = int(request.params['statement_id'])
-    except (KeyError, TypeError, ValueError):
-        pass
-
-    try:
-        resp = requests.get('{}/problem/{}/languages'.format(endpoint, problem.id),
-                            params=params, timeout=5)
-        resp.raise_for_status()
-        languages = resp.json()['data']
-    except Exception:
-        log.exception("Failed to load languages of problem %s from %s", problem.id, endpoint)
-        return fallback
+    if problem.output_only:
+        languages = _OUTPUT_ONLY_LANGUAGES
+    else:
+        languages = _FALLBACK_LANGUAGES
+        endpoint = request.registry.settings.get('rmatics.endpoint')
+        if endpoint:
+            try:
+                resp = requests.get('{}/problem/{}/languages'.format(endpoint, problem.id),
+                                    params={'user_id': user_id}, timeout=5)
+                resp.raise_for_status()
+                languages = resp.json()['data']
+            except Exception:
+                log.exception("Failed to load languages of problem %s from %s",
+                              problem.id, endpoint)
 
     # rmatics leaves the name of the output-only "language" unset
-    return [
+    languages = [
         dict(lang, name=OUTPUT_ONLY_LANG_NAME) if lang['name'] is None else lang
         for lang in languages
     ]
+
+    # answers are plain text for output-only problems, not a language
+    if not problem.output_only:
+        try:
+            statement_id = int(request.params['statement_id'])
+        except (KeyError, TypeError, ValueError):
+            statement_id = None
+        allowed = _statement_allowed_languages(statement_id) if statement_id else None
+        if allowed is not None:
+            languages = [lang for lang in languages if lang['id'] in allowed]
+    return languages
 
 
 def _judge_config(judge_id, endpoint):
