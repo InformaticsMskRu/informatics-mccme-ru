@@ -25,6 +25,8 @@ class Statement(Base):
     timestart = Column(Integer)
     timestop = Column(Integer)
     olympiad = Column(Integer)
+    # JSON text, see rmatics' Statement.SETTINGS_SCHEMA
+    settings = Column(Text)
 #    analysis = Column(Unicode)
     
     problems = association_proxy("StatementProblems", 'problem')

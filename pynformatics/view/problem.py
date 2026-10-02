@@ -12,7 +12,7 @@ import transaction
 from pyramid.view import view_config
 
 from pynformatics.contest.ejudge.serve_internal import EjudgeContestCfg
-from pynformatics.model import SimpleUser, EjudgeProblem, EjudgeProblemDummy, Problem
+from pynformatics.model import SimpleUser, EjudgeProblem, EjudgeProblemDummy, Problem, Statement
 from pynformatics.models import DBSession
 from pynformatics.utils.proxied_request_helpers import peek_request_args
 from pynformatics.view.utils import *
@@ -57,6 +57,124 @@ def _load_judges_config(endpoint):
 
     _judges_config_cache[endpoint] = (now, judges)
     return judges
+
+
+# Languages offered when rmatics can't be asked. A static snapshot of what
+# Moodle's langs.php used to offer everybody; rmatics' answer replaces it.
+OUTPUT_ONLY_LANG_ID = 0
+OUTPUT_ONLY_LANG_NAME = 'Текстовый файл'
+_OUTPUT_ONLY_LANGUAGES = [{"id": OUTPUT_ONLY_LANG_ID, "name": OUTPUT_ONLY_LANG_NAME}]
+_FALLBACK_LANGUAGES = [
+    {"id": 1, "name": "Free Pascal 3.0"},
+    {"id": 2, "name": "GNU C 11.2"},
+    {"id": 3, "name": "GNU C++ 11.2"},
+    {"id": 18, "name": "Java JDK 15"},
+    {"id": 22, "name": "PHP 7.2"},
+    {"id": 23, "name": "Python 2.7"},
+    {"id": 24, "name": "Perl 5.28"},
+    {"id": 25, "name": "Mono C# 6.12"},
+    {"id": 26, "name": "Ruby 2.5.3"},
+    {"id": 27, "name": "Python 3.9"},
+    {"id": 28, "name": "Haskell GHC 8.2.2"},
+    {"id": 29, "name": "FreeBASIC 1.05.0"},
+    {"id": 30, "name": "PascalABC 3.7"},
+    {"id": 53, "name": "GNU Go 11.2"},
+    {"id": 71, "name": "Kotlin 1.4"},
+    {"id": 89, "name": "Scala 2.13"},
+]
+
+
+def _statement_allowed_languages(statement_id):
+    """allowed_languages of the statement, or None when it doesn't restrict them.
+
+    Mirrors rmatics' Statement.is_language_allowed: a missing or empty list
+    means "not set", not "nothing allowed". Unreadable settings restrict nothing.
+    """
+    statement = DBSession.query(Statement).filter(Statement.id == statement_id).first()
+    if statement is None or not statement.settings:
+        return None
+    try:
+        allowed = json.loads(statement.settings).get('allowed_languages')
+    except (ValueError, AttributeError):
+        log.warning("Statement %s has unreadable settings", statement_id)
+        return None
+    if not isinstance(allowed, list) or not allowed:
+        return None
+    return allowed
+
+
+def _parse_statement_id(request):
+    """?statement_id= / form field statement_id as an int, or None."""
+    try:
+        return int(request.params['statement_id'])
+    except (KeyError, TypeError, ValueError):
+        return None
+
+
+def _check_language_allowed(problem_id, lang_id, statement_id):
+    """The error reply when the statement doesn't allow the language, else None.
+
+    Output-only problems take a text file, not a language, so they are never
+    restricted. Values this can't make sense of are left to rmatics to reject.
+    """
+    if not statement_id:
+        return None
+    try:
+        lang_id = int(lang_id)
+        problem = DBSession.query(Problem).filter(Problem.id == int(problem_id)).first()
+    except (TypeError, ValueError):
+        return None
+    if problem is None or problem.output_only:
+        return None
+    allowed = _statement_allowed_languages(statement_id)
+    if allowed is None or lang_id in allowed:
+        return None
+    return {
+        'status': 'error',
+        'status_code': 400,
+        'error_code': 'language_not_allowed',
+        'error': 'Language {} is not allowed in statement {}'.format(lang_id, statement_id),
+    }
+
+
+def _problem_languages(request, problem, user_id):
+    """Languages the user can submit the problem in: [{'id', 'name'}, ...].
+
+    Asked from rmatics (the languages field of its problem), which knows the judges routing, then narrowed by the
+    allowed_languages of the statement given as ?statement_id= (rmatics
+    enforces that on submit). When rmatics can't answer, the static fallback
+    list is used instead (it can't honour per-problem routing).
+    """
+    if problem.output_only:
+        languages = _OUTPUT_ONLY_LANGUAGES
+    else:
+        languages = _FALLBACK_LANGUAGES
+        endpoint = request.registry.settings.get('rmatics.endpoint')
+        if endpoint:
+            try:
+                resp = requests.get('{}/problem/{}'.format(endpoint, problem.id),
+                                    params={'user_id': user_id,
+                                            'exclude': 'sample_tests_json'},
+                                    timeout=5)
+                resp.raise_for_status()
+                languages = resp.json()['data']['languages']
+            except Exception:
+                log.exception("Failed to load languages of problem %s from %s",
+                              problem.id, endpoint)
+
+    # rmatics leaves the name of the output-only "language" unset
+    languages = [
+        dict(lang, name=OUTPUT_ONLY_LANG_NAME) if lang['name'] is None else lang
+        for lang in languages
+    ]
+
+    # answers are plain text for output-only problems, not a language
+    if not problem.output_only:
+        statement_id = _parse_statement_id(request)
+        allowed = _statement_allowed_languages(statement_id) if statement_id else None
+        if allowed is not None:
+            languages = [lang for lang in languages if lang['id'] in allowed]
+    return languages
 
 
 def _judge_config(judge_id, endpoint):
@@ -186,6 +304,7 @@ def problem_get(request):
             "sample_tests_html": problem.sample_tests_html,
             "output_only": problem.output_only,
         }
+        result["languages"] = _problem_languages(request, problem, RequestGetUserId(request))
         if problem.show_limits:
             result["timelimit"] = problem.timelimit
             result["memorylimit"] = problem.memorylimit
@@ -233,10 +352,16 @@ def problem_submits(request):
     user_id = RequestGetUserId(request)
     lang_id = request.params["lang_id"]
     problem_id = request.matchdict["problem_id"]
-    statement_id = request.matchdict.get('statement_id')
+    # the route has no statement part: the widget sends it as a form field
+    statement_id = _parse_statement_id(request)
     input_file = request.POST['file'].file
 
     try:
+        # rmatics doesn't know allowed_languages: it is checked here
+        error = _check_language_allowed(problem_id, lang_id, statement_id)
+        if error is not None:
+            return error
+
         input_file.seek(0)
         _data = {
             'lang_id': lang_id,

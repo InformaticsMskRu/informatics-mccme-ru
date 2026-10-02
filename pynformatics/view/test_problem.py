@@ -11,10 +11,12 @@ class FakeResponse:
 
 
 class FakeRequest:
-    def __init__(self, problem_id, settings=None):
+    def __init__(self, problem_id, settings=None, params=None):
         self.matchdict = {'problem_id': problem_id}
         self.response = FakeResponse()
         self.registry = SimpleNamespace(settings=settings or {})
+        self.params = params or {}
+        self.cookies = {}
 
 
 def make_problem(**overrides):
@@ -53,11 +55,12 @@ def make_ejudge(**overrides):
 
 
 class ProblemGetTests(unittest.TestCase):
-    def _call(self, request, problem=None, ejudge=None, caps=None, query_raises=None):
+    def _call(self, request, problem=None, ejudge=None, caps=None, query_raises=None,
+              statement=None):
         """Invoke problem_get with DBSession and capability checks mocked.
 
         The base Problem query returns `problem`; the EjudgeProblemDummy query
-        returns `ejudge`. caps maps a capability string -> bool; anything not
+        returns `ejudge` and the Statement query `statement`. caps maps a capability string -> bool; anything not
         listed is denied.
         """
         caps = caps or {}
@@ -66,6 +69,8 @@ class ProblemGetTests(unittest.TestCase):
             query = mock.Mock()
             if model is problem_view.EjudgeProblemDummy:
                 query.filter.return_value.first.return_value = ejudge
+            elif model is problem_view.Statement:
+                query.filter.return_value.first.return_value = statement
             else:
                 query.filter.return_value.first.return_value = problem
             return query
@@ -207,7 +212,8 @@ class ProblemGetTests(unittest.TestCase):
             )
         self.addCleanup(problem_view._judges_config_cache.pop, endpoint, None)
 
-        get.assert_called_once_with('{}/judges'.format(endpoint), timeout=5)
+        # the problem's languages are asked from the same endpoint
+        get.assert_any_call('{}/judges'.format(endpoint), timeout=5)
         self.assertEqual(result['judges_settings'][0]['judge_name'], 'Judge-2')
         # url is a ready-to-use ejudge master link built on the server
         self.assertEqual(result['judges_settings'][0]['url'],
@@ -248,6 +254,117 @@ class ProblemGetTests(unittest.TestCase):
         self.assertNotIn('show_limits', result)
         self.assertNotIn('sample_tests', result)
 
+    def _languages(self, request, problem=None, user_id=7, statement=None):
+        with mock.patch.object(problem_view, 'RequestGetUserId', return_value=user_id):
+            return self._call(request, problem=problem or make_problem(),
+                              statement=statement)['languages']
+
+    def test_languages_from_rmatics(self):
+        endpoint = 'http://rmatics.test'
+        fake_resp = mock.Mock()
+        fake_resp.json.return_value = {'data': {'languages': [{'id': 27, 'name': 'Python 3.9'}]}}
+        request = FakeRequest('42', settings={'rmatics.endpoint': endpoint})
+        with mock.patch.object(problem_view.requests, 'get', return_value=fake_resp) as get:
+            languages = self._languages(request)
+
+        get.assert_called_once_with('http://rmatics.test/problem/42',
+                                    params={'user_id': 7, 'exclude': 'sample_tests_json'},
+                                    timeout=5)
+        self.assertEqual(languages, [{'id': 27, 'name': 'Python 3.9'}])
+
+    def test_output_only_language_is_named_here(self):
+        fake_resp = mock.Mock()
+        fake_resp.json.return_value = {'data': {'languages': [{'id': 0, 'name': None}]}}
+        request = FakeRequest('42', settings={'rmatics.endpoint': 'http://rmatics.test'})
+        with mock.patch.object(problem_view.requests, 'get', return_value=fake_resp):
+            languages = self._languages(request, problem=make_problem(output_only=True))
+
+        self.assertEqual(languages, [{'id': 0, 'name': 'Текстовый файл'}])
+
+    def _restricted(self, settings, params=None, **kwargs):
+        """Languages 1, 3 and 27 from rmatics, narrowed by a statement."""
+        fake_resp = mock.Mock()
+        fake_resp.json.return_value = {'data': {'languages': [
+            {'id': 1, 'name': 'Free Pascal 3.0'},
+            {'id': 3, 'name': 'GNU C++ 11.2'},
+            {'id': 27, 'name': 'Python 3.9'},
+        ]}}
+        request = FakeRequest('42', settings={'rmatics.endpoint': 'http://rmatics.test'},
+                              params={'statement_id': '5'} if params is None else params)
+        statement = SimpleNamespace(settings=settings)
+        with mock.patch.object(problem_view.requests, 'get', return_value=fake_resp):
+            languages = self._languages(request, statement=statement, **kwargs)
+        return [lang['id'] for lang in languages]
+
+    def test_statement_allowed_languages_narrow_the_list(self):
+        self.assertEqual(self._restricted('{"allowed_languages": [3, 71]}'), [3])
+
+    def test_statement_without_allowed_languages_keeps_all(self):
+        for settings in (None, '', '{}', '{"allowed_languages": []}',
+                         '{"allowed_languages": null}'):
+            self.assertEqual(self._restricted(settings), [1, 3, 27], settings)
+
+    def test_statement_with_unreadable_settings_keeps_all(self):
+        for settings in ('not json', '[1, 2]', '{"allowed_languages": 3}'):
+            self.assertEqual(self._restricted(settings), [1, 3, 27], settings)
+
+    def test_unknown_statement_keeps_all(self):
+        self.assertEqual(self._restricted(None), [1, 3, 27])
+
+    def test_missing_or_invalid_statement_id_is_ignored(self):
+        settings = '{"allowed_languages": [3]}'
+        self.assertEqual(self._restricted(settings, params={}), [1, 3, 27])
+        self.assertEqual(self._restricted(settings, params={'statement_id': 'abc'}),
+                         [1, 3, 27])
+
+    def test_statement_narrows_the_fallback_list(self):
+        request = FakeRequest('42', settings={'rmatics.endpoint': 'http://rmatics.test'},
+                              params={'statement_id': '5'})
+        statement = SimpleNamespace(settings='{"allowed_languages": [27]}')
+        with mock.patch.object(problem_view.requests, 'get', side_effect=OSError('down')):
+            languages = self._languages(request, statement=statement)
+
+        self.assertEqual(languages, [{'id': 27, 'name': 'Python 3.9'}])
+
+    def test_statement_does_not_restrict_output_only(self):
+        request = FakeRequest('42', settings={'rmatics.endpoint': 'http://rmatics.test'},
+                              params={'statement_id': '5'})
+        statement = SimpleNamespace(settings='{"allowed_languages": [27]}')
+        fake_resp = mock.Mock()
+        fake_resp.json.return_value = {'data': {'languages': [{'id': 0, 'name': None}]}}
+        with mock.patch.object(problem_view.requests, 'get', return_value=fake_resp):
+            languages = self._languages(request, problem=make_problem(output_only=True),
+                                        statement=statement)
+
+        self.assertEqual(languages, [{'id': 0, 'name': 'Текстовый файл'}])
+
+    def test_languages_fall_back_when_rmatics_is_unreachable(self):
+        request = FakeRequest('42', settings={'rmatics.endpoint': 'http://rmatics.test'})
+        with mock.patch.object(problem_view.requests, 'get', side_effect=OSError('down')):
+            languages = self._languages(request)
+
+        self.assertEqual(languages, problem_view._FALLBACK_LANGUAGES)
+        self.assertIn({'id': 27, 'name': 'Python 3.9'}, languages)
+
+    def test_languages_fall_back_on_error_status(self):
+        fake_resp = mock.Mock()
+        fake_resp.raise_for_status.side_effect = OSError('500')
+        request = FakeRequest('42', settings={'rmatics.endpoint': 'http://rmatics.test'})
+        with mock.patch.object(problem_view.requests, 'get', return_value=fake_resp):
+            languages = self._languages(request)
+
+        self.assertEqual(languages, problem_view._FALLBACK_LANGUAGES)
+
+    def test_languages_fallback_for_output_only(self):
+        request = FakeRequest('42', settings={'rmatics.endpoint': 'http://rmatics.test'})
+        with mock.patch.object(problem_view.requests, 'get', side_effect=OSError('down')):
+            languages = self._languages(request, problem=make_problem(output_only=True))
+
+        self.assertEqual(languages, [{'id': 0, 'name': 'Текстовый файл'}])
+
+    def test_languages_fall_back_without_endpoint(self):
+        self.assertEqual(self._languages(FakeRequest('42')), problem_view._FALLBACK_LANGUAGES)
+
     def test_not_found(self):
         request = FakeRequest('42')
         result = self._call(request, problem=None)
@@ -277,3 +394,74 @@ class ProblemGetTests(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+class ProblemSubmitsTests(unittest.TestCase):
+    def _submit(self, params, statement=None, problem=None):
+        request = FakeRequest('42', settings={'rmatics.endpoint': 'http://rmatics.test'},
+                              params={'lang_id': '27', **params})
+        request.POST = {'file': SimpleNamespace(file=mock.Mock())}
+
+        def query_for(model):
+            query = mock.Mock()
+            found = statement if model is problem_view.Statement else (problem or make_problem())
+            query.filter.return_value.first.return_value = found
+            return query
+
+        resp = mock.Mock()
+        resp.json.return_value = {'status': 'success'}
+        with mock.patch.object(problem_view, 'RequestGetUserId', return_value=7), \
+                mock.patch.object(problem_view, 'DBSession') as db, \
+                mock.patch.object(problem_view.requests, 'post', return_value=resp) as post:
+            db.query.side_effect = query_for
+            result = problem_view.problem_submits(request)
+        return result, post
+
+    def _restricted(self, allowed=(3, 71)):
+        return SimpleNamespace(settings='{"allowed_languages": %s}' % list(allowed))
+
+    def test_statement_id_is_passed_to_rmatics(self):
+        result, post = self._submit({'statement_id': '5'})
+        data = post.call_args[1]['data']
+        self.assertEqual(result, {'status': 'success'})
+        self.assertEqual(data['statement_id'], 5)
+        self.assertEqual(data['lang_id'], '27')
+        self.assertEqual(data['user_id'], 7)
+
+    def test_missing_or_invalid_statement_id_is_none(self):
+        for params in ({}, {'statement_id': 'abc'}):
+            _, post = self._submit(params)
+            self.assertIsNone(post.call_args[1]['data']['statement_id'])
+
+    def test_language_not_allowed_in_statement_is_rejected(self):
+        result, post = self._submit({'statement_id': '5'}, statement=self._restricted())
+
+        post.assert_not_called()
+        self.assertEqual(result['status'], 'error')
+        self.assertEqual(result['error_code'], 'language_not_allowed')
+        self.assertEqual(result['error'], 'Language 27 is not allowed in statement 5')
+
+    def test_allowed_language_is_sent(self):
+        result, post = self._submit({'statement_id': '5'},
+                                    statement=self._restricted((3, 27)))
+
+        post.assert_called_once()
+        self.assertEqual(result, {'status': 'success'})
+
+    def test_statement_without_restriction_is_sent(self):
+        for settings in (None, '{}', '{"allowed_languages": []}'):
+            _, post = self._submit({'statement_id': '5'},
+                                   statement=SimpleNamespace(settings=settings))
+            post.assert_called_once()
+
+    def test_output_only_is_not_restricted(self):
+        _, post = self._submit({'statement_id': '5', 'lang_id': '0'},
+                               statement=self._restricted(),
+                               problem=make_problem(output_only=True))
+
+        post.assert_called_once()
+
+    def test_without_statement_id_nothing_is_restricted(self):
+        _, post = self._submit({}, statement=self._restricted())
+
+        post.assert_called_once()
