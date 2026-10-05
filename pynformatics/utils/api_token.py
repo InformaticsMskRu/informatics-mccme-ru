@@ -15,7 +15,7 @@ from hmac import compare_digest
 from pyramid.response import Response
 
 # Far from DEFAULT_MOODLE_CONTEXT_SOURCE (10) and CONTEXT_SHIFT + course_id
-API_CONTEXT_BASE = 10_000_000
+API_CONTEXT_BASE = 10000000
 
 # Moodle ids up to 2 are the guest and the system users
 MIN_USER_ID = 3
