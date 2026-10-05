@@ -5,6 +5,7 @@ import time
 from pyramid.config import Configurator
 from pyramid.events import NewRequest
 
+from pynformatics.utils.api_token import parse_api_tokens
 from pynformatics.utils.events import subscribe_rollback_on_request_finished
 from .models import DBSession
 from pynformatics.view.comment import *
@@ -21,6 +22,9 @@ def main(global_config, **settings):
     """
     load_config_map(settings.get("config.map"), settings)
     load_config_map(settings.get("config.secret"), settings)
+
+    # fail at startup on a malformed token list
+    parse_api_tokens(settings)
 
     config = Configurator(settings=settings)
     config.include('pyramid_mako')
@@ -98,6 +102,9 @@ def main(global_config, **settings):
     config.add_route('problem.runs.status', '/problem/run/{run_id}/status')
     config.add_route('problem.runs.update_from_ejudge_v2', '/problem/run/action/update_from_ejudge_v2')
     
+    config.add_route('api.problem.submit', r'/api/v1/problem/{problem_id:\d+}/submit')
+    config.add_route('api.run.status', r'/api/v1/run/{run_id:\d+}/status')
+
     config.add_route('contest.ejudge.reload', '/contest/ejudge/reload/{contest_id}')
     config.add_route('contest.ejudge.judge.reload',
                      r'/contest/ejudge/{judge_id:\d+}/reload/{contest_id:\d+}')
