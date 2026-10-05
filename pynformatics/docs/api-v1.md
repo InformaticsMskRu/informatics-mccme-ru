@@ -24,7 +24,7 @@ printf %s "$TOKEN" | shasum -a 256
 
 ## Submit
 
-`POST /api/v1/problem/{problem_id}/submit`, multipart form:
+`POST /py/v1/problem/{problem_id}/submit`, multipart form:
 
 | field     | description                                  |
 |-----------|----------------------------------------------|
@@ -33,7 +33,7 @@ printf %s "$TOKEN" | shasum -a 256
 | `file`    | the source                                   |
 
 ```bash
-curl -X POST https://informatics.msk.ru/api/v1/problem/42/submit \
+curl -X POST https://informatics.msk.ru/py/v1/problem/42/submit \
   -H "Authorization: Bearer $TOKEN" \
   -F user_id=101 \
   -F lang_id=27 \
@@ -46,10 +46,10 @@ curl -X POST https://informatics.msk.ru/api/v1/problem/42/submit \
 
 ## Run status
 
-`GET /api/v1/run/{run_id}/status`
+`GET /py/v1/run/{run_id}/status`
 
 ```bash
-curl https://informatics.msk.ru/api/v1/run/9/status \
+curl https://informatics.msk.ru/py/v1/run/9/status \
   -H "Authorization: Bearer $TOKEN"
 ```
 

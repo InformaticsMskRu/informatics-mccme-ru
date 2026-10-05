@@ -1,4 +1,4 @@
-"""Bearer-token authorization for the /api/v1 endpoints.
+"""Bearer-token authorization for the /v1 endpoints.
 
 Tokens come from the "api.tokens" setting (config.secret JSON):
 

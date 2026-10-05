@@ -102,8 +102,8 @@ def main(global_config, **settings):
     config.add_route('problem.runs.status', '/problem/run/{run_id}/status')
     config.add_route('problem.runs.update_from_ejudge_v2', '/problem/run/action/update_from_ejudge_v2')
     
-    config.add_route('api.problem.submit', r'/api/v1/problem/{problem_id:\d+}/submit')
-    config.add_route('api.run.status', r'/api/v1/run/{run_id:\d+}/status')
+    config.add_route('api.problem.submit', r'/v1/problem/{problem_id:\d+}/submit')
+    config.add_route('api.run.status', r'/v1/run/{run_id:\d+}/status')
 
     config.add_route('contest.ejudge.reload', '/contest/ejudge/reload/{contest_id}')
     config.add_route('contest.ejudge.judge.reload',
