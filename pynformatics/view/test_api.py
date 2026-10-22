@@ -1,3 +1,4 @@
+import copy
 import hashlib
 import json
 import unittest
@@ -176,6 +177,58 @@ class StatusTests(unittest.TestCase):
 
     def test_rmatics_down_is_502(self):
         response, _ = self._status(raises=OSError('down'))
+        self.assertEqual(response.status_code, 502)
+
+
+class ProtocolTests(unittest.TestCase):
+    FULL = {
+        'compiler_output': 'ok',
+        'audit': {'secret': 1},
+        'tests': {
+            '1': {'status': 'OK', 'input': 'in', 'corr': 'c', 'output': 'o',
+                  'checker_output': 'fine', 'error_output': 'e', 'extra': 'x',
+                  'big_input': 'bi', 'big_corr': 'bc', 'big_output': 'bo'},
+            '2': {'status': 'WA', 'checker_output': 'Game id: 77'},
+        },
+    }
+
+    def _protocol(self, reply=None, headers=None, raises=None):
+        request = FakeRequest([token_entry()], headers=headers, matchdict={'run_id': '9'})
+        reply = reply or rmatics_reply({'status': 'success', 'data': copy.deepcopy(self.FULL)})
+        with mock.patch.object(api_view.requests, 'get', return_value=reply,
+                               side_effect=raises) as get:
+            response = api_view.api_run_protocol(request)
+        return response, get
+
+    def test_protocol_is_public_and_scoped_to_token_context(self):
+        response, get = self._protocol()
+        self.assertEqual(response.status_code, 200)
+        body = response.json_body
+        self.assertNotIn('audit', body)
+        self.assertEqual(body['compiler_output'], 'ok')
+        self.assertEqual(body['tests']['1'], {'status': 'OK'})
+        self.assertEqual(body['tests']['2'], {'status': 'WA', 'game_id': '77'})
+        self.assertEqual(get.call_args[0][0], 'http://rmatics.test/problem/run/9/protocol')
+        self.assertEqual(get.call_args[1]['params'], {
+            'is_admin': 'false', 'context_source': API_CONTEXT_BASE + 7})
+
+    def test_protocol_without_tests(self):
+        reply = rmatics_reply({'status': 'success', 'data': {'compiler_output': 'CE', 'audit': 1}})
+        response, _ = self._protocol(reply=reply)
+        self.assertEqual(response.json_body, {'compiler_output': 'CE'})
+
+    def test_unauthorized_is_401(self):
+        response, get = self._protocol(headers={})
+        self.assertEqual(response.status_code, 401)
+        get.assert_not_called()
+
+    def test_foreign_run_or_missing_protocol_is_404(self):
+        payload = {'status': 'error', 'code': 404, 'error': 'Run with id #9 is not found'}
+        response, _ = self._protocol(reply=rmatics_reply(payload, status=404))
+        self.assertEqual(response.status_code, 404)
+
+    def test_rmatics_down_is_502(self):
+        response, _ = self._protocol(raises=OSError('down'))
         self.assertEqual(response.status_code, 502)
 
 

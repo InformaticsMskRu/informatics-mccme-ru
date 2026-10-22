@@ -104,6 +104,7 @@ def main(global_config, **settings):
     
     config.add_route('api.problem.submit', r'/v1/problem/{problem_id:\d+}/submit')
     config.add_route('api.run.status', r'/v1/run/{run_id:\d+}/status')
+    config.add_route('api.run.protocol', r'/v1/run/{run_id:\d+}/protocol')
 
     config.add_route('contest.ejudge.reload', '/contest/ejudge/reload/{contest_id}')
     config.add_route('contest.ejudge.judge.reload',

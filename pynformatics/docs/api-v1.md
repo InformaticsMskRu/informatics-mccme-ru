@@ -61,6 +61,26 @@ curl https://informatics.msk.ru/py/v1/run/9/status \
 `ejudge_status` is the ejudge verdict code; 377 means the run is in the queue.
 Poll until it changes.
 
+## Run protocol
+
+`GET /py/v1/run/{run_id}/protocol`
+
+```bash
+curl https://informatics.msk.ru/py/v1/run/9/protocol \
+  -H "Authorization: Bearer $TOKEN"
+```
+
+This is the public protocol, the same one the site shows to a regular user:
+the `audit` field and the tests' input, correct answer, output and
+checker/error output are left out. The reply is abbreviated here, and the
+exact fields are those stored by the judge:
+
+```json
+{"compiler_output": "", "tests": {"1": {"status": "OK"}, "2": {"status": "WA"}}}
+```
+
+A run that has no protocol yet (not tested) gives 404; poll the status first.
+
 ## Errors
 
 Errors are JSON with the matching HTTP status:
@@ -74,5 +94,5 @@ Errors are JSON with the matching HTTP status:
 | 400 | missing or invalid `user_id`, `lang_id` or `file`; rmatics rejections such as a duplicate of the previous submission |
 | 401 | missing, malformed or unknown token |
 | 403 | user or problem is not allowed for the token |
-| 404 | run not found, or it was not created by this token |
+| 404 | run not found, or it was not created by this token; for the protocol, also when the run has no protocol yet |
 | 502 | rmatics is unavailable |
