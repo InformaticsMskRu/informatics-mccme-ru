@@ -39,6 +39,24 @@ PROTOCOL_EXCLUDED_TEST_FIELDS = [
 ]
 
 
+def public_protocol(data):
+    """The protocol as shown to a regular user: no audit, no test data."""
+    for field in PROTOCOL_EXCLUDED_FIELDS:
+        data.pop(field, None)
+    tests = data.get('tests')
+
+    if not tests:
+        return data
+
+    for test in tests.values():
+        if "Game id: " in test["checker_output"]:
+            test["game_id"] = test["checker_output"][9:]
+        for field in PROTOCOL_EXCLUDED_TEST_FIELDS:
+            test.pop(field, None)
+
+    return data
+
+
 @view_config(route_name='protocol.get', renderer='json')
 def get_protocol(request):
     # Короче в чём разница protocol и full protocol
@@ -62,21 +80,7 @@ def get_protocol(request):
     if content['status'] != 'success':
         return content
 
-    data = content['data']
-    for field in PROTOCOL_EXCLUDED_FIELDS:
-        data.pop(field, None)
-    tests = data.get('tests')
-
-    if not tests:
-        return data
-
-    for test in tests.values():
-        if "Game id: " in test["checker_output"]:
-            test["game_id"] = test["checker_output"][9:]
-        for field in PROTOCOL_EXCLUDED_TEST_FIELDS:
-            test.pop(field, None)
-
-    return data
+    return public_protocol(content['data'])
 
 
 @view_config(route_name="protocol.get_full", renderer="json")

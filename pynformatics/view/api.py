@@ -2,7 +2,7 @@
 
 A token (see utils/api_token.py) may submit as several users. Every run it
 creates is stamped with the token's context_source, and the status endpoint
-only shows runs of that context.
+only shows runs of that context. The same goes for the protocol.
 """
 import logging
 
@@ -11,6 +11,7 @@ from pyramid.response import Response
 from pyramid.view import view_config
 
 from pynformatics.utils.api_token import authenticate, error_response
+from pynformatics.view.protocol import public_protocol
 
 log = logging.getLogger(__name__)
 
@@ -104,3 +105,26 @@ def api_run_status(request):
     if resp.status_code != 200 or content.get('status') != 'success':
         return _rmatics_error(resp)
     return Response(json_body=content['data'])
+
+
+@view_config(route_name='api.run.protocol', request_method='GET')
+def api_run_protocol(request):
+    """The protocol a regular user sees: no audit, no test input/output."""
+    token, error = authenticate(request)
+    if error is not None:
+        return error
+
+    run_id = int(request.matchdict['run_id'])
+    url = '{}/problem/run/{}/protocol'.format(
+        request.registry.settings['rmatics.endpoint'], run_id)
+    params = {'is_admin': 'false', 'context_source': token.context_source}
+    try:
+        resp = requests.get(url, params=params, timeout=REQUEST_TIMEOUT)
+        content = resp.json()
+    except Exception:
+        log.exception('api protocol: rmatics request failed, token=%s run=%s', token.id, run_id)
+        return error_response(502, 'rmatics is unavailable')
+
+    if resp.status_code != 200 or content.get('status') != 'success':
+        return _rmatics_error(resp)
+    return Response(json_body=public_protocol(content['data']))
